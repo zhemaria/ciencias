@@ -1,1 +1,473 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Laboratorio de Física: Lanzamiento de Proyectiles</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      :root {
+        --primary: #4f46e5;
+        --primary-hover: #4338ca;
+        --bg-main: #f8fafc;
+      }
+
+      body {
+        background-color: var(--bg-main);
+        color: #1e293b;
+      }
+
+      .glass-panel {
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(226, 232, 240, 1);
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+      }
+
+      canvas {
+        width: 100%;
+        height: auto;
+        image-rendering: auto;
+        background: linear-gradient(to bottom, #ffffff, #f1f5f9);
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        touch-action: none;
+      }
+
+      input[type='range'] {
+        accent-color: var(--primary);
+      }
+
+      /* Estilo para el scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f1f5f9;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+      }
+
+      /* Animación para el modal */
+      .modal-enter {
+        animation: fadeIn 0.3s ease-out;
+      }
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body class="min-h-screen p-4 md:p-8">
+    <div class="max-w-6xl mx-auto">
+      <!-- Header -->
+      <header class="flex flex-col md:flex-row justify-between items-center mb-8 gap-4">
+        <div>
+          <h1 class="text-3xl font-bold text-slate-800">Laboratorio de Cinemática</h1>
+          <p class="text-slate-500">
+            Simulación interactiva de movimiento parabólico
+            <br />
+            Creado por Jose M. Fernández con Cluade Sonnet 4.6
+          </p>
+        </div>
+        <div class="flex gap-2">
+          <button onclick="openHelp()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 font-semibold py-2 px-4 rounded-lg transition">Ayuda</button>
+          <button onclick="exportCSV()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition shadow-md">Exportar Datos</button>
+        </div>
+      </header>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Panel de Controles -->
+        <aside class="lg:col-span-4 space-y-6">
+          <div class="glass-panel p-6 rounded-2xl">
+            <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
+              <svg class="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+              </svg>
+              Parámetros de Control
+            </h2>
+
+            <div class="space-y-4">
+              <div>
+                <div class="flex justify-between mb-1">
+                  <label class="text-sm font-medium">Velocidad Inicial</label>
+                  <span class="text-xs text-indigo-600 font-bold" id="val-v">25 m/s</span>
+                </div>
+                <input type="range" id="velocity" min="5" max="60" step="1" value="25" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer" />
+              </div>
+
+              <div>
+                <div class="flex justify-between mb-1">
+                  <label class="text-sm font-medium">Ángulo de Disparo</label>
+                  <span class="text-xs text-indigo-600 font-bold" id="val-a">45°</span>
+                </div>
+                <input type="range" id="angle" min="5" max="85" step="1" value="45" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer" />
+              </div>
+
+              <div>
+                <div class="flex justify-between mb-1">
+                  <label class="text-sm font-medium">Gravedad</label>
+                  <span class="text-xs text-indigo-600 font-bold" id="val-g">9.8 m/s²</span>
+                </div>
+                <input type="range" id="gravity" min="1" max="30" step="0.1" value="9.8" class="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer" />
+              </div>
+
+              <div class="grid grid-cols-2 gap-3 pt-4">
+                <button onclick="startSimulation()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition shadow-lg active:scale-95">Lanzar</button>
+                <button onclick="resetSimulation()" class="bg-slate-500 hover:bg-slate-600 text-white font-bold py-3 rounded-xl transition active:scale-95">Reiniciar</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Resultados Analíticos -->
+          <div class="glass-panel p-6 rounded-2xl">
+            <h2 class="text-lg font-bold mb-4">Análisis del Vuelo</h2>
+            <div class="grid grid-cols-2 gap-4">
+              <div class="p-3 bg-indigo-50 rounded-lg">
+                <p class="text-[10px] uppercase font-bold text-indigo-400">Altura Máx.</p>
+                <p class="text-xl font-bold text-indigo-900">
+                  <span id="maxHeight">0.00</span>
+                  <small class="text-xs">m</small>
+                </p>
+              </div>
+              <div class="p-3 bg-indigo-50 rounded-lg">
+                <p class="text-[10px] uppercase font-bold text-indigo-400">Alcance Total</p>
+                <p class="text-xl font-bold text-indigo-900">
+                  <span id="range">0.00</span>
+                  <small class="text-xs">m</small>
+                </p>
+              </div>
+              <div class="p-3 bg-slate-50 rounded-lg">
+                <p class="text-[10px] uppercase font-bold text-slate-400">Tiempo Vértice</p>
+                <p class="text-lg font-bold text-slate-700">
+                  <span id="tVertex">0.00</span>
+                  <small class="text-xs">s</small>
+                </p>
+              </div>
+              <div class="p-3 bg-slate-50 rounded-lg">
+                <p class="text-[10px] uppercase font-bold text-slate-400">Tiempo Total</p>
+                <p class="text-lg font-bold text-slate-700">
+                  <span id="tTotal">0.00</span>
+                  <small class="text-xs">s</small>
+                </p>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Visualizador Central -->
+        <main class="lg:col-span-8 space-y-6">
+          <div class="glass-panel p-4 rounded-2xl">
+            <div class="flex justify-between items-center mb-2 px-2">
+              <span class="text-xs font-bold text-slate-400 uppercase tracking-widest">Simulación en Tiempo Real</span>
+              <span class="flex items-center gap-1 text-xs text-slate-400">
+                <span class="w-2 h-2 bg-indigo-500 rounded-full animate-pulse"></span>
+                Sistema Activo
+              </span>
+            </div>
+            <div id="canvas-container">
+              <canvas id="canvas"></canvas>
+            </div>
+          </div>
+
+          <!-- Ecuaciones -->
+          <div class="glass-panel p-6 rounded-2xl font-mono text-sm overflow-x-auto">
+            <h3 class="text-slate-800 font-bold mb-3 border-b pb-2">Modelado Matemático</h3>
+            <div class="space-y-2 text-indigo-700">
+              <p id="eqX" class="bg-indigo-50 p-2 rounded">x(t) = 0.000 t</p>
+              <p id="eqY" class="bg-indigo-50 p-2 rounded">y(t) = 0.000 t² + 0.000 t</p>
+              <p id="eqDeriv" class="bg-slate-100 p-2 rounded text-slate-600 italic font-sans text-xs">v_y(t) = ... (Derivada para el cálculo de altura máxima)</p>
+            </div>
+          </div>
+        </main>
+      </div>
+
+      <!-- Tabla de Registros -->
+      <section class="mt-8 glass-panel rounded-2xl overflow-hidden">
+        <div class="bg-slate-800 p-4 text-white">
+          <h3 class="font-bold">Historial de Experimentos</h3>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead>
+              <tr class="bg-slate-100 text-slate-600 uppercase text-[10px] font-bold tracking-tighter">
+                <th class="px-6 py-4">v₀ (m/s)</th>
+                <th class="px-6 py-4">θ (°)</th>
+                <th class="px-6 py-4">g (m/s²)</th>
+                <th class="px-6 py-4">Altura Máx</th>
+                <th class="px-6 py-4">Alcance</th>
+                <th class="px-6 py-4">Ecuación y(t)</th>
+              </tr>
+            </thead>
+            <tbody id="dataTable" class="divide-y divide-slate-100">
+              <!-- Filas dinámicas -->
+            </tbody>
+          </table>
+          <div id="no-data" class="p-8 text-center text-slate-400 italic">No hay experimentos registrados todavía.</div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Modal de Ayuda -->
+    <div id="helpModal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      <div class="bg-white max-w-lg w-full rounded-2xl shadow-2xl overflow-hidden modal-enter">
+        <div class="p-6">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-xl font-bold">Guía del Laboratorio</h3>
+            <button onclick="closeHelp()" class="text-slate-400 hover:text-slate-600 text-2xl">&times;</button>
+          </div>
+          <div class="space-y-4 text-slate-600 text-sm leading-relaxed">
+            <p>
+              Bienvenido al
+              <strong>Laboratorio Matemático v6.0</strong>
+              . Aquí puedes simular lanzamientos de proyectiles y analizar su comportamiento físico.
+            </p>
+            <ul class="list-disc pl-5 space-y-2">
+              <li>
+                <strong>Controles:</strong>
+                Ajusta la velocidad, el ángulo y la gravedad usando los deslizadores laterales.
+              </li>
+              <li>
+                <strong>Simulación:</strong>
+                Haz clic en "Lanzar" para ver la trayectoria. Los cálculos se actualizarán automáticamente al finalizar el vuelo.
+              </li>
+              <li>
+                <strong>Exportación:</strong>
+                Puedes descargar todos los resultados en un archivo Excel/CSV para su análisis externo.
+              </li>
+              <li>
+                <strong>Responsive:</strong>
+                Esta herramienta funciona en celulares (en horizontal es mejor) y computadoras.
+              </li>
+            </ul>
+            <div class="bg-blue-50 p-4 rounded-lg border border-blue-100 text-blue-800 italic">
+              "La trayectoria es una parábola descrita por la ecuación de segundo grado y(t) = v₀·sin(θ)·t - ½gt²"
+            </div>
+          </div>
+          <button onclick="closeHelp()" class="mt-6 w-full bg-slate-800 text-white font-bold py-3 rounded-xl transition hover:bg-slate-900">Entendido</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const canvas = document.getElementById('canvas');
+      const ctx = canvas.getContext('2d');
+      const container = document.getElementById('canvas-container');
+
+      // Inputs
+      const velocityInput = document.getElementById('velocity');
+      const angleInput = document.getElementById('angle');
+      const gravityInput = document.getElementById('gravity');
+
+      // UI Labels
+      const lblV = document.getElementById('val-v');
+      const lblA = document.getElementById('val-a');
+      const lblG = document.getElementById('val-g');
+
+      let running = false;
+      let t = 0;
+      let trajectory = [];
+      let experiments = [];
+
+      // Inicializar tamaño del canvas
+      function resizeCanvas() {
+        const containerWidth = container.clientWidth;
+        canvas.width = containerWidth;
+        canvas.height = containerWidth * 0.5; // Aspect ratio 2:1
+        draw();
+      }
+
+      window.addEventListener('resize', resizeCanvas);
+      setTimeout(resizeCanvas, 100);
+
+      // Actualizar etiquetas en tiempo real
+      velocityInput.addEventListener('input', () => (lblV.innerText = velocityInput.value + ' m/s'));
+      angleInput.addEventListener('input', () => (lblA.innerText = angleInput.value + '°'));
+      gravityInput.addEventListener('input', () => (lblG.innerText = gravityInput.value + ' m/s²'));
+
+      function startSimulation() {
+        if (running) return;
+        running = true;
+        t = 0;
+        trajectory = [];
+        requestAnimationFrame(update);
+      }
+
+      function resetSimulation() {
+        running = false;
+        t = 0;
+        trajectory = [];
+        document.getElementById('maxHeight').textContent = '0.00';
+        document.getElementById('range').textContent = '0.00';
+        document.getElementById('tVertex').textContent = '0.00';
+        document.getElementById('tTotal').textContent = '0.00';
+        draw();
+      }
+
+      function update() {
+        if (!running) return;
+
+        // Incremento suave basado en el tiempo
+        t += 0.05;
+
+        const v = parseFloat(velocityInput.value);
+        const angleDeg = parseFloat(angleInput.value);
+        const angleRad = (angleDeg * Math.PI) / 180;
+        const g = parseFloat(gravityInput.value);
+
+        const vx = v * Math.cos(angleRad);
+        const vy = v * Math.sin(angleRad);
+
+        const x = vx * t;
+        const y = vy * t - 0.5 * g * t * t;
+
+        if (y < 0 && t > 0.1) {
+          running = false;
+          computeAnalytics(v, angleRad, g);
+          saveExperiment(v, angleDeg, g);
+          return;
+        }
+
+        trajectory.push({x, y});
+        draw(x, y);
+
+        requestAnimationFrame(update);
+      }
+
+      function computeAnalytics(v, angleRad, g) {
+        const vx = v * Math.cos(angleRad);
+        const vy = v * Math.sin(angleRad);
+
+        const a = -0.5 * g;
+        const b = vy;
+
+        const tVertex = -b / (2 * a);
+        const yMax = a * tVertex * tVertex + b * tVertex;
+        const tTotal = (2 * vy) / g;
+        const range = vx * tTotal;
+
+        document.getElementById('maxHeight').textContent = yMax.toFixed(2);
+        document.getElementById('range').textContent = range.toFixed(2);
+        document.getElementById('tVertex').textContent = tVertex.toFixed(2);
+        document.getElementById('tTotal').textContent = tTotal.toFixed(2);
+
+        document.getElementById('eqX').textContent = `x(t) = ${vx.toFixed(3)} t`;
+        document.getElementById('eqY').textContent = `y(t) = ${a.toFixed(3)} t² + ${b.toFixed(3)} t`;
+        document.getElementById('eqDeriv').textContent = `v_y(t) = ${(2 * a).toFixed(3)} t + ${b.toFixed(3)}`;
+      }
+
+      function saveExperiment(v, angle, g) {
+        const eq = document.getElementById('eqY').textContent;
+        const maxH = document.getElementById('maxHeight').textContent;
+        const rangeVal = document.getElementById('range').textContent;
+
+        experiments.push({v, angle, g, eq, maxH, range: rangeVal});
+
+        document.getElementById('no-data').classList.add('hidden');
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-slate-50 transition';
+        row.innerHTML = `
+                <td class="px-6 py-4 font-bold text-slate-700">${v}</td>
+                <td class="px-6 py-4">${angle}</td>
+                <td class="px-6 py-4">${g}</td>
+                <td class="px-6 py-4 text-indigo-600 font-bold">${maxH}</td>
+                <td class="px-6 py-4 text-emerald-600 font-bold">${rangeVal}</td>
+                <td class="px-6 py-4 font-mono text-xs">${eq}</td>
+            `;
+        document.getElementById('dataTable').prepend(row);
+      }
+
+      function draw(px = 0, py = 0) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Escala adaptativa: buscamos que quepa todo el alcance y altura
+        // Definimos un margen de 50px
+        const margin = 50;
+        const maxRangeInput = 150; // Aproximado para escala
+        const scale = (canvas.width - margin * 2) / maxRangeInput;
+
+        // Dibujar suelo
+        ctx.strokeStyle = '#e2e8f0';
+        ctx.setLineDash([5, 5]);
+        ctx.beginPath();
+        ctx.moveTo(margin, canvas.height - margin);
+        ctx.lineTo(canvas.width - margin, canvas.height - margin);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Trayectoria
+        if (trajectory.length > 0) {
+          ctx.strokeStyle = '#6366f1';
+          ctx.lineWidth = 3;
+          ctx.lineJoin = 'round';
+          ctx.beginPath();
+          trajectory.forEach((p, i) => {
+            let sx = p.x * scale + margin;
+            let sy = canvas.height - p.y * scale - margin;
+            if (i === 0) ctx.moveTo(sx, sy);
+            else ctx.lineTo(sx, sy);
+          });
+          ctx.stroke();
+        }
+
+        // Proyectil
+        let screenX = px * scale + margin;
+        let screenY = canvas.height - py * scale - margin;
+
+        // Sombra del proyectil
+        ctx.fillStyle = 'rgba(79, 70, 229, 0.2)';
+        ctx.beginPath();
+        ctx.arc(screenX, canvas.height - margin, 4, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Objeto principal
+        ctx.fillStyle = '#4f46e5';
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = 'rgba(0,0,0,0.2)';
+        ctx.beginPath();
+        ctx.arc(screenX, screenY, 8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+
+      function exportCSV() {
+        if (experiments.length === 0) {
+          alert('No hay datos para exportar.');
+          return;
+        }
+        let csv = 'Velocidad Inicial,Angulo,Gravedad,Altura Maxima,Alcance,Ecuacion\n';
+        experiments.forEach(e => {
+          csv += `${e.v},${e.angle},${e.g},${e.maxH},${e.range},"${e.eq}"\n`;
+        });
+
+        const blob = new Blob([csv], {type: 'text/csv'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'experimentos_fisica.csv';
+        a.click();
+      }
+
+      // Modals
+      function openHelp() {
+        document.getElementById('helpModal').classList.remove('hidden');
+      }
+      function closeHelp() {
+        document.getElementById('helpModal').classList.add('hidden');
+      }
+    </script>
+  </body>
+</html>
 
