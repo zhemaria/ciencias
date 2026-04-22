@@ -1,1 +1,1596 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CientíLab — Diseño experimental | GEDparaHispanos</title>
+<style>
+/* ============================================================
+   CientíLab — Diseño experimental
+   Práctica para GED: Assessment Target SP.7
+   Estilo DUA · hermano visual de CientíGraf · self-contained
+   ============================================================ */
 
+:root {
+  --c-bg:       #fafafa;
+  --c-surface:  #ffffff;
+  --c-ink:      #1a1a1a;
+  --c-ink-soft: #4a4a4a;
+  --c-ink-mute: #6a6a6a;
+  --c-line:     #e0e0e0;
+  --c-line-str: #b0b0b0;
+
+  --c-ciencias: #0f7a5c;
+  --c-ciencias-bg: #e8f5ee;
+  --c-accent:   #1e5aa6;
+  --c-accent-bg: #eaf2fb;
+
+  --c-good:     #0f7a5c;
+  --c-good-bg:  #e8f5ee;
+  --c-bad:      #a63d1e;
+  --c-bad-bg:   #fbe9e7;
+
+  --c-bio:      #0f7a5c;
+  --c-qui:      #1e5aa6;
+  --c-fis:      #5a2a8a;
+  --c-tie:      #8a5a00;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--c-ink);
+  background: var(--c-bg);
+  margin: 0;
+  padding: 0;
+}
+
+.contenedor {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+}
+
+/* ---------- Cabecera ---------- */
+header {
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-top: 6px solid var(--c-ciencias);
+  border-radius: 6px;
+  padding: 28px 28px 24px;
+  margin-bottom: 28px;
+}
+.eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--c-ciencias);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+header h1 {
+  font-size: 30px;
+  margin: 0 0 6px;
+  color: var(--c-ink);
+  font-weight: 700;
+}
+.subtitulo {
+  font-size: 16px;
+  color: var(--c-ink-soft);
+  margin: 0;
+}
+
+/* ---------- Pantallas ---------- */
+.pantalla {
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: 6px;
+  padding: 28px;
+  margin-bottom: 20px;
+}
+.pantalla.oculta { display: none; }
+
+/* ---------- Pantalla Inicio ---------- */
+.descripcion {
+  background: var(--c-ciencias-bg);
+  border-left: 4px solid var(--c-ciencias);
+  padding: 16px 20px;
+  border-radius: 4px;
+  margin-bottom: 24px;
+}
+.descripcion p {
+  margin: 0 0 10px;
+  color: var(--c-ink-soft);
+}
+.descripcion p:last-child { margin-bottom: 0; }
+.descripcion strong { color: var(--c-ink); }
+.descripcion ul {
+  margin: 8px 0 0 0;
+  padding-left: 22px;
+  color: var(--c-ink-soft);
+}
+.descripcion ul li { margin: 3px 0; }
+
+.opciones-sesion h3 {
+  font-size: 18px;
+  margin: 0 0 16px;
+  color: var(--c-ink);
+}
+.opciones-sesion h4 {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--c-ink-mute);
+  margin: 0 0 10px;
+  font-weight: 700;
+}
+.config-grid {
+  display: grid;
+  gap: 22px;
+  margin-bottom: 24px;
+}
+.config-bloque {
+  background: #f8f8f8;
+  border: 1px solid var(--c-line);
+  border-radius: 5px;
+  padding: 16px 18px;
+}
+.categorias, .numero-preguntas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.cat-chip, .num-chip {
+  padding: 8px 14px;
+  border: 2px solid var(--c-line);
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--c-ink-soft);
+  background: var(--c-surface);
+  user-select: none;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+.cat-chip:hover, .num-chip:hover { border-color: var(--c-line-str); }
+.cat-chip.activa, .num-chip.activa {
+  background: var(--c-ciencias);
+  color: #fff;
+  border-color: var(--c-ciencias);
+}
+.cat-chip:focus-visible, .num-chip:focus-visible {
+  outline: 3px solid var(--c-accent);
+  outline-offset: 2px;
+}
+
+.info-sesion {
+  background: var(--c-accent-bg);
+  border: 1px solid #c5d5e8;
+  border-radius: 4px;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: var(--c-ink-soft);
+  margin-bottom: 20px;
+}
+.info-sesion strong { color: var(--c-accent); }
+
+.enfoque-toggle {
+  text-align: center;
+  margin: -8px 0 20px;
+}
+.link-enfoque {
+  color: var(--c-accent);
+  font-size: 13px;
+  text-decoration: underline;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: inherit;
+  padding: 4px 8px;
+}
+.link-enfoque:hover { color: #164878; }
+.link-enfoque:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+.panel-enfoque {
+  background: var(--c-accent-bg);
+  border: 1px solid #c5d5e8;
+  border-radius: 4px;
+  padding: 16px 18px;
+  margin-bottom: 20px;
+}
+.panel-enfoque.oculto { display: none; }
+.panel-enfoque h4 {
+  margin: 0 0 6px;
+  color: var(--c-accent);
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+}
+.nota-enfoque {
+  font-size: 13px;
+  color: var(--c-ink-soft);
+  margin: 0 0 12px;
+  line-height: 1.45;
+}
+.volver-balanceado {
+  margin-top: 10px;
+  display: inline-block;
+}
+
+/* ---------- Botones ---------- */
+.btn {
+  display: inline-block;
+  padding: 12px 26px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s, transform 0.05s;
+  font-family: inherit;
+}
+.btn:active { transform: translateY(1px); }
+.btn:focus-visible {
+  outline: 3px solid var(--c-accent);
+  outline-offset: 2px;
+}
+.btn-primario { background: var(--c-ciencias); color: #fff; }
+.btn-primario:hover { background: #0c6449; }
+.btn-secundario { background: #f0f0f0; color: var(--c-ink); }
+.btn-secundario:hover { background: #e0e0e0; }
+.btn.oculto { display: none; }
+
+/* ---------- Pantalla Quiz ---------- */
+.quiz-header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+.progreso { font-weight: 700; color: var(--c-ink); }
+.progreso #num-actual { color: var(--c-ciencias); font-size: 18px; }
+.cronometro {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--c-ink-soft);
+  text-align: center;
+}
+.badge-categoria {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #fff;
+}
+.badge-categoria.biologia { background: var(--c-bio); }
+.badge-categoria.quimica  { background: var(--c-qui); }
+.badge-categoria.fisica   { background: var(--c-fis); }
+.badge-categoria.tierra   { background: var(--c-tie); }
+
+.barra-progreso {
+  height: 6px;
+  background: #f0f0f0;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+#barra-progreso-fill {
+  height: 100%;
+  background: var(--c-ciencias);
+  width: 0%;
+  transition: width 0.3s;
+}
+
+/* El escenario ahora es más largo y narrativo */
+.escenario-caja {
+  background: #f8f8f8;
+  border-left: 3px solid var(--c-ciencias);
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  font-size: 15px;
+  color: var(--c-ink);
+  border-radius: 0 4px 4px 0;
+  line-height: 1.6;
+}
+.escenario-caja .etq-escenario {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--c-ciencias);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  display: block;
+  margin-bottom: 6px;
+}
+
+/* Tabla opcional con grupos experimentales */
+.tabla-contenedor {
+  background: #fcfcfc;
+  border: 1px solid var(--c-line);
+  border-radius: 4px;
+  padding: 16px;
+  margin-bottom: 20px;
+  overflow-x: auto;
+}
+.tabla-contenedor.oculta { display: none; }
+.tabla-contenedor table {
+  margin: 0 auto;
+  border-collapse: collapse;
+  font-size: 14px;
+  min-width: 300px;
+}
+.tabla-contenedor table caption {
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: var(--c-ink);
+  font-size: 13px;
+  text-align: left;
+  padding-left: 2px;
+  caption-side: top;
+}
+.tabla-contenedor th,
+.tabla-contenedor td {
+  padding: 8px 14px;
+  border: 1px solid var(--c-line);
+  text-align: left;
+}
+.tabla-contenedor th {
+  background: #f0f0f0;
+  font-weight: 700;
+  color: var(--c-ink);
+  font-size: 13px;
+}
+
+.pregunta-texto {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--c-ink);
+  margin-bottom: 16px;
+  line-height: 1.45;
+}
+
+.opciones {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.opcion {
+  background: var(--c-surface);
+  border: 2px solid var(--c-line);
+  border-radius: 5px;
+  padding: 12px 16px 12px 46px;
+  cursor: pointer;
+  font-size: 15px;
+  color: var(--c-ink);
+  position: relative;
+  transition: border-color 0.15s, background 0.15s;
+  user-select: none;
+  line-height: 1.5;
+}
+.opcion:hover:not(.deshabilitada) {
+  border-color: var(--c-ciencias);
+  background: #f8fbf9;
+}
+.opcion:focus-visible {
+  outline: 3px solid var(--c-accent);
+  outline-offset: 2px;
+}
+.opcion .letra {
+  position: absolute;
+  left: 14px;
+  top: 14px;
+  width: 24px;
+  height: 24px;
+  background: #f0f0f0;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 24px;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--c-ink-soft);
+}
+.opcion.correcta {
+  background: var(--c-good-bg);
+  border-color: var(--c-good);
+}
+.opcion.correcta .letra { background: var(--c-good); color: #fff; }
+.opcion.incorrecta {
+  background: var(--c-bad-bg);
+  border-color: var(--c-bad);
+}
+.opcion.incorrecta .letra { background: var(--c-bad); color: #fff; }
+.opcion.deshabilitada { cursor: default; }
+
+.feedback {
+  padding: 14px 18px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.feedback.oculto { display: none; }
+.feedback.correcto {
+  background: var(--c-good-bg);
+  border-left: 4px solid var(--c-good);
+}
+.feedback.incorrecto {
+  background: var(--c-bad-bg);
+  border-left: 4px solid var(--c-bad);
+}
+.feedback .titulo-fb {
+  font-weight: 700;
+  margin-bottom: 4px;
+  display: block;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.feedback.correcto .titulo-fb   { color: var(--c-good); }
+.feedback.incorrecto .titulo-fb { color: var(--c-bad); }
+
+.controles-quiz {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* ---------- Pantalla Resultados ---------- */
+#pantalla-resultados h2 {
+  font-size: 26px;
+  margin: 0 0 20px;
+  color: var(--c-ink);
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--c-line);
+}
+.resumen-resultados {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.tarjeta-resumen {
+  background: var(--c-ciencias-bg);
+  border: 1px solid #b8dcc7;
+  border-radius: 6px;
+  padding: 20px;
+  text-align: center;
+}
+.tarjeta-resumen .num {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--c-ciencias);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.tarjeta-resumen .etq {
+  font-size: 13px;
+  color: var(--c-ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+.desglose-categorias { margin-bottom: 28px; }
+.desglose-categorias h3 {
+  font-size: 17px;
+  margin: 0 0 14px;
+  color: var(--c-ink);
+}
+.cat-row {
+  display: grid;
+  grid-template-columns: 180px 1fr 90px;
+  gap: 12px;
+  align-items: center;
+  margin: 8px 0;
+  font-size: 14px;
+}
+.cat-label { font-weight: 600; color: var(--c-ink-soft); }
+.cat-track {
+  height: 18px;
+  background: #f0f0f0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.cat-fill { height: 100%; border-radius: 3px; }
+.cat-fill.biologia { background: var(--c-bio); }
+.cat-fill.quimica  { background: var(--c-qui); }
+.cat-fill.fisica   { background: var(--c-fis); }
+.cat-fill.tierra   { background: var(--c-tie); }
+.cat-pct { font-weight: 700; color: var(--c-ink); font-size: 13px; }
+
+.revisar-preguntas h3 {
+  font-size: 17px;
+  margin: 24px 0 14px;
+  color: var(--c-ink);
+}
+.item-revisar {
+  background: #fcfcfc;
+  border: 1px solid var(--c-line);
+  border-left: 4px solid var(--c-bad);
+  padding: 14px 18px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+.item-revisar .esc-resumen {
+  font-size: 13px;
+  color: var(--c-ink-mute);
+  margin-bottom: 6px;
+  font-style: italic;
+}
+.item-revisar .preg {
+  font-weight: 600;
+  color: var(--c-ink);
+  margin-bottom: 6px;
+}
+.item-revisar .resp {
+  color: var(--c-ink-soft);
+  margin-bottom: 4px;
+}
+.item-revisar .resp strong { color: var(--c-ink); }
+.item-revisar .expl {
+  font-size: 13px;
+  color: var(--c-ink-mute);
+  font-style: italic;
+  margin-top: 6px;
+  line-height: 1.5;
+}
+.sin-errores {
+  background: var(--c-good-bg);
+  border: 1px solid var(--c-good);
+  padding: 16px 20px;
+  border-radius: 4px;
+  color: var(--c-ink);
+  font-weight: 600;
+  text-align: center;
+}
+.botones-finales {
+  display: flex;
+  gap: 10px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.pie {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid var(--c-line);
+  font-size: 12px;
+  color: var(--c-ink-mute);
+  text-align: center;
+  line-height: 1.5;
+}
+
+@media (max-width: 600px) {
+  .contenedor { padding: 20px 16px 60px; }
+  header { padding: 22px 20px 18px; }
+  header h1 { font-size: 24px; }
+  .pantalla { padding: 20px; }
+  .resumen-resultados { grid-template-columns: 1fr; }
+  .cat-row { grid-template-columns: 130px 1fr 70px; gap: 8px; font-size: 13px; }
+  .quiz-header {
+    grid-template-columns: auto auto;
+    grid-template-rows: auto auto;
+    gap: 8px;
+  }
+  .cronometro { grid-column: 1 / -1; text-align: left; }
+}
+
+@media print {
+  body { background: #fff; }
+  .btn, .controles-quiz, .botones-finales { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="contenedor">
+
+<header>
+  <div class="eyebrow">GEDparaHispanos · Ciencias · SP.7</div>
+  <h1>CientíLab</h1>
+  <p class="subtitulo">Práctica de diseño experimental</p>
+</header>
+
+<!-- ============================================================
+     PANTALLA 1 — INICIO
+     ============================================================ -->
+<section id="pantalla-inicio" class="pantalla">
+
+  <div class="descripcion">
+    <p><strong>¿Qué practicas aquí?</strong> Evaluar diseños experimentales como lo hace un científico al revisar el trabajo de otro. Es una de las competencias más importantes del GED de Ciencias.</p>
+    <p>En cada pregunta leerás un escenario experimental y responderás sobre alguno de estos aspectos:</p>
+    <ul>
+      <li>Identificar variables (independiente, dependiente, controles)</li>
+      <li>Identificar el grupo de control</li>
+      <li>Detectar variables confusoras no controladas</li>
+      <li>Evaluar la validez de la muestra (tamaño, representatividad)</li>
+      <li>Juzgar la replicabilidad y proponer mejoras al diseño</li>
+    </ul>
+  </div>
+
+  <div class="opciones-sesion">
+    <h3>Configura tu sesión</h3>
+
+    <div class="config-grid">
+      <div class="config-bloque">
+        <h4>Número de preguntas</h4>
+        <div class="numero-preguntas" id="selector-numero">
+          <div class="num-chip"        data-n="5"  role="radio" aria-checked="false" tabindex="0">5</div>
+          <div class="num-chip activa" data-n="10" role="radio" aria-checked="true"  tabindex="0">10</div>
+          <div class="num-chip"        data-n="15" role="radio" aria-checked="false" tabindex="0">15</div>
+          <div class="num-chip"        data-n="20" role="radio" aria-checked="false" tabindex="0">20</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-sesion" id="info-sesion">
+      <strong>Modo balanceado:</strong> recibirás escenarios mezclados de las 4 áreas de Ciencias (biología, química, física y ciencias de la tierra) en proporciones parejas.
+    </div>
+
+    <div class="enfoque-toggle">
+      <button type="button" id="toggle-enfoque" class="link-enfoque">
+        ¿Prefieres enfocar una sola área? (práctica dirigida)
+      </button>
+    </div>
+
+    <div id="panel-enfoque" class="panel-enfoque oculto">
+      <h4>Práctica dirigida</h4>
+      <p class="nota-enfoque">Útil cuando acabas de estudiar un área específica y quieres hacer drill concentrado en ella. Para repaso general, usa el modo balanceado.</p>
+      <div class="categorias" id="selector-categorias">
+        <div class="cat-chip" data-cat="biologia" role="radio" aria-checked="false" tabindex="0">Biología</div>
+        <div class="cat-chip" data-cat="quimica"  role="radio" aria-checked="false" tabindex="0">Química</div>
+        <div class="cat-chip" data-cat="fisica"   role="radio" aria-checked="false" tabindex="0">Física</div>
+        <div class="cat-chip" data-cat="tierra"   role="radio" aria-checked="false" tabindex="0">Ciencias de la Tierra</div>
+      </div>
+      <div class="volver-balanceado">
+        <button type="button" id="volver-balanceado" class="link-enfoque">← Volver al modo balanceado</button>
+      </div>
+    </div>
+
+    <button id="btn-iniciar" class="btn btn-primario">Comenzar práctica</button>
+  </div>
+
+</section>
+
+<!-- ============================================================
+     PANTALLA 2 — QUIZ
+     ============================================================ -->
+<section id="pantalla-quiz" class="pantalla oculta" aria-live="polite">
+
+  <div class="quiz-header">
+    <div class="progreso">Pregunta <span id="num-actual">1</span> / <span id="num-total">10</span></div>
+    <div class="cronometro" id="cronometro" aria-label="Tiempo transcurrido">00:00</div>
+    <div class="badge-categoria" id="badge-cat">Biología</div>
+  </div>
+
+  <div class="barra-progreso"><div id="barra-progreso-fill"></div></div>
+
+  <div class="escenario-caja">
+    <span class="etq-escenario">Escenario experimental</span>
+    <div id="escenario-texto"></div>
+  </div>
+
+  <div class="tabla-contenedor oculta" id="tabla-contenedor"></div>
+
+  <div class="pregunta-texto" id="pregunta-texto"></div>
+
+  <div class="opciones" id="opciones"></div>
+
+  <div class="feedback oculto" id="feedback"></div>
+
+  <div class="controles-quiz">
+    <button id="btn-siguiente" class="btn btn-primario oculto">Siguiente →</button>
+  </div>
+
+</section>
+
+<!-- ============================================================
+     PANTALLA 3 — RESULTADOS
+     ============================================================ -->
+<section id="pantalla-resultados" class="pantalla oculta">
+
+  <h2>Resultados de tu sesión</h2>
+
+  <div class="resumen-resultados">
+    <div class="tarjeta-resumen">
+      <div class="num" id="puntaje">–</div>
+      <div class="etq">Correctas</div>
+    </div>
+    <div class="tarjeta-resumen">
+      <div class="num" id="tiempo-total">–</div>
+      <div class="etq">Tiempo total</div>
+    </div>
+  </div>
+
+  <div class="desglose-categorias">
+    <h3>Desempeño por categoría</h3>
+    <div id="desglose-cats"></div>
+  </div>
+
+  <div class="revisar-preguntas">
+    <h3>Preguntas para revisar</h3>
+    <div id="lista-revisar"></div>
+  </div>
+
+  <div class="botones-finales">
+    <button id="btn-reintentar" class="btn btn-primario">Otra ronda (misma configuración)</button>
+    <button id="btn-menu"       class="btn btn-secundario">Volver al menú</button>
+  </div>
+
+</section>
+
+<div class="pie">
+  CientíLab · Módulo de práctica para GEDparaHispanos.com · Objetivo de evaluación SP.7<br>
+  Diseñado con principios DUA · GED® es marca registrada del American Council on Education (ACE).
+</div>
+
+</div>
+
+<script>
+/* ============================================================
+   CientíLab — lógica
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1.  POOL DE ESCENARIOS
+   Campos:
+     id, categoria, escenario, [tabla], pregunta, opciones, correcta,
+     tipo (para estadística interna), explicacion
+   ------------------------------------------------------------ */
+
+const PREGUNTAS = [
+
+  /* ============ BIOLOGÍA ============ */
+  {
+    id: 'bio-01',
+    categoria: 'biologia',
+    tipo: 'confusor',
+    escenario: 'María quiere probar si un fertilizante nuevo acelera el crecimiento de plantas de tomate. Siembra 10 plantas en macetas iguales con la misma tierra: 5 plantas reciben agua con fertilizante y las coloca cerca de la ventana; las otras 5 reciben solo agua y las coloca en el otro extremo de la sala, lejos de la ventana. Después de 4 semanas, mide la altura de cada planta.',
+    pregunta: '¿Cuál es el problema más serio del diseño experimental de María?',
+    opciones: [
+      'La muestra de 10 plantas es demasiado pequeña para sacar conclusiones.',
+      'No identificó correctamente la variable independiente.',
+      'Las plantas con fertilizante reciben más luz solar, lo que introduce una variable confusora.',
+      'Debió usar plantas de distintas especies para que la conclusión sea generalizable.'
+    ],
+    correcta: 2,
+    explicacion: 'Si al final las plantas con fertilizante crecen más, no se podrá saber si fue por el fertilizante o por la luz extra junto a la ventana. Cuando dos factores varían a la vez, el experimento no permite atribuir el efecto a uno solo. Un buen diseño mantiene todas las condiciones iguales salvo la variable que se investiga.'
+  },
+
+  {
+    id: 'bio-02',
+    categoria: 'biologia',
+    tipo: 'variable',
+    escenario: 'Un estudiante investiga si la cafeína aumenta el pulso. Pide a 20 voluntarios adultos sanos que se sienten tranquilos durante 10 minutos, les mide el pulso (medición basal), les da una taza de café con 100 mg de cafeína, espera 30 minutos y vuelve a medir el pulso.',
+    pregunta: '¿Cuál es la variable independiente en este experimento?',
+    opciones: [
+      'El pulso medido en los voluntarios.',
+      'La administración de cafeína (con o sin cafeína).',
+      'El tiempo de espera de 30 minutos.',
+      'La edad de los voluntarios.'
+    ],
+    correcta: 1,
+    explicacion: 'La variable independiente es la que el experimentador manipula a propósito para ver cómo afecta al sistema. Aquí manipula la administración de cafeína; el pulso es la variable dependiente (lo que se mide como respuesta). El tiempo de espera es una condición controlada.'
+  },
+
+  {
+    id: 'bio-03',
+    categoria: 'biologia',
+    tipo: 'control',
+    escenario: 'Un microbiólogo prueba un nuevo antibiótico sobre cultivos de E. coli. Prepara 4 placas de Petri con el mismo medio de cultivo e inocula en cada una la misma cantidad de bacterias. Incuba todas a 37 °C durante 24 horas y luego cuenta las colonias.',
+    tabla: {
+      caption: 'Distribución de placas',
+      encabezados: ['Placa', 'Tratamiento'],
+      filas: [
+        ['Placa 1', 'Sin antibiótico'],
+        ['Placa 2', '5 mg de antibiótico'],
+        ['Placa 3', '10 mg de antibiótico'],
+        ['Placa 4', '20 mg de antibiótico']
+      ]
+    },
+    pregunta: '¿Cuál es el grupo de control en este experimento?',
+    opciones: [
+      'La Placa 1 (sin antibiótico).',
+      'La Placa 2 (5 mg, dosis más baja).',
+      'La Placa 4 (20 mg, dosis más alta).',
+      'No hay un grupo de control claramente definido.'
+    ],
+    correcta: 0,
+    explicacion: 'El grupo de control es el que no recibe el tratamiento que se está evaluando. Sirve de referencia para comparar. La Placa 1, sin antibiótico, muestra cómo crecen las bacterias en ausencia del tratamiento y permite saber si el antibiótico realmente inhibe el crecimiento.'
+  },
+
+  {
+    id: 'bio-04',
+    categoria: 'biologia',
+    tipo: 'muestra',
+    escenario: 'Un investigador quiere saber si 30 minutos de caminata diaria reducen la presión arterial en adultos. Recluta a 8 hombres de entre 25 y 30 años, les mide la presión arterial basal, les pide caminar 30 minutos diarios durante un mes y vuelve a medir. La presión promedio bajó 5 mmHg. El investigador concluye: "Caminar 30 minutos al día reduce la presión arterial en los adultos".',
+    pregunta: '¿Cuál es la limitación más importante de esa conclusión?',
+    opciones: [
+      'La reducción de 5 mmHg es demasiado grande para ser creíble.',
+      'La muestra es pequeña (n = 8) y solo incluye hombres jóvenes; no se puede extrapolar "a los adultos" en general.',
+      'La caminata debió durar al menos tres meses.',
+      'Debió medir también la frecuencia cardíaca como variable dependiente.'
+    ],
+    correcta: 1,
+    explicacion: 'Generalizar de 8 hombres jóvenes a "los adultos" implica extender la conclusión a mujeres, adultos mayores, personas con otras condiciones de salud, etc. Una conclusión honesta se limita a la población estudiada, o bien requiere una muestra más grande y diversa antes de generalizar.'
+  },
+
+  {
+    id: 'bio-05',
+    categoria: 'biologia',
+    tipo: 'control',
+    escenario: 'Luis quiere probar si las semillas de frijol germinan mejor en oscuridad. Coloca 10 semillas en una caja completamente cerrada (sin luz) y las riega a diario. Una semana después, observa que 9 de las 10 han germinado. Concluye: "La oscuridad favorece la germinación del frijol".',
+    pregunta: '¿Cuál es el problema más grave con el experimento de Luis?',
+    opciones: [
+      'No midió la temperatura dentro de la caja.',
+      'Faltó un grupo de control con semillas expuestas a la luz para poder comparar.',
+      'No usó suficientes semillas.',
+      'No debió cerrar la caja por completo.'
+    ],
+    correcta: 1,
+    explicacion: 'Sin un grupo comparativo con semillas en la luz, Luis no puede saber si la oscuridad ayudó, estorbó o fue indiferente. Quizá 9 de 10 también habrían germinado expuestas a la luz. Sin control, no hay comparación; sin comparación, no hay conclusión científica válida.'
+  },
+
+  {
+    id: 'bio-06',
+    categoria: 'biologia',
+    tipo: 'replicabilidad',
+    escenario: 'Un laboratorio publica que una nueva enzima descompone plásticos 200 veces más rápido que cualquier otra conocida. El equipo realizó el experimento una sola vez, con una sola muestra de plástico, y publicó los resultados inmediatamente.',
+    pregunta: '¿Por qué la comunidad científica pedirá más evidencia antes de aceptar este resultado?',
+    opciones: [
+      'Un solo experimento con una sola muestra no permite descartar errores, contaminación o casualidad; la replicación es necesaria.',
+      'Una mejora de 200 veces es imposible por principios de la química.',
+      'El experimento debió publicarse en inglés para ser aceptado.',
+      'Las enzimas no son capaces de descomponer plásticos bajo ninguna circunstancia.'
+    ],
+    correcta: 0,
+    explicacion: 'La replicabilidad es un pilar del método científico. Un resultado único puede deberse a contaminación, error de medición, defecto de la muestra o simple casualidad. Solo cuando el resultado se reproduce en laboratorios independientes, con muestras distintas, la comunidad lo acepta como fiable.'
+  },
+
+  /* ============ QUÍMICA ============ */
+  {
+    id: 'qui-01',
+    categoria: 'quimica',
+    tipo: 'variable',
+    escenario: 'Un químico estudia cómo la temperatura afecta la velocidad de una reacción química. Prepara 5 matraces idénticos con la misma cantidad del mismo reactivo. Calienta cada matraz a una temperatura distinta y mide cuánto tiempo tarda la reacción en completarse.',
+    tabla: {
+      caption: 'Matraces preparados',
+      encabezados: ['Matraz', 'Temperatura'],
+      filas: [
+        ['1', '20 °C'],
+        ['2', '30 °C'],
+        ['3', '40 °C'],
+        ['4', '50 °C'],
+        ['5', '60 °C']
+      ]
+    },
+    pregunta: '¿Cuál es la variable dependiente en este experimento?',
+    opciones: [
+      'La temperatura de cada matraz.',
+      'La cantidad de reactivo en cada matraz.',
+      'El tiempo que tarda la reacción en completarse.',
+      'El número de matraces utilizados.'
+    ],
+    correcta: 2,
+    explicacion: 'La variable dependiente es la que se mide como respuesta a la manipulación. El químico manipula la temperatura (variable independiente) y mide cómo responde el tiempo de reacción (variable dependiente). La cantidad de reactivo se mantiene constante a propósito; no es variable sino una condición controlada.'
+  },
+
+  {
+    id: 'qui-02',
+    categoria: 'quimica',
+    tipo: 'constantes',
+    escenario: 'Una estudiante quiere medir cómo cambia la solubilidad del azúcar en agua al aumentar la temperatura. Prepara 4 vasos de precipitados con agua a 20, 40, 60 y 80 °C, y añade cucharadas de azúcar a cada uno hasta que ya no se disuelva más, contando cuántas cucharadas entraron.',
+    pregunta: 'Para que los resultados sean comparables entre los cuatro vasos, ¿cuál variable DEBE mantenerse constante?',
+    opciones: [
+      'La temperatura del agua en cada vaso.',
+      'La cantidad inicial de agua en cada vaso.',
+      'El color o material de los vasos de precipitados.',
+      'El sabor del azúcar utilizado.'
+    ],
+    correcta: 1,
+    explicacion: 'Para comparar solubilidad entre vasos hay que usar el mismo volumen de disolvente. Si un vaso tiene más agua, aceptará más azúcar sin que eso signifique que la solubilidad sea mayor. La temperatura es precisamente la variable independiente (debe variar). El color y el material del vaso son irrelevantes.'
+  },
+
+  {
+    id: 'qui-03',
+    categoria: 'quimica',
+    tipo: 'confusor',
+    escenario: 'Un químico compara la velocidad de una misma reacción en dos condiciones. En la reacción A usa agua destilada como disolvente; en la reacción B usa agua de la llave. Observa que la reacción B ocurre el doble de rápido y concluye: "El agua de la llave acelera la reacción en comparación con el agua destilada".',
+    pregunta: 'Un revisor señala que la conclusión es prematura. ¿Por qué?',
+    opciones: [
+      'El agua no influye en las reacciones químicas, así que la observación debe ser un error.',
+      'El agua de la llave contiene sales y minerales disueltos (calcio, magnesio, cloruros...), por lo que no se puede saber si aceleró la reacción el "agua de la llave" como tal, un ion específico, o una combinación.',
+      'Debió usar al menos cinco tipos distintos de agua para obtener un resultado válido.',
+      'El experimento tiene muy pocos ensayos por cada condición.'
+    ],
+    correcta: 1,
+    explicacion: 'Al comparar agua destilada con agua de la llave se cambian varias cosas a la vez: presencia de calcio, magnesio, cloro, bicarbonatos, incluso pH. Cualquiera de esos componentes, solo o combinado, podría ser la causa real. Para aislar el factor responsable habría que probar con soluciones que difieran en un solo ion a la vez.'
+  },
+
+  {
+    id: 'qui-04',
+    categoria: 'quimica',
+    tipo: 'control',
+    escenario: 'Una investigadora estudia si el platino actúa como catalizador acelerando la descomposición del peróxido de hidrógeno (H₂O₂). Prepara tres tubos idénticos, cada uno con 10 mL de H₂O₂ al 3 % a la misma temperatura. Durante 5 minutos mide el volumen de oxígeno liberado por cada tubo.',
+    tabla: {
+      caption: 'Condiciones de los tubos',
+      encabezados: ['Tubo', 'Contenido adicional'],
+      filas: [
+        ['1', 'Nada (solo H₂O₂)'],
+        ['2', 'Laminilla de platino'],
+        ['3', 'Laminilla de platino + agitación']
+      ]
+    },
+    pregunta: '¿Cuál es el grupo de control en este experimento?',
+    opciones: [
+      'El Tubo 1 (sin platino).',
+      'El Tubo 2 (con platino sin agitar).',
+      'El Tubo 3 (con platino y agitación).',
+      'No hay grupo de control en este experimento.'
+    ],
+    correcta: 0,
+    explicacion: 'El grupo de control es el que no recibe el tratamiento que se está evaluando. En este caso el tratamiento es añadir platino, así que el Tubo 1 (sin platino) es la línea base: muestra cuánto oxígeno libera el H₂O₂ por descomposición espontánea y permite comparar con los tubos donde sí hay catalizador.'
+  },
+
+  {
+    id: 'qui-05',
+    categoria: 'quimica',
+    tipo: 'muestra',
+    escenario: 'Un alumno mide el pH de tres soluciones de ácido acético de distinta concentración: 0,1 M, 0,5 M y 1,0 M. Obtiene pH de 2,9, 2,4 y 2,2 respectivamente. Concluye: "Cualquier ácido se comporta como ácido más fuerte a mayor concentración".',
+    pregunta: '¿Cuál es el problema más importante con esa conclusión?',
+    opciones: [
+      'Los datos no muestran ninguna tendencia clara.',
+      'Está generalizando a "cualquier ácido" a partir de un solo ácido (el acético); para afirmar eso tendría que haber probado también con HCl, H₂SO₄, HNO₃ y otros.',
+      'Las concentraciones utilizadas son demasiado altas para medir el pH correctamente.',
+      'El pH no está relacionado con la fuerza ni con la concentración del ácido.'
+    ],
+    correcta: 1,
+    explicacion: 'Los datos sí muestran que al aumentar la concentración del ácido acético baja el pH, lo cual es válido para ese ácido. Pero extrapolar a "cualquier ácido" requiere probar con ácidos de distinta naturaleza. Los ácidos fuertes (HCl, H₂SO₄) y débiles (acético) responden de forma muy distinta a cambios de concentración.'
+  },
+
+  {
+    id: 'qui-06',
+    categoria: 'quimica',
+    tipo: 'mejora',
+    escenario: 'Una estudiante disuelve 10 g de sal en 100 mL de agua caliente. Reparte la solución en dos recipientes idénticos: uno lo deja sobre la mesa del laboratorio y otro lo pone en la ventana al sol. Tres días después observa que el recipiente de la ventana tiene cristales más grandes. Concluye: "La luz solar favorece la formación de cristales grandes".',
+    pregunta: '¿Qué cambio haría el experimento más confiable para probar esa conclusión?',
+    opciones: [
+      'Repetir el experimento varias veces controlando por separado la temperatura, la luz y la velocidad de evaporación.',
+      'Usar solo la mitad de sal, para que los cristales sean más pequeños.',
+      'Sustituir la sal por azúcar, que produce cristales más claros.',
+      'Medir únicamente el recipiente de la ventana y no el de la mesa.'
+    ],
+    correcta: 0,
+    explicacion: 'La ventana al sol es también más caliente y provoca evaporación más rápida; la luz es solo una de tres variables que cambian a la vez. Sin separarlas, no se puede atribuir el tamaño de los cristales a la luz sola. Un buen diseño varía un solo factor por vez y replica la medición para reducir el azar.'
+  },
+
+  /* ============ FÍSICA ============ */
+  {
+    id: 'fis-01',
+    categoria: 'fisica',
+    tipo: 'variable',
+    escenario: 'Un alumno investiga qué factores afectan el período de un péndulo simple. Construye un péndulo y lo hace oscilar variando la longitud de la cuerda (20, 40, 60 y 80 cm), manteniendo la misma masa colgante y soltando siempre desde el mismo ángulo inicial. Para cada longitud mide el tiempo de 10 oscilaciones y calcula el período.',
+    pregunta: '¿Cuál es la variable independiente en este experimento?',
+    opciones: [
+      'La masa colgante del péndulo.',
+      'La longitud de la cuerda.',
+      'El período de oscilación.',
+      'El ángulo inicial de liberación.'
+    ],
+    correcta: 1,
+    explicacion: 'La variable independiente es la que el experimentador manipula a propósito. Aquí se manipula la longitud de la cuerda (cuatro valores distintos) y se mantienen constantes la masa y el ángulo. El período es la variable dependiente (lo que se mide como respuesta).'
+  },
+
+  {
+    id: 'fis-02',
+    categoria: 'fisica',
+    tipo: 'constantes',
+    escenario: 'Un grupo de estudiantes quiere comparar la fricción que ejercen distintos materiales sobre un bloque que desliza por una rampa. Preparan una rampa y hacen deslizar el mismo bloque sobre tres superficies distintas: madera, cartón y metal. Cronometran cuánto tarda el bloque en recorrer la rampa en cada superficie.',
+    pregunta: '¿Qué variables deben mantenerse constantes para que el experimento sea válido?',
+    opciones: [
+      'El material de la superficie, la masa del bloque y la altura de partida.',
+      'La masa del bloque, el ángulo de la rampa y la altura desde la que se suelta el bloque.',
+      'Solo el ángulo de la rampa.',
+      'Solo la masa del bloque.'
+    ],
+    correcta: 1,
+    explicacion: 'Para atribuir las diferencias de tiempo al material (la variable independiente), todo lo demás que pueda afectar al movimiento debe mantenerse constante: masa del bloque, ángulo de la rampa y altura desde donde se suelta. Precisamente el material es lo único que debe cambiar.'
+  },
+
+  {
+    id: 'fis-03',
+    categoria: 'fisica',
+    tipo: 'control',
+    escenario: 'Una estudiante investiga cómo la temperatura afecta la resistencia eléctrica de un cable de cobre. Toma el mismo cable y le mide la resistencia con un multímetro en tres condiciones distintas.',
+    tabla: {
+      caption: 'Condiciones de medición',
+      encabezados: ['Medición', 'Condición'],
+      filas: [
+        ['1', 'Temperatura ambiente (≈ 22 °C)'],
+        ['2', 'Sumergido en hielo con sal (≈ -5 °C)'],
+        ['3', 'Sumergido en nitrógeno líquido (≈ -196 °C)']
+      ]
+    },
+    pregunta: '¿Cuál medición funciona como grupo de control?',
+    opciones: [
+      'La medición 1, a temperatura ambiente: sirve como referencia base para comparar las condiciones frías.',
+      'La medición 2, en hielo con sal.',
+      'La medición 3, en nitrógeno líquido.',
+      'No hay grupo de control en experimentos de este tipo.'
+    ],
+    correcta: 0,
+    explicacion: 'El control es la condición sin el tratamiento especial, la línea base. Aquí el tratamiento es enfriar el cable, así que la medición a temperatura ambiente (sin enfriar) es la referencia natural contra la que se comparan las mediciones a baja temperatura.'
+  },
+
+  {
+    id: 'fis-04',
+    categoria: 'fisica',
+    tipo: 'confusor',
+    escenario: 'Un estudiante quiere comprobar si los objetos más pesados caen más rápido que los livianos. Deja caer desde 2 metros de altura una bola de hierro de 1 kg y una pluma. Cronometra la caída: la bola tarda 0,8 s en llegar al suelo; la pluma, 5,2 s. Concluye: "Los objetos más pesados caen más rápido, contradiciendo a Galileo".',
+    pregunta: '¿Cuál es el error principal del experimento?',
+    opciones: [
+      'No dejó caer los objetos exactamente desde la misma altura.',
+      'No controló la resistencia del aire, que frena muchísimo a la pluma pero casi no afecta a la bola de hierro; en vacío ambos caerían igual.',
+      'Usó un cronómetro poco preciso para estas mediciones.',
+      'La conclusión es correcta; Galileo estaba equivocado.'
+    ],
+    correcta: 1,
+    explicacion: 'La predicción de Galileo se cumple en ausencia de aire. Aquí la pluma cae lento no por ser liviana sino porque el aire la frena muchísimo debido a su gran superficie relativa. Un experimento válido requeriría hacer caer los objetos en vacío, o comparar dos objetos con masa distinta pero resistencia aerodinámica similar.'
+  },
+
+  {
+    id: 'fis-05',
+    categoria: 'fisica',
+    tipo: 'confusor',
+    escenario: 'Un técnico mide la longitud de una barra metálica con un calibrador de acero a 20 °C. Luego calienta la barra a 100 °C con un soplete y la mide inmediatamente con el mismo calibrador, sin dejar que se enfríe. Anota que la barra se alargó 0,2 mm y utiliza ese dato para calcular el coeficiente de dilatación del metal.',
+    pregunta: '¿Cuál es un problema no controlado en esta medición?',
+    opciones: [
+      'El calibrador también se calienta por contacto con la barra caliente, así que también se dilata y altera la medición.',
+      'El soplete no calienta de forma completamente uniforme, pero eso no afecta al resultado.',
+      'La barra debería enfriarse antes de medirla, aunque eso no afecta al resultado.',
+      'Las barras metálicas no se dilatan con el calor.'
+    ],
+    correcta: 0,
+    explicacion: 'Al tocar una barra a 100 °C, el calibrador de acero también se calienta y cambia ligeramente sus propias dimensiones, introduciendo error en la lectura. Un diseño mejor usa un método de medición que no se vea afectado por la temperatura: láser, cámara a distancia o calibrador térmicamente aislado.'
+  },
+
+  {
+    id: 'fis-06',
+    categoria: 'fisica',
+    tipo: 'replicabilidad',
+    escenario: 'Un físico quiere medir la velocidad del sonido en distintos gases. Hace sonar un diapasón en un extremo de un tubo lleno de helio y mide con un cronómetro cuánto tarda en escuchar el eco desde el otro extremo. Hace una sola medición. Luego repite una sola vez con CO₂. Los resultados son muy distintos. Concluye que la velocidad del sonido depende del gas.',
+    pregunta: '¿Qué haría el experimento más fiable?',
+    opciones: [
+      'Repetir cada medición varias veces para calcular un promedio y estimar la incertidumbre; así se distingue una diferencia real de una debida al azar o al tiempo de reacción.',
+      'Usar el mismo gas en ambos tubos para que las condiciones sean idénticas.',
+      'Dejar de medir con eco y usar otro método, aunque se midiera solo una vez.',
+      'Cambiar de diapasón entre una medición y otra.'
+    ],
+    correcta: 0,
+    explicacion: 'Una sola medición por gas contiene ruido: tiempo de reacción humano al cronómetro, detección imprecisa del eco, etc. Repetir varias veces y promediar reduce el error aleatorio y proporciona una estimación de la incertidumbre, que permite saber si la diferencia observada es real o producto del azar.'
+  },
+
+  /* ============ CIENCIAS DE LA TIERRA ============ */
+  {
+    id: 'tie-01',
+    categoria: 'tierra',
+    tipo: 'variable',
+    escenario: 'Un grupo de estudiantes construye un modelo de ladera inclinada y simula la lluvia con una regadera para estudiar la erosión. Prueban tres tipos de cubierta de suelo en la misma ladera, vertiendo siempre 1 litro de agua desde la misma altura, y miden cuántos gramos de material se desprenden en cada caso.',
+    tabla: {
+      caption: 'Tipos de cubierta probados',
+      encabezados: ['Ensayo', 'Cubierta del suelo'],
+      filas: [
+        ['A', 'Arcilla compactada'],
+        ['B', 'Arena suelta'],
+        ['C', 'Tierra con hierba']
+      ]
+    },
+    pregunta: '¿Cuál es la variable independiente?',
+    opciones: [
+      'La cantidad de agua utilizada.',
+      'El tipo de cubierta del suelo.',
+      'La cantidad de material desprendido.',
+      'El tamaño del modelo de ladera.'
+    ],
+    correcta: 1,
+    explicacion: 'La variable independiente es el factor que el experimentador cambia deliberadamente: aquí, el tipo de cubierta. El agua y la ladera se mantienen constantes (condiciones controladas), y el material desprendido es la variable dependiente.'
+  },
+
+  {
+    id: 'tie-02',
+    categoria: 'tierra',
+    tipo: 'control',
+    escenario: 'Un biólogo estudia si la contaminación del aire afecta la diversidad de líquenes que crecen sobre los árboles. Visita tres localizaciones y, en cada una, cuenta el número de especies de líquenes presentes en 50 árboles: el centro de una gran ciudad (muy contaminado), un parque suburbano (contaminación moderada) y un bosque rural alejado (contaminación mínima). Encuentra muchas más especies en el bosque rural.',
+    pregunta: 'En este estudio observacional, ¿cuál localización funciona como referencia para evaluar el efecto de la contaminación urbana?',
+    opciones: [
+      'El centro urbano, porque allí la contaminación es máxima.',
+      'El parque suburbano, porque tiene contaminación intermedia.',
+      'El bosque rural, porque con contaminación mínima funciona como línea base o control natural con el cual comparar las otras condiciones.',
+      'Ninguna localización puede servir de control en estudios de campo.'
+    ],
+    correcta: 2,
+    explicacion: 'En estudios observacionales, el "control" es la condición sin el factor que se investiga. Aquí el bosque rural, con contaminación mínima, representa cómo están los líquenes en ausencia del factor, y es la referencia natural para comparar las otras localizaciones.'
+  },
+
+  {
+    id: 'tie-03',
+    categoria: 'tierra',
+    tipo: 'replicabilidad',
+    escenario: 'Un estudiante diseña un modelo para ilustrar el efecto invernadero. Coloca dos botellas de plástico cerradas bajo una lámpara: una con aire y otra con CO₂ puro. Mide la temperatura dentro de cada botella cada 2 minutos durante 20 minutos. Tras este único experimento, concluye: "El CO₂ es la causa principal del calentamiento global actual".',
+    pregunta: '¿Por qué esta conclusión es demasiado amplia?',
+    opciones: [
+      'Un modelo en botellas es una analogía muy simplificada del clima global, y además una sola corrida experimental no permite descartar fluctuaciones aleatorias.',
+      'El CO₂ en realidad no tiene ningún efecto sobre la temperatura del aire.',
+      'La lámpara no emite exactamente el mismo espectro que el Sol.',
+      'Las botellas deberían haber sido de vidrio en lugar de plástico.'
+    ],
+    correcta: 0,
+    explicacion: 'El experimento ilustra el principio de atrapamiento de calor por CO₂, pero el clima real implica océanos, corrientes, nubes, albedo, vegetación, aerosoles y muchos otros factores. Además, una sola corrida sin repeticiones no distingue una diferencia real de una fluctuación aleatoria. Una conclusión honesta sería: "Consistente con que el CO₂ atrapa más calor en este modelo".'
+  },
+
+  {
+    id: 'tie-04',
+    categoria: 'tierra',
+    tipo: 'confusor',
+    escenario: 'Un oceanógrafo observa que en una zona costera tranquila los sedimentos en suspensión tardan 3 días en asentarse, mientras que en otra zona costera con fuerte oleaje tardan 10 días. Concluye: "Las corrientes marinas lentas aceleran la sedimentación, mientras que las fuertes la retrasan".',
+    pregunta: 'Un crítico señala que la conclusión es frágil. ¿Cuál es la razón principal?',
+    opciones: [
+      'Las corrientes marinas no están relacionadas con la sedimentación.',
+      'Las dos zonas costeras probablemente también difieren en profundidad, salinidad, tipo de sedimento y aportes de ríos cercanos, y esas variables confusoras no se controlaron.',
+      'Tres días es demasiado poco tiempo para hacer una medición válida.',
+      'El estudio solo usó dos zonas, cuando debería haber usado exactamente cuatro.'
+    ],
+    correcta: 1,
+    explicacion: 'En estudios de campo, dos zonas costeras difieren en muchos factores a la vez. Una podría ser más profunda, tener distinta salinidad, o recibir agua de un río cercano; cualquiera de esos factores afecta la sedimentación. Para aislar el efecto de la corriente habría que comparar zonas casi idénticas excepto por la corriente, o hacer el experimento en laboratorio controlado.'
+  },
+
+  {
+    id: 'tie-05',
+    categoria: 'tierra',
+    tipo: 'muestra',
+    escenario: 'Un agricultor quiere saber si el suelo de su finca (de 20 hectáreas) es adecuado para cultivar arándanos, que necesitan un pH ácido entre 4 y 5. Toma una sola muestra de suelo cerca de la casa, la lleva al laboratorio y el análisis da pH = 6,5. Concluye: "Mi finca completa no sirve para arándanos".',
+    pregunta: '¿Cuál es el problema con esa conclusión?',
+    opciones: [
+      'El pH del suelo no influye en el cultivo de arándanos.',
+      'Una sola muestra no representa la variabilidad típica de una finca de 20 hectáreas; debería tomar varias muestras en distintos puntos.',
+      'El agricultor debió medir humedad y temperatura además del pH.',
+      'Los arándanos crecen igualmente bien en cualquier tipo de suelo.'
+    ],
+    correcta: 1,
+    explicacion: 'El pH del suelo varía dentro de una misma finca por drenaje, sombra, uso previo de la tierra, cercanía a árboles o a construcciones, etc. Una muestra única puede no ser representativa. Un diseño adecuado toma múltiples muestras en distintos puntos, en una cuadrícula o al azar, y promedia o mapea la variación.'
+  },
+
+  {
+    id: 'tie-06',
+    categoria: 'tierra',
+    tipo: 'mejora',
+    escenario: 'Una estudiante de geología estudia cómo la temperatura del agua afecta el tamaño de los cristales de sulfato de cobre. Prepara una solución saturada a 80 °C en un recipiente y otra a 40 °C en otro recipiente distinto. Deja que ambas se enfríen lentamente durante tres días y luego mide el cristal más grande en cada recipiente.',
+    pregunta: '¿Qué cambio mejoraría este diseño para que se pueda atribuir con más confianza las diferencias a la temperatura inicial?',
+    opciones: [
+      'Preparar varios recipientes por cada temperatura inicial y promediar los tamaños obtenidos; además, controlar la iluminación, el tipo de recipiente y la pureza del agua.',
+      'Usar temperaturas mucho más altas, como 200 °C, para que los cristales sean más grandes.',
+      'Sustituir el sulfato de cobre por sal común para simplificar el experimento.',
+      'Dejar las soluciones solo un día en lugar de tres.'
+    ],
+    correcta: 0,
+    explicacion: 'Un solo recipiente por temperatura deja el resultado a merced de variaciones aleatorias (impurezas, evaporación, vibraciones, iluminación). Múltiples réplicas permiten promediar y detectar la variación dentro de cada condición. Además, hay que controlar las otras variables (iluminación, recipiente, pureza del agua) para no introducir confusores.'
+  }
+
+];
+
+/* ------------------------------------------------------------
+   2. RENDERIZADO DE TABLA OPCIONAL
+   ------------------------------------------------------------ */
+
+function renderTabla(tabla) {
+  let html = '<table role="table">';
+  if (tabla.caption) {
+    html += `<caption>${tabla.caption}</caption>`;
+  }
+  html += '<thead><tr>';
+  tabla.encabezados.forEach(h => { html += `<th scope="col">${h}</th>`; });
+  html += '</tr></thead><tbody>';
+  tabla.filas.forEach(fila => {
+    html += '<tr>';
+    fila.forEach(celda => { html += `<td>${celda}</td>`; });
+    html += '</tr>';
+  });
+  html += '</tbody></table>';
+  return html;
+}
+
+/* ------------------------------------------------------------
+   3. ESTADO Y LÓGICA
+   ------------------------------------------------------------ */
+
+const CATEGORIAS = {
+  biologia: 'Biología',
+  quimica:  'Química',
+  fisica:   'Física',
+  tierra:   'Ciencias de la Tierra'
+};
+
+let estado = {
+  preguntasSesion: [],
+  idx: 0,
+  correctas: 0,
+  respuestas: [],
+  tiempoInicio: 0,
+  tiempoFinal: 0,
+  timerId: null,
+  modo: 'balanceado',
+  categoriaEnfocada: null,
+  numeroPreguntas: 10
+};
+
+/* ---- Toggle panel de enfoque ---- */
+document.getElementById('toggle-enfoque').addEventListener('click', abrirPanelEnfoque);
+document.getElementById('volver-balanceado').addEventListener('click', volverABalanceado);
+
+function abrirPanelEnfoque() {
+  document.getElementById('panel-enfoque').classList.remove('oculto');
+  document.querySelector('.enfoque-toggle').style.display = 'none';
+}
+
+function volverABalanceado() {
+  document.getElementById('panel-enfoque').classList.add('oculto');
+  document.querySelector('.enfoque-toggle').style.display = '';
+  document.querySelectorAll('.cat-chip').forEach(c => {
+    c.classList.remove('activa');
+    c.setAttribute('aria-checked', 'false');
+  });
+  estado.modo = 'balanceado';
+  estado.categoriaEnfocada = null;
+  actualizarInfoSesion();
+}
+
+/* ---- Selección single-select de categoría ---- */
+document.querySelectorAll('.cat-chip').forEach(chip => {
+  chip.addEventListener('click', () => seleccionarCategoriaEnfoque(chip));
+  chip.addEventListener('keydown', e => {
+    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); seleccionarCategoriaEnfoque(chip); }
+  });
+});
+
+function seleccionarCategoriaEnfoque(chip) {
+  document.querySelectorAll('.cat-chip').forEach(c => {
+    c.classList.remove('activa');
+    c.setAttribute('aria-checked', 'false');
+  });
+  chip.classList.add('activa');
+  chip.setAttribute('aria-checked', 'true');
+  estado.modo = 'enfocado';
+  estado.categoriaEnfocada = chip.dataset.cat;
+  actualizarInfoSesion();
+}
+
+/* ---- Selección de número de preguntas ---- */
+document.querySelectorAll('.num-chip').forEach(chip => {
+  chip.addEventListener('click', () => seleccionarNumero(chip));
+  chip.addEventListener('keydown', e => {
+    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); seleccionarNumero(chip); }
+  });
+});
+
+function seleccionarNumero(chip) {
+  document.querySelectorAll('.num-chip').forEach(c => {
+    c.classList.remove('activa');
+    c.setAttribute('aria-checked', 'false');
+  });
+  chip.classList.add('activa');
+  chip.setAttribute('aria-checked', 'true');
+  estado.numeroPreguntas = parseInt(chip.dataset.n, 10);
+  actualizarInfoSesion();
+}
+
+function actualizarInfoSesion() {
+  const info = document.getElementById('info-sesion');
+  if (estado.modo === 'balanceado') {
+    info.innerHTML = '<strong>Modo balanceado:</strong> recibirás escenarios mezclados de las 4 áreas de Ciencias (biología, química, física y ciencias de la tierra) en proporciones parejas.';
+  } else {
+    const nombreCat = CATEGORIAS[estado.categoriaEnfocada];
+    const disponibles = PREGUNTAS.filter(p => p.categoria === estado.categoriaEnfocada).length;
+    const n = Math.min(estado.numeroPreguntas, disponibles);
+    const aviso = estado.numeroPreguntas > disponibles
+      ? ` · solo hay ${disponibles} escenarios en esta área, tu sesión tendrá ${n}.`
+      : '.';
+    info.innerHTML = `<strong>Práctica dirigida en ${nombreCat}</strong>${aviso}`;
+  }
+}
+
+/* ---- Iniciar sesión ---- */
+document.getElementById('btn-iniciar').addEventListener('click', iniciarSesion);
+
+function iniciarSesion() {
+  let preguntasSesion;
+  if (estado.modo === 'balanceado') {
+    preguntasSesion = armarSesionBalanceada(estado.numeroPreguntas);
+  } else {
+    if (!estado.categoriaEnfocada) {
+      alert('Selecciona una categoría o vuelve al modo balanceado.');
+      return;
+    }
+    preguntasSesion = armarSesionEnfocada(estado.categoriaEnfocada, estado.numeroPreguntas);
+  }
+
+  if (preguntasSesion.length === 0) {
+    alert('No hay preguntas disponibles para esta configuración.');
+    return;
+  }
+
+  estado.preguntasSesion = preguntasSesion;
+  estado.idx = 0;
+  estado.correctas = 0;
+  estado.respuestas = [];
+  estado.tiempoInicio = Date.now();
+
+  document.getElementById('num-total').textContent = preguntasSesion.length;
+
+  cambiarPantalla('pantalla-quiz');
+  iniciarCronometro();
+  mostrarPregunta();
+}
+
+function armarSesionBalanceada(n) {
+  const cats = Object.keys(CATEGORIAS);
+  const porCat = {};
+  cats.forEach(c => {
+    porCat[c] = PREGUNTAS.filter(p => p.categoria === c);
+  });
+
+  const base = Math.floor(n / cats.length);
+  const resto = n % cats.length;
+  const cuantas = {};
+  cats.forEach(c => { cuantas[c] = base; });
+  fisherYates(cats).slice(0, resto).forEach(c => { cuantas[c]++; });
+
+  const seleccionadas = [];
+  cats.forEach(c => {
+    const k = Math.min(cuantas[c], porCat[c].length);
+    if (k > 0) {
+      seleccionadas.push(...fisherYates(porCat[c]).slice(0, k));
+    }
+  });
+
+  return fisherYates(seleccionadas);
+}
+
+function armarSesionEnfocada(cat, n) {
+  const disponibles = PREGUNTAS.filter(p => p.categoria === cat);
+  const mezclado = fisherYates(disponibles);
+  return mezclado.slice(0, Math.min(n, mezclado.length));
+}
+
+/* ---- Fisher-Yates: baraja uniforme sin modificar el array original ---- */
+function fisherYates(arr) {
+  const copia = arr.slice();
+  for (let i = copia.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copia[i], copia[j]] = [copia[j], copia[i]];
+  }
+  return copia;
+}
+
+function cambiarPantalla(idDestino) {
+  document.querySelectorAll('.pantalla').forEach(p => p.classList.add('oculta'));
+  document.getElementById(idDestino).classList.remove('oculta');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ---- Mostrar pregunta ---- */
+function mostrarPregunta() {
+  const p = estado.preguntasSesion[estado.idx];
+
+  // Barajar opciones con Fisher-Yates, remapear la correcta
+  const indicesBarajados = fisherYates([0, 1, 2, 3]);
+  p._opcionesBarajadas = indicesBarajados.map(i => p.opciones[i]);
+  p._correctaBarajada = indicesBarajados.indexOf(p.correcta);
+
+  document.getElementById('num-actual').textContent = estado.idx + 1;
+  const pct = (estado.idx / estado.preguntasSesion.length) * 100;
+  document.getElementById('barra-progreso-fill').style.width = pct + '%';
+
+  const badge = document.getElementById('badge-cat');
+  badge.textContent = CATEGORIAS[p.categoria];
+  badge.className = 'badge-categoria ' + p.categoria;
+
+  document.getElementById('escenario-texto').textContent = p.escenario;
+
+  // Tabla opcional
+  const tablaCont = document.getElementById('tabla-contenedor');
+  if (p.tabla) {
+    tablaCont.innerHTML = renderTabla(p.tabla);
+    tablaCont.classList.remove('oculta');
+  } else {
+    tablaCont.innerHTML = '';
+    tablaCont.classList.add('oculta');
+  }
+
+  document.getElementById('pregunta-texto').textContent = p.pregunta;
+
+  // Opciones (ya barajadas)
+  const cont = document.getElementById('opciones');
+  cont.innerHTML = '';
+  const letras = ['A', 'B', 'C', 'D'];
+  p._opcionesBarajadas.forEach((opt, i) => {
+    const div = document.createElement('div');
+    div.className = 'opcion';
+    div.setAttribute('role', 'button');
+    div.setAttribute('tabindex', '0');
+    div.setAttribute('aria-label', `Opción ${letras[i]}: ${opt}`);
+    div.innerHTML = `<span class="letra">${letras[i]}</span>${opt}`;
+    div.addEventListener('click', () => responder(i));
+    div.addEventListener('keydown', e => {
+      if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); responder(i); }
+    });
+    cont.appendChild(div);
+  });
+
+  document.getElementById('feedback').classList.add('oculto');
+  document.getElementById('btn-siguiente').classList.add('oculto');
+}
+
+/* ---- Responder ---- */
+function responder(seleccionada) {
+  const p = estado.preguntasSesion[estado.idx];
+  const opciones = document.querySelectorAll('#opciones .opcion');
+  const correctaBarajada = p._correctaBarajada;
+  const esCorrecta = seleccionada === correctaBarajada;
+
+  opciones.forEach((op, i) => {
+    op.classList.add('deshabilitada');
+    op.style.pointerEvents = 'none';
+    op.setAttribute('tabindex', '-1');
+    if (i === correctaBarajada) op.classList.add('correcta');
+    if (i === seleccionada && !esCorrecta) op.classList.add('incorrecta');
+  });
+
+  const fb = document.getElementById('feedback');
+  fb.classList.remove('oculto');
+  fb.className = 'feedback ' + (esCorrecta ? 'correcto' : 'incorrecto');
+  fb.innerHTML = `
+    <span class="titulo-fb">${esCorrecta ? '✓ Correcto' : '✗ Incorrecto'}</span>
+    ${p.explicacion}
+  `;
+
+  const letras = ['A', 'B', 'C', 'D'];
+  estado.respuestas.push({
+    preguntaId: p.id,
+    textoSeleccionada: p._opcionesBarajadas[seleccionada],
+    textoCorrecta: p._opcionesBarajadas[correctaBarajada],
+    letraSeleccionada: letras[seleccionada],
+    letraCorrecta: letras[correctaBarajada],
+    esCorrecta,
+    categoria: p.categoria
+  });
+  if (esCorrecta) estado.correctas++;
+
+  const btn = document.getElementById('btn-siguiente');
+  btn.classList.remove('oculto');
+  btn.textContent = (estado.idx === estado.preguntasSesion.length - 1)
+    ? 'Ver resultados →'
+    : 'Siguiente →';
+  btn.focus();
+}
+
+document.getElementById('btn-siguiente').addEventListener('click', () => {
+  estado.idx++;
+  if (estado.idx >= estado.preguntasSesion.length) {
+    finalizarSesion();
+  } else {
+    mostrarPregunta();
+  }
+});
+
+/* ---- Cronómetro ---- */
+function iniciarCronometro() {
+  detenerCronometro();
+  const elem = document.getElementById('cronometro');
+  function actualizar() {
+    const ms = Date.now() - estado.tiempoInicio;
+    elem.textContent = formatearTiempo(ms);
+  }
+  actualizar();
+  estado.timerId = setInterval(actualizar, 1000);
+}
+
+function detenerCronometro() {
+  if (estado.timerId) {
+    clearInterval(estado.timerId);
+    estado.timerId = null;
+  }
+}
+
+function formatearTiempo(ms) {
+  const totalSeg = Math.floor(ms / 1000);
+  const min = Math.floor(totalSeg / 60);
+  const seg = totalSeg % 60;
+  return `${String(min).padStart(2, '0')}:${String(seg).padStart(2, '0')}`;
+}
+
+/* ---- Finalizar ---- */
+function finalizarSesion() {
+  detenerCronometro();
+  estado.tiempoFinal = Date.now() - estado.tiempoInicio;
+  mostrarResultados();
+  cambiarPantalla('pantalla-resultados');
+}
+
+function mostrarResultados() {
+  const total = estado.preguntasSesion.length;
+  document.getElementById('puntaje').textContent = `${estado.correctas} / ${total}`;
+  document.getElementById('tiempo-total').textContent = formatearTiempo(estado.tiempoFinal);
+
+  const desglose = {};
+  estado.respuestas.forEach(r => {
+    if (!desglose[r.categoria]) desglose[r.categoria] = { correctas: 0, total: 0 };
+    desglose[r.categoria].total++;
+    if (r.esCorrecta) desglose[r.categoria].correctas++;
+  });
+
+  const contCats = document.getElementById('desglose-cats');
+  contCats.innerHTML = '';
+  Object.keys(CATEGORIAS).forEach(cat => {
+    if (!desglose[cat]) return;
+    const d = desglose[cat];
+    const pct = Math.round((d.correctas / d.total) * 100);
+    const row = document.createElement('div');
+    row.className = 'cat-row';
+    row.innerHTML = `
+      <div class="cat-label">${CATEGORIAS[cat]}</div>
+      <div class="cat-track"><div class="cat-fill ${cat}" style="width:${pct}%"></div></div>
+      <div class="cat-pct">${d.correctas}/${d.total} · ${pct}%</div>
+    `;
+    contCats.appendChild(row);
+  });
+
+  const falladas = estado.respuestas.filter(r => !r.esCorrecta);
+  const listaRev = document.getElementById('lista-revisar');
+  listaRev.innerHTML = '';
+
+  if (falladas.length === 0) {
+    listaRev.innerHTML = '<div class="sin-errores">🎉 ¡Perfecto! No fallaste ninguna pregunta.</div>';
+  } else {
+    falladas.forEach(r => {
+      const p = PREGUNTAS.find(q => q.id === r.preguntaId);
+      // Resumen corto del escenario (primeras 130 caracteres)
+      const escResumen = p.escenario.length > 130
+        ? p.escenario.slice(0, 130).trim() + '…'
+        : p.escenario;
+      const item = document.createElement('div');
+      item.className = 'item-revisar';
+      item.innerHTML = `
+        <div class="esc-resumen">${escResumen}</div>
+        <div class="preg">${p.pregunta}</div>
+        <div class="resp">Tu respuesta: <strong>${r.letraSeleccionada}.</strong> ${r.textoSeleccionada}</div>
+        <div class="resp">Correcta: <strong>${r.letraCorrecta}.</strong> ${r.textoCorrecta}</div>
+        <div class="expl">${p.explicacion}</div>
+      `;
+      listaRev.appendChild(item);
+    });
+  }
+}
+
+/* ---- Botones finales ---- */
+document.getElementById('btn-reintentar').addEventListener('click', () => iniciarSesion());
+document.getElementById('btn-menu').addEventListener('click', () => cambiarPantalla('pantalla-inicio'));
+
+/* ---- Inicialización ---- */
+actualizarInfoSesion();
+</script>
+
+</body>
+</html>
