@@ -1,1 +1,1881 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CientíGraf — Interpretación de gráficas científicas | GEDparaHispanos</title>
+<style>
+/* ============================================================
+   CientíGraf — Interpretación de gráficas científicas
+   Práctica para GED: Assessment Targets SP.3 y SP.4
+   Estilo DUA · colores sólidos · self-contained
+   ============================================================ */
 
+:root {
+  --c-bg:       #fafafa;
+  --c-surface:  #ffffff;
+  --c-ink:      #1a1a1a;
+  --c-ink-soft: #4a4a4a;
+  --c-ink-mute: #6a6a6a;
+  --c-line:     #e0e0e0;
+  --c-line-str: #b0b0b0;
+
+  --c-ciencias: #0f7a5c;
+  --c-ciencias-bg: #e8f5ee;
+  --c-accent:   #1e5aa6;
+  --c-accent-bg: #eaf2fb;
+
+  --c-good:     #0f7a5c;
+  --c-good-bg:  #e8f5ee;
+  --c-bad:      #a63d1e;
+  --c-bad-bg:   #fbe9e7;
+  --c-warn:     #8a5a00;
+  --c-warn-bg:  #fdf6e3;
+
+  --c-bio:      #0f7a5c;
+  --c-qui:      #1e5aa6;
+  --c-fis:      #5a2a8a;
+  --c-tie:      #8a5a00;
+
+  --c-serie-1:  #1e5aa6;
+  --c-serie-2:  #a63d1e;
+  --c-serie-3:  #0f7a5c;
+  --c-serie-4:  #8a5a00;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--c-ink);
+  background: var(--c-bg);
+  margin: 0;
+  padding: 0;
+}
+
+.contenedor {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+}
+
+/* ---------- Cabecera ---------- */
+header {
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-top: 6px solid var(--c-ciencias);
+  border-radius: 6px;
+  padding: 28px 28px 24px;
+  margin-bottom: 28px;
+}
+.eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--c-ciencias);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+header h1 {
+  font-size: 30px;
+  margin: 0 0 6px;
+  color: var(--c-ink);
+  font-weight: 700;
+}
+.subtitulo {
+  font-size: 16px;
+  color: var(--c-ink-soft);
+  margin: 0;
+}
+
+/* ---------- Pantallas ---------- */
+.pantalla {
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: 6px;
+  padding: 28px;
+  margin-bottom: 20px;
+}
+.pantalla.oculta { display: none; }
+
+/* ---------- Pantalla Inicio ---------- */
+.descripcion {
+  background: var(--c-ciencias-bg);
+  border-left: 4px solid var(--c-ciencias);
+  padding: 16px 20px;
+  border-radius: 4px;
+  margin-bottom: 24px;
+}
+.descripcion p {
+  margin: 0 0 10px;
+  color: var(--c-ink-soft);
+}
+.descripcion p:last-child { margin-bottom: 0; }
+.descripcion strong { color: var(--c-ink); }
+
+.opciones-sesion h3 {
+  font-size: 18px;
+  margin: 0 0 16px;
+  color: var(--c-ink);
+}
+.opciones-sesion h4 {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--c-ink-mute);
+  margin: 0 0 10px;
+  font-weight: 700;
+}
+.config-grid {
+  display: grid;
+  gap: 22px;
+  margin-bottom: 24px;
+}
+.config-bloque {
+  background: #f8f8f8;
+  border: 1px solid var(--c-line);
+  border-radius: 5px;
+  padding: 16px 18px;
+}
+.categorias, .numero-preguntas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.cat-chip, .num-chip {
+  padding: 8px 14px;
+  border: 2px solid var(--c-line);
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--c-ink-soft);
+  background: var(--c-surface);
+  user-select: none;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+.cat-chip:hover, .num-chip:hover {
+  border-color: var(--c-line-str);
+}
+.cat-chip.activa, .num-chip.activa {
+  background: var(--c-ciencias);
+  color: #fff;
+  border-color: var(--c-ciencias);
+}
+.cat-chip:focus-visible, .num-chip:focus-visible {
+  outline: 3px solid var(--c-accent);
+  outline-offset: 2px;
+}
+
+.info-sesion {
+  background: var(--c-accent-bg);
+  border: 1px solid #c5d5e8;
+  border-radius: 4px;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: var(--c-ink-soft);
+  margin-bottom: 20px;
+}
+.info-sesion strong { color: var(--c-accent); }
+
+/* ---- Toggle enfoque dirigido ---- */
+.enfoque-toggle {
+  text-align: center;
+  margin: -8px 0 20px;
+}
+.link-enfoque {
+  color: var(--c-accent);
+  font-size: 13px;
+  text-decoration: underline;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: inherit;
+  padding: 4px 8px;
+}
+.link-enfoque:hover { color: #164878; }
+.link-enfoque:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+.panel-enfoque {
+  background: var(--c-accent-bg);
+  border: 1px solid #c5d5e8;
+  border-radius: 4px;
+  padding: 16px 18px;
+  margin-bottom: 20px;
+}
+.panel-enfoque.oculto { display: none; }
+.panel-enfoque h4 {
+  margin: 0 0 6px;
+  color: var(--c-accent);
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+}
+.nota-enfoque {
+  font-size: 13px;
+  color: var(--c-ink-soft);
+  margin: 0 0 12px;
+  line-height: 1.45;
+}
+.volver-balanceado {
+  margin-top: 10px;
+  display: inline-block;
+}
+
+/* ---------- Botones ---------- */
+.btn {
+  display: inline-block;
+  padding: 12px 26px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s, transform 0.05s;
+  font-family: inherit;
+}
+.btn:active { transform: translateY(1px); }
+.btn:focus-visible {
+  outline: 3px solid var(--c-accent);
+  outline-offset: 2px;
+}
+.btn-primario {
+  background: var(--c-ciencias);
+  color: #fff;
+}
+.btn-primario:hover { background: #0c6449; }
+.btn-secundario {
+  background: #f0f0f0;
+  color: var(--c-ink);
+}
+.btn-secundario:hover { background: #e0e0e0; }
+.btn.oculto { display: none; }
+
+/* ---------- Pantalla Quiz ---------- */
+.quiz-header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+.progreso {
+  font-weight: 700;
+  color: var(--c-ink);
+}
+.progreso #num-actual {
+  color: var(--c-ciencias);
+  font-size: 18px;
+}
+.cronometro {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--c-ink-soft);
+  text-align: center;
+}
+.badge-categoria {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #fff;
+}
+.badge-categoria.biologia { background: var(--c-bio); }
+.badge-categoria.quimica  { background: var(--c-qui); }
+.badge-categoria.fisica   { background: var(--c-fis); }
+.badge-categoria.tierra   { background: var(--c-tie); }
+
+.barra-progreso {
+  height: 6px;
+  background: #f0f0f0;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+#barra-progreso-fill {
+  height: 100%;
+  background: var(--c-ciencias);
+  width: 0%;
+  transition: width 0.3s;
+}
+
+.pregunta-escenario {
+  background: #f8f8f8;
+  border-left: 3px solid var(--c-ink-mute);
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  font-size: 15px;
+  color: var(--c-ink-soft);
+  border-radius: 0 4px 4px 0;
+}
+
+.grafica-contenedor {
+  background: #fcfcfc;
+  border: 1px solid var(--c-line);
+  border-radius: 4px;
+  padding: 16px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.grafica-contenedor svg {
+  max-width: 100%;
+  height: auto;
+}
+.grafica-contenedor table {
+  margin: 0 auto;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.grafica-contenedor table caption {
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: var(--c-ink);
+}
+.grafica-contenedor table th,
+.grafica-contenedor table td {
+  padding: 8px 14px;
+  border: 1px solid var(--c-line);
+  text-align: center;
+}
+.grafica-contenedor table th {
+  background: #f0f0f0;
+  font-weight: 700;
+  color: var(--c-ink);
+}
+
+.pregunta-texto {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--c-ink);
+  margin-bottom: 16px;
+  line-height: 1.45;
+}
+
+.opciones {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.opcion {
+  background: var(--c-surface);
+  border: 2px solid var(--c-line);
+  border-radius: 5px;
+  padding: 12px 16px 12px 46px;
+  cursor: pointer;
+  font-size: 15px;
+  color: var(--c-ink);
+  position: relative;
+  transition: border-color 0.15s, background 0.15s;
+  user-select: none;
+}
+.opcion:hover:not(.deshabilitada) {
+  border-color: var(--c-ciencias);
+  background: #f8fbf9;
+}
+.opcion:focus-visible {
+  outline: 3px solid var(--c-accent);
+  outline-offset: 2px;
+}
+.opcion .letra {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  background: #f0f0f0;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 24px;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--c-ink-soft);
+}
+.opcion.correcta {
+  background: var(--c-good-bg);
+  border-color: var(--c-good);
+  color: var(--c-ink);
+}
+.opcion.correcta .letra {
+  background: var(--c-good);
+  color: #fff;
+}
+.opcion.incorrecta {
+  background: var(--c-bad-bg);
+  border-color: var(--c-bad);
+  color: var(--c-ink);
+}
+.opcion.incorrecta .letra {
+  background: var(--c-bad);
+  color: #fff;
+}
+.opcion.deshabilitada { cursor: default; }
+
+.feedback {
+  padding: 14px 18px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  font-size: 15px;
+  line-height: 1.55;
+}
+.feedback.oculto { display: none; }
+.feedback.correcto {
+  background: var(--c-good-bg);
+  border-left: 4px solid var(--c-good);
+  color: var(--c-ink);
+}
+.feedback.incorrecto {
+  background: var(--c-bad-bg);
+  border-left: 4px solid var(--c-bad);
+  color: var(--c-ink);
+}
+.feedback .titulo-fb {
+  font-weight: 700;
+  margin-bottom: 4px;
+  display: block;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.feedback.correcto .titulo-fb   { color: var(--c-good); }
+.feedback.incorrecto .titulo-fb { color: var(--c-bad); }
+
+.controles-quiz {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* ---------- Pantalla Resultados ---------- */
+#pantalla-resultados h2 {
+  font-size: 26px;
+  margin: 0 0 20px;
+  color: var(--c-ink);
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--c-line);
+}
+.resumen-resultados {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.tarjeta-resumen {
+  background: var(--c-ciencias-bg);
+  border: 1px solid #b8dcc7;
+  border-radius: 6px;
+  padding: 20px;
+  text-align: center;
+}
+.tarjeta-resumen .num {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--c-ciencias);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.tarjeta-resumen .etq {
+  font-size: 13px;
+  color: var(--c-ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
+.desglose-categorias {
+  margin-bottom: 28px;
+}
+.desglose-categorias h3 {
+  font-size: 17px;
+  margin: 0 0 14px;
+  color: var(--c-ink);
+}
+.cat-row {
+  display: grid;
+  grid-template-columns: 150px 1fr 80px;
+  gap: 12px;
+  align-items: center;
+  margin: 8px 0;
+  font-size: 14px;
+}
+.cat-label { font-weight: 600; color: var(--c-ink-soft); }
+.cat-track {
+  height: 18px;
+  background: #f0f0f0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.cat-fill { height: 100%; border-radius: 3px; }
+.cat-fill.biologia { background: var(--c-bio); }
+.cat-fill.quimica  { background: var(--c-qui); }
+.cat-fill.fisica   { background: var(--c-fis); }
+.cat-fill.tierra   { background: var(--c-tie); }
+.cat-pct {
+  font-weight: 700;
+  color: var(--c-ink);
+  font-size: 13px;
+}
+
+.revisar-preguntas h3 {
+  font-size: 17px;
+  margin: 24px 0 14px;
+  color: var(--c-ink);
+}
+.item-revisar {
+  background: #fcfcfc;
+  border: 1px solid var(--c-line);
+  border-left: 4px solid var(--c-bad);
+  padding: 14px 18px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+.item-revisar .preg {
+  font-weight: 600;
+  color: var(--c-ink);
+  margin-bottom: 6px;
+}
+.item-revisar .resp {
+  color: var(--c-ink-soft);
+  margin-bottom: 4px;
+}
+.item-revisar .resp strong { color: var(--c-ink); }
+.item-revisar .expl {
+  font-size: 13px;
+  color: var(--c-ink-mute);
+  font-style: italic;
+  margin-top: 6px;
+}
+.sin-errores {
+  background: var(--c-good-bg);
+  border: 1px solid var(--c-good);
+  padding: 16px 20px;
+  border-radius: 4px;
+  color: var(--c-ink);
+  font-weight: 600;
+  text-align: center;
+}
+
+.botones-finales {
+  display: flex;
+  gap: 10px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+/* ---------- Pie ---------- */
+.pie {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid var(--c-line);
+  font-size: 12px;
+  color: var(--c-ink-mute);
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 600px) {
+  .contenedor { padding: 20px 16px 60px; }
+  header { padding: 22px 20px 18px; }
+  header h1 { font-size: 24px; }
+  .pantalla { padding: 20px; }
+  .resumen-resultados { grid-template-columns: 1fr; }
+  .cat-row { grid-template-columns: 110px 1fr 60px; gap: 8px; }
+  .quiz-header {
+    grid-template-columns: auto auto;
+    grid-template-rows: auto auto;
+    gap: 8px;
+  }
+  .cronometro { grid-column: 1 / -1; text-align: left; }
+}
+
+@media print {
+  body { background: #fff; }
+  .btn, .controles-quiz, .botones-finales { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="contenedor">
+
+<header>
+  <div class="eyebrow">GEDparaHispanos · Ciencias · SP.3 y SP.4</div>
+  <h1>CientíGraf</h1>
+  <p class="subtitulo">Práctica de interpretación de gráficas científicas</p>
+</header>
+
+<!-- ============================================================
+     PANTALLA 1 — INICIO
+     ============================================================ -->
+<section id="pantalla-inicio" class="pantalla">
+
+  <div class="descripcion">
+    <p><strong>¿Qué practicas aquí?</strong> Lectura e interpretación de gráficas científicas: identificar tendencias, comparar resultados, sacar conclusiones a partir de los datos y evaluar si una afirmación está respaldada por la evidencia.</p>
+    <p>Cada pregunta presenta un escenario científico, una gráfica o tabla, y cuatro opciones. Al responder, verás si acertaste y <strong>por qué</strong>. Al final, obtendrás un desglose por categoría y un repaso de lo que fallaste.</p>
+  </div>
+
+  <div class="opciones-sesion">
+    <h3>Configura tu sesión</h3>
+
+    <div class="config-grid">
+
+      <div class="config-bloque">
+        <h4>Número de preguntas</h4>
+        <div class="numero-preguntas" id="selector-numero">
+          <div class="num-chip"        data-n="5"  role="radio" aria-checked="false" tabindex="0">5</div>
+          <div class="num-chip activa" data-n="10" role="radio" aria-checked="true"  tabindex="0">10</div>
+          <div class="num-chip"        data-n="15" role="radio" aria-checked="false" tabindex="0">15</div>
+          <div class="num-chip"        data-n="20" role="radio" aria-checked="false" tabindex="0">20</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="info-sesion" id="info-sesion">
+      <strong>Modo balanceado:</strong> recibirás preguntas mezcladas de las 4 áreas de Ciencias (biología, química, física y ciencias de la tierra) en proporciones parejas.
+    </div>
+
+    <div class="enfoque-toggle">
+      <button type="button" id="toggle-enfoque" class="link-enfoque">
+        ¿Prefieres enfocar una sola área? (práctica dirigida)
+      </button>
+    </div>
+
+    <div id="panel-enfoque" class="panel-enfoque oculto">
+      <h4>Práctica dirigida</h4>
+      <p class="nota-enfoque">Útil cuando acabas de estudiar un área específica y quieres hacer drill concentrado en ella. Para repaso general, usa el modo balanceado.</p>
+      <div class="categorias" id="selector-categorias">
+        <div class="cat-chip" data-cat="biologia" role="radio" aria-checked="false" tabindex="0">Biología</div>
+        <div class="cat-chip" data-cat="quimica"  role="radio" aria-checked="false" tabindex="0">Química</div>
+        <div class="cat-chip" data-cat="fisica"   role="radio" aria-checked="false" tabindex="0">Física</div>
+        <div class="cat-chip" data-cat="tierra"   role="radio" aria-checked="false" tabindex="0">Ciencias de la Tierra</div>
+      </div>
+      <div class="volver-balanceado">
+        <button type="button" id="volver-balanceado" class="link-enfoque">← Volver al modo balanceado</button>
+      </div>
+    </div>
+
+    <button id="btn-iniciar" class="btn btn-primario">Comenzar práctica</button>
+  </div>
+
+</section>
+
+<!-- ============================================================
+     PANTALLA 2 — QUIZ
+     ============================================================ -->
+<section id="pantalla-quiz" class="pantalla oculta" aria-live="polite">
+
+  <div class="quiz-header">
+    <div class="progreso">Pregunta <span id="num-actual">1</span> / <span id="num-total">10</span></div>
+    <div class="cronometro" id="cronometro" aria-label="Tiempo transcurrido">00:00</div>
+    <div class="badge-categoria" id="badge-cat">Biología</div>
+  </div>
+
+  <div class="barra-progreso"><div id="barra-progreso-fill"></div></div>
+
+  <div class="pregunta-escenario" id="escenario"></div>
+
+  <div class="grafica-contenedor" id="grafica"></div>
+
+  <div class="pregunta-texto" id="pregunta-texto"></div>
+
+  <div class="opciones" id="opciones"></div>
+
+  <div class="feedback oculto" id="feedback"></div>
+
+  <div class="controles-quiz">
+    <button id="btn-siguiente" class="btn btn-primario oculto">Siguiente →</button>
+  </div>
+
+</section>
+
+<!-- ============================================================
+     PANTALLA 3 — RESULTADOS
+     ============================================================ -->
+<section id="pantalla-resultados" class="pantalla oculta">
+
+  <h2>Resultados de tu sesión</h2>
+
+  <div class="resumen-resultados">
+    <div class="tarjeta-resumen">
+      <div class="num" id="puntaje">–</div>
+      <div class="etq">Correctas</div>
+    </div>
+    <div class="tarjeta-resumen">
+      <div class="num" id="tiempo-total">–</div>
+      <div class="etq">Tiempo total</div>
+    </div>
+  </div>
+
+  <div class="desglose-categorias">
+    <h3>Desempeño por categoría</h3>
+    <div id="desglose-cats"></div>
+  </div>
+
+  <div class="revisar-preguntas">
+    <h3>Preguntas para revisar</h3>
+    <div id="lista-revisar"></div>
+  </div>
+
+  <div class="botones-finales">
+    <button id="btn-reintentar" class="btn btn-primario">Otra ronda (misma configuración)</button>
+    <button id="btn-menu"       class="btn btn-secundario">Volver al menú</button>
+  </div>
+
+</section>
+
+<div class="pie">
+  CientíGraf · Módulo de práctica para GEDparaHispanos.com · Objetivos de evaluación SP.3 y SP.4<br>
+  Diseñado con principios DUA · GED® es marca registrada del American Council on Education (ACE).
+</div>
+
+</div>
+
+<script>
+/* ============================================================
+   CientíGraf — lógica
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1.  POOL DE PREGUNTAS
+   ------------------------------------------------------------ */
+
+const PREGUNTAS = [
+
+  /* ============ BIOLOGÍA ============ */
+  {
+    id: 'bio-01',
+    categoria: 'biologia',
+    escenario: 'Un biólogo midió cada 2 horas el tamaño de una colonia de bacterias E. coli cultivadas a 37 °C en un medio rico en nutrientes.',
+    grafica: {
+      tipo: 'linea',
+      xEtq: 'Tiempo (h)',
+      yEtq: 'Población (millones)',
+      series: [{ nombre: 'E. coli', puntos: [[0,1],[2,2],[4,5],[6,15],[8,40],[10,55]] }]
+    },
+    pregunta: '¿Durante cuál intervalo de tiempo la población aumentó más en valor absoluto?',
+    opciones: ['0 a 2 h', '2 a 4 h', '4 a 6 h', '6 a 8 h'],
+    correcta: 3,
+    explicacion: 'Entre 6 y 8 horas la población pasó de 15 a 40 millones (+25), el mayor incremento absoluto registrado en el experimento.'
+  },
+
+  {
+    id: 'bio-02',
+    categoria: 'biologia',
+    escenario: 'Se midió la actividad (%) de la enzima pepsina, presente en el estómago humano, a distintos valores de pH.',
+    grafica: {
+      tipo: 'linea',
+      xEtq: 'pH',
+      yEtq: 'Actividad enzimática (%)',
+      series: [{ nombre: 'Pepsina', puntos: [[1,20],[2,80],[3,100],[4,70],[5,30],[7,10],[9,5]] }]
+    },
+    pregunta: '¿Cuál conclusión está mejor respaldada por los datos?',
+    opciones: [
+      'La pepsina funciona mejor en medios básicos.',
+      'La pepsina tiene un pH óptimo alrededor de 3.',
+      'La actividad de la pepsina es constante entre pH 1 y 9.',
+      'La pepsina se desnaturaliza completamente a pH 1.'
+    ],
+    correcta: 1,
+    explicacion: 'La máxima actividad (100 %) se registra a pH 3. A pH básicos (7–9) la actividad cae por debajo del 10 %, consistente con un pH óptimo ácido.'
+  },
+
+  {
+    id: 'bio-03',
+    categoria: 'biologia',
+    escenario: 'Se midió la tasa de fotosíntesis de una planta de espinaca al aumentar la intensidad de la luz, manteniendo constante la temperatura y la concentración de CO₂.',
+    grafica: {
+      tipo: 'linea',
+      xEtq: 'Intensidad de luz (lux)',
+      yEtq: 'Tasa fotosintética (µmol O₂/min)',
+      series: [{ nombre: 'Espinaca', puntos: [[0,0],[100,5],[200,10],[400,18],[600,22],[800,23],[1000,23]] }]
+    },
+    pregunta: '¿Qué fenómeno muestran los datos a partir de 600 lux?',
+    opciones: [
+      'La planta muere por el exceso de luz.',
+      'La tasa fotosintética alcanza un nivel de saturación.',
+      'La tasa fotosintética comienza a disminuir.',
+      'La fotosíntesis se detiene con alta intensidad de luz.'
+    ],
+    correcta: 1,
+    explicacion: 'A partir de 600 lux la tasa se estabiliza alrededor de 22–23 µmol/min. Esto indica saturación: otro factor (CO₂, enzimas) pasó a ser limitante.'
+  },
+
+  {
+    id: 'bio-04',
+    categoria: 'biologia',
+    escenario: 'En un ecosistema aislado se registraron durante 10 años las poblaciones de linces (depredadores) y liebres (presas).',
+    grafica: {
+      tipo: 'linea',
+      xEtq: 'Año',
+      yEtq: 'Población relativa',
+      series: [
+        { nombre: 'Liebres (miles)', puntos: [[1,80],[2,60],[3,40],[4,60],[5,90],[6,70],[7,50],[8,70],[9,100],[10,80]] },
+        { nombre: 'Linces (decenas)', puntos: [[1,20],[2,35],[3,25],[4,15],[5,20],[6,40],[7,30],[8,20],[9,25],[10,45]] }
+      ]
+    },
+    pregunta: '¿Qué relación sugieren los datos entre las dos poblaciones?',
+    opciones: [
+      'Ambas crecen en paralelo, sin relación entre sí.',
+      'Los linces y las liebres son independientes y oscilan por azar.',
+      'Los picos de linces ocurren después de los picos de liebres, consistente con un ciclo depredador-presa.',
+      'Las liebres dependen de los linces para alimentarse.'
+    ],
+    correcta: 2,
+    explicacion: 'Cuando aumentan las liebres (más comida), los linces aumentan con un retraso; luego las liebres bajan (más depredación) y los linces caen. Patrón clásico depredador-presa.'
+  },
+
+  {
+    id: 'bio-05',
+    categoria: 'biologia',
+    escenario: 'Se cruzaron dos plantas heterocigotas para el color de flor (Aa × Aa). De los 400 descendientes se registró el fenotipo observado.',
+    grafica: {
+      tipo: 'tabla',
+      encabezados: ['Fenotipo', 'Cantidad', 'Proporción'],
+      filas: [
+        ['Flor púrpura (dominante)', '305', '76,3 %'],
+        ['Flor blanca (recesiva)',  '95',  '23,7 %'],
+        ['Total',                   '400', '100 %']
+      ]
+    },
+    pregunta: '¿Los datos respaldan la proporción 3 : 1 predicha por la herencia mendeliana?',
+    opciones: [
+      'No: la proporción observada es de aproximadamente 2 : 1.',
+      'Sí: 305 : 95 se aproxima a 3 : 1 (esperado 300 : 100).',
+      'No: se esperarían proporciones iguales (1 : 1).',
+      'No se puede determinar sin más datos.'
+    ],
+    correcta: 1,
+    explicacion: 'El cociente 305/95 ≈ 3,2 está muy cerca del 3,0 predicho por Mendel. Los valores esperados serían 300 púrpuras y 100 blancas; la desviación es pequeña.'
+  },
+
+  {
+    id: 'bio-06',
+    categoria: 'biologia',
+    escenario: 'Un ecólogo registró el número de especies de aves residentes en cinco ecosistemas distintos.',
+    grafica: {
+      tipo: 'barras',
+      xEtq: 'Ecosistema',
+      yEtq: 'Número de especies',
+      barras: [
+        { etq: 'Bosque tropical', valor: 120 },
+        { etq: 'Bosque templado', valor: 65 },
+        { etq: 'Pradera',          valor: 35 },
+        { etq: 'Desierto',         valor: 18 },
+        { etq: 'Tundra',           valor: 8 }
+      ]
+    },
+    pregunta: 'Un investigador afirma: "A mayor temperatura ambiente, mayor diversidad de aves". ¿Los datos respaldan esa afirmación?',
+    opciones: [
+      'Sí, directamente y sin excepciones.',
+      'Parcialmente: los climas más cálidos y húmedos tienen más especies, pero la temperatura sola no basta (el desierto es cálido y tiene poca diversidad).',
+      'No: los datos muestran lo contrario.',
+      'Los datos son insuficientes para evaluar la afirmación.'
+    ],
+    correcta: 1,
+    explicacion: 'El bosque tropical (cálido y húmedo) lidera, pero el desierto —también cálido— tiene baja diversidad. La temperatura por sí sola no explica el patrón; importan también la humedad y la productividad.'
+  },
+
+  /* ============ QUÍMICA ============ */
+  {
+    id: 'qui-01',
+    categoria: 'quimica',
+    escenario: 'Se midió la velocidad de descomposición del peróxido de hidrógeno (H₂O₂) a distintas temperaturas.',
+    grafica: {
+      tipo: 'linea',
+      xEtq: 'Temperatura (°C)',
+      yEtq: 'Velocidad (mL O₂/s)',
+      series: [{ nombre: 'H₂O₂', puntos: [[10,0.5],[20,1.2],[30,2.5],[40,5.0],[50,10.2]] }]
+    },
+    pregunta: '¿Qué patrón muestra la velocidad de reacción al aumentar la temperatura?',
+    opciones: [
+      'La velocidad disminuye al aumentar la temperatura.',
+      'La velocidad aumenta de forma lineal con la temperatura.',
+      'La velocidad se duplica aproximadamente por cada aumento de 10 °C.',
+      'La velocidad permanece constante.'
+    ],
+    correcta: 2,
+    explicacion: 'Los valores sucesivos (0,5; 1,2; 2,5; 5,0; 10,2) aproximadamente se duplican cada 10 °C. Esta duplicación es la regla empírica típica de muchas reacciones químicas.'
+  },
+
+  {
+    id: 'qui-02',
+    categoria: 'quimica',
+    escenario: 'Se midió la solubilidad (g por 100 mL de agua) de tres sales distintas a temperaturas entre 0 °C y 100 °C.',
+    grafica: {
+      tipo: 'linea',
+      xEtq: 'Temperatura (°C)',
+      yEtq: 'Solubilidad (g / 100 mL)',
+      series: [
+        { nombre: 'KNO₃',          puntos: [[0,13],[20,32],[40,62],[60,110],[80,170],[100,240]] },
+        { nombre: 'NaCl',          puntos: [[0,35],[20,36],[40,36],[60,37],[80,38],[100,39]] },
+        { nombre: 'Ce₂(SO₄)₃',     puntos: [[0,20],[20,10],[40,5],[60,3],[80,2],[100,1]] }
+      ]
+    },
+    pregunta: '¿Cuál afirmación está mejor respaldada por los datos?',
+    opciones: [
+      'Toda sal aumenta mucho su solubilidad al subir la temperatura.',
+      'La solubilidad del NaCl cambia drásticamente con la temperatura.',
+      'La relación entre solubilidad y temperatura depende de la sal: unas aumentan, otras apenas cambian y otras disminuyen.',
+      'Las tres sales tienen la misma solubilidad a 100 °C.'
+    ],
+    correcta: 2,
+    explicacion: 'El KNO₃ sube mucho, el NaCl casi no cambia y el Ce₂(SO₄)₃ disminuye. La generalización simple "toda sal se disuelve más al calentar" no se sostiene con estos datos.'
+  },
+
+  {
+    id: 'qui-03',
+    categoria: 'quimica',
+    escenario: 'Se midió la concentración de un reactivo A en una reacción a lo largo del tiempo, manteniendo la temperatura constante.',
+    grafica: {
+      tipo: 'linea',
+      xEtq: 'Tiempo (min)',
+      yEtq: 'Concentración de A (M)',
+      series: [{ nombre: '[A]', puntos: [[0,1.00],[1,0.71],[2,0.50],[3,0.35],[4,0.25],[5,0.18]] }]
+    },
+    pregunta: '¿Cuánto tiempo tarda la concentración en reducirse a la mitad?',
+    opciones: [
+      '1 minuto',
+      '2 minutos',
+      '3 minutos',
+      'El tiempo de vida media va cambiando'
+    ],
+    correcta: 1,
+    explicacion: 'De 1,00 a 0,50 M hay 2 min; de 0,50 a 0,25 M hay 2 min más. La vida media es constante ≈ 2 min, característica de una reacción de primer orden.'
+  },
+
+  {
+    id: 'qui-04',
+    categoria: 'quimica',
+    escenario: 'Un estudiante midió el pH de cinco sustancias cotidianas con un pH-metro calibrado.',
+    grafica: {
+      tipo: 'barras',
+      xEtq: 'Sustancia',
+      yEtq: 'pH',
+      barras: [
+        { etq: 'Jugo de limón',       valor: 2 },
+        { etq: 'Café',                valor: 5 },
+        { etq: 'Agua destilada',      valor: 7 },
+        { etq: 'Leche de magnesia',   valor: 10 },
+        { etq: 'Lejía doméstica',     valor: 13 }
+      ]
+    },
+    pregunta: '¿Cuál conclusión está apoyada por los datos?',
+    opciones: [
+      'Todas las sustancias medidas son ácidas.',
+      'Jugo de limón y café son ácidos, el agua destilada es neutra, y la leche de magnesia y la lejía son básicas.',
+      'Todas las sustancias son prácticamente neutras.',
+      'El agua destilada es la más básica del conjunto.'
+    ],
+    correcta: 1,
+    explicacion: 'pH < 7 = ácido, pH = 7 = neutro, pH > 7 = básico. La gráfica cubre el rango completo de la escala y ubica a cada sustancia en la zona correcta.'
+  },
+
+  {
+    id: 'qui-05',
+    categoria: 'quimica',
+    escenario: 'Un químico midió, en tres ensayos distintos, la masa total de los reactivos antes de una reacción y la masa total de los productos después de ella, todo en un sistema cerrado.',
+    grafica: {
+      tipo: 'tabla',
+      encabezados: ['Ensayo', 'Masa reactivos (g)', 'Masa productos (g)'],
+      filas: [
+        ['1', '10,0', '10,0'],
+        ['2', '15,5', '15,5'],
+        ['3', '22,3', '22,3']
+      ]
+    },
+    pregunta: '¿Qué principio científico apoyan estos datos?',
+    opciones: [
+      'La masa desaparece parcialmente en las reacciones químicas.',
+      'La ley de conservación de la masa (Lavoisier).',
+      'Los productos siempre pesan más que los reactivos.',
+      'No se puede concluir nada con solo tres ensayos.'
+    ],
+    correcta: 1,
+    explicacion: 'En los tres ensayos la masa de reactivos iguala a la masa de productos, lo que respalda la ley de conservación de la masa en sistemas cerrados.'
+  },
+
+  {
+    id: 'qui-06',
+    categoria: 'quimica',
+    escenario: 'Se midió la presión de una cantidad fija de gas al variar su volumen, manteniendo la temperatura constante.',
+    grafica: {
+      tipo: 'linea',
+      xEtq: 'Volumen (L)',
+      yEtq: 'Presión (atm)',
+      series: [{ nombre: 'Gas', puntos: [[1,6.0],[2,3.0],[3,2.0],[4,1.5],[5,1.2],[6,1.0]] }]
+    },
+    pregunta: '¿Qué relación matemática describen mejor los datos entre presión (P) y volumen (V)?',
+    opciones: [
+      'P y V son directamente proporcionales.',
+      'P y V son inversamente proporcionales (P × V ≈ constante).',
+      'No hay relación entre P y V.',
+      'P aumenta cuando aumenta V.'
+    ],
+    correcta: 1,
+    explicacion: 'El producto P × V ≈ 6 se mantiene constante en todos los pares: 1×6, 2×3, 3×2, 4×1,5, 5×1,2, 6×1. Esta es la Ley de Boyle (relación inversamente proporcional).'
+  },
+
+  /* ============ FÍSICA ============ */
+  {
+    id: 'fis-01',
+    categoria: 'fisica',
+    escenario: 'Se registró la posición de un auto que se mueve en línea recta sobre una carretera plana. La medición se hizo cada segundo desde que el auto pasa por el punto de referencia.',
+    grafica: {
+      tipo: 'linea',
+      xEtq: 'Tiempo (s)',
+      yEtq: 'Posición (m)',
+      series: [{ nombre: 'Auto', puntos: [[0,0],[1,15],[2,30],[3,45],[4,60],[5,75]] }]
+    },
+    pregunta: '¿Qué tipo de movimiento describe la gráfica?',
+    opciones: [
+      'Movimiento acelerado.',
+      'Movimiento con velocidad constante de 15 m/s.',
+      'El auto está en reposo.',
+      'Movimiento desacelerado.'
+    ],
+    correcta: 1,
+    explicacion: 'En cada segundo el auto recorre 15 m exactos. La gráfica es una línea recta, y la pendiente (15 m/s) representa la velocidad constante.'
+  },
+
+  {
+    id: 'fis-02',
+    categoria: 'fisica',
+    escenario: 'Una estación meteorológica registró la temperatura del aire cada 4 horas durante un día soleado de verano.',
+    grafica: {
+      tipo: 'linea',
+      xEtq: 'Hora del día',
+      yEtq: 'Temperatura (°C)',
+      series: [{ nombre: 'Temperatura', puntos: [[0,18],[4,16],[8,22],[12,30],[16,34],[20,26],[24,20]] }]
+    },
+    pregunta: '¿Qué se puede concluir a partir de estos datos?',
+    opciones: [
+      'La temperatura máxima ocurre a medianoche.',
+      'La temperatura máxima se registra alrededor de las 16:00, no exactamente al mediodía.',
+      'La temperatura se mantiene prácticamente constante todo el día.',
+      'La temperatura mínima ocurre al mediodía.'
+    ],
+    correcta: 1,
+    explicacion: 'El pico (34 °C) aparece a las 16:00, no a las 12:00. Esto se debe al desfase térmico: el suelo sigue irradiando calor acumulado después del mediodía solar.'
+  },
+
+  {
+    id: 'fis-03',
+    categoria: 'fisica',
+    escenario: 'En un laboratorio se midió la corriente eléctrica (I) que circula por un resistor al aplicarle distintos voltajes (V), manteniendo la temperatura constante.',
+    grafica: {
+      tipo: 'linea',
+      xEtq: 'Voltaje (V)',
+      yEtq: 'Corriente (A)',
+      series: [{ nombre: 'Resistor', puntos: [[0,0],[2,0.4],[4,0.8],[6,1.2],[8,1.6],[10,2.0]] }]
+    },
+    pregunta: '¿Cuál es la resistencia del resistor?',
+    opciones: [
+      '0,2 Ω',
+      '2 Ω',
+      '5 Ω',
+      'La resistencia cambia con el voltaje aplicado.'
+    ],
+    correcta: 2,
+    explicacion: 'Por la Ley de Ohm R = V/I. Tomando el último par: 10 V / 2,0 A = 5 Ω. La línea recta por el origen confirma que la resistencia es constante.'
+  },
+
+  {
+    id: 'fis-04',
+    categoria: 'fisica',
+    escenario: 'Se calculó la energía cinética de cuatro objetos de distinta masa, todos moviéndose a la misma velocidad (10 m/s).',
+    grafica: {
+      tipo: 'barras',
+      xEtq: 'Objeto (masa en kg)',
+      yEtq: 'Energía cinética (J)',
+      barras: [
+        { etq: 'A (1 kg)', valor: 50 },
+        { etq: 'B (2 kg)', valor: 100 },
+        { etq: 'C (4 kg)', valor: 200 },
+        { etq: 'D (8 kg)', valor: 400 }
+      ]
+    },
+    pregunta: 'A velocidad constante, ¿qué relación se observa entre la masa y la energía cinética?',
+    opciones: [
+      'No hay una relación clara.',
+      'Son inversamente proporcionales.',
+      'Son directamente proporcionales: al duplicar la masa, la energía cinética se duplica.',
+      'La energía cinética crece con el cuadrado de la masa.'
+    ],
+    correcta: 2,
+    explicacion: 'De 1 a 2 kg la energía pasa de 50 a 100 J (×2); de 2 a 4 kg, de 100 a 200 J (×2); de 4 a 8 kg, de 200 a 400 J (×2). A v constante, K es directamente proporcional a m.'
+  },
+
+  {
+    id: 'fis-05',
+    categoria: 'fisica',
+    escenario: 'Se registró la posición horizontal (respecto al reposo) de un péndulo simple ideal oscilando sin fricción.',
+    grafica: {
+      tipo: 'linea',
+      xEtq: 'Tiempo (s)',
+      yEtq: 'Posición (cm)',
+      series: [{ nombre: 'Péndulo', puntos: [[0,0],[0.25,5],[0.5,0],[0.75,-5],[1.0,0],[1.25,5],[1.5,0],[1.75,-5],[2.0,0]] }]
+    },
+    pregunta: '¿Cuál es el período de oscilación del péndulo?',
+    opciones: [
+      '0,5 segundos',
+      '1 segundo',
+      '2 segundos',
+      'No se puede determinar con estos datos.'
+    ],
+    correcta: 1,
+    explicacion: 'Un ciclo completo es ir y volver a la misma posición con el mismo sentido. Entre t = 0 (pasa por 0 subiendo) y t = 1 (vuelve a 0 subiendo) hay un ciclo entero: T = 1 s.'
+  },
+
+  {
+    id: 'fis-06',
+    categoria: 'fisica',
+    escenario: 'Se midió la velocidad de un objeto soltado en caída libre desde el reposo, despreciando la resistencia del aire.',
+    grafica: {
+      tipo: 'linea',
+      xEtq: 'Tiempo (s)',
+      yEtq: 'Velocidad (m/s)',
+      series: [{ nombre: 'Objeto', puntos: [[0,0],[1,9.8],[2,19.6],[3,29.4],[4,39.2]] }]
+    },
+    pregunta: '¿Qué se puede inferir sobre la aceleración del objeto?',
+    opciones: [
+      'La aceleración varía con el tiempo.',
+      'La aceleración es nula (caída a velocidad constante).',
+      'La aceleración es constante y vale aproximadamente 9,8 m/s² (aceleración de la gravedad).',
+      'La aceleración depende de la masa del objeto.'
+    ],
+    correcta: 2,
+    explicacion: 'Cada segundo la velocidad aumenta exactamente 9,8 m/s (0 → 9,8 → 19,6 → 29,4 → 39,2). Esto indica aceleración constante g = 9,8 m/s², como se espera en caída libre.'
+  },
+
+  /* ============ CIENCIAS DE LA TIERRA ============ */
+  {
+    id: 'tie-01',
+    categoria: 'tierra',
+    escenario: 'La NASA publica cada año la anomalía de la temperatura global media respecto al promedio del período 1951-1980. La gráfica muestra esa anomalía para años seleccionados.',
+    grafica: {
+      tipo: 'linea',
+      xEtq: 'Año',
+      yEtq: 'Anomalía (°C)',
+      series: [{ nombre: 'ΔT', puntos: [[1880,-0.2],[1920,-0.2],[1960,0.0],[1980,0.3],[2000,0.5],[2020,1.0]] }]
+    },
+    pregunta: 'Un climatólogo afirma: "El calentamiento se aceleró a partir de 1980". ¿Los datos respaldan esa afirmación?',
+    opciones: [
+      'No: la temperatura no ha cambiado de forma significativa.',
+      'Sí: entre 1980 y 2020 el cambio es de +0,7 °C en 40 años, mucho mayor que los +0,5 °C registrados en los 100 años previos.',
+      'Sí, pero únicamente en los últimos 5 años.',
+      'Los datos son insuficientes para evaluarlo.'
+    ],
+    correcta: 1,
+    explicacion: 'La pendiente de la curva es claramente más empinada después de 1980: +0,7 °C en 40 años es una tasa unas tres veces mayor que la previa. Los datos sí respaldan la aceleración.'
+  },
+
+  {
+    id: 'tie-02',
+    categoria: 'tierra',
+    escenario: 'El Observatorio de Mauna Loa, en Hawái, mide la concentración de CO₂ atmosférico de forma continua desde 1958.',
+    grafica: {
+      tipo: 'linea',
+      xEtq: 'Año',
+      yEtq: 'CO₂ atmosférico (ppm)',
+      series: [{ nombre: 'CO₂', puntos: [[1960,315],[1975,330],[1990,355],[2005,380],[2020,415]] }]
+    },
+    pregunta: '¿Qué tendencia muestran los datos de CO₂ atmosférico?',
+    opciones: [
+      'El CO₂ atmosférico disminuye con el tiempo.',
+      'El CO₂ atmosférico aumenta de manera sostenida, con una tasa aproximada de 1,5 a 2 ppm por año.',
+      'El CO₂ atmosférico se mantiene constante.',
+      'El CO₂ oscila sin una tendencia clara.'
+    ],
+    correcta: 1,
+    explicacion: 'De 315 a 415 ppm en 60 años = +100 ppm ≈ 1,7 ppm/año en promedio. La tendencia creciente es monótona y consistente.'
+  },
+
+  {
+    id: 'tie-03',
+    categoria: 'tierra',
+    escenario: 'Se recopiló la precipitación mensual promedio registrada en San Juan, Puerto Rico, a lo largo de varios años.',
+    grafica: {
+      tipo: 'barras',
+      xEtq: 'Mes',
+      yEtq: 'Precipitación (mm)',
+      barras: [
+        { etq: 'E',  valor: 95  },
+        { etq: 'F',  valor: 70  },
+        { etq: 'M',  valor: 80  },
+        { etq: 'A',  valor: 110 },
+        { etq: 'My', valor: 170 },
+        { etq: 'J',  valor: 140 },
+        { etq: 'Jl', valor: 150 },
+        { etq: 'Ag', valor: 190 },
+        { etq: 'S',  valor: 170 },
+        { etq: 'O',  valor: 170 },
+        { etq: 'N',  valor: 155 },
+        { etq: 'D',  valor: 115 }
+      ]
+    },
+    pregunta: '¿Cuál conclusión está mejor respaldada por los datos?',
+    opciones: [
+      'En San Juan prácticamente no llueve durante el verano.',
+      'Los meses más lluviosos se concentran entre mayo y noviembre.',
+      'Febrero es el mes más lluvioso del año.',
+      'La precipitación es uniforme durante todo el año.'
+    ],
+    correcta: 1,
+    explicacion: 'De mayo a noviembre todos los valores superan los 140 mm, mientras que enero a abril quedan por debajo de los 110 mm. La temporada lluviosa coincide con el verano-otoño caribeño.'
+  },
+
+  {
+    id: 'tie-04',
+    categoria: 'tierra',
+    escenario: 'El Servicio Geológico registró el número de sismos de magnitud ≥ 5 ocurridos en cinco regiones durante un año.',
+    grafica: {
+      tipo: 'barras',
+      xEtq: 'Región',
+      yEtq: 'Sismos ≥ magnitud 5',
+      barras: [
+        { etq: 'Japón',         valor: 200 },
+        { etq: 'Chile',         valor: 180 },
+        { etq: 'Islandia',      valor: 80  },
+        { etq: 'California',    valor: 45  },
+        { etq: 'Puerto Rico',   valor: 25  }
+      ]
+    },
+    pregunta: 'Un geólogo afirma: "La mayor actividad sísmica se concentra en los bordes del Cinturón de Fuego del Pacífico". ¿Los datos respaldan esa afirmación?',
+    opciones: [
+      'Sí, plenamente: solo hay sismos en el Cinturón de Fuego.',
+      'Parcialmente: Japón y Chile (Cinturón de Fuego) lideran, pero Islandia también registra alta actividad sin pertenecer al Cinturón de Fuego.',
+      'No: los datos muestran exactamente lo contrario.',
+      'Los datos no permiten evaluar la afirmación.'
+    ],
+    correcta: 1,
+    explicacion: 'Japón (200) y Chile (180) encabezan la lista y sí pertenecen al Cinturón de Fuego, pero Islandia (80) tiene alta sismicidad por estar sobre la dorsal mesoatlántica. El respaldo es parcial.'
+  },
+
+  {
+    id: 'tie-05',
+    categoria: 'tierra',
+    escenario: 'Se registró la altura de la marea alta diaria durante un mes junto con la fase lunar correspondiente.',
+    grafica: {
+      tipo: 'linea',
+      xEtq: 'Día del mes',
+      yEtq: 'Altura de marea alta (m)',
+      series: [
+        { nombre: 'Altura de la marea', puntos: [[0,3.0],[3,2.5],[7,1.5],[10,2.0],[14,3.2],[17,2.4],[21,1.6],[24,2.1],[28,3.0]] }
+      ]
+    },
+    pregunta: 'En este mes, la luna nueva ocurrió en el día 0 y en el día 28; la luna llena en el día 14; los cuartos en los días 7 y 21. ¿Qué sugieren los datos?',
+    opciones: [
+      'Las mareas altas son siempre iguales.',
+      'Las mareas más altas ocurren durante luna nueva y luna llena.',
+      'Las mareas solo dependen de la hora del día, no de la luna.',
+      'Las mareas son más altas en los cuartos que en luna llena.'
+    ],
+    correcta: 1,
+    explicacion: 'Los máximos (≈ 3,0 – 3,2 m) coinciden con luna nueva y luna llena, cuando Sol, Tierra y Luna se alinean (sizigia): son las mareas vivas. En los cuartos la altura baja: son mareas muertas.'
+  },
+
+  {
+    id: 'tie-06',
+    categoria: 'tierra',
+    escenario: 'En un corte geológico se recogieron muestras de cinco capas sucesivas (la capa 1 es la más superficial) y se dató cada una mediante métodos radiométricos (C-14 y U-Pb combinados).',
+    grafica: {
+      tipo: 'tabla',
+      encabezados: ['Capa', 'Profundidad', 'Edad estimada'],
+      filas: [
+        ['Capa 1', 'Superficie',     '10 000 años'],
+        ['Capa 2', 'Moderada',       '120 000 años'],
+        ['Capa 3', 'Moderada-alta',  '850 000 años'],
+        ['Capa 4', 'Alta',           '2,1 millones de años'],
+        ['Capa 5', 'Muy profunda',   '4,5 millones de años']
+      ]
+    },
+    pregunta: '¿Qué principio geológico respaldan estos datos?',
+    opciones: [
+      'Principio del uniformismo (los procesos actuales explican los del pasado).',
+      'Principio de superposición: en una secuencia no perturbada, las capas más profundas son más antiguas.',
+      'Principio de las inclusiones.',
+      'Los datos no apoyan ningún principio geológico.'
+    ],
+    correcta: 1,
+    explicacion: 'La edad aumenta con la profundidad: 10 000 → 4 500 000 años desde la capa 1 a la 5. Esto ilustra el principio de superposición de Steno para secuencias sedimentarias no perturbadas.'
+  }
+
+];
+
+/* ------------------------------------------------------------
+   2. RENDERIZADORES DE GRÁFICAS (SVG nativo)
+   ------------------------------------------------------------ */
+
+const COLORES_SERIE = ['#1e5aa6', '#a63d1e', '#0f7a5c', '#8a5a00', '#5a2a8a'];
+
+/* ---- Líneas ---- */
+function renderLinea(datos) {
+  const W = 560, H = 340;
+  const m = { t: 24, r: 24, b: 68, l: 72 };
+  const pw = W - m.l - m.r;
+  const ph = H - m.t - m.b;
+
+  // recoger todos los puntos
+  let xs = [], ys = [];
+  datos.series.forEach(s => s.puntos.forEach(p => { xs.push(p[0]); ys.push(p[1]); }));
+  const xMin = Math.min(...xs), xMax = Math.max(...xs);
+  let yMin = Math.min(0, ...ys);
+  let yMax = Math.max(...ys);
+  // pequeño margen vertical
+  const yPad = (yMax - yMin) * 0.08 || 1;
+  yMax += yPad;
+  if (yMin < 0) yMin -= yPad;
+
+  const sx = x => m.l + ((x - xMin) / (xMax - xMin)) * pw;
+  const sy = y => m.t + ph - ((y - yMin) / (yMax - yMin)) * ph;
+
+  let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Gráfica de líneas">`;
+
+  // grid horizontal (5 líneas)
+  for (let i = 0; i <= 5; i++) {
+    const y = m.t + (ph * i / 5);
+    svg += `<line x1="${m.l}" y1="${y}" x2="${m.l + pw}" y2="${y}" stroke="#ececec" stroke-width="1"/>`;
+    const valorY = yMax - (yMax - yMin) * i / 5;
+    svg += `<text x="${m.l - 8}" y="${y + 4}" text-anchor="end" font-size="11" fill="#6a6a6a">${formatearNumero(valorY)}</text>`;
+  }
+
+  // ejes
+  svg += `<line x1="${m.l}" y1="${m.t}" x2="${m.l}" y2="${m.t + ph}" stroke="#4a4a4a" stroke-width="1.5"/>`;
+  svg += `<line x1="${m.l}" y1="${m.t + ph}" x2="${m.l + pw}" y2="${m.t + ph}" stroke="#4a4a4a" stroke-width="1.5"/>`;
+
+  // línea cero si aplica
+  if (yMin < 0 && yMax > 0) {
+    const y0 = sy(0);
+    svg += `<line x1="${m.l}" y1="${y0}" x2="${m.l + pw}" y2="${y0}" stroke="#b0b0b0" stroke-width="1" stroke-dasharray="3,3"/>`;
+  }
+
+  // marcas X (usar los valores x únicos)
+  const xsUnicos = [...new Set(xs)].sort((a, b) => a - b);
+  // limitar a máximo 8 marcas
+  const pasoXM = Math.max(1, Math.ceil(xsUnicos.length / 8));
+  xsUnicos.forEach((v, i) => {
+    if (i % pasoXM !== 0 && i !== xsUnicos.length - 1) return;
+    const xx = sx(v);
+    svg += `<line x1="${xx}" y1="${m.t + ph}" x2="${xx}" y2="${m.t + ph + 5}" stroke="#4a4a4a" stroke-width="1"/>`;
+    svg += `<text x="${xx}" y="${m.t + ph + 18}" text-anchor="middle" font-size="11" fill="#4a4a4a">${formatearNumero(v)}</text>`;
+  });
+
+  // series
+  datos.series.forEach((serie, i) => {
+    const color = COLORES_SERIE[i % COLORES_SERIE.length];
+    const pts = serie.puntos;
+    const d = pts.map((p, j) => `${j === 0 ? 'M' : 'L'}${sx(p[0]).toFixed(1)},${sy(p[1]).toFixed(1)}`).join(' ');
+    svg += `<path d="${d}" fill="none" stroke="${color}" stroke-width="2.2"/>`;
+    pts.forEach(p => {
+      svg += `<circle cx="${sx(p[0]).toFixed(1)}" cy="${sy(p[1]).toFixed(1)}" r="3.5" fill="${color}" stroke="#fff" stroke-width="1.2"/>`;
+    });
+  });
+
+  // etiquetas de ejes
+  svg += `<text x="${m.l + pw / 2}" y="${H - 8}" text-anchor="middle" font-size="13" font-weight="600" fill="#1a1a1a">${datos.xEtq}</text>`;
+  svg += `<text transform="translate(16,${m.t + ph / 2}) rotate(-90)" text-anchor="middle" font-size="13" font-weight="600" fill="#1a1a1a">${datos.yEtq}</text>`;
+
+  // leyenda si hay más de una serie
+  if (datos.series.length > 1) {
+    const leyX = m.l + 10;
+    let leyY = m.t + 10;
+    datos.series.forEach((s, i) => {
+      const color = COLORES_SERIE[i % COLORES_SERIE.length];
+      svg += `<rect x="${leyX}" y="${leyY}" width="160" height="20" fill="#ffffff" fill-opacity="0.92" stroke="#e0e0e0"/>`;
+      svg += `<line x1="${leyX + 6}" y1="${leyY + 10}" x2="${leyX + 26}" y2="${leyY + 10}" stroke="${color}" stroke-width="2.5"/>`;
+      svg += `<circle cx="${leyX + 16}" cy="${leyY + 10}" r="3" fill="${color}"/>`;
+      svg += `<text x="${leyX + 32}" y="${leyY + 14}" font-size="11" fill="#1a1a1a">${s.nombre}</text>`;
+      leyY += 22;
+    });
+  }
+
+  svg += `</svg>`;
+  return svg;
+}
+
+/* ---- Barras ---- */
+function renderBarras(datos) {
+  const W = 560, H = 340;
+  const m = { t: 24, r: 24, b: 68, l: 72 };
+  const pw = W - m.l - m.r;
+  const ph = H - m.t - m.b;
+
+  const vals = datos.barras.map(b => b.valor);
+  const yMin = 0;
+  const yMax = Math.max(...vals) * 1.12;
+
+  const sy = y => m.t + ph - ((y - yMin) / (yMax - yMin)) * ph;
+
+  const n = datos.barras.length;
+  const anchoCelda = pw / n;
+  const anchoBarra = Math.min(50, anchoCelda * 0.65);
+
+  let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Gráfica de barras">`;
+
+  // grid horizontal
+  for (let i = 0; i <= 5; i++) {
+    const y = m.t + (ph * i / 5);
+    svg += `<line x1="${m.l}" y1="${y}" x2="${m.l + pw}" y2="${y}" stroke="#ececec" stroke-width="1"/>`;
+    const valorY = yMax - (yMax - yMin) * i / 5;
+    svg += `<text x="${m.l - 8}" y="${y + 4}" text-anchor="end" font-size="11" fill="#6a6a6a">${formatearNumero(valorY)}</text>`;
+  }
+
+  // ejes
+  svg += `<line x1="${m.l}" y1="${m.t}" x2="${m.l}" y2="${m.t + ph}" stroke="#4a4a4a" stroke-width="1.5"/>`;
+  svg += `<line x1="${m.l}" y1="${m.t + ph}" x2="${m.l + pw}" y2="${m.t + ph}" stroke="#4a4a4a" stroke-width="1.5"/>`;
+
+  // barras
+  datos.barras.forEach((b, i) => {
+    const cx = m.l + anchoCelda * (i + 0.5);
+    const bx = cx - anchoBarra / 2;
+    const by = sy(b.valor);
+    const bh = sy(0) - by;
+    const color = COLORES_SERIE[0];
+    svg += `<rect x="${bx.toFixed(1)}" y="${by.toFixed(1)}" width="${anchoBarra}" height="${bh.toFixed(1)}" fill="${color}" rx="2"/>`;
+    // valor arriba
+    svg += `<text x="${cx}" y="${by - 6}" text-anchor="middle" font-size="11" font-weight="600" fill="#1a1a1a">${formatearNumero(b.valor)}</text>`;
+    // etiqueta debajo
+    svg += `<text x="${cx}" y="${m.t + ph + 18}" text-anchor="middle" font-size="11" fill="#4a4a4a">${b.etq}</text>`;
+  });
+
+  // etiquetas de ejes
+  svg += `<text x="${m.l + pw / 2}" y="${H - 8}" text-anchor="middle" font-size="13" font-weight="600" fill="#1a1a1a">${datos.xEtq}</text>`;
+  svg += `<text transform="translate(16,${m.t + ph / 2}) rotate(-90)" text-anchor="middle" font-size="13" font-weight="600" fill="#1a1a1a">${datos.yEtq}</text>`;
+
+  svg += `</svg>`;
+  return svg;
+}
+
+/* ---- Tabla ---- */
+function renderTabla(datos) {
+  let html = `<table role="table">`;
+  html += `<thead><tr>`;
+  datos.encabezados.forEach(h => { html += `<th scope="col">${h}</th>`; });
+  html += `</tr></thead><tbody>`;
+  datos.filas.forEach(fila => {
+    html += `<tr>`;
+    fila.forEach(celda => { html += `<td>${celda}</td>`; });
+    html += `</tr>`;
+  });
+  html += `</tbody></table>`;
+  return html;
+}
+
+/* ---- Dispatcher ---- */
+function renderGrafica(g) {
+  if (g.tipo === 'linea')  return renderLinea(g);
+  if (g.tipo === 'barras') return renderBarras(g);
+  if (g.tipo === 'tabla')  return renderTabla(g);
+  return '<p><em>Tipo de gráfica no soportado.</em></p>';
+}
+
+/* ---- Formateo de números ---- */
+function formatearNumero(n) {
+  if (n === 0) return '0';
+  const abs = Math.abs(n);
+  if (abs >= 1000000) return (n / 1000000).toFixed(1).replace('.0','') + 'M';
+  if (abs >= 1000)    return (n / 1000).toFixed(1).replace('.0','') + 'k';
+  if (abs >= 10)      return Math.round(n).toString();
+  if (abs >= 1)       return n.toFixed(1).replace(/\.?0+$/, '');
+  return n.toFixed(2).replace(/\.?0+$/, '');
+}
+
+/* ------------------------------------------------------------
+   3. ESTADO Y NAVEGACIÓN
+   ------------------------------------------------------------ */
+
+const CATEGORIAS = {
+  biologia: 'Biología',
+  quimica:  'Química',
+  fisica:   'Física',
+  tierra:   'Ciencias de la Tierra'
+};
+
+let estado = {
+  preguntasSesion: [],
+  idx: 0,
+  correctas: 0,
+  respuestas: [],         // { preguntaId, seleccionada, correcta, categoria }
+  tiempoInicio: 0,
+  tiempoFinal: 0,
+  timerId: null,
+  modo: 'balanceado',        // 'balanceado' | 'enfocado'
+  categoriaEnfocada: null,   // 'biologia' | 'quimica' | 'fisica' | 'tierra'
+  numeroPreguntas: 10
+};
+
+/* ---- Mostrar/ocultar panel de enfoque dirigido ---- */
+document.getElementById('toggle-enfoque').addEventListener('click', abrirPanelEnfoque);
+document.getElementById('volver-balanceado').addEventListener('click', volverABalanceado);
+
+function abrirPanelEnfoque() {
+  document.getElementById('panel-enfoque').classList.remove('oculto');
+  document.querySelector('.enfoque-toggle').style.display = 'none';
+}
+
+function volverABalanceado() {
+  document.getElementById('panel-enfoque').classList.add('oculto');
+  document.querySelector('.enfoque-toggle').style.display = '';
+  document.querySelectorAll('.cat-chip').forEach(c => {
+    c.classList.remove('activa');
+    c.setAttribute('aria-checked', 'false');
+  });
+  estado.modo = 'balanceado';
+  estado.categoriaEnfocada = null;
+  actualizarInfoSesion();
+}
+
+/* ---- Selección de categoría (single-select, activa modo enfocado) ---- */
+document.querySelectorAll('.cat-chip').forEach(chip => {
+  chip.addEventListener('click', () => seleccionarCategoriaEnfoque(chip));
+  chip.addEventListener('keydown', e => {
+    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); seleccionarCategoriaEnfoque(chip); }
+  });
+});
+
+function seleccionarCategoriaEnfoque(chip) {
+  document.querySelectorAll('.cat-chip').forEach(c => {
+    c.classList.remove('activa');
+    c.setAttribute('aria-checked', 'false');
+  });
+  chip.classList.add('activa');
+  chip.setAttribute('aria-checked', 'true');
+  estado.modo = 'enfocado';
+  estado.categoriaEnfocada = chip.dataset.cat;
+  actualizarInfoSesion();
+}
+
+/* ---- Selección de número de preguntas ---- */
+document.querySelectorAll('.num-chip').forEach(chip => {
+  chip.addEventListener('click', () => seleccionarNumero(chip));
+  chip.addEventListener('keydown', e => {
+    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); seleccionarNumero(chip); }
+  });
+});
+
+function seleccionarNumero(chip) {
+  document.querySelectorAll('.num-chip').forEach(c => {
+    c.classList.remove('activa');
+    c.setAttribute('aria-checked', 'false');
+  });
+  chip.classList.add('activa');
+  chip.setAttribute('aria-checked', 'true');
+  estado.numeroPreguntas = parseInt(chip.dataset.n, 10);
+  actualizarInfoSesion();
+}
+
+function actualizarInfoSesion() {
+  const info = document.getElementById('info-sesion');
+  if (estado.modo === 'balanceado') {
+    info.innerHTML = '<strong>Modo balanceado:</strong> recibirás preguntas mezcladas de las 4 áreas de Ciencias (biología, química, física y ciencias de la tierra) en proporciones parejas.';
+  } else {
+    const nombreCat = CATEGORIAS[estado.categoriaEnfocada];
+    const disponibles = PREGUNTAS.filter(p => p.categoria === estado.categoriaEnfocada).length;
+    const n = Math.min(estado.numeroPreguntas, disponibles);
+    const aviso = estado.numeroPreguntas > disponibles
+      ? ` · solo hay ${disponibles} preguntas en esta área, tu sesión tendrá ${n}.`
+      : '.';
+    info.innerHTML = `<strong>Práctica dirigida en ${nombreCat}</strong>${aviso}`;
+  }
+}
+
+/* ---- Iniciar sesión ---- */
+document.getElementById('btn-iniciar').addEventListener('click', iniciarSesion);
+
+function iniciarSesion() {
+  let preguntasSesion;
+  if (estado.modo === 'balanceado') {
+    preguntasSesion = armarSesionBalanceada(estado.numeroPreguntas);
+  } else {
+    if (!estado.categoriaEnfocada) {
+      alert('Selecciona una categoría o vuelve al modo balanceado.');
+      return;
+    }
+    preguntasSesion = armarSesionEnfocada(estado.categoriaEnfocada, estado.numeroPreguntas);
+  }
+
+  if (preguntasSesion.length === 0) {
+    alert('No hay preguntas disponibles para esta configuración.');
+    return;
+  }
+
+  estado.preguntasSesion = preguntasSesion;
+  estado.idx = 0;
+  estado.correctas = 0;
+  estado.respuestas = [];
+  estado.tiempoInicio = Date.now();
+
+  document.getElementById('num-total').textContent = preguntasSesion.length;
+
+  cambiarPantalla('pantalla-quiz');
+  iniciarCronometro();
+  mostrarPregunta();
+}
+
+/* Arma una sesión con distribución pareja entre las 4 categorías.
+   Reparte n/4 a cada una; el resto (n mod 4) se asigna a categorías al azar,
+   para que n = 10 → 3/3/2/2 (por ejemplo), n = 15 → 4/4/4/3, n = 20 → 5/5/5/5. */
+function armarSesionBalanceada(n) {
+  const cats = Object.keys(CATEGORIAS);
+  const porCat = {};
+  cats.forEach(c => {
+    porCat[c] = PREGUNTAS.filter(p => p.categoria === c);
+  });
+
+  const base = Math.floor(n / cats.length);
+  const resto = n % cats.length;
+  const cuantas = {};
+  cats.forEach(c => { cuantas[c] = base; });
+  fisherYates(cats).slice(0, resto).forEach(c => { cuantas[c]++; });
+
+  const seleccionadas = [];
+  cats.forEach(c => {
+    const k = Math.min(cuantas[c], porCat[c].length);
+    if (k > 0) {
+      seleccionadas.push(...fisherYates(porCat[c]).slice(0, k));
+    }
+  });
+
+  return fisherYates(seleccionadas);
+}
+
+function armarSesionEnfocada(cat, n) {
+  const disponibles = PREGUNTAS.filter(p => p.categoria === cat);
+  const mezclado = fisherYates(disponibles);
+  return mezclado.slice(0, Math.min(n, mezclado.length));
+}
+
+/* ---- Fisher-Yates: baraja uniforme (no modifica el array original) ---- */
+function fisherYates(arr) {
+  const copia = arr.slice();
+  for (let i = copia.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copia[i], copia[j]] = [copia[j], copia[i]];
+  }
+  return copia;
+}
+
+function cambiarPantalla(idDestino) {
+  document.querySelectorAll('.pantalla').forEach(p => p.classList.add('oculta'));
+  document.getElementById(idDestino).classList.remove('oculta');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ---- Mostrar pregunta ---- */
+function mostrarPregunta() {
+  const p = estado.preguntasSesion[estado.idx];
+
+  // Barajar opciones al vuelo para eliminar sesgo posicional.
+  // Usamos Fisher-Yates (el truco de sort(() => Math.random() - 0.5)
+  // tiene un sesgo conocido y no produce distribución uniforme).
+  // Guardamos el orden barajado y el índice remapeado de la correcta
+  // en el propio objeto de la pregunta, para que responder() los consulte.
+  const indicesBarajados = fisherYates([0, 1, 2, 3]);
+  p._opcionesBarajadas = indicesBarajados.map(i => p.opciones[i]);
+  p._correctaBarajada = indicesBarajados.indexOf(p.correcta);
+
+  // header
+  document.getElementById('num-actual').textContent = estado.idx + 1;
+  const pct = ((estado.idx) / estado.preguntasSesion.length) * 100;
+  document.getElementById('barra-progreso-fill').style.width = pct + '%';
+
+  const badge = document.getElementById('badge-cat');
+  badge.textContent = CATEGORIAS[p.categoria];
+  badge.className = 'badge-categoria ' + p.categoria;
+
+  // contenido
+  document.getElementById('escenario').textContent = p.escenario;
+  document.getElementById('grafica').innerHTML = renderGrafica(p.grafica);
+  document.getElementById('pregunta-texto').textContent = p.pregunta;
+
+  // opciones (ya barajadas)
+  const cont = document.getElementById('opciones');
+  cont.innerHTML = '';
+  const letras = ['A', 'B', 'C', 'D'];
+  p._opcionesBarajadas.forEach((opt, i) => {
+    const div = document.createElement('div');
+    div.className = 'opcion';
+    div.setAttribute('role', 'button');
+    div.setAttribute('tabindex', '0');
+    div.setAttribute('aria-label', `Opción ${letras[i]}: ${opt}`);
+    div.innerHTML = `<span class="letra">${letras[i]}</span>${opt}`;
+    div.addEventListener('click', () => responder(i));
+    div.addEventListener('keydown', e => {
+      if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); responder(i); }
+    });
+    cont.appendChild(div);
+  });
+
+  // ocultar feedback y botón siguiente
+  document.getElementById('feedback').classList.add('oculto');
+  document.getElementById('btn-siguiente').classList.add('oculto');
+}
+
+/* ---- Responder ---- */
+function responder(seleccionada) {
+  const p = estado.preguntasSesion[estado.idx];
+  const opciones = document.querySelectorAll('#opciones .opcion');
+  const correctaBarajada = p._correctaBarajada;
+  const esCorrecta = seleccionada === correctaBarajada;
+
+  // marcar visualmente
+  opciones.forEach((op, i) => {
+    op.classList.add('deshabilitada');
+    op.style.pointerEvents = 'none';
+    op.setAttribute('tabindex', '-1');
+    if (i === correctaBarajada) op.classList.add('correcta');
+    if (i === seleccionada && !esCorrecta) op.classList.add('incorrecta');
+  });
+
+  // feedback
+  const fb = document.getElementById('feedback');
+  fb.classList.remove('oculto');
+  fb.className = 'feedback ' + (esCorrecta ? 'correcto' : 'incorrecto');
+  fb.innerHTML = `
+    <span class="titulo-fb">${esCorrecta ? '✓ Correcto' : '✗ Incorrecto'}</span>
+    ${p.explicacion}
+  `;
+
+  // registrar respuesta (guardamos texto directo para el repaso)
+  const letras = ['A', 'B', 'C', 'D'];
+  estado.respuestas.push({
+    preguntaId: p.id,
+    textoSeleccionada: p._opcionesBarajadas[seleccionada],
+    textoCorrecta: p._opcionesBarajadas[correctaBarajada],
+    letraSeleccionada: letras[seleccionada],
+    letraCorrecta: letras[correctaBarajada],
+    esCorrecta,
+    categoria: p.categoria
+  });
+  if (esCorrecta) estado.correctas++;
+
+  // mostrar botón siguiente
+  const btn = document.getElementById('btn-siguiente');
+  btn.classList.remove('oculto');
+  btn.textContent = (estado.idx === estado.preguntasSesion.length - 1)
+    ? 'Ver resultados →'
+    : 'Siguiente →';
+  btn.focus();
+}
+
+document.getElementById('btn-siguiente').addEventListener('click', () => {
+  estado.idx++;
+  if (estado.idx >= estado.preguntasSesion.length) {
+    finalizarSesion();
+  } else {
+    mostrarPregunta();
+  }
+});
+
+/* ---- Cronómetro ---- */
+function iniciarCronometro() {
+  detenerCronometro();
+  const elem = document.getElementById('cronometro');
+  function actualizar() {
+    const ms = Date.now() - estado.tiempoInicio;
+    elem.textContent = formatearTiempo(ms);
+  }
+  actualizar();
+  estado.timerId = setInterval(actualizar, 1000);
+}
+
+function detenerCronometro() {
+  if (estado.timerId) {
+    clearInterval(estado.timerId);
+    estado.timerId = null;
+  }
+}
+
+function formatearTiempo(ms) {
+  const totalSeg = Math.floor(ms / 1000);
+  const min = Math.floor(totalSeg / 60);
+  const seg = totalSeg % 60;
+  return `${String(min).padStart(2, '0')}:${String(seg).padStart(2, '0')}`;
+}
+
+/* ---- Finalizar ---- */
+function finalizarSesion() {
+  detenerCronometro();
+  estado.tiempoFinal = Date.now() - estado.tiempoInicio;
+  mostrarResultados();
+  cambiarPantalla('pantalla-resultados');
+}
+
+function mostrarResultados() {
+  const total = estado.preguntasSesion.length;
+  document.getElementById('puntaje').textContent = `${estado.correctas} / ${total}`;
+  document.getElementById('tiempo-total').textContent = formatearTiempo(estado.tiempoFinal);
+
+  // desglose por categoría
+  const desglose = {};
+  estado.respuestas.forEach(r => {
+    if (!desglose[r.categoria]) desglose[r.categoria] = { correctas: 0, total: 0 };
+    desglose[r.categoria].total++;
+    if (r.esCorrecta) desglose[r.categoria].correctas++;
+  });
+
+  const contCats = document.getElementById('desglose-cats');
+  contCats.innerHTML = '';
+  Object.keys(CATEGORIAS).forEach(cat => {
+    if (!desglose[cat]) return;
+    const d = desglose[cat];
+    const pct = Math.round((d.correctas / d.total) * 100);
+    const row = document.createElement('div');
+    row.className = 'cat-row';
+    row.innerHTML = `
+      <div class="cat-label">${CATEGORIAS[cat]}</div>
+      <div class="cat-track"><div class="cat-fill ${cat}" style="width:${pct}%"></div></div>
+      <div class="cat-pct">${d.correctas}/${d.total} · ${pct}%</div>
+    `;
+    contCats.appendChild(row);
+  });
+
+  // preguntas falladas
+  const falladas = estado.respuestas.filter(r => !r.esCorrecta);
+  const listaRev = document.getElementById('lista-revisar');
+  listaRev.innerHTML = '';
+
+  if (falladas.length === 0) {
+    listaRev.innerHTML = '<div class="sin-errores">🎉 ¡Perfecto! No fallaste ninguna pregunta.</div>';
+  } else {
+    falladas.forEach(r => {
+      const p = PREGUNTAS.find(q => q.id === r.preguntaId);
+      const item = document.createElement('div');
+      item.className = 'item-revisar';
+      item.innerHTML = `
+        <div class="preg">${p.pregunta}</div>
+        <div class="resp">Tu respuesta: <strong>${r.letraSeleccionada}.</strong> ${r.textoSeleccionada}</div>
+        <div class="resp">Correcta: <strong>${r.letraCorrecta}.</strong> ${r.textoCorrecta}</div>
+        <div class="expl">${p.explicacion}</div>
+      `;
+      listaRev.appendChild(item);
+    });
+  }
+}
+
+/* ---- Botones finales ---- */
+document.getElementById('btn-reintentar').addEventListener('click', () => iniciarSesion());
+document.getElementById('btn-menu').addEventListener('click', () => cambiarPantalla('pantalla-inicio'));
+
+/* ---- Inicialización ---- */
+actualizarInfoSesion();
+</script>
+
+</body>
+</html>
