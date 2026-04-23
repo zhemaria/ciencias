@@ -1,1 +1,1587 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CientíDebate — Reconciliación de teorías | GEDparaHispanos</title>
+<style>
+/* ============================================================
+   CientíDebate — Reconciliación de teorías científicas
+   Práctica para GED: Assessment Target SP.5
+   Hermano visual de CientíGraf y CientíLab · self-contained
+   ============================================================ */
 
+:root {
+  --c-bg:       #fafafa;
+  --c-surface:  #ffffff;
+  --c-ink:      #1a1a1a;
+  --c-ink-soft: #4a4a4a;
+  --c-ink-mute: #6a6a6a;
+  --c-line:     #e0e0e0;
+  --c-line-str: #b0b0b0;
+
+  --c-ciencias: #0f7a5c;
+  --c-ciencias-bg: #e8f5ee;
+  --c-accent:   #1e5aa6;
+  --c-accent-bg: #eaf2fb;
+
+  --c-good:     #0f7a5c;
+  --c-good-bg:  #e8f5ee;
+  --c-bad:      #a63d1e;
+  --c-bad-bg:   #fbe9e7;
+
+  --c-bio:      #0f7a5c;
+  --c-qui:      #1e5aa6;
+  --c-fis:      #5a2a8a;
+  --c-tie:      #8a5a00;
+
+  /* colores para las dos posturas: azul y marrón, ambos neutros de valor */
+  --c-postura-a:    #1e5aa6;
+  --c-postura-a-bg: #eef4fb;
+  --c-postura-b:    #8a5a00;
+  --c-postura-b-bg: #faf3e5;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--c-ink);
+  background: var(--c-bg);
+  margin: 0;
+  padding: 0;
+}
+
+.contenedor {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+}
+
+/* ---------- Cabecera ---------- */
+header {
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-top: 6px solid var(--c-ciencias);
+  border-radius: 6px;
+  padding: 28px 28px 24px;
+  margin-bottom: 28px;
+}
+.eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--c-ciencias);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+header h1 {
+  font-size: 30px;
+  margin: 0 0 6px;
+  color: var(--c-ink);
+  font-weight: 700;
+}
+.subtitulo {
+  font-size: 16px;
+  color: var(--c-ink-soft);
+  margin: 0;
+}
+
+/* ---------- Pantallas ---------- */
+.pantalla {
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: 6px;
+  padding: 28px;
+  margin-bottom: 20px;
+}
+.pantalla.oculta { display: none; }
+
+/* ---------- Pantalla Inicio ---------- */
+.descripcion {
+  background: var(--c-ciencias-bg);
+  border-left: 4px solid var(--c-ciencias);
+  padding: 16px 20px;
+  border-radius: 4px;
+  margin-bottom: 24px;
+}
+.descripcion p {
+  margin: 0 0 10px;
+  color: var(--c-ink-soft);
+}
+.descripcion p:last-child { margin-bottom: 0; }
+.descripcion strong { color: var(--c-ink); }
+.descripcion ul {
+  margin: 8px 0 0 0;
+  padding-left: 22px;
+  color: var(--c-ink-soft);
+}
+.descripcion ul li { margin: 3px 0; }
+
+.opciones-sesion h3 {
+  font-size: 18px;
+  margin: 0 0 16px;
+  color: var(--c-ink);
+}
+.opciones-sesion h4 {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--c-ink-mute);
+  margin: 0 0 10px;
+  font-weight: 700;
+}
+.config-grid {
+  display: grid;
+  gap: 22px;
+  margin-bottom: 24px;
+}
+.config-bloque {
+  background: #f8f8f8;
+  border: 1px solid var(--c-line);
+  border-radius: 5px;
+  padding: 16px 18px;
+}
+.categorias, .numero-preguntas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.cat-chip, .num-chip {
+  padding: 8px 14px;
+  border: 2px solid var(--c-line);
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--c-ink-soft);
+  background: var(--c-surface);
+  user-select: none;
+  transition: border-color 0.15s, background 0.15s, color 0.15s;
+}
+.cat-chip:hover, .num-chip:hover { border-color: var(--c-line-str); }
+.cat-chip.activa, .num-chip.activa {
+  background: var(--c-ciencias);
+  color: #fff;
+  border-color: var(--c-ciencias);
+}
+.cat-chip:focus-visible, .num-chip:focus-visible {
+  outline: 3px solid var(--c-accent);
+  outline-offset: 2px;
+}
+
+.info-sesion {
+  background: var(--c-accent-bg);
+  border: 1px solid #c5d5e8;
+  border-radius: 4px;
+  padding: 12px 16px;
+  font-size: 14px;
+  color: var(--c-ink-soft);
+  margin-bottom: 20px;
+}
+.info-sesion strong { color: var(--c-accent); }
+
+.enfoque-toggle {
+  text-align: center;
+  margin: -8px 0 20px;
+}
+.link-enfoque {
+  color: var(--c-accent);
+  font-size: 13px;
+  text-decoration: underline;
+  cursor: pointer;
+  background: none;
+  border: none;
+  font-family: inherit;
+  padding: 4px 8px;
+}
+.link-enfoque:hover { color: #164878; }
+.link-enfoque:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+.panel-enfoque {
+  background: var(--c-accent-bg);
+  border: 1px solid #c5d5e8;
+  border-radius: 4px;
+  padding: 16px 18px;
+  margin-bottom: 20px;
+}
+.panel-enfoque.oculto { display: none; }
+.panel-enfoque h4 {
+  margin: 0 0 6px;
+  color: var(--c-accent);
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 700;
+}
+.nota-enfoque {
+  font-size: 13px;
+  color: var(--c-ink-soft);
+  margin: 0 0 12px;
+  line-height: 1.45;
+}
+.volver-balanceado {
+  margin-top: 10px;
+  display: inline-block;
+}
+
+/* ---------- Botones ---------- */
+.btn {
+  display: inline-block;
+  padding: 12px 26px;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s, transform 0.05s;
+  font-family: inherit;
+}
+.btn:active { transform: translateY(1px); }
+.btn:focus-visible {
+  outline: 3px solid var(--c-accent);
+  outline-offset: 2px;
+}
+.btn-primario { background: var(--c-ciencias); color: #fff; }
+.btn-primario:hover { background: #0c6449; }
+.btn-secundario { background: #f0f0f0; color: var(--c-ink); }
+.btn-secundario:hover { background: #e0e0e0; }
+.btn.oculto { display: none; }
+
+/* ---------- Pantalla Quiz ---------- */
+.quiz-header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+.progreso { font-weight: 700; color: var(--c-ink); }
+.progreso #num-actual { color: var(--c-ciencias); font-size: 18px; }
+.cronometro {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--c-ink-soft);
+  text-align: center;
+}
+.badge-categoria {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #fff;
+}
+.badge-categoria.biologia { background: var(--c-bio); }
+.badge-categoria.quimica  { background: var(--c-qui); }
+.badge-categoria.fisica   { background: var(--c-fis); }
+.badge-categoria.tierra   { background: var(--c-tie); }
+
+.barra-progreso {
+  height: 6px;
+  background: #f0f0f0;
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+#barra-progreso-fill {
+  height: 100%;
+  background: var(--c-ciencias);
+  width: 0%;
+  transition: width 0.3s;
+}
+
+.contexto-tema {
+  font-size: 14px;
+  color: var(--c-ink-mute);
+  margin-bottom: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* ---------- Cajas de las dos posturas ---------- */
+.teorias-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.teoria {
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-left: 4px solid;
+  border-radius: 0 4px 4px 0;
+  padding: 14px 16px;
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: var(--c-ink);
+}
+.teoria.a {
+  border-left-color: var(--c-postura-a);
+  background: var(--c-postura-a-bg);
+}
+.teoria.b {
+  border-left-color: var(--c-postura-b);
+  background: var(--c-postura-b-bg);
+}
+.teoria-etq {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+  display: block;
+}
+.teoria.a .teoria-etq { color: var(--c-postura-a); }
+.teoria.b .teoria-etq { color: var(--c-postura-b); }
+.teoria-nombre {
+  font-weight: 700;
+}
+
+.pregunta-texto {
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--c-ink);
+  margin-bottom: 16px;
+  line-height: 1.45;
+}
+
+.opciones {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.opcion {
+  background: var(--c-surface);
+  border: 2px solid var(--c-line);
+  border-radius: 5px;
+  padding: 12px 16px 12px 46px;
+  cursor: pointer;
+  font-size: 15px;
+  color: var(--c-ink);
+  position: relative;
+  transition: border-color 0.15s, background 0.15s;
+  user-select: none;
+  line-height: 1.5;
+}
+.opcion:hover:not(.deshabilitada) {
+  border-color: var(--c-ciencias);
+  background: #f8fbf9;
+}
+.opcion:focus-visible {
+  outline: 3px solid var(--c-accent);
+  outline-offset: 2px;
+}
+.opcion .letra {
+  position: absolute;
+  left: 14px;
+  top: 14px;
+  width: 24px;
+  height: 24px;
+  background: #f0f0f0;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 24px;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--c-ink-soft);
+}
+.opcion.correcta {
+  background: var(--c-good-bg);
+  border-color: var(--c-good);
+}
+.opcion.correcta .letra { background: var(--c-good); color: #fff; }
+.opcion.incorrecta {
+  background: var(--c-bad-bg);
+  border-color: var(--c-bad);
+}
+.opcion.incorrecta .letra { background: var(--c-bad); color: #fff; }
+.opcion.deshabilitada { cursor: default; }
+
+.feedback {
+  padding: 14px 18px;
+  border-radius: 4px;
+  margin-bottom: 16px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+.feedback.oculto { display: none; }
+.feedback.correcto {
+  background: var(--c-good-bg);
+  border-left: 4px solid var(--c-good);
+}
+.feedback.incorrecto {
+  background: var(--c-bad-bg);
+  border-left: 4px solid var(--c-bad);
+}
+.feedback .titulo-fb {
+  font-weight: 700;
+  margin-bottom: 4px;
+  display: block;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.feedback.correcto .titulo-fb   { color: var(--c-good); }
+.feedback.incorrecto .titulo-fb { color: var(--c-bad); }
+
+.controles-quiz {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* ---------- Pantalla Resultados ---------- */
+#pantalla-resultados h2 {
+  font-size: 26px;
+  margin: 0 0 20px;
+  color: var(--c-ink);
+  padding-bottom: 8px;
+  border-bottom: 2px solid var(--c-line);
+}
+.resumen-resultados {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 28px;
+}
+.tarjeta-resumen {
+  background: var(--c-ciencias-bg);
+  border: 1px solid #b8dcc7;
+  border-radius: 6px;
+  padding: 20px;
+  text-align: center;
+}
+.tarjeta-resumen .num {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--c-ciencias);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.tarjeta-resumen .etq {
+  font-size: 13px;
+  color: var(--c-ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+.desglose-categorias { margin-bottom: 28px; }
+.desglose-categorias h3 {
+  font-size: 17px;
+  margin: 0 0 14px;
+  color: var(--c-ink);
+}
+.cat-row {
+  display: grid;
+  grid-template-columns: 180px 1fr 90px;
+  gap: 12px;
+  align-items: center;
+  margin: 8px 0;
+  font-size: 14px;
+}
+.cat-label { font-weight: 600; color: var(--c-ink-soft); }
+.cat-track {
+  height: 18px;
+  background: #f0f0f0;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.cat-fill { height: 100%; border-radius: 3px; }
+.cat-fill.biologia { background: var(--c-bio); }
+.cat-fill.quimica  { background: var(--c-qui); }
+.cat-fill.fisica   { background: var(--c-fis); }
+.cat-fill.tierra   { background: var(--c-tie); }
+.cat-pct { font-weight: 700; color: var(--c-ink); font-size: 13px; }
+
+.revisar-preguntas h3 {
+  font-size: 17px;
+  margin: 24px 0 14px;
+  color: var(--c-ink);
+}
+.item-revisar {
+  background: #fcfcfc;
+  border: 1px solid var(--c-line);
+  border-left: 4px solid var(--c-bad);
+  padding: 14px 18px;
+  margin-bottom: 10px;
+  border-radius: 4px;
+  font-size: 14px;
+}
+.item-revisar .esc-resumen {
+  font-size: 13px;
+  color: var(--c-ink-mute);
+  margin-bottom: 6px;
+  font-style: italic;
+}
+.item-revisar .preg {
+  font-weight: 600;
+  color: var(--c-ink);
+  margin-bottom: 6px;
+}
+.item-revisar .resp {
+  color: var(--c-ink-soft);
+  margin-bottom: 4px;
+}
+.item-revisar .resp strong { color: var(--c-ink); }
+.item-revisar .expl {
+  font-size: 13px;
+  color: var(--c-ink-mute);
+  font-style: italic;
+  margin-top: 6px;
+  line-height: 1.5;
+}
+.sin-errores {
+  background: var(--c-good-bg);
+  border: 1px solid var(--c-good);
+  padding: 16px 20px;
+  border-radius: 4px;
+  color: var(--c-ink);
+  font-weight: 600;
+  text-align: center;
+}
+.botones-finales {
+  display: flex;
+  gap: 10px;
+  margin-top: 24px;
+  flex-wrap: wrap;
+}
+
+.pie {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid var(--c-line);
+  font-size: 12px;
+  color: var(--c-ink-mute);
+  text-align: center;
+  line-height: 1.5;
+}
+
+@media (max-width: 700px) {
+  .teorias-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 600px) {
+  .contenedor { padding: 20px 16px 60px; }
+  header { padding: 22px 20px 18px; }
+  header h1 { font-size: 24px; }
+  .pantalla { padding: 20px; }
+  .resumen-resultados { grid-template-columns: 1fr; }
+  .cat-row { grid-template-columns: 130px 1fr 70px; gap: 8px; font-size: 13px; }
+  .quiz-header {
+    grid-template-columns: auto auto;
+    grid-template-rows: auto auto;
+    gap: 8px;
+  }
+  .cronometro { grid-column: 1 / -1; text-align: left; }
+}
+@media print {
+  body { background: #fff; }
+  .btn, .controles-quiz, .botones-finales { display: none; }
+}
+</style>
+</head>
+<body>
+
+<div class="contenedor">
+
+<header>
+  <div class="eyebrow">GEDparaHispanos · Ciencias · SP.5</div>
+  <h1>CientíDebate</h1>
+  <p class="subtitulo">Reconciliación de teorías científicas</p>
+</header>
+
+<!-- PANTALLA 1 — INICIO -->
+<section id="pantalla-inicio" class="pantalla">
+
+  <div class="descripcion">
+    <p><strong>¿Qué practicas aquí?</strong> Cuando dos teorías científicas parecen decir cosas distintas, tu tarea no es siempre escoger una "ganadora". A veces una generaliza a la otra, a veces ambas son válidas en dominios distintos, y a veces solo la evidencia las puede separar.</p>
+    <p>En cada pregunta leerás <strong>dos posturas científicas</strong> sobre un mismo tema, y responderás sobre su relación:</p>
+    <ul>
+      <li>¿Qué evidencia decidió la disputa, o decidiría?</li>
+      <li>¿Cómo se reconcilian en un marco más general?</li>
+      <li>¿En qué dominios aplica cada una?</li>
+      <li>¿Qué implica un hallazgo concreto para cada postura?</li>
+    </ul>
+  </div>
+
+  <div class="opciones-sesion">
+    <h3>Configura tu sesión</h3>
+
+    <div class="config-grid">
+      <div class="config-bloque">
+        <h4>Número de preguntas</h4>
+        <div class="numero-preguntas" id="selector-numero">
+          <div class="num-chip"        data-n="5"  role="radio" aria-checked="false" tabindex="0">5</div>
+          <div class="num-chip activa" data-n="10" role="radio" aria-checked="true"  tabindex="0">10</div>
+          <div class="num-chip"        data-n="15" role="radio" aria-checked="false" tabindex="0">15</div>
+          <div class="num-chip"        data-n="20" role="radio" aria-checked="false" tabindex="0">20</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-sesion" id="info-sesion">
+      <strong>Modo balanceado:</strong> recibirás pares de teorías mezclados de las 4 áreas de Ciencias (biología, química, física y ciencias de la tierra) en proporciones parejas.
+    </div>
+
+    <div class="enfoque-toggle">
+      <button type="button" id="toggle-enfoque" class="link-enfoque">
+        ¿Prefieres enfocar una sola área? (práctica dirigida)
+      </button>
+    </div>
+
+    <div id="panel-enfoque" class="panel-enfoque oculto">
+      <h4>Práctica dirigida</h4>
+      <p class="nota-enfoque">Útil cuando acabas de estudiar un área específica y quieres hacer drill concentrado en ella. Para repaso general, usa el modo balanceado.</p>
+      <div class="categorias" id="selector-categorias">
+        <div class="cat-chip" data-cat="biologia" role="radio" aria-checked="false" tabindex="0">Biología</div>
+        <div class="cat-chip" data-cat="quimica"  role="radio" aria-checked="false" tabindex="0">Química</div>
+        <div class="cat-chip" data-cat="fisica"   role="radio" aria-checked="false" tabindex="0">Física</div>
+        <div class="cat-chip" data-cat="tierra"   role="radio" aria-checked="false" tabindex="0">Ciencias de la Tierra</div>
+      </div>
+      <div class="volver-balanceado">
+        <button type="button" id="volver-balanceado" class="link-enfoque">← Volver al modo balanceado</button>
+      </div>
+    </div>
+
+    <button id="btn-iniciar" class="btn btn-primario">Comenzar práctica</button>
+  </div>
+
+</section>
+
+<!-- PANTALLA 2 — QUIZ -->
+<section id="pantalla-quiz" class="pantalla oculta" aria-live="polite">
+
+  <div class="quiz-header">
+    <div class="progreso">Pregunta <span id="num-actual">1</span> / <span id="num-total">10</span></div>
+    <div class="cronometro" id="cronometro" aria-label="Tiempo transcurrido">00:00</div>
+    <div class="badge-categoria" id="badge-cat">Biología</div>
+  </div>
+
+  <div class="barra-progreso"><div id="barra-progreso-fill"></div></div>
+
+  <div class="contexto-tema" id="contexto-tema"></div>
+
+  <div class="teorias-grid" id="teorias-grid"></div>
+
+  <div class="pregunta-texto" id="pregunta-texto"></div>
+
+  <div class="opciones" id="opciones"></div>
+
+  <div class="feedback oculto" id="feedback"></div>
+
+  <div class="controles-quiz">
+    <button id="btn-siguiente" class="btn btn-primario oculto">Siguiente →</button>
+  </div>
+
+</section>
+
+<!-- PANTALLA 3 — RESULTADOS -->
+<section id="pantalla-resultados" class="pantalla oculta">
+
+  <h2>Resultados de tu sesión</h2>
+
+  <div class="resumen-resultados">
+    <div class="tarjeta-resumen">
+      <div class="num" id="puntaje">–</div>
+      <div class="etq">Correctas</div>
+    </div>
+    <div class="tarjeta-resumen">
+      <div class="num" id="tiempo-total">–</div>
+      <div class="etq">Tiempo total</div>
+    </div>
+  </div>
+
+  <div class="desglose-categorias">
+    <h3>Desempeño por categoría</h3>
+    <div id="desglose-cats"></div>
+  </div>
+
+  <div class="revisar-preguntas">
+    <h3>Preguntas para revisar</h3>
+    <div id="lista-revisar"></div>
+  </div>
+
+  <div class="botones-finales">
+    <button id="btn-reintentar" class="btn btn-primario">Otra ronda (misma configuración)</button>
+    <button id="btn-menu"       class="btn btn-secundario">Volver al menú</button>
+  </div>
+
+</section>
+
+<div class="pie">
+  CientíDebate · Módulo de práctica para GEDparaHispanos.com · Objetivo de evaluación SP.5<br>
+  Diseñado con principios DUA · GED® es marca registrada del American Council on Education (ACE).
+</div>
+
+</div>
+
+<script>
+/* ============================================================
+   CientíDebate — lógica
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   1. POOL DE PARES DE TEORÍAS
+   ------------------------------------------------------------ */
+
+const PREGUNTAS = [
+
+  /* ============ BIOLOGÍA ============ */
+  {
+    id: 'bio-01',
+    categoria: 'biologia',
+    tema: 'Herencia de los rasgos',
+    teorias: {
+      a: { nombre: 'Lamarck (1809)', texto: 'Los organismos adquieren rasgos durante su vida por uso o desuso de órganos, y transmiten esos rasgos adquiridos a sus descendientes. Una jirafa que estira su cuello produce crías con cuellos algo más largos.' },
+      b: { nombre: 'Darwin (1859)',  texto: 'Dentro de toda población existe variación natural en los rasgos. Los individuos con rasgos ventajosos sobreviven y reproducen más, transmitiendo esos rasgos. La evolución es selección natural sobre variación preexistente.' }
+    },
+    pregunta: '¿Cuál observación moderna permite distinguir mejor entre ambas teorías?',
+    opciones: [
+      'Los hijos de culturistas no nacen con más músculos: los rasgos adquiridos por el cuerpo durante la vida no se transmiten al ADN.',
+      'Las jirafas actualmente tienen cuellos largos, lo cual apoya por igual a ambas teorías.',
+      'Muchos organismos se adaptan a su ambiente, algo que ninguna de las dos teorías menciona.',
+      'Las dos teorías son indistinguibles desde la evidencia experimental disponible.'
+    ],
+    correcta: 0,
+    explicacion: 'Los rasgos adquiridos por el cuerpo a lo largo de la vida (músculos ganados en el gimnasio, bronceado, idiomas aprendidos) no se codifican en el ADN ni se transmiten a los hijos. Este hecho falsa la propuesta central de Lamarck como mecanismo general de la evolución. En cambio, el descubrimiento del ADN como molécula de la herencia confirmó a Darwin: la variación que la selección actúa sobre ya está en el ADN del individuo.'
+  },
+
+  {
+    id: 'bio-02',
+    categoria: 'biologia',
+    tema: 'Origen de los microorganismos',
+    teorias: {
+      a: { nombre: 'Generación espontánea', texto: 'La vida puede surgir espontáneamente de materia no viva en condiciones adecuadas. Los microbios aparecen en un caldo en reposo. Era la creencia predominante durante siglos.' },
+      b: { nombre: 'Pasteur (1861)',        texto: 'Los microorganismos siempre provienen de otros microorganismos. Un caldo esterilizado y aislado del aire no genera vida. El aire transporta esporas y microbios que son la fuente real de contaminación.' }
+    },
+    pregunta: 'En el famoso experimento del matraz de cuello de cisne (cuello curvo que atrapa partículas del aire pero permite el paso de aire), Pasteur hervía el caldo y esperaba. ¿Qué observación decidió la cuestión?',
+    opciones: [
+      'El caldo se volvió turbio dentro del matraz de cuello curvo en pocas horas.',
+      'El caldo permaneció limpio dentro del matraz de cuello curvo; al romper el cuello, se volvió turbio a los pocos días.',
+      'Se formaron moscas adultas dentro del matraz.',
+      'El experimento nunca pudo replicarse en otros laboratorios.'
+    ],
+    correcta: 1,
+    explicacion: 'Si la vida surgiera espontáneamente del caldo, este debió volverse turbio por crecimiento microbiano incluso con el cuello curvo intacto. Pero el cuello curvo atrapaba los microbios y las esporas que flotan en el aire, y el caldo permanecía limpio. Al romper el cuello, el aire con microbios entraba directamente y el caldo se contaminaba en días. Pasteur demostró así que los microbios provienen de otros microbios, no de generación espontánea.'
+  },
+
+  {
+    id: 'bio-03',
+    categoria: 'biologia',
+    tema: 'Transmisión de enfermedades',
+    teorias: {
+      a: { nombre: 'Teoría miasmática', texto: 'Las enfermedades como el cólera se transmiten por "miasmas": aire viciado, olores de materia en descomposición, vapores malsanos que emanan de pantanos y basurales.' },
+      b: { nombre: 'Teoría germinal',   texto: 'Las enfermedades infecciosas las causan microorganismos específicos. El cólera lo produce la bacteria Vibrio cholerae, que se transmite sobre todo por agua contaminada con heces.' }
+    },
+    pregunta: 'En 1854, el médico John Snow mapeó los casos de cólera en un barrio de Londres y encontró que casi todos los enfermos bebían agua de una misma bomba pública contaminada por fugas cloacales, aunque vivían lejos de pantanos. ¿A cuál teoría apoya ese hallazgo?',
+    opciones: [
+      'A la teoría miasmática, porque los pantanos huelen mal y ese olor viaja lejos.',
+      'A la teoría germinal, porque identifica una fuente común de transmisión (el agua contaminada) no relacionada con el aire.',
+      'A ninguna de las dos, porque los datos son insuficientes.',
+      'A ambas por igual, sin poder distinguir.'
+    ],
+    correcta: 1,
+    explicacion: 'Si el cólera fuera miasmático, los casos se distribuirían según la presencia de olores pestilentes en el aire. Pero el mapa de Snow mostró los casos concentrados geográficamente alrededor de una bomba específica de agua, sin relación con pantanos o vapores. Esto apunta inequívocamente a un agente transmitido por agua, anticipando la teoría germinal años antes de que Koch aislara la bacteria. Fue uno de los momentos fundacionales de la epidemiología moderna.'
+  },
+
+  {
+    id: 'bio-04',
+    categoria: 'biologia',
+    tema: 'Metabolismo de los dinosaurios',
+    teorias: {
+      a: { nombre: 'Reptiles clásicos',       texto: 'Los dinosaurios eran reptiles y, como los reptiles modernos, ectotermos (de "sangre fría"): dependían del sol para calentarse y se movían relativamente despacio.' },
+      b: { nombre: 'Dinosaurios modernos',    texto: 'Muchos dinosaurios eran endotermos o mesotermos: generaban calor corporal propio, tenían crecimiento óseo rápido (como aves y mamíferos), vivían en regiones frías, y varios linajes tenían plumas.' }
+    },
+    pregunta: '¿Cuál evidencia moderna contradice más directamente la postura clásica?',
+    opciones: [
+      'Fósiles de dinosaurios encontrados en regiones polares (Alaska, Antártica) donde no sobrevivirían ectotermos con inviernos largos sin sol.',
+      'Algunos dinosaurios eran más grandes que cualquier reptil moderno.',
+      'Todos los fósiles de dinosaurios muestran escamas idénticas a los lagartos actuales.',
+      'Los dinosaurios vivieron hace mucho tiempo.'
+    ],
+    correcta: 0,
+    explicacion: 'Un ectotermo no puede sobrevivir inviernos polares sin luz solar por meses, porque depende del calor externo. El descubrimiento de numerosos fósiles de dinosaurios en latitudes árticas y antárticas fue una de las piezas que obligó a replantear el paradigma clásico. Sumado al hallazgo de dinosaurios con plumas y al análisis microscópico del hueso (crecimiento rápido tipo aves), hoy la mayoría de los paleontólogos considera que los dinosaurios eran endotermos o mesotermos, mucho más cerca de las aves modernas que de los lagartos.'
+  },
+
+  {
+    id: 'bio-05',
+    categoria: 'biologia',
+    tema: 'Origen de la vida',
+    teorias: {
+      a: { nombre: 'Abiogénesis química', texto: 'La vida se originó en la Tierra primitiva a partir de moléculas inorgánicas simples, mediante procesos químicos espontáneos en océanos o pozas ricos en compuestos orgánicos (la "sopa primordial").' },
+      b: { nombre: 'Panspermia',          texto: 'La vida, o al menos sus precursores orgánicos complejos, llegó a la Tierra desde el espacio, transportada por meteoritos o cometas. La Tierra habría sido "sembrada" por material biológico de otro lugar.' }
+    },
+    pregunta: '¿Qué tipo de evidencia haría más difícil decidir entre las dos teorías?',
+    opciones: [
+      'Descubrir aminoácidos complejos dentro de meteoritos, porque sería consistente con ambas teorías simultáneamente.',
+      'Reproducir en laboratorio la formación de proteínas a partir de gases simples con descargas eléctricas.',
+      'Encontrar fósiles de bacterias en rocas muy antiguas de la corteza terrestre.',
+      'Observar vida microbiana con bioquímica totalmente distinta en otro planeta.'
+    ],
+    correcta: 0,
+    explicacion: 'Los aminoácidos se han encontrado en meteoritos como el Murchison. Esta evidencia es ambigua: por un lado apoya la panspermia (moléculas biológicas complejas vienen del espacio), y por otro apoya la abiogénesis (los aminoácidos se forman espontáneamente en condiciones cósmicas o terrestres primitivas). La observación no discrimina entre las dos posturas. En cambio, encontrar vida con bioquímica independiente en otro planeta (opción D) sería mucho más discriminante a favor de la abiogénesis como fenómeno común.'
+  },
+
+  {
+    id: 'bio-06',
+    categoria: 'biologia',
+    tema: 'Ritmo de la evolución',
+    teorias: {
+      a: { nombre: 'Gradualismo',            texto: 'La evolución ocurre por acumulación lenta y continua de pequeños cambios durante millones de años. El registro fósil debería mostrar largas series de transición entre especies (idea clásica darwiniana).' },
+      b: { nombre: 'Equilibrio puntuado',    texto: 'La evolución ocurre mayoritariamente en "estallidos" geológicamente breves (decenas de miles de años) durante los cuales aparecen nuevas especies; entre estallidos hay largos períodos de estasis con poco cambio (Eldredge y Gould, 1972).' }
+    },
+    pregunta: '¿Cómo se reconcilian ambas posturas en la síntesis evolutiva moderna?',
+    opciones: [
+      'Eldredge y Gould refutaron por completo la teoría de Darwin.',
+      'Ambos patrones ocurren según el linaje y el ambiente: la evolución puede ser gradual en algunos casos (caballos) y puntuada en otros (especiación por aislamiento geográfico rápido). No son mutuamente excluyentes.',
+      'El equilibrio puntuado se aplica únicamente a los dinosaurios.',
+      'El gradualismo ha dejado de ser considerado válido por la biología actual.'
+    ],
+    correcta: 1,
+    explicacion: 'Este es un caso clásico de reconciliación. Eldredge y Gould no discutieron la selección natural como mecanismo, solo el ritmo del cambio. El registro fósil muestra ambos patrones según las especies. La especiación por aislamiento geográfico de poblaciones pequeñas tiende a ser rápida (puntuada), mientras que el cambio dentro de linajes grandes y estables puede ser gradual. Ambos son compatibles con la selección natural; la biología moderna los incluye a los dos.'
+  },
+
+  /* ============ QUÍMICA ============ */
+  {
+    id: 'qui-01',
+    categoria: 'quimica',
+    tema: 'La combustión',
+    teorias: {
+      a: { nombre: 'Teoría del flogisto', texto: 'Todo material combustible contiene una sustancia invisible llamada "flogisto" que se libera al arder. Las cenizas son el material "desflogistado". Los metales al calcinarse también pierden flogisto (siglo XVIII).' },
+      b: { nombre: 'Lavoisier (1770s)',   texto: 'La combustión es la combinación química del material con el oxígeno del aire. El material no pierde nada: al contrario, gana peso al combinarse con el oxígeno y formar óxidos.' }
+    },
+    pregunta: '¿Qué evidencia cuantitativa decidió la disputa a favor de Lavoisier?',
+    opciones: [
+      'El olor característico del humo de combustión.',
+      'El color de las cenizas, que varía según el material quemado.',
+      'Al calcinar un metal en un recipiente cerrado, el metal gana peso (y el aire encerrado lo pierde en la misma proporción), lo que contradice una pérdida de flogisto.',
+      'La altura de la llama al quemar distintas sustancias.'
+    ],
+    correcta: 2,
+    explicacion: 'Si arder liberara flogisto, el material debería pesar menos después de la combustión. Pero Lavoisier demostró con balanzas precisas que, al calcinar un metal en aire confinado, el óxido resultante pesa más que el metal original, y el aire encerrado pierde peso exactamente en la misma cantidad. Esta conservación entre metal + aire = óxido era imposible de reconciliar con el flogisto sin postular absurdos (como un "flogisto con peso negativo"). La química moderna se construyó sobre esta medición rigurosa.'
+  },
+
+  {
+    id: 'qui-02',
+    categoria: 'quimica',
+    tema: 'La "fuerza vital"',
+    teorias: {
+      a: { nombre: 'Vitalismo',        texto: 'Los compuestos orgánicos (los que forman parte de los seres vivos) solo pueden ser producidos por organismos vivos, gracias a una "fuerza vital" que actúa únicamente en la vida. Los compuestos inorgánicos vienen de química ordinaria (creencia dominante hasta 1828).' },
+      b: { nombre: 'Wöhler (1828)',    texto: 'Los compuestos orgánicos e inorgánicos siguen las mismas leyes químicas. No se requiere ninguna "fuerza vital": los compuestos orgánicos pueden sintetizarse en el laboratorio desde sustancias puramente inorgánicas.' }
+    },
+    pregunta: '¿Qué experimento concreto de Wöhler derrumbó la idea de fuerza vital?',
+    opciones: [
+      'Extrajo urea directamente de la orina de un animal para analizarla.',
+      'Sintetizó urea (un compuesto orgánico que excretan los mamíferos) calentando cianato de amonio, un compuesto inorgánico.',
+      'Demostró que los seres vivos necesitan oxígeno para respirar.',
+      'Aisló una proteína animal por primera vez.'
+    ],
+    correcta: 1,
+    explicacion: 'Al calentar cianato de amonio (NH₄OCN), una sal puramente inorgánica, Wöhler obtuvo urea, el mismo compuesto orgánico que excretan los mamíferos por la orina. Hasta entonces se creía que la urea solo podía ser producida por un ser vivo. La síntesis a partir de material inorgánico, en el laboratorio, sin "fuerza vital" de por medio, demostró que no hay una barrera química entre lo "vivo" y lo "no vivo". Desde entonces, casi todos los compuestos orgánicos (incluso proteínas y ADN) se han sintetizado en laboratorio.'
+  },
+
+  {
+    id: 'qui-03',
+    categoria: 'quimica',
+    tema: 'Estructura del átomo',
+    teorias: {
+      a: { nombre: 'Thomson (1904)',    texto: 'El átomo es una esfera de carga positiva uniforme con electrones incrustados como pasas en un budín ("modelo del budín de pasas"). Masa y carga positiva distribuidas homogéneamente.' },
+      b: { nombre: 'Rutherford (1911)', texto: 'El átomo es prácticamente vacío. Casi toda la masa y toda la carga positiva se concentran en un pequeño núcleo central; los electrones orbitan a gran distancia de ese núcleo.' }
+    },
+    pregunta: 'Rutherford disparó partículas alfa (positivas, energéticas) contra una lámina finísima de oro. Según el modelo de Thomson, las alfa debían atravesar la lámina sin apenas desviación. ¿Qué observación inesperada refutó a Thomson?',
+    opciones: [
+      'Todas las alfa atravesaron la lámina en línea recta, sin ninguna desviación.',
+      'Una pequeña fracción de las alfa rebotó hacia atrás o se desvió en ángulos muy grandes, algo imposible si la masa y la carga estuvieran distribuidas uniformemente.',
+      'Las alfa se convirtieron en otros elementos químicos al atravesar el oro.',
+      'No se observó absolutamente nada en el experimento.'
+    ],
+    correcta: 1,
+    explicacion: 'Rutherford dijo: "fue casi tan increíble como disparar un proyectil de artillería contra un pañuelo y que rebotara hacia uno". Algunas alfa rebotaban casi 180°, lo que solo es posible si chocan con algo muy pequeño, muy denso y con toda la carga concentrada: el núcleo. Si la carga estuviera distribuida uniformemente (Thomson), no habría zonas capaces de desviar tanto a las alfa. El experimento forzó a aceptar un núcleo central compacto y un átomo mayormente vacío.'
+  },
+
+  {
+    id: 'qui-04',
+    categoria: 'quimica',
+    tema: 'Los electrones en el átomo',
+    teorias: {
+      a: { nombre: 'Rutherford (1911)', texto: 'Los electrones orbitan el núcleo como planetas alrededor del Sol, a cualquier distancia y cualquier velocidad que permita la física clásica.' },
+      b: { nombre: 'Bohr (1913)',       texto: 'Los electrones solo pueden ocupar ciertas órbitas específicas con niveles de energía discretos. Un electrón emite luz únicamente al saltar de un nivel a otro, y la frecuencia de esa luz depende de la diferencia de energía entre niveles.' }
+    },
+    pregunta: '¿Qué evidencia experimental favorece al modelo de Bohr sobre el de Rutherford?',
+    opciones: [
+      'Los espectros de emisión de los átomos muestran líneas discretas de colores específicos y no un continuo: solo órbitas cuantizadas (niveles discretos) explican esa discretización.',
+      'Los átomos son eléctricamente neutros en su conjunto.',
+      'Los electrones tienen carga eléctrica negativa.',
+      'Los átomos tienen muy poca masa.'
+    ],
+    correcta: 0,
+    explicacion: 'Si los electrones pudieran ocupar cualquier órbita (Rutherford), al excitar un átomo se emitiría luz de todas las frecuencias y el espectro sería un continuo. Pero cuando se excita hidrógeno gaseoso y se descompone su luz con un prisma, solo aparecen líneas discretas en colores específicos (rojo, azul, violeta muy definidos). Estos patrones exigen niveles de energía cuantizados —exactamente la propuesta de Bohr. Su modelo incluso predijo cuantitativamente las longitudes de onda del hidrógeno (series de Balmer y Lyman).'
+  },
+
+  {
+    id: 'qui-05',
+    categoria: 'quimica',
+    tema: 'Definición de ácidos y bases',
+    teorias: {
+      a: { nombre: 'Arrhenius (1887)',       texto: 'Un ácido es una sustancia que libera iones H⁺ al disolverse en agua. Una base es una sustancia que libera iones OH⁻ en agua. Una reacción ácido-base produce sal y agua.' },
+      b: { nombre: 'Brønsted-Lowry (1923)',  texto: 'Un ácido es cualquier sustancia que dona protones (H⁺); una base es cualquier sustancia que acepta protones. No hace falta estar en agua ni involucrar iones OH⁻.' }
+    },
+    pregunta: '¿Cómo se relacionan ambas teorías?',
+    opciones: [
+      'Brønsted-Lowry contradice y refuta completamente a Arrhenius.',
+      'Brønsted-Lowry amplía a Arrhenius: todo ácido de Arrhenius es también ácido de Brønsted-Lowry, pero hay muchos ácidos y bases de Brønsted-Lowry que no encajan en Arrhenius (por ejemplo la reacción gaseosa HCl + NH₃ → NH₄Cl).',
+      'Arrhenius es más general que Brønsted-Lowry.',
+      'Ambas son equivalentes y describen exactamente el mismo conjunto de sustancias.'
+    ],
+    correcta: 1,
+    explicacion: 'Este es un caso clásico de generalización: Brønsted-Lowry incluye a Arrhenius como caso particular (ácido-base en agua), pero abarca más reacciones. Por ejemplo, HCl gaseoso reaccionando con NH₃ gaseoso: HCl dona H⁺, NH₃ lo acepta, y forman cloruro de amonio sin que haya agua ni iones OH⁻ presentes. Este tipo de reacción queda fuera de Arrhenius pero encaja en Brønsted-Lowry. La ciencia avanza a menudo así: una teoría más general contiene a la anterior como caso especial.'
+  },
+
+  {
+    id: 'qui-06',
+    categoria: 'quimica',
+    tema: 'La naturaleza del calor',
+    teorias: {
+      a: { nombre: 'Teoría del calórico', texto: 'El calor es una sustancia fluida invisible llamada "calórico" que fluye de los cuerpos calientes a los fríos. Es una sustancia como cualquier otra y se conserva (siglo XVIII).' },
+      b: { nombre: 'Teoría cinética',     texto: 'El calor no es una sustancia, sino la energía cinética del movimiento aleatorio de las partículas microscópicas. Se puede transformar desde y hacia otras formas de energía (siglo XIX).' }
+    },
+    pregunta: 'En 1847, Joule agitaba agua con unas paletas impulsadas por pesas que caían y medía el aumento de temperatura. ¿Qué conclusión respalda ese experimento?',
+    opciones: [
+      'Apoya al calórico, porque el calor se transfirió desde las paletas hacia el agua.',
+      'Apoya a la teoría cinética: la energía mecánica de las pesas que caen se convirtió directamente en calor en el agua, sin que ninguna sustancia ("calórico") se transfiriera desde ningún lado.',
+      'Apoya al calórico, porque el agua aumentó su volumen al calentarse.',
+      'No está relacionado con ninguna de las dos teorías.'
+    ],
+    correcta: 1,
+    explicacion: 'Si el calor fuera una sustancia conservada (calórico), tendría que venir de alguna parte: las paletas, el agua, o el aire circundante. Pero no se detectaba transferencia de calórico desde ninguna fuente previa; el calor simplemente aparecía en proporción a la energía mecánica gastada por las pesas al caer. Joule midió una equivalencia exacta entre trabajo mecánico y calor producido (el "equivalente mecánico del calor"). Este resultado es inexplicable si el calor es sustancia, pero natural si es una forma de energía que se transforma desde otra forma.'
+  },
+
+  /* ============ FÍSICA ============ */
+  {
+    id: 'fis-01',
+    categoria: 'fisica',
+    tema: 'Caída de los objetos',
+    teorias: {
+      a: { nombre: 'Aristóteles',    texto: 'Los objetos más pesados caen más rápido que los ligeros; la velocidad de caída es proporcional al peso. Esta es la tendencia natural hacia el centro del universo (la Tierra inmóvil).' },
+      b: { nombre: 'Galileo',        texto: 'En ausencia de resistencia del aire, todos los objetos caen con la misma aceleración, independientemente de su masa. La diferencia visible se debe solo a la fricción con el aire.' }
+    },
+    pregunta: 'Un experimento moderno consiste en soltar una pluma y una bola de plomo dentro de un tubo del que se ha extraído el aire. ¿Qué se observa?',
+    opciones: [
+      'La bola de plomo llega al fondo mucho antes que la pluma, confirmando a Aristóteles.',
+      'La pluma llega al fondo primero.',
+      'Ambas caen juntas y tocan el fondo al mismo tiempo, confirmando a Galileo.',
+      'Ninguna cae: al no haber aire, no hay caída posible.'
+    ],
+    correcta: 2,
+    explicacion: 'Sin aire, no hay resistencia que frene a la pluma más que a la bola. Ambos objetos caen con la misma aceleración (g ≈ 9,8 m/s²) y llegan al fondo simultáneamente. Este experimento se ha reproducido muchas veces, incluso por el astronauta David Scott en la Luna durante la misión Apollo 15 (con un martillo y una pluma: ambos tocan el polvo lunar al mismo tiempo). La intuición aristotélica confunde el efecto del peso con el efecto de la resistencia del aire.'
+  },
+
+  {
+    id: 'fis-02',
+    categoria: 'fisica',
+    tema: 'Centro del sistema solar',
+    teorias: {
+      a: { nombre: 'Geocentrismo (Ptolomeo)',  texto: 'La Tierra está fija en el centro del universo. El Sol, la Luna, los planetas y las estrellas giran todos en torno a la Tierra (modelo dominante durante más de 1 400 años).' },
+      b: { nombre: 'Heliocentrismo (Copérnico, Galileo)', texto: 'El Sol está en el centro del sistema; la Tierra es un planeta más, que gira alrededor del Sol y sobre su propio eje.' }
+    },
+    pregunta: 'En 1610 Galileo, con uno de los primeros telescopios, observó cuatro lunas girando alrededor de Júpiter. ¿Por qué este descubrimiento apoyó al heliocentrismo?',
+    opciones: [
+      'Porque demostró que Júpiter brilla más que la Tierra.',
+      'Porque mostró que no todo gira alrededor de la Tierra: Júpiter también puede ser centro de órbitas, contradiciendo un supuesto central del geocentrismo.',
+      'Porque probó que las lunas de Júpiter son del mismo tamaño que la Tierra.',
+      'Porque confirmó que la Tierra es plana.'
+    ],
+    correcta: 1,
+    explicacion: 'Una tesis central del geocentrismo era que todo cuerpo celeste gira en torno a la Tierra. Observar satélites orbitando alrededor de otro planeta (Júpiter) fue la primera prueba visual directa de que existen órbitas centradas en cuerpos distintos de la Tierra. Junto con las fases de Venus (que solo se explican si Venus gira alrededor del Sol) y las imperfecciones de la Luna y el Sol, las observaciones telescópicas de Galileo fueron devastadoras para el modelo ptolemaico.'
+  },
+
+  {
+    id: 'fis-03',
+    categoria: 'fisica',
+    tema: 'Naturaleza de la luz',
+    teorias: {
+      a: { nombre: 'Newton (1704)', texto: 'La luz está hecha de partículas (corpúsculos) que viajan en línea recta. Esto explica la reflexión (como bolas rebotando), la propagación rectilínea y las sombras bien definidas.' },
+      b: { nombre: 'Huygens (1690)', texto: 'La luz es una onda que se propaga por un medio. Esto explica la difracción (la luz se curva al pasar por bordes) y la interferencia (dos haces de luz pueden reforzarse o cancelarse mutuamente).' }
+    },
+    pregunta: '¿Cómo resolvió la física moderna esta disputa?',
+    opciones: [
+      'Demostrando que Newton tenía completamente la razón y Huygens estaba equivocado.',
+      'Reconociendo que la luz tiene naturaleza dual: en algunos fenómenos se comporta como onda (interferencia, difracción), en otros como partícula (efecto fotoeléctrico). Ambas descripciones son complementarias bajo la mecánica cuántica.',
+      'Demostrando que la luz no es ni onda ni partícula, sino algo completamente sin relación con ninguna de las dos analogías.',
+      'Ignorando ambas teorías y describiendo la luz solo con matemáticas abstractas.'
+    ],
+    correcta: 1,
+    explicacion: 'Este es el caso más famoso de reconciliación en la física. La mecánica cuántica del siglo XX mostró que la luz —y de hecho toda la materia— exhibe propiedades tanto ondulatorias como corpusculares, según el fenómeno. El experimento de doble rendija de Young (1801) produce patrones de interferencia (onda); el efecto fotoeléctrico de Einstein (1905) muestra que la luz transfiere energía en paquetes discretos llamados fotones (partícula). Ambas descripciones son correctas; la naturaleza es más rica que cualquiera de las analogías clásicas.'
+  },
+
+  {
+    id: 'fis-04',
+    categoria: 'fisica',
+    tema: 'El medio de propagación de la luz',
+    teorias: {
+      a: { nombre: 'Éter luminífero',   texto: 'Si la luz es una onda, necesita un medio material para propagarse, igual que el sonido necesita aire. El "éter luminífero" es ese medio: un fluido invisible que llena todo el espacio (siglo XIX).' },
+      b: { nombre: 'Einstein (1905)',   texto: 'No existe un éter. La luz se propaga por el vacío sin necesidad de un medio. Su velocidad (c ≈ 300 000 km/s) es la misma para cualquier observador, sin importar el movimiento del observador o de la fuente.' }
+    },
+    pregunta: 'En 1887, Michelson y Morley diseñaron un experimento muy preciso para detectar el "viento del éter" producido por el movimiento de la Tierra a través de él. ¿Qué observaron?',
+    opciones: [
+      'Un fuerte viento del éter, consistente con la teoría clásica.',
+      'Un viento moderado dependiente de la dirección del movimiento terrestre.',
+      'Ningún viento del éter detectable: la velocidad de la luz era la misma en todas las direcciones, resultado nulo que socavó la teoría del éter y motivó la relatividad.',
+      'Un viento que variaba significativamente cada mañana.'
+    ],
+    correcta: 2,
+    explicacion: 'Si la Tierra se mueve a través de un éter en reposo, la velocidad de la luz medida a bordo debería variar según la dirección, igual que el sonido se afecta por el viento. Michelson y Morley esperaban detectar esa variación y no encontraron nada dentro de la altísima precisión de su aparato. Este "resultado nulo" fue un shock: la luz no sigue las reglas de adición de velocidades de Galileo. Einstein lo tomó precisamente como un postulado base de la relatividad especial: la velocidad de la luz es una constante universal.'
+  },
+
+  {
+    id: 'fis-05',
+    categoria: 'fisica',
+    tema: 'La gravedad',
+    teorias: {
+      a: { nombre: 'Newton (1687)',  texto: 'La gravedad es una fuerza a distancia entre cuerpos con masa. La Tierra ejerce una fuerza atractiva sobre la Luna, aunque no haya nada físico entre ellas. La fuerza depende del producto de las masas y la inversa del cuadrado de la distancia.' },
+      b: { nombre: 'Einstein (1915)', texto: 'La gravedad no es una fuerza, sino una curvatura del espacio-tiempo. Las masas deforman el "tejido" del espacio-tiempo; la Luna simplemente sigue una trayectoria recta (geodésica) en ese espacio curvado.' }
+    },
+    pregunta: '¿Cómo conviven ambas teorías en la física y la ingeniería actuales?',
+    opciones: [
+      'La teoría de Newton es completamente falsa y ha sido descartada.',
+      'Newton sigue siendo una excelente aproximación cuando las velocidades son pequeñas comparadas con la luz y los campos gravitatorios son débiles (por ejemplo en la Tierra); Einstein se necesita en casos extremos como cerca de agujeros negros o en el GPS satelital.',
+      'Einstein es falsa; solo Newton describe correctamente la gravedad.',
+      'Ambas teorías describen fenómenos totalmente distintos, no relacionados entre sí.'
+    ],
+    correcta: 1,
+    explicacion: 'Otro caso clásico de teoría más general que contiene a la anterior. La relatividad general se reduce a la gravedad newtoniana cuando las velocidades son mucho menores que c y los campos gravitatorios son débiles. Los ingenieros usan Newton para calcular trayectorias de cohetes, órbitas satelitales, caída libre. Pero el GPS requiere corrección relativista: sus satélites experimentan tiempo distinto al de la superficie, y sin ajustar por relatividad el GPS acumularía errores kilométricos por día. Es una reconciliación por dominio de aplicación.'
+  },
+
+  {
+    id: 'fis-06',
+    categoria: 'fisica',
+    tema: 'Determinismo y probabilidad',
+    teorias: {
+      a: { nombre: 'Newton (determinismo)', texto: 'Si conocieras la posición y la velocidad exactas de cada partícula del universo, podrías predecir todo el futuro con precisión perfecta. La naturaleza es una gran máquina de relojería determinista.' },
+      b: { nombre: 'Mecánica cuántica',     texto: 'A escala subatómica, no se pueden conocer simultáneamente con precisión arbitraria la posición y la velocidad de una partícula (principio de incertidumbre de Heisenberg). La naturaleza es fundamentalmente probabilista.' }
+    },
+    pregunta: '¿Cómo se relacionan ambos marcos teóricos hoy en día?',
+    opciones: [
+      'La mecánica cuántica ha reemplazado por completo al determinismo newtoniano en todos los dominios.',
+      'Newton sigue siendo válido a escala macroscópica, donde las fluctuaciones cuánticas son despreciables; la mecánica cuántica gobierna la escala subatómica. Para objetos grandes, la naturaleza cuántica da lugar a un comportamiento efectivamente determinista.',
+      'La mecánica cuántica es una pseudociencia sin base empírica.',
+      'Ambas teorías son incompatibles entre sí y no hay manera de reconciliarlas.'
+    ],
+    correcta: 1,
+    explicacion: 'En la práctica no hay contradicción. A escala macroscópica (bolas de billar, cohetes, puentes), la naturaleza probabilista de la cuántica produce —al promediar sobre cantidades enormes de átomos— el comportamiento determinista observable. Las desviaciones cuánticas son increíblemente pequeñas, mucho menores que cualquier tolerancia medible. Por eso Newton funciona perfectamente para ingeniería y la cuántica es imprescindible para chips, láseres, GPS de precisión y diseño molecular. Cada teoría reina en su dominio.'
+  },
+
+  /* ============ CIENCIAS DE LA TIERRA ============ */
+  {
+    id: 'tie-01',
+    categoria: 'tierra',
+    tema: 'Formación de montañas y continentes',
+    teorias: {
+      a: { nombre: 'Contraccionismo',      texto: 'La Tierra se está enfriando y contrayendo desde su origen incandescente. Las montañas se formarían al arrugarse su superficie, como en una manzana que se seca. Los continentes están fijos en sus posiciones (visión dominante en el siglo XIX).' },
+      b: { nombre: 'Tectónica de placas',  texto: 'La superficie terrestre está dividida en placas rígidas que flotan y se desplazan sobre el manto plástico. Los continentes se mueven lentamente durante millones de años (Wegener, 1912; teoría consolidada desde los años 60).' }
+    },
+    pregunta: '¿Cuál hallazgo apoya fuertemente a la tectónica de placas sobre el contraccionismo?',
+    opciones: [
+      'Las costas de Sudamérica y África encajan como piezas de rompecabezas, y se encuentran fósiles y formaciones geológicas idénticas a ambos lados del océano Atlántico.',
+      'Las montañas tienen formas puntiagudas.',
+      'El núcleo interno de la Tierra está muy caliente.',
+      'Los volcanes emiten humo y cenizas al entrar en erupción.'
+    ],
+    correcta: 0,
+    explicacion: 'Wegener notó en 1912 que América del Sur y África encajan geométricamente, y que a ambos lados del Atlántico hay fósiles idénticos (como el reptil Mesosaurus) y formaciones geológicas que se continúan entre continentes. El contraccionismo no podía explicar por qué rocas y fósiles de continentes separados por un océano son idénticos. Añadiendo la medición directa del movimiento de las placas por GPS y la datación del fondo marino en expansión, la tectónica de placas se consolidó firmemente desde los años 60.'
+  },
+
+  {
+    id: 'tie-02',
+    categoria: 'tierra',
+    tema: 'Cambios geológicos mayores',
+    teorias: {
+      a: { nombre: 'Catastrofismo (Cuvier)',   texto: 'Los grandes cambios geológicos (diluvios, erupciones globales, extinciones masivas) han sido causados por eventos súbitos y violentos a escala planetaria, no por procesos lentos (siglo XIX).' },
+      b: { nombre: 'Uniformismo (Lyell)',      texto: '"El presente es la clave del pasado." Los mismos procesos lentos y graduales que observamos hoy (erosión, sedimentación, tectónica) son los que construyeron todas las formaciones geológicas durante millones de años (1830).' }
+    },
+    pregunta: '¿Cómo reconcilia la geología moderna ambas posturas?',
+    opciones: [
+      'Los procesos graduales (Lyell) dan forma al paisaje la mayor parte del tiempo, pero los eventos catastróficos (impactos, supervolcanes, megaterremotos) son reales y también dejan huella. Ambos tipos de proceso actúan, a escalas de tiempo y frecuencia distintas.',
+      'El catastrofismo es completamente falso.',
+      'El uniformismo de Lyell es completamente falso.',
+      'Los procesos geológicos en realidad no existen: la superficie de la Tierra es estática.'
+    ],
+    correcta: 0,
+    explicacion: 'La geología moderna se puede resumir como "uniformismo más catástrofes puntuales". Lyell acertó en que la mayor parte del cambio geológico se debe a procesos lentos acumulados durante tiempos enormes: ríos que cavan cañones, placas que colisionan lentamente, sedimentación. Pero también ocurren catástrofes genuinas: el impacto de Chicxulub (fin de los dinosaurios), la erupción del Toba hace 74 000 años, o los megaterremotos. No hace falta elegir una postura: ambas operan a escalas distintas.'
+  },
+
+  {
+    id: 'tie-03',
+    categoria: 'tierra',
+    tema: 'Extinción de los dinosaurios',
+    teorias: {
+      a: { nombre: 'Hipótesis del impacto (Álvarez, 1980)',  texto: 'Un asteroide gigante impactó la Tierra hace unos 66 millones de años (cráter de Chicxulub, Yucatán). La nube de polvo bloqueó el Sol durante años y causó la extinción masiva del final del Cretácico, incluidos los dinosaurios no avianos.' },
+      b: { nombre: 'Hipótesis del vulcanismo',                texto: 'Las erupciones volcánicas masivas de los Trapps del Decán (en la India actual), que duraron cientos de miles de años en esa misma época, liberaron enormes cantidades de gases, acidificaron los océanos y alteraron el clima global, provocando la extinción.' }
+    },
+    pregunta: '¿Cuál es la visión más aceptada hoy en día?',
+    opciones: [
+      'Solo el impacto fue responsable; el vulcanismo no jugó ningún papel significativo.',
+      'Solo el vulcanismo causó la extinción; el impacto es irrelevante.',
+      'Ambos eventos contribuyeron: el vulcanismo ya venía estresando los ecosistemas durante cientos de miles de años, y el impacto fue el golpe final que llevó a muchas especies al colapso.',
+      'Ninguno de los dos eventos ocurrió realmente.'
+    ],
+    correcta: 2,
+    explicacion: 'Las dos hipótesis se presentaron originalmente como mutuamente excluyentes, pero la investigación de las últimas dos décadas apunta a que ambas interactuaron. Los Trapps del Decán ya venían deteriorando el clima global y a muchos ecosistemas cuando ocurrió el impacto de Chicxulub. El impacto fue el coup de grâce sobre un mundo que ya estaba alterado. Esta visión combinada explica mejor los patrones de extinción por grupos y la cronología fina del registro fósil a través del límite K-Pg.'
+  },
+
+  {
+    id: 'tie-04',
+    categoria: 'tierra',
+    tema: 'Edad de la Tierra',
+    teorias: {
+      a: { nombre: 'Kelvin (1862)',              texto: 'La Tierra comenzó como una esfera fundida que se ha estado enfriando por conducción. Calculando la temperatura interior actual y la tasa de pérdida de calor hacia el espacio, la Tierra tiene entre 20 y 100 millones de años.' },
+      b: { nombre: 'Datación radiométrica',      texto: 'La radiactividad interna del uranio y del torio genera calor de forma continua, así que la Tierra no se enfría al ritmo que calculó Kelvin. La datación por desintegración radiactiva establece una edad de unos 4 540 millones de años.' }
+    },
+    pregunta: '¿Por qué el cálculo de Kelvin, siendo matemáticamente correcto, produjo un resultado tan alejado del valor real?',
+    opciones: [
+      'Kelvin cometió errores elementales de aritmética en sus cálculos.',
+      'Kelvin no conocía la radiactividad (descubierta recién en 1896). Su modelo supuso que la Tierra solo pierde calor, sin saber que existe una fuente interna continua que lo repone. Su modelo estaba incompleto, no mal formulado.',
+      'La Tierra realmente tiene solo 100 millones de años y Kelvin estaba esencialmente en lo correcto.',
+      'No existe ninguna manera confiable de calcular la edad de la Tierra.'
+    ],
+    correcta: 1,
+    explicacion: 'Este es un ejemplo potente de cómo un cálculo puede ser matemáticamente correcto pero físicamente inadecuado por no incluir un factor desconocido. Kelvin aplicó correctamente la termodinámica del enfriamiento por conducción, pero en 1862 nadie sabía de la radiactividad (descubierta en 1896 por Becquerel). La generación interna de calor por isótopos radiactivos mantiene la Tierra mucho más caliente que lo que predeciría un simple enfriamiento desde un origen fundido. La datación radiométrica estableció la edad real: aproximadamente 4 540 millones de años.'
+  },
+
+  {
+    id: 'tie-05',
+    categoria: 'tierra',
+    tema: 'Origen de la Luna',
+    teorias: {
+      a: { nombre: 'Captura',             texto: 'La Luna se formó en otra parte del sistema solar y fue capturada por la gravedad de la Tierra al pasar cerca. Sería un cuerpo con origen independiente de la Tierra.' },
+      b: { nombre: 'Impacto gigante',     texto: 'Un cuerpo del tamaño de Marte (llamado Tea) chocó con la Tierra primitiva hace unos 4 500 millones de años. El impacto arrojó al espacio una nube de material de ambos, que se acumuló en órbita y formó la Luna.' }
+    },
+    pregunta: '¿Qué observación moderna favorece más a la hipótesis del impacto gigante que a la de captura?',
+    opciones: [
+      'Que la Luna brilla de noche reflejando la luz del Sol.',
+      'La composición química de las rocas lunares (traídas por las misiones Apollo) es casi idéntica a la del manto terrestre, y la Luna contiene muy poco hierro, como si se hubiera formado a partir de las capas externas de la Tierra.',
+      'La Luna tiene un gran número de cráteres de impacto visibles.',
+      'La Luna se ve aproximadamente del mismo tamaño aparente que el Sol en el cielo.'
+    ],
+    correcta: 1,
+    explicacion: 'Si la Luna hubiera sido capturada desde otra parte del sistema solar, su composición química sería distinta a la de la Tierra, porque la composición varía con la distancia al Sol. Pero las muestras lunares traídas por Apollo muestran una composición isotópica casi idéntica al manto terrestre, y muy poco hierro, justo lo esperado si se formó de las capas rocosas externas eyectadas en un impacto. Además, la captura gravitatoria de un cuerpo grande es mecánicamente muy difícil sin un tercer cuerpo que disipe energía.'
+  },
+
+  {
+    id: 'tie-06',
+    categoria: 'tierra',
+    tema: 'Origen del universo',
+    teorias: {
+      a: { nombre: 'Estado estacionario (Hoyle, 1948)', texto: 'El universo no tuvo un comienzo definido. Siempre ha existido con la misma densidad media; a medida que se expande, se crea nueva materia continuamente para mantener la densidad constante.' },
+      b: { nombre: 'Big Bang (Lemaître, Gamow)',         texto: 'El universo tuvo un comienzo hace unos 13 800 millones de años, en un estado muy denso y muy caliente, y se ha estado expandiendo y enfriando desde entonces.' }
+    },
+    pregunta: '¿Cuál descubrimiento de 1965 decidió la cuestión a favor del Big Bang?',
+    opciones: [
+      'El descubrimiento de planetas fuera del sistema solar (exoplanetas).',
+      'La detección de la radiación cósmica de fondo de microondas (CMB): radiación térmica a unos 2,7 K que llena uniformemente el universo, predicha por el Big Bang como "eco" del universo caliente primitivo. No hay predicción equivalente en el estado estacionario.',
+      'La observación sistemática de la Luna llena con telescopios más potentes.',
+      'La invención del láser y la óptica cuántica moderna.'
+    ],
+    correcta: 1,
+    explicacion: 'Penzias y Wilson detectaron accidentalmente en 1965 un ruido uniforme de microondas proveniente de todas las direcciones del cielo. George Gamow había predicho en los años 40 que, si el universo comenzó muy caliente y denso, debería existir hoy una radiación térmica residual a unos pocos kelvin —exactamente lo observado. El modelo del estado estacionario no predice nada semejante. Este hallazgo, sumado a la expansión del universo (Hubble) y a la proporción observada de hidrógeno y helio primordiales, estableció firmemente el Big Bang como el modelo cosmológico estándar.'
+  }
+
+];
+
+/* ------------------------------------------------------------
+   2. RENDERIZADO DE LAS DOS POSTURAS
+   ------------------------------------------------------------ */
+
+function renderTeorias(teorias) {
+  const a = teorias.a;
+  const b = teorias.b;
+  return `
+    <div class="teoria a">
+      <span class="teoria-etq">Postura A${a.nombre ? ' · <span class="teoria-nombre">' + a.nombre + '</span>' : ''}</span>
+      ${a.texto}
+    </div>
+    <div class="teoria b">
+      <span class="teoria-etq">Postura B${b.nombre ? ' · <span class="teoria-nombre">' + b.nombre + '</span>' : ''}</span>
+      ${b.texto}
+    </div>
+  `;
+}
+
+/* ------------------------------------------------------------
+   3. ESTADO Y LÓGICA
+   ------------------------------------------------------------ */
+
+const CATEGORIAS = {
+  biologia: 'Biología',
+  quimica:  'Química',
+  fisica:   'Física',
+  tierra:   'Ciencias de la Tierra'
+};
+
+let estado = {
+  preguntasSesion: [],
+  idx: 0,
+  correctas: 0,
+  respuestas: [],
+  tiempoInicio: 0,
+  tiempoFinal: 0,
+  timerId: null,
+  modo: 'balanceado',
+  categoriaEnfocada: null,
+  numeroPreguntas: 10
+};
+
+/* ---- Toggle panel de enfoque ---- */
+document.getElementById('toggle-enfoque').addEventListener('click', abrirPanelEnfoque);
+document.getElementById('volver-balanceado').addEventListener('click', volverABalanceado);
+
+function abrirPanelEnfoque() {
+  document.getElementById('panel-enfoque').classList.remove('oculto');
+  document.querySelector('.enfoque-toggle').style.display = 'none';
+}
+
+function volverABalanceado() {
+  document.getElementById('panel-enfoque').classList.add('oculto');
+  document.querySelector('.enfoque-toggle').style.display = '';
+  document.querySelectorAll('.cat-chip').forEach(c => {
+    c.classList.remove('activa');
+    c.setAttribute('aria-checked', 'false');
+  });
+  estado.modo = 'balanceado';
+  estado.categoriaEnfocada = null;
+  actualizarInfoSesion();
+}
+
+/* ---- Selección single-select de categoría ---- */
+document.querySelectorAll('.cat-chip').forEach(chip => {
+  chip.addEventListener('click', () => seleccionarCategoriaEnfoque(chip));
+  chip.addEventListener('keydown', e => {
+    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); seleccionarCategoriaEnfoque(chip); }
+  });
+});
+
+function seleccionarCategoriaEnfoque(chip) {
+  document.querySelectorAll('.cat-chip').forEach(c => {
+    c.classList.remove('activa');
+    c.setAttribute('aria-checked', 'false');
+  });
+  chip.classList.add('activa');
+  chip.setAttribute('aria-checked', 'true');
+  estado.modo = 'enfocado';
+  estado.categoriaEnfocada = chip.dataset.cat;
+  actualizarInfoSesion();
+}
+
+/* ---- Selección de número de preguntas ---- */
+document.querySelectorAll('.num-chip').forEach(chip => {
+  chip.addEventListener('click', () => seleccionarNumero(chip));
+  chip.addEventListener('keydown', e => {
+    if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); seleccionarNumero(chip); }
+  });
+});
+
+function seleccionarNumero(chip) {
+  document.querySelectorAll('.num-chip').forEach(c => {
+    c.classList.remove('activa');
+    c.setAttribute('aria-checked', 'false');
+  });
+  chip.classList.add('activa');
+  chip.setAttribute('aria-checked', 'true');
+  estado.numeroPreguntas = parseInt(chip.dataset.n, 10);
+  actualizarInfoSesion();
+}
+
+function actualizarInfoSesion() {
+  const info = document.getElementById('info-sesion');
+  if (estado.modo === 'balanceado') {
+    info.innerHTML = '<strong>Modo balanceado:</strong> recibirás pares de teorías mezclados de las 4 áreas de Ciencias (biología, química, física y ciencias de la tierra) en proporciones parejas.';
+  } else {
+    const nombreCat = CATEGORIAS[estado.categoriaEnfocada];
+    const disponibles = PREGUNTAS.filter(p => p.categoria === estado.categoriaEnfocada).length;
+    const n = Math.min(estado.numeroPreguntas, disponibles);
+    const aviso = estado.numeroPreguntas > disponibles
+      ? ` · solo hay ${disponibles} pares en esta área, tu sesión tendrá ${n}.`
+      : '.';
+    info.innerHTML = `<strong>Práctica dirigida en ${nombreCat}</strong>${aviso}`;
+  }
+}
+
+/* ---- Iniciar sesión ---- */
+document.getElementById('btn-iniciar').addEventListener('click', iniciarSesion);
+
+function iniciarSesion() {
+  let preguntasSesion;
+  if (estado.modo === 'balanceado') {
+    preguntasSesion = armarSesionBalanceada(estado.numeroPreguntas);
+  } else {
+    if (!estado.categoriaEnfocada) {
+      alert('Selecciona una categoría o vuelve al modo balanceado.');
+      return;
+    }
+    preguntasSesion = armarSesionEnfocada(estado.categoriaEnfocada, estado.numeroPreguntas);
+  }
+
+  if (preguntasSesion.length === 0) {
+    alert('No hay preguntas disponibles para esta configuración.');
+    return;
+  }
+
+  estado.preguntasSesion = preguntasSesion;
+  estado.idx = 0;
+  estado.correctas = 0;
+  estado.respuestas = [];
+  estado.tiempoInicio = Date.now();
+
+  document.getElementById('num-total').textContent = preguntasSesion.length;
+
+  cambiarPantalla('pantalla-quiz');
+  iniciarCronometro();
+  mostrarPregunta();
+}
+
+function armarSesionBalanceada(n) {
+  const cats = Object.keys(CATEGORIAS);
+  const porCat = {};
+  cats.forEach(c => {
+    porCat[c] = PREGUNTAS.filter(p => p.categoria === c);
+  });
+
+  const base = Math.floor(n / cats.length);
+  const resto = n % cats.length;
+  const cuantas = {};
+  cats.forEach(c => { cuantas[c] = base; });
+  fisherYates(cats).slice(0, resto).forEach(c => { cuantas[c]++; });
+
+  const seleccionadas = [];
+  cats.forEach(c => {
+    const k = Math.min(cuantas[c], porCat[c].length);
+    if (k > 0) {
+      seleccionadas.push(...fisherYates(porCat[c]).slice(0, k));
+    }
+  });
+
+  return fisherYates(seleccionadas);
+}
+
+function armarSesionEnfocada(cat, n) {
+  const disponibles = PREGUNTAS.filter(p => p.categoria === cat);
+  const mezclado = fisherYates(disponibles);
+  return mezclado.slice(0, Math.min(n, mezclado.length));
+}
+
+/* ---- Fisher-Yates: baraja uniforme sin modificar el array original ---- */
+function fisherYates(arr) {
+  const copia = arr.slice();
+  for (let i = copia.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [copia[i], copia[j]] = [copia[j], copia[i]];
+  }
+  return copia;
+}
+
+function cambiarPantalla(idDestino) {
+  document.querySelectorAll('.pantalla').forEach(p => p.classList.add('oculta'));
+  document.getElementById(idDestino).classList.remove('oculta');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ---- Mostrar pregunta ---- */
+function mostrarPregunta() {
+  const p = estado.preguntasSesion[estado.idx];
+
+  // Barajar opciones con Fisher-Yates
+  const indicesBarajados = fisherYates([0, 1, 2, 3]);
+  p._opcionesBarajadas = indicesBarajados.map(i => p.opciones[i]);
+  p._correctaBarajada = indicesBarajados.indexOf(p.correcta);
+
+  document.getElementById('num-actual').textContent = estado.idx + 1;
+  const pct = (estado.idx / estado.preguntasSesion.length) * 100;
+  document.getElementById('barra-progreso-fill').style.width = pct + '%';
+
+  const badge = document.getElementById('badge-cat');
+  badge.textContent = CATEGORIAS[p.categoria];
+  badge.className = 'badge-categoria ' + p.categoria;
+
+  document.getElementById('contexto-tema').textContent = 'Tema: ' + p.tema;
+  document.getElementById('teorias-grid').innerHTML = renderTeorias(p.teorias);
+  document.getElementById('pregunta-texto').textContent = p.pregunta;
+
+  const cont = document.getElementById('opciones');
+  cont.innerHTML = '';
+  const letras = ['A', 'B', 'C', 'D'];
+  p._opcionesBarajadas.forEach((opt, i) => {
+    const div = document.createElement('div');
+    div.className = 'opcion';
+    div.setAttribute('role', 'button');
+    div.setAttribute('tabindex', '0');
+    div.setAttribute('aria-label', `Opción ${letras[i]}: ${opt}`);
+    div.innerHTML = `<span class="letra">${letras[i]}</span>${opt}`;
+    div.addEventListener('click', () => responder(i));
+    div.addEventListener('keydown', e => {
+      if (e.key === ' ' || e.key === 'Enter') { e.preventDefault(); responder(i); }
+    });
+    cont.appendChild(div);
+  });
+
+  document.getElementById('feedback').classList.add('oculto');
+  document.getElementById('btn-siguiente').classList.add('oculto');
+}
+
+/* ---- Responder ---- */
+function responder(seleccionada) {
+  const p = estado.preguntasSesion[estado.idx];
+  const opciones = document.querySelectorAll('#opciones .opcion');
+  const correctaBarajada = p._correctaBarajada;
+  const esCorrecta = seleccionada === correctaBarajada;
+
+  opciones.forEach((op, i) => {
+    op.classList.add('deshabilitada');
+    op.style.pointerEvents = 'none';
+    op.setAttribute('tabindex', '-1');
+    if (i === correctaBarajada) op.classList.add('correcta');
+    if (i === seleccionada && !esCorrecta) op.classList.add('incorrecta');
+  });
+
+  const fb = document.getElementById('feedback');
+  fb.classList.remove('oculto');
+  fb.className = 'feedback ' + (esCorrecta ? 'correcto' : 'incorrecto');
+  fb.innerHTML = `
+    <span class="titulo-fb">${esCorrecta ? '✓ Correcto' : '✗ Incorrecto'}</span>
+    ${p.explicacion}
+  `;
+
+  const letras = ['A', 'B', 'C', 'D'];
+  estado.respuestas.push({
+    preguntaId: p.id,
+    textoSeleccionada: p._opcionesBarajadas[seleccionada],
+    textoCorrecta: p._opcionesBarajadas[correctaBarajada],
+    letraSeleccionada: letras[seleccionada],
+    letraCorrecta: letras[correctaBarajada],
+    esCorrecta,
+    categoria: p.categoria
+  });
+  if (esCorrecta) estado.correctas++;
+
+  const btn = document.getElementById('btn-siguiente');
+  btn.classList.remove('oculto');
+  btn.textContent = (estado.idx === estado.preguntasSesion.length - 1)
+    ? 'Ver resultados →'
+    : 'Siguiente →';
+  btn.focus();
+}
+
+document.getElementById('btn-siguiente').addEventListener('click', () => {
+  estado.idx++;
+  if (estado.idx >= estado.preguntasSesion.length) {
+    finalizarSesion();
+  } else {
+    mostrarPregunta();
+  }
+});
+
+/* ---- Cronómetro ---- */
+function iniciarCronometro() {
+  detenerCronometro();
+  const elem = document.getElementById('cronometro');
+  function actualizar() {
+    const ms = Date.now() - estado.tiempoInicio;
+    elem.textContent = formatearTiempo(ms);
+  }
+  actualizar();
+  estado.timerId = setInterval(actualizar, 1000);
+}
+
+function detenerCronometro() {
+  if (estado.timerId) {
+    clearInterval(estado.timerId);
+    estado.timerId = null;
+  }
+}
+
+function formatearTiempo(ms) {
+  const totalSeg = Math.floor(ms / 1000);
+  const min = Math.floor(totalSeg / 60);
+  const seg = totalSeg % 60;
+  return `${String(min).padStart(2, '0')}:${String(seg).padStart(2, '0')}`;
+}
+
+/* ---- Finalizar ---- */
+function finalizarSesion() {
+  detenerCronometro();
+  estado.tiempoFinal = Date.now() - estado.tiempoInicio;
+  mostrarResultados();
+  cambiarPantalla('pantalla-resultados');
+}
+
+function mostrarResultados() {
+  const total = estado.preguntasSesion.length;
+  document.getElementById('puntaje').textContent = `${estado.correctas} / ${total}`;
+  document.getElementById('tiempo-total').textContent = formatearTiempo(estado.tiempoFinal);
+
+  const desglose = {};
+  estado.respuestas.forEach(r => {
+    if (!desglose[r.categoria]) desglose[r.categoria] = { correctas: 0, total: 0 };
+    desglose[r.categoria].total++;
+    if (r.esCorrecta) desglose[r.categoria].correctas++;
+  });
+
+  const contCats = document.getElementById('desglose-cats');
+  contCats.innerHTML = '';
+  Object.keys(CATEGORIAS).forEach(cat => {
+    if (!desglose[cat]) return;
+    const d = desglose[cat];
+    const pct = Math.round((d.correctas / d.total) * 100);
+    const row = document.createElement('div');
+    row.className = 'cat-row';
+    row.innerHTML = `
+      <div class="cat-label">${CATEGORIAS[cat]}</div>
+      <div class="cat-track"><div class="cat-fill ${cat}" style="width:${pct}%"></div></div>
+      <div class="cat-pct">${d.correctas}/${d.total} · ${pct}%</div>
+    `;
+    contCats.appendChild(row);
+  });
+
+  const falladas = estado.respuestas.filter(r => !r.esCorrecta);
+  const listaRev = document.getElementById('lista-revisar');
+  listaRev.innerHTML = '';
+
+  if (falladas.length === 0) {
+    listaRev.innerHTML = '<div class="sin-errores">🎉 ¡Perfecto! No fallaste ninguna pregunta.</div>';
+  } else {
+    falladas.forEach(r => {
+      const p = PREGUNTAS.find(q => q.id === r.preguntaId);
+      const item = document.createElement('div');
+      item.className = 'item-revisar';
+      item.innerHTML = `
+        <div class="esc-resumen">Tema: <strong>${p.tema}</strong> · ${p.teorias.a.nombre || 'Postura A'} vs. ${p.teorias.b.nombre || 'Postura B'}</div>
+        <div class="preg">${p.pregunta}</div>
+        <div class="resp">Tu respuesta: <strong>${r.letraSeleccionada}.</strong> ${r.textoSeleccionada}</div>
+        <div class="resp">Correcta: <strong>${r.letraCorrecta}.</strong> ${r.textoCorrecta}</div>
+        <div class="expl">${p.explicacion}</div>
+      `;
+      listaRev.appendChild(item);
+    });
+  }
+}
+
+/* ---- Botones finales ---- */
+document.getElementById('btn-reintentar').addEventListener('click', () => iniciarSesion());
+document.getElementById('btn-menu').addEventListener('click', () => cambiarPantalla('pantalla-inicio'));
+
+/* ---- Inicialización ---- */
+actualizarInfoSesion();
+</script>
+
+</body>
+</html>
