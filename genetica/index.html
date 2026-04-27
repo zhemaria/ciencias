@@ -1,1 +1,1634 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Genética y herencia | Ciencias de la vida | GEDparaHispanos</title>
+<style>
+/* ============================================================
+   Sub-página: Genética y herencia
+   Sección: Ciencias > Ciencias de la vida > Genética y herencia
+   Estilo DUA · self-contained
+   Patrón estándar establecido en celula.html
+   ============================================================ */
 
+:root {
+  --c-bg:       #fafafa;
+  --c-surface:  #ffffff;
+  --c-ink:      #1a1a1a;
+  --c-ink-soft: #4a4a4a;
+  --c-ink-mute: #6a6a6a;
+  --c-line:     #e0e0e0;
+  --c-line-str: #b0b0b0;
+
+  --c-ciencias: #0f7a5c;
+  --c-ciencias-bg: #e8f5ee;
+  --c-ciencias-dk: #073d2d;
+
+  --c-accent:   #1e5aa6;
+  --c-accent-bg: #eaf2fb;
+
+  --c-good:     #0f7a5c;
+  --c-good-bg:  #e8f5ee;
+  --c-bad:      #a63d1e;
+  --c-bad-bg:   #fbe9e7;
+  --c-warn:     #8a5a00;
+  --c-warn-bg:  #fdf6e3;
+
+  --c-dom:      #5a2a8a;
+  --c-dom-bg:   #f0e8f7;
+  --c-rec:      #8a5a00;
+  --c-rec-bg:   #fdf6e3;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--c-ink);
+  background: var(--c-bg);
+  margin: 0;
+  padding: 0;
+}
+
+.contenedor {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 28px 24px 80px;
+}
+
+/* ---------- Breadcrumb ---------- */
+.breadcrumb {
+  font-size: 13px;
+  color: var(--c-ink-mute);
+  margin-bottom: 20px;
+}
+.breadcrumb a { color: var(--c-ciencias); text-decoration: none; }
+.breadcrumb a:hover { text-decoration: underline; }
+.breadcrumb .sep { margin: 0 8px; color: var(--c-line-str); }
+
+/* ---------- Cabecera ---------- */
+header.principal {
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-top: 6px solid var(--c-ciencias);
+  border-radius: 6px;
+  padding: 28px 28px 24px;
+  margin-bottom: 24px;
+}
+.eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--c-ciencias);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+header.principal h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+  color: var(--c-ink);
+  letter-spacing: -0.01em;
+}
+header.principal .subtitulo {
+  font-size: 17px;
+  color: var(--c-ink-soft);
+  margin: 0 0 16px 0;
+}
+header.principal .meta {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-size: 14px;
+  color: var(--c-ink-mute);
+  padding-top: 14px;
+  border-top: 1px solid var(--c-line);
+}
+
+/* ---------- Tabla de contenido ---------- */
+.toc {
+  background: var(--c-ciencias-bg);
+  border: 1px solid var(--c-ciencias);
+  border-radius: 6px;
+  padding: 18px 22px;
+  margin-bottom: 18px;
+}
+.toc h3 {
+  margin: 0 0 10px 0;
+  color: var(--c-ciencias-dk);
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.toc ol {
+  margin: 0;
+  padding-left: 22px;
+  columns: 2;
+  column-gap: 24px;
+  font-size: 14px;
+}
+.toc ol li {
+  margin-bottom: 4px;
+  break-inside: avoid;
+}
+.toc ol li a {
+  color: var(--c-ciencias-dk);
+  text-decoration: none;
+}
+.toc ol li a:hover { text-decoration: underline; }
+@media (max-width: 600px) { .toc ol { columns: 1; } }
+
+/* ---------- Botones de vista ---------- */
+.acciones-vista {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.btn-vista {
+  background: var(--c-surface);
+  color: var(--c-ciencias);
+  border: 2px solid var(--c-ciencias);
+  padding: 8px 18px;
+  border-radius: 5px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  transition: background 0.12s, color 0.12s;
+}
+.btn-vista:hover {
+  background: var(--c-ciencias);
+  color: var(--c-surface);
+}
+
+/* ---------- Secciones grandes (details/summary) ---------- */
+details.seccion-grande {
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: 6px;
+  margin-bottom: 14px;
+  scroll-margin-top: 16px;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+details.seccion-grande[open] { border-color: var(--c-ciencias); }
+details.seccion-grande > summary {
+  padding: 18px 26px;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--c-ink);
+  background: var(--c-surface);
+  user-select: none;
+  border-left: 5px solid var(--c-ciencias);
+}
+details.seccion-grande > summary::-webkit-details-marker { display: none; }
+details.seccion-grande > summary::after {
+  content: "▼";
+  color: var(--c-ciencias);
+  font-size: 14px;
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+details.seccion-grande[open] > summary::after { transform: rotate(180deg); }
+details.seccion-grande[open] > summary {
+  background: var(--c-ciencias-bg);
+  border-bottom: 1px solid var(--c-ciencias);
+}
+details.seccion-grande > summary:hover { background: var(--c-ciencias-bg); }
+details.seccion-grande .num-seccion {
+  display: inline-block;
+  background: var(--c-ciencias);
+  color: var(--c-surface);
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 700;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+details.seccion-grande .titulo-seccion { flex: 1; }
+details.seccion-grande > .seccion-contenido { padding: 22px 30px 26px 30px; }
+details.seccion-grande h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 22px 0 10px 0;
+  color: var(--c-ink);
+}
+details.seccion-grande > .seccion-contenido > h3:first-child { margin-top: 0; }
+details.seccion-grande h4 {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 16px 0 6px 0;
+  color: var(--c-ink-soft);
+  letter-spacing: 0.02em;
+}
+details.seccion-grande p {
+  margin: 0 0 14px 0;
+  color: var(--c-ink-soft);
+}
+details.seccion-grande p strong { color: var(--c-ink); }
+details.seccion-grande ul, details.seccion-grande ol {
+  margin: 0 0 14px 0;
+  padding-left: 22px;
+  color: var(--c-ink-soft);
+}
+details.seccion-grande ul li, details.seccion-grande ol li { margin-bottom: 6px; }
+
+/* ---------- Tooltip ---------- */
+.tip {
+  position: relative;
+  border-bottom: 2px dotted var(--c-ciencias);
+  cursor: help;
+  color: var(--c-ciencias-dk);
+  font-weight: 600;
+}
+.tip::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: 130%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--c-ink);
+  color: var(--c-surface);
+  padding: 8px 12px;
+  border-radius: 5px;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.45;
+  white-space: normal;
+  width: max-content;
+  max-width: 280px;
+  text-align: left;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.tip:hover::after, .tip:focus::after { opacity: 1; }
+
+/* ---------- Cajas ---------- */
+.caja {
+  background: var(--c-bg);
+  border: 1px solid var(--c-line);
+  border-left: 5px solid var(--c-ciencias);
+  border-radius: 5px;
+  padding: 16px 20px;
+  margin: 18px 0;
+}
+.caja.dato { border-left-color: var(--c-accent); background: var(--c-accent-bg); }
+.caja.atencion { border-left-color: var(--c-warn); background: var(--c-warn-bg); }
+.caja.idea { border-left-color: var(--c-ciencias); background: var(--c-ciencias-bg); }
+.caja h4 {
+  margin: 0 0 8px 0;
+  color: var(--c-ink);
+  font-size: 14px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.caja p:last-child { margin-bottom: 0; }
+
+/* ---------- Tablas ---------- */
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  margin: 16px 0;
+  background: var(--c-surface);
+}
+.tabla th, .tabla td {
+  padding: 10px 14px;
+  border: 1px solid var(--c-line-str);
+  text-align: left;
+  vertical-align: top;
+}
+.tabla th {
+  background: var(--c-bg);
+  color: var(--c-ink);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+}
+.tabla td { color: var(--c-ink-soft); }
+.tabla.compara th:first-child { background: var(--c-ink); color: var(--c-surface); }
+.tabla .si { color: var(--c-good); font-weight: 700; text-align: center; }
+.tabla .no { color: var(--c-bad); font-weight: 700; text-align: center; }
+
+/* ---------- Diagrama SVG ---------- */
+.diagrama {
+  background: var(--c-bg);
+  border: 1px solid var(--c-line);
+  border-radius: 6px;
+  padding: 20px;
+  margin: 18px 0;
+  text-align: center;
+  overflow-x: auto;
+}
+.diagrama .leyenda {
+  font-size: 13px;
+  color: var(--c-ink-mute);
+  margin-top: 10px;
+  font-style: italic;
+}
+
+/* ---------- Acordeón nativo ---------- */
+details.acordeon {
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: 5px;
+  margin: 10px 0;
+  overflow: hidden;
+}
+details.acordeon[open] { border-color: var(--c-ciencias); }
+details.acordeon summary {
+  padding: 14px 18px;
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--c-ink);
+  background: var(--c-bg);
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 15px;
+  user-select: none;
+}
+details.acordeon summary::-webkit-details-marker { display: none; }
+details.acordeon summary::after {
+  content: "+";
+  color: var(--c-ciencias);
+  font-size: 22px;
+  font-weight: 700;
+}
+details.acordeon[open] summary::after { content: "−"; }
+details.acordeon[open] summary {
+  background: var(--c-ciencias-bg);
+  color: var(--c-ciencias-dk);
+}
+details.acordeon .contenido-acord {
+  padding: 16px 22px 18px 22px;
+  font-size: 14.5px;
+  color: var(--c-ink-soft);
+  line-height: 1.65;
+}
+details.acordeon .contenido-acord p { margin: 0 0 10px 0; }
+details.acordeon .contenido-acord p:last-child { margin-bottom: 0; }
+
+/* ---------- Quiz integrado ---------- */
+.quiz-bloque {
+  background: var(--c-surface);
+  border: 2px solid var(--c-ciencias);
+  border-radius: 6px;
+  padding: 26px 30px;
+  margin-bottom: 22px;
+}
+.quiz-bloque h2 {
+  border-bottom: none;
+  padding-bottom: 0;
+  color: var(--c-ciencias-dk);
+  margin-top: 0;
+}
+.quiz-pregunta {
+  background: var(--c-bg);
+  border: 1px solid var(--c-line);
+  border-radius: 5px;
+  padding: 16px 20px;
+  margin-bottom: 14px;
+}
+.quiz-pregunta .num {
+  display: inline-block;
+  background: var(--c-ciencias);
+  color: var(--c-surface);
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+.quiz-pregunta .texto {
+  font-weight: 600;
+  color: var(--c-ink);
+  margin-bottom: 12px;
+}
+.quiz-opciones {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.quiz-op {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 2px solid var(--c-line-str);
+  border-radius: 5px;
+  background: var(--c-surface);
+  font-size: 14.5px;
+  color: var(--c-ink);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  line-height: 1.5;
+  transition: border-color 0.12s, background 0.12s;
+}
+.quiz-op:hover:not(:disabled) { border-color: var(--c-ciencias); }
+.quiz-op:disabled { cursor: default; }
+.quiz-op .letra {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--c-bg);
+  border: 2px solid var(--c-line-str);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--c-ink-soft);
+}
+.quiz-op.correcta { border-color: var(--c-good); background: var(--c-good-bg); }
+.quiz-op.correcta .letra { background: var(--c-good); border-color: var(--c-good); color: var(--c-surface); }
+.quiz-op.incorrecta { border-color: var(--c-bad); background: var(--c-bad-bg); }
+.quiz-op.incorrecta .letra { background: var(--c-bad); border-color: var(--c-bad); color: var(--c-surface); }
+.quiz-feedback {
+  margin-top: 10px;
+  padding: 12px 16px;
+  border-radius: 5px;
+  font-size: 14px;
+  display: none;
+  line-height: 1.55;
+}
+.quiz-feedback.bien { background: var(--c-good-bg); border-left: 4px solid var(--c-good); color: var(--c-ciencias-dk); }
+.quiz-feedback.mal { background: var(--c-bad-bg); border-left: 4px solid var(--c-bad); color: #5a1d0c; }
+.quiz-feedback.activo { display: block; }
+.quiz-resumen {
+  text-align: center;
+  background: var(--c-ciencias-bg);
+  border: 2px solid var(--c-ciencias);
+  border-radius: 6px;
+  padding: 22px;
+  margin-top: 18px;
+  display: none;
+}
+.quiz-resumen.activo { display: block; }
+.quiz-resumen .puntaje {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--c-ciencias-dk);
+  margin: 8px 0;
+}
+.quiz-resumen .mensaje {
+  color: var(--c-ink-soft);
+  margin-bottom: 14px;
+}
+.btn-reintentar {
+  background: var(--c-ciencias);
+  color: var(--c-surface);
+  border: none;
+  padding: 10px 22px;
+  border-radius: 5px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+}
+.btn-reintentar:hover { background: var(--c-ciencias-dk); }
+
+/* ---------- Referencias ---------- */
+.referencias {
+  background: var(--c-warn-bg);
+  border: 1px solid var(--c-warn);
+  border-radius: 6px;
+  padding: 22px 26px;
+}
+.referencias h2 {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-top: 0;
+  color: #5a3a00;
+  font-size: 19px;
+}
+.referencias .libro {
+  font-style: italic;
+  color: var(--c-ink);
+  font-weight: 600;
+}
+.referencias .nota-paginas {
+  font-size: 13px;
+  color: var(--c-ink-mute);
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--c-warn);
+}
+.tabla-paginas { font-size: 14px; }
+.tabla-paginas th { background: var(--c-warn); color: var(--c-surface); }
+.tabla-paginas td .pag {
+  display: inline-block;
+  background: var(--c-warn);
+  color: var(--c-surface);
+  padding: 2px 10px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+
+/* ---------- Pie ---------- */
+footer.pie {
+  text-align: center;
+  margin-top: 48px;
+  padding-top: 28px;
+  border-top: 1px solid var(--c-line);
+  font-size: 13px;
+  color: var(--c-ink-mute);
+}
+footer.pie a { color: var(--c-ciencias); text-decoration: none; }
+footer.pie a:hover { text-decoration: underline; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 640px) {
+  .contenedor { padding: 20px 14px 60px; }
+  header.principal { padding: 22px 18px 18px; }
+  header.principal h1 { font-size: 26px; }
+  .quiz-bloque { padding: 20px 18px; }
+  details.seccion-grande > summary { padding: 16px 18px; font-size: 17px; }
+  details.seccion-grande > .seccion-contenido { padding: 20px 18px; }
+  details.seccion-grande .num-seccion { width: 26px; height: 26px; line-height: 26px; font-size: 12px; }
+  .tabla { font-size: 13px; }
+  .tabla th, .tabla td { padding: 8px 10px; }
+}
+</style>
+</head>
+<body>
+<div class="contenedor">
+
+<nav class="breadcrumb" aria-label="Ruta de navegación">
+  <a href="https://www.gedparahispanos.com">Inicio</a>
+  <span class="sep">›</span>
+  <a href="https://www.gedparahispanos.com/ciencias">Ciencias</a>
+  <span class="sep">›</span>
+  <a href="https://www.gedparahispanos.com/ciencias/ciencias-de-la-vida">Ciencias de la vida</a>
+  <span class="sep">›</span>
+  <span>Genética y herencia</span>
+</nav>
+
+<header class="principal">
+  <div class="eyebrow">CIENCIAS DE LA VIDA · UNIDAD 2</div>
+  <h1>Genética y herencia</h1>
+  <p class="subtitulo">ADN, cromosomas, leyes de Mendel y la transmisión de rasgos entre generaciones</p>
+  <div class="meta">
+    <span>🧬 Tema central del GED Science</span>
+    <span>⏱️ 30–40 min de estudio</span>
+    <span>📝 8 preguntas de práctica</span>
+  </div>
+</header>
+
+<div class="toc">
+  <h3>Contenido de esta lección</h3>
+  <ol>
+    <li><a href="#intro">¿Qué es la genética?</a></li>
+    <li><a href="#adn">ADN, cromosomas y genes</a></li>
+    <li><a href="#mendel">Mendel y la herencia clásica</a></li>
+    <li><a href="#punnett">Cuadros de Punnett</a></li>
+    <li><a href="#meiosis">Meiosis: la división que crea diversidad</a></li>
+    <li><a href="#humana">Herencia humana</a></li>
+    <li><a href="#mutaciones">Mutaciones</a></li>
+    <li><a href="#ingenieria">Ingeniería genética</a></li>
+    <li><a href="#vocabulario">Vocabulario clave</a></li>
+    <li><a href="#quiz">Práctica: 8 preguntas tipo GED</a></li>
+    <li><a href="#referencias">Referencias del Steck-Vaughn</a></li>
+  </ol>
+</div>
+
+<div class="acciones-vista">
+  <button class="btn-vista" onclick="toggleTodas(true)">📖 Abrir todo</button>
+  <button class="btn-vista" onclick="toggleTodas(false)">📑 Cerrar todo</button>
+</div>
+
+<!-- ============================================================
+     1. INTRODUCCIÓN
+     ============================================================ -->
+<details class="seccion-grande" open id="intro">
+  <summary><span class="num-seccion">1</span><span class="titulo-seccion">¿Qué es la genética?</span></summary>
+  <div class="seccion-contenido">
+
+    <p>
+      La <strong>genética</strong> es la rama de la biología que estudia cómo se transmiten las
+      características de los padres a los hijos. ¿Por qué heredas el color de ojos de tu madre o
+      la forma de la nariz de tu padre? La respuesta está en el <strong>ADN</strong>, la molécula que
+      contiene las instrucciones para construir y operar todo ser vivo.
+    </p>
+
+    <div class="caja idea">
+      <h4>💡 Tres conceptos centrales que verás todo el tiempo</h4>
+      <p style="margin:0;">
+        <strong>ADN:</strong> la molécula que guarda la información genética. <br>
+        <strong>Gen:</strong> un fragmento de ADN con instrucciones para una característica concreta (ej. color de ojos). <br>
+        <strong>Cromosoma:</strong> una larga cadena de ADN que contiene muchos genes.
+      </p>
+    </div>
+
+    <p>
+      Los seres humanos tenemos aproximadamente <strong>20,000 genes</strong> repartidos en
+      <strong>46 cromosomas</strong> (23 pares). En el GED, se evalúa especialmente cómo se predicen
+      los rasgos heredados usando los principios descubiertos por Gregor Mendel en el siglo XIX.
+    </p>
+  </div>
+</details>
+
+<!-- ============================================================
+     2. ADN, CROMOSOMAS Y GENES
+     ============================================================ -->
+<details class="seccion-grande" id="adn">
+  <summary><span class="num-seccion">2</span><span class="titulo-seccion">ADN, cromosomas y genes</span></summary>
+  <div class="seccion-contenido">
+
+    <h3>El ADN: una doble hélice</h3>
+    <p>
+      El <strong>ADN</strong> (ácido desoxirribonucleico) tiene forma de <strong>doble hélice</strong>, parecida a una
+      escalera de caracol. Los "peldaños" están formados por pares de cuatro bases químicas:
+    </p>
+    <ul>
+      <li><strong>A</strong> (adenina) siempre se empareja con <strong>T</strong> (timina)</li>
+      <li><strong>G</strong> (guanina) siempre se empareja con <strong>C</strong> (citosina)</li>
+    </ul>
+
+    <div class="diagrama">
+      <svg viewBox="0 0 500 220" xmlns="http://www.w3.org/2000/svg" style="max-width:500px; width:100%; height:auto;">
+        <!-- Doble hélice esquemática -->
+        <g stroke="#1e5aa6" stroke-width="3" fill="none">
+          <path d="M 50 20 Q 130 60, 50 100 Q -30 140, 50 180 L 50 200"/>
+          <path d="M 110 20 Q 30 60, 110 100 Q 190 140, 110 180 L 110 200"/>
+        </g>
+        <!-- Pares de bases (peldaños) -->
+        <g font-family="monospace" font-size="13" font-weight="700">
+          <line x1="50" y1="35" x2="110" y2="35" stroke="#a63d1e" stroke-width="2"/>
+          <text x="42" y="40" text-anchor="end" fill="#a63d1e">A</text>
+          <text x="118" y="40" text-anchor="start" fill="#0f7a5c">T</text>
+
+          <line x1="50" y1="65" x2="110" y2="65" stroke="#a63d1e" stroke-width="2"/>
+          <text x="42" y="70" text-anchor="end" fill="#0f7a5c">G</text>
+          <text x="118" y="70" text-anchor="start" fill="#a63d1e">C</text>
+
+          <line x1="50" y1="95" x2="110" y2="95" stroke="#a63d1e" stroke-width="2"/>
+          <text x="42" y="100" text-anchor="end" fill="#a63d1e">T</text>
+          <text x="118" y="100" text-anchor="start" fill="#0f7a5c">A</text>
+
+          <line x1="50" y1="125" x2="110" y2="125" stroke="#a63d1e" stroke-width="2"/>
+          <text x="42" y="130" text-anchor="end" fill="#0f7a5c">C</text>
+          <text x="118" y="130" text-anchor="start" fill="#a63d1e">G</text>
+
+          <line x1="50" y1="155" x2="110" y2="155" stroke="#a63d1e" stroke-width="2"/>
+          <text x="42" y="160" text-anchor="end" fill="#a63d1e">A</text>
+          <text x="118" y="160" text-anchor="start" fill="#0f7a5c">T</text>
+
+          <line x1="50" y1="185" x2="110" y2="185" stroke="#a63d1e" stroke-width="2"/>
+          <text x="42" y="190" text-anchor="end" fill="#0f7a5c">G</text>
+          <text x="118" y="190" text-anchor="start" fill="#a63d1e">C</text>
+        </g>
+
+        <!-- Cromosoma -->
+        <g transform="translate(250, 30)">
+          <text x="60" y="0" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">Cromosoma</text>
+          <path d="M 50 20 L 50 70 L 30 95 L 50 120 L 50 170" stroke="#5a2a8a" stroke-width="14" fill="none" stroke-linecap="round"/>
+          <path d="M 70 20 L 70 70 L 90 95 L 70 120 L 70 170" stroke="#5a2a8a" stroke-width="14" fill="none" stroke-linecap="round"/>
+          <!-- gen resaltado -->
+          <rect x="44" y="40" width="32" height="14" fill="#a63d1e" rx="3"/>
+          <text x="135" y="50" font-size="11" font-weight="700" fill="#a63d1e">← Gen</text>
+          <text x="135" y="64" font-size="10" fill="#6a6a6a">(fragmento</text>
+          <text x="135" y="76" font-size="10" fill="#6a6a6a">de ADN)</text>
+        </g>
+
+        <!-- flecha de relación -->
+        <text x="180" y="115" font-size="22" fill="#6a6a6a">→</text>
+        <text x="155" y="135" font-size="11" fill="#6a6a6a">empacado</text>
+        <text x="160" y="148" font-size="11" fill="#6a6a6a">en</text>
+
+        <!-- Etiquetas izquierda -->
+        <text x="80" y="218" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1a1a">Doble hélice de ADN</text>
+      </svg>
+      <p class="leyenda">El ADN se enrolla y empaqueta para formar los cromosomas; cada gen es un fragmento del ADN con instrucciones para una característica</p>
+    </div>
+
+    <h3>Los cromosomas humanos</h3>
+    <p>
+      En cada célula de tu cuerpo (excepto los óvulos y espermatozoides) hay <strong>46 cromosomas</strong>
+      organizados en <strong>23 pares</strong>. De cada par, uno proviene de tu madre y otro de tu padre.
+    </p>
+    <ul>
+      <li><strong>22 pares de cromosomas autosómicos:</strong> determinan la mayoría de las características.</li>
+      <li><strong>1 par de cromosomas sexuales:</strong>
+        <ul>
+          <li><strong>XX</strong> = sexo femenino</li>
+          <li><strong>XY</strong> = sexo masculino</li>
+        </ul>
+      </li>
+    </ul>
+
+    <div class="caja dato">
+      <h4>📌 Dato clave: gen vs alelo</h4>
+      <p style="margin:0;">
+        Un <strong>gen</strong> es la "instrucción" para una característica (ej. color de ojos).
+        Un <strong>alelo</strong> es una versión específica de ese gen (ej. el alelo "ojos cafés" o el alelo
+        "ojos azules"). Cada persona tiene <em>dos alelos</em> de cada gen — uno del padre y uno de la madre.
+      </p>
+    </div>
+  </div>
+</details>
+
+<!-- ============================================================
+     3. MENDEL Y LA HERENCIA CLÁSICA
+     ============================================================ -->
+<details class="seccion-grande" id="mendel">
+  <summary><span class="num-seccion">3</span><span class="titulo-seccion">Mendel y la herencia clásica</span></summary>
+  <div class="seccion-contenido">
+
+    <p>
+      <strong>Gregor Mendel</strong> fue un monje austríaco que en la década de 1860 estudió la herencia
+      cruzando plantas de chícharo (guisantes). Sus observaciones se convirtieron en las
+      <strong>tres leyes de la herencia</strong>, base de toda la genética moderna.
+    </p>
+
+    <h3>Conceptos esenciales</h3>
+
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th style="width:30%;">Término</th>
+          <th>Significado</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Alelo dominante</strong></td>
+          <td>Versión del gen que se expresa siempre que esté presente. Se escribe con
+            <em>letra mayúscula</em> (ej. <strong>B</strong>). Suele ser el rasgo más común.</td>
+        </tr>
+        <tr>
+          <td><strong>Alelo recesivo</strong></td>
+          <td>Versión que solo se expresa cuando los <em>dos</em> alelos del par son recesivos. Se escribe
+            con <em>minúscula</em> (ej. <strong>b</strong>).</td>
+        </tr>
+        <tr>
+          <td><strong>Genotipo</strong></td>
+          <td>La combinación de alelos que tiene un individuo (ej. <strong>BB</strong>, <strong>Bb</strong> o <strong>bb</strong>).</td>
+        </tr>
+        <tr>
+          <td><strong>Fenotipo</strong></td>
+          <td>La característica <em>visible</em> que resulta del genotipo (ej. semilla amarilla o verde).</td>
+        </tr>
+        <tr>
+          <td><strong>Homocigoto</strong></td>
+          <td>Cuando los dos alelos son <em>iguales</em> (BB o bb). También se llama "raza pura".</td>
+        </tr>
+        <tr>
+          <td><strong>Heterocigoto</strong></td>
+          <td>Cuando los dos alelos son <em>distintos</em> (Bb). También se llama "híbrido".</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Ejemplo: las semillas de chícharo de Mendel</h3>
+
+    <p>
+      Mendel descubrió que el alelo de <strong>semilla amarilla (B)</strong> es dominante sobre el alelo de
+      <strong>semilla verde (b)</strong>. Esto significa que cualquier planta con al menos un alelo B tendrá
+      semillas amarillas.
+    </p>
+
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th>Genotipo</th>
+          <th>Tipo</th>
+          <th>Fenotipo (color de semilla)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="text-align:center; font-family:monospace; font-weight:700;">BB</td>
+          <td>Homocigoto dominante</td>
+          <td>🟡 Amarilla</td>
+        </tr>
+        <tr>
+          <td style="text-align:center; font-family:monospace; font-weight:700;">Bb</td>
+          <td>Heterocigoto</td>
+          <td>🟡 Amarilla (B domina sobre b)</td>
+        </tr>
+        <tr>
+          <td style="text-align:center; font-family:monospace; font-weight:700;">bb</td>
+          <td>Homocigoto recesivo</td>
+          <td>🟢 Verde</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="caja idea">
+      <h4>🧠 Truco para no confundirte</h4>
+      <p style="margin:0;">
+        Para que un rasgo recesivo aparezca, <strong>ambos</strong> alelos deben ser recesivos. Una sola
+        copia del alelo dominante "tapa" al recesivo, pero no lo elimina — el alelo recesivo
+        sigue allí y puede pasar a los hijos.
+      </p>
+    </div>
+  </div>
+</details>
+
+<!-- ============================================================
+     4. CUADROS DE PUNNETT
+     ============================================================ -->
+<details class="seccion-grande" id="punnett">
+  <summary><span class="num-seccion">4</span><span class="titulo-seccion">Cuadros de Punnett</span></summary>
+  <div class="seccion-contenido">
+
+    <p>
+      El <strong>cuadro de Punnett</strong> es una herramienta visual para predecir las probabilidades de
+      los genotipos de los hijos a partir de los alelos de los padres. Es uno de los temas que el
+      GED evalúa con mayor frecuencia, así que vale la pena dominarlo.
+    </p>
+
+    <h3>Cómo construir un cuadro de Punnett</h3>
+    <ol>
+      <li>Escribe los alelos de un padre arriba (uno por columna).</li>
+      <li>Escribe los alelos del otro padre a la izquierda (uno por fila).</li>
+      <li>Combina las letras en cada celda — esos son los posibles genotipos de los hijos.</li>
+      <li>Cuenta cuántas celdas tienen cada genotipo para sacar las proporciones.</li>
+    </ol>
+
+    <h3>Ejemplo 1: Bb × Bb (dos heterocigotos)</h3>
+
+    <div class="diagrama">
+      <svg viewBox="0 0 280 270" xmlns="http://www.w3.org/2000/svg" style="max-width:280px; width:100%; height:auto;">
+        <text x="140" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">Cruce Bb × Bb</text>
+        <text x="100" y="58" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">B</text>
+        <text x="180" y="58" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">b</text>
+        <text x="40" y="115" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">B</text>
+        <text x="40" y="185" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">b</text>
+        <rect x="60" y="70" width="80" height="60" fill="#fdf6e3" stroke="#1a1a1a" stroke-width="1.5"/>
+        <text x="100" y="100" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">BB</text>
+        <text x="100" y="118" text-anchor="middle" font-size="9" fill="#6a6a6a">amarilla</text>
+        <rect x="140" y="70" width="80" height="60" fill="#fdf6e3" stroke="#1a1a1a" stroke-width="1.5"/>
+        <text x="180" y="100" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">Bb</text>
+        <text x="180" y="118" text-anchor="middle" font-size="9" fill="#6a6a6a">amarilla</text>
+        <rect x="60" y="130" width="80" height="60" fill="#fdf6e3" stroke="#1a1a1a" stroke-width="1.5"/>
+        <text x="100" y="160" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">Bb</text>
+        <text x="100" y="178" text-anchor="middle" font-size="9" fill="#6a6a6a">amarilla</text>
+        <rect x="140" y="130" width="80" height="60" fill="#0f7a5c" stroke="#1a1a1a" stroke-width="1.5"/>
+        <text x="180" y="160" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">bb</text>
+        <text x="180" y="178" text-anchor="middle" font-size="9" fill="#e8f5ee">verde</text>
+        <text x="140" y="220" text-anchor="middle" font-size="11" fill="#4a4a4a">Genotipos: 1 BB : 2 Bb : 1 bb</text>
+        <text x="140" y="240" text-anchor="middle" font-size="11" font-weight="700" fill="#1a1a1a">Fenotipos: 3 amarillas : 1 verde</text>
+        <text x="140" y="258" text-anchor="middle" font-size="10" font-style="italic" fill="#6a6a6a">(75% amarillas, 25% verdes)</text>
+      </svg>
+      <p class="leyenda">El cruce clásico de Mendel: dos heterocigotos producen una proporción fenotípica 3:1</p>
+    </div>
+
+    <h3>Ejemplo 2: BB × bb (homocigoto dominante × homocigoto recesivo)</h3>
+
+    <div class="diagrama">
+      <svg viewBox="0 0 280 270" xmlns="http://www.w3.org/2000/svg" style="max-width:280px; width:100%; height:auto;">
+        <text x="140" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">Cruce BB × bb</text>
+        <text x="100" y="58" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">B</text>
+        <text x="180" y="58" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">B</text>
+        <text x="40" y="115" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">b</text>
+        <text x="40" y="185" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">b</text>
+        <rect x="60" y="70" width="80" height="60" fill="#fdf6e3" stroke="#1a1a1a" stroke-width="1.5"/>
+        <text x="100" y="100" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">Bb</text>
+        <text x="100" y="118" text-anchor="middle" font-size="9" fill="#6a6a6a">amarilla</text>
+        <rect x="140" y="70" width="80" height="60" fill="#fdf6e3" stroke="#1a1a1a" stroke-width="1.5"/>
+        <text x="180" y="100" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">Bb</text>
+        <text x="180" y="118" text-anchor="middle" font-size="9" fill="#6a6a6a">amarilla</text>
+        <rect x="60" y="130" width="80" height="60" fill="#fdf6e3" stroke="#1a1a1a" stroke-width="1.5"/>
+        <text x="100" y="160" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">Bb</text>
+        <text x="100" y="178" text-anchor="middle" font-size="9" fill="#6a6a6a">amarilla</text>
+        <rect x="140" y="130" width="80" height="60" fill="#fdf6e3" stroke="#1a1a1a" stroke-width="1.5"/>
+        <text x="180" y="160" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">Bb</text>
+        <text x="180" y="178" text-anchor="middle" font-size="9" fill="#6a6a6a">amarilla</text>
+        <text x="140" y="220" text-anchor="middle" font-size="11" fill="#4a4a4a">Genotipos: 100% Bb</text>
+        <text x="140" y="240" text-anchor="middle" font-size="11" font-weight="700" fill="#1a1a1a">Fenotipos: 100% amarillas</text>
+        <text x="140" y="258" text-anchor="middle" font-size="10" font-style="italic" fill="#6a6a6a">(todas heterocigotas)</text>
+      </svg>
+      <p class="leyenda">Cuando los padres son homocigotos puros opuestos, todos los hijos son heterocigotos</p>
+    </div>
+
+    <div class="caja atencion">
+      <h4>⚠️ Cuidado con la interpretación de probabilidades</h4>
+      <p style="margin:0;">
+        El cuadro de Punnett indica la <strong>probabilidad</strong> de cada genotipo, no un resultado garantizado.
+        Si dos heterocigotos tienen 4 hijos, no necesariamente serán exactamente 3 amarillos y 1
+        verde — podrían ser los 4 amarillos por azar. Las proporciones se cumplen mejor con
+        muestras grandes (cientos o miles de descendientes).
+      </p>
+    </div>
+  </div>
+</details>
+
+<!-- ============================================================
+     5. MEIOSIS
+     ============================================================ -->
+<details class="seccion-grande" id="meiosis">
+  <summary><span class="num-seccion">5</span><span class="titulo-seccion">Meiosis: la división que crea diversidad</span></summary>
+  <div class="seccion-contenido">
+
+    <p>
+      En la sub-página de <a href="https://www.gedparahispanos.com/ciencias/ciencias-de-la-vida/célula" style="color:var(--c-ciencias);">la célula</a>
+      vimos la <strong>mitosis</strong>, que produce dos células hijas idénticas. Pero los óvulos y
+      espermatozoides se forman por un proceso diferente: la <strong>meiosis</strong>, que produce
+      <strong>cuatro</strong> células sexuales (gametos) con la mitad de cromosomas.
+    </p>
+
+    <h3>Mitosis vs meiosis: comparación</h3>
+
+    <table class="tabla compara">
+      <thead>
+        <tr>
+          <th>Característica</th>
+          <th style="background:#a63d1e; color:#fff;">Mitosis</th>
+          <th style="background:#0f7a5c; color:#fff;">Meiosis</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>¿Cuántas células hijas?</strong></td>
+          <td>2 células</td>
+          <td>4 células</td>
+        </tr>
+        <tr>
+          <td><strong>Número de cromosomas</strong></td>
+          <td>46 (igual que la madre)</td>
+          <td>23 (la mitad)</td>
+        </tr>
+        <tr>
+          <td><strong>¿Las hijas son idénticas?</strong></td>
+          <td class="si">Sí, son clones</td>
+          <td class="no">No, todas son distintas</td>
+        </tr>
+        <tr>
+          <td><strong>¿Para qué sirve?</strong></td>
+          <td>Crecer, reparar tejidos</td>
+          <td>Producir gametos (óvulos, espermatozoides)</td>
+        </tr>
+        <tr>
+          <td><strong>¿Hay recombinación?</strong></td>
+          <td class="no">No</td>
+          <td class="si">Sí — crea diversidad</td>
+        </tr>
+        <tr>
+          <td><strong>Número de divisiones</strong></td>
+          <td>1</td>
+          <td>2 (meiosis I y meiosis II)</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>¿Por qué la meiosis es tan importante?</h3>
+
+    <p>
+      Durante la meiosis ocurre un proceso llamado <span class="tip" data-tip="Intercambio de fragmentos de ADN entre cromosomas homólogos durante la meiosis. Genera nuevas combinaciones genéticas.">recombinación genética</span>
+      o "<strong>crossing over</strong>": los cromosomas del padre y de la madre intercambian fragmentos de ADN.
+      Esto significa que cada óvulo y cada espermatozoide es <strong>genéticamente único</strong>.
+    </p>
+
+    <p>
+      Cuando un óvulo (23 cromosomas) y un espermatozoide (23 cromosomas) se unen en la
+      <strong>fecundación</strong>, forman un <strong>cigoto</strong> con los 46 cromosomas completos. Por eso los
+      hermanos comparten genética pero no son idénticos: cada uno recibió una combinación única de
+      cromosomas paternos y maternos.
+    </p>
+
+    <div class="caja idea">
+      <h4>🧬 ¿Por qué los gemelos idénticos sí son iguales?</h4>
+      <p style="margin:0;">
+        Los <strong>gemelos idénticos</strong> (monocigóticos) provienen de un solo óvulo fecundado que se
+        divide en dos embriones. Por eso comparten 100% de su ADN. Los <strong>gemelos fraternos</strong>
+        (dicigóticos) provienen de dos óvulos distintos fecundados por dos espermatozoides
+        distintos — comparten en promedio 50% del ADN, igual que cualquier par de hermanos.
+      </p>
+    </div>
+  </div>
+</details>
+
+<!-- ============================================================
+     6. HERENCIA HUMANA
+     ============================================================ -->
+<details class="seccion-grande" id="humana">
+  <summary><span class="num-seccion">6</span><span class="titulo-seccion">Herencia humana</span></summary>
+  <div class="seccion-contenido">
+
+    <p>
+      Los principios de Mendel se aplican también a los humanos, aunque con algunas
+      complicaciones que el GED suele evaluar.
+    </p>
+
+    <h3>Grupos sanguíneos ABO: codominancia y alelos múltiples</h3>
+
+    <p>
+      El sistema de grupos sanguíneos ABO tiene <strong>tres alelos posibles</strong>: <strong>I^A</strong>, <strong>I^B</strong>, e <strong>i</strong>.
+      Los alelos A y B son <strong>codominantes</strong> entre sí (los dos se expresan a la vez), y ambos
+      son dominantes sobre el alelo i (recesivo).
+    </p>
+
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th>Grupo sanguíneo (fenotipo)</th>
+          <th>Genotipo(s) posibles</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>Tipo A</strong></td><td>I<sup>A</sup>I<sup>A</sup> o I<sup>A</sup>i</td></tr>
+        <tr><td><strong>Tipo B</strong></td><td>I<sup>B</sup>I<sup>B</sup> o I<sup>B</sup>i</td></tr>
+        <tr><td><strong>Tipo AB</strong></td><td>I<sup>A</sup>I<sup>B</sup> (codominantes)</td></tr>
+        <tr><td><strong>Tipo O</strong></td><td>ii (homocigoto recesivo)</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Herencia ligada al sexo</h3>
+
+    <p>
+      Algunos rasgos están en el cromosoma X. Como las mujeres tienen <strong>XX</strong> y los hombres
+      <strong>XY</strong>, los rasgos recesivos ligados al X aparecen <strong>mucho más frecuentemente en hombres</strong>:
+      basta con un alelo recesivo para que se exprese (no hay segundo X que lo "tape").
+    </p>
+
+    <ul>
+      <li><strong>Daltonismo</strong> (no distinguir rojo y verde): mucho más común en hombres.</li>
+      <li><strong>Hemofilia</strong> (problemas de coagulación): casi exclusiva de hombres.</li>
+      <li><strong>Distrofia muscular de Duchenne:</strong> también más frecuente en hombres.</li>
+    </ul>
+
+    <h3>Otros patrones de herencia humana</h3>
+
+    <details class="acordeon">
+      <summary>Rasgos autosómicos dominantes</summary>
+      <div class="contenido-acord">
+        <p>Una sola copia del alelo dominante produce el rasgo. Ejemplos: tener el lóbulo de la oreja
+        despegado, poder enrollar la lengua, tener cabello rizado (en algunos casos).</p>
+      </div>
+    </details>
+
+    <details class="acordeon">
+      <summary>Rasgos autosómicos recesivos</summary>
+      <div class="contenido-acord">
+        <p>Se necesitan los dos alelos recesivos. Ejemplos: ojos azules, fibrosis quística, anemia
+        falciforme. Los padres pueden ser <em>portadores</em> (heterocigotos) sin manifestar el rasgo.</p>
+      </div>
+    </details>
+
+    <details class="acordeon">
+      <summary>Herencia poligénica</summary>
+      <div class="contenido-acord">
+        <p>Muchos genes contribuyen al mismo rasgo, dando una distribución continua de fenotipos.
+        Ejemplos: estatura, color de piel, color de ojos (más allá del modelo simple azul/café).</p>
+      </div>
+    </details>
+  </div>
+</details>
+
+<!-- ============================================================
+     7. MUTACIONES
+     ============================================================ -->
+<details class="seccion-grande" id="mutaciones">
+  <summary><span class="num-seccion">7</span><span class="titulo-seccion">Mutaciones</span></summary>
+  <div class="seccion-contenido">
+
+    <p>
+      Una <strong>mutación</strong> es un <strong>cambio en la secuencia del ADN</strong>. Puede ocurrir espontáneamente
+      durante la replicación del ADN o ser causada por factores externos:
+    </p>
+
+    <ul>
+      <li><strong>Radiación</strong> (rayos UV del sol, rayos X, radiación nuclear)</li>
+      <li><strong>Sustancias químicas</strong> (humo del cigarrillo, ciertos pesticidas)</li>
+      <li><strong>Virus</strong> que insertan su ADN en nuestras células</li>
+      <li><strong>Errores aleatorios</strong> al copiarse el ADN</li>
+    </ul>
+
+    <h3>Tipos de mutaciones</h3>
+
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th>Tipo</th>
+          <th>Qué ocurre</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Sustitución (puntual)</strong></td>
+          <td>Una base se cambia por otra (ej. A → G).</td>
+        </tr>
+        <tr>
+          <td><strong>Inserción</strong></td>
+          <td>Se añade una o más bases extra a la secuencia.</td>
+        </tr>
+        <tr>
+          <td><strong>Deleción</strong></td>
+          <td>Se elimina una o más bases de la secuencia.</td>
+        </tr>
+        <tr>
+          <td><strong>Duplicación</strong></td>
+          <td>Una sección de ADN se copia y aparece dos veces.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>¿Las mutaciones son malas?</h3>
+
+    <p>
+      Depende. Hay tres efectos posibles:
+    </p>
+
+    <ul>
+      <li>
+        <strong>Perjudiciales:</strong> causan enfermedades (cáncer, anemia falciforme, fibrosis quística).
+        Las mutaciones cancerígenas hacen que las células pierdan el control de su crecimiento.
+      </li>
+      <li>
+        <strong>Neutras:</strong> no afectan al organismo. La mayoría de las mutaciones caen en esta categoría.
+      </li>
+      <li>
+        <strong>Beneficiosas:</strong> dan al organismo alguna ventaja. Ejemplos: la resistencia a antibióticos
+        en bacterias, o la capacidad de digerir lactosa en adultos humanos. Estas son la
+        materia prima de la <strong>evolución</strong>.
+      </li>
+    </ul>
+
+    <div class="caja dato">
+      <h4>📌 Conexión con evolución</h4>
+      <p style="margin:0;">
+        Sin mutaciones, no habría variación genética nueva. Sin variación, la selección natural no
+        tendría sobre qué actuar. Las mutaciones son el motor último de la evolución — un tema
+        que verás en la siguiente sub-página.
+      </p>
+    </div>
+  </div>
+</details>
+
+<!-- ============================================================
+     8. INGENIERÍA GENÉTICA
+     ============================================================ -->
+<details class="seccion-grande" id="ingenieria">
+  <summary><span class="num-seccion">8</span><span class="titulo-seccion">Ingeniería genética</span></summary>
+  <div class="seccion-contenido">
+
+    <p>
+      La <strong>ingeniería genética</strong> es la modificación deliberada del ADN de un organismo. Es uno de
+      los temas tecnológicos más importantes del siglo XXI y aparece con frecuencia en preguntas
+      del GED sobre ciencia y sociedad.
+    </p>
+
+    <h3>Aplicaciones principales</h3>
+
+    <details class="acordeon">
+      <summary>🌽 Organismos genéticamente modificados (OGM o transgénicos)</summary>
+      <div class="contenido-acord">
+        <p>Cultivos modificados para resistir plagas, sequías o producir más alimento. Ejemplos:
+        maíz Bt (resistente a insectos), arroz dorado (con vitamina A), soya tolerante a herbicidas.</p>
+        <p>Los OGM han aumentado los rendimientos agrícolas, pero generan debate sobre seguridad
+        ambiental, dependencia de empresas semilleras y efectos a largo plazo.</p>
+      </div>
+    </details>
+
+    <details class="acordeon">
+      <summary>💊 Producción de medicamentos</summary>
+      <div class="contenido-acord">
+        <p>Bacterias modificadas para producir <strong>insulina humana</strong> (tratamiento de la diabetes),
+        <strong>hormona de crecimiento</strong> y <strong>vacunas</strong>. Antes de la ingeniería genética, la insulina se
+        extraía del páncreas de cerdos y vacas, lo que era costoso y a veces causaba reacciones.</p>
+      </div>
+    </details>
+
+    <details class="acordeon">
+      <summary>🧬 Terapia génica</summary>
+      <div class="contenido-acord">
+        <p>Tratamiento de enfermedades insertando un gen sano en las células del paciente. Se ha
+        usado experimentalmente en enfermedades hereditarias raras y algunos tipos de cáncer.
+        Es una de las áreas con mayor crecimiento en medicina actual.</p>
+      </div>
+    </details>
+
+    <details class="acordeon">
+      <summary>✂️ CRISPR-Cas9</summary>
+      <div class="contenido-acord">
+        <p>Una técnica revolucionaria que actúa como "tijeras moleculares" que pueden cortar el ADN
+        en lugares específicos. Permite editar genes con una precisión nunca antes vista. Sus
+        descubridoras (Charpentier y Doudna) ganaron el Premio Nobel de Química en 2020.</p>
+        <p>CRISPR plantea cuestiones éticas profundas: ¿deberíamos editar el ADN de embriones
+        humanos? ¿Hasta dónde debería llegar la modificación genética?</p>
+      </div>
+    </details>
+
+    <details class="acordeon">
+      <summary>🐑 Clonación</summary>
+      <div class="contenido-acord">
+        <p>Producir un organismo genéticamente idéntico a otro. La oveja Dolly (1996) fue el primer
+        mamífero clonado a partir de una célula adulta. La clonación humana sigue siendo
+        ilegal en la mayoría de países por razones éticas.</p>
+      </div>
+    </details>
+
+    <div class="caja atencion">
+      <h4>⚖️ Para el GED: aspectos éticos</h4>
+      <p style="margin:0;">
+        El examen suele incluir preguntas sobre las <strong>implicaciones éticas y sociales</strong> de la
+        ingeniería genética. Lo importante es entender que existen <em>argumentos a favor</em>
+        (curar enfermedades, alimentar más gente) y <em>argumentos en contra</em> (riesgos
+        desconocidos, desigualdad de acceso, modificación de la línea germinal humana). El examen
+        no busca una respuesta "correcta" ideológica, sino que reconozcas la complejidad del debate.
+      </p>
+    </div>
+  </div>
+</details>
+
+<!-- ============================================================
+     9. VOCABULARIO CLAVE
+     ============================================================ -->
+<details class="seccion-grande" id="vocabulario">
+  <summary><span class="num-seccion">9</span><span class="titulo-seccion">Vocabulario clave de la lección</span></summary>
+  <div class="seccion-contenido">
+
+    <p>Términos que aparecen frecuentemente en preguntas del GED. Toca cada término para ver su definición.</p>
+
+    <details class="acordeon">
+      <summary>ADN</summary>
+      <div class="contenido-acord">
+        <p>Ácido desoxirribonucleico. La molécula con forma de doble hélice que contiene las instrucciones genéticas para construir y operar un organismo.</p>
+      </div>
+    </details>
+
+    <details class="acordeon">
+      <summary>Gen</summary>
+      <div class="contenido-acord">
+        <p>Fragmento de ADN que contiene las instrucciones para una característica específica. Los humanos tenemos aproximadamente 20,000 genes.</p>
+      </div>
+    </details>
+
+    <details class="acordeon">
+      <summary>Cromosoma</summary>
+      <div class="contenido-acord">
+        <p>Estructura de ADN empaquetado que contiene muchos genes. Los humanos tenemos 46 cromosomas (23 pares).</p>
+      </div>
+    </details>
+
+    <details class="acordeon">
+      <summary>Alelo</summary>
+      <div class="contenido-acord">
+        <p>Versión específica de un gen. Cada persona tiene dos alelos de cada gen — uno del padre y uno de la madre.</p>
+      </div>
+    </details>
+
+    <details class="acordeon">
+      <summary>Dominante / Recesivo</summary>
+      <div class="contenido-acord">
+        <p><strong>Dominante:</strong> alelo que se expresa con una sola copia. Se escribe con mayúscula (B).</p>
+        <p><strong>Recesivo:</strong> alelo que solo se expresa cuando ambos alelos del par son recesivos. Se escribe con minúscula (b).</p>
+      </div>
+    </details>
+
+    <details class="acordeon">
+      <summary>Genotipo / Fenotipo</summary>
+      <div class="contenido-acord">
+        <p><strong>Genotipo:</strong> los alelos que un individuo tiene (ej. BB, Bb, bb).</p>
+        <p><strong>Fenotipo:</strong> la característica visible que resulta de ese genotipo (ej. semilla amarilla).</p>
+      </div>
+    </details>
+
+    <details class="acordeon">
+      <summary>Homocigoto / Heterocigoto</summary>
+      <div class="contenido-acord">
+        <p><strong>Homocigoto:</strong> los dos alelos son iguales (BB o bb).</p>
+        <p><strong>Heterocigoto:</strong> los dos alelos son diferentes (Bb).</p>
+      </div>
+    </details>
+
+    <details class="acordeon">
+      <summary>Cuadro de Punnett</summary>
+      <div class="contenido-acord">
+        <p>Diagrama en forma de tabla que predice las probabilidades de los genotipos posibles de los hijos a partir de los alelos de los padres.</p>
+      </div>
+    </details>
+
+    <details class="acordeon">
+      <summary>Meiosis</summary>
+      <div class="contenido-acord">
+        <p>División celular que produce gametos (óvulos, espermatozoides) con la mitad de cromosomas. Crea diversidad genética por recombinación.</p>
+      </div>
+    </details>
+
+    <details class="acordeon">
+      <summary>Mutación</summary>
+      <div class="contenido-acord">
+        <p>Cambio en la secuencia del ADN. Puede ser perjudicial, neutra o beneficiosa. Es la fuente última de la variación genética sobre la que actúa la evolución.</p>
+      </div>
+    </details>
+  </div>
+</details>
+
+<!-- ============================================================
+     10. QUIZ
+     ============================================================ -->
+<div class="quiz-bloque" id="quiz">
+  <h2 style="border-bottom:none; padding-bottom:0; margin-top:0;">10. Práctica: 8 preguntas tipo GED</h2>
+  <p style="color:var(--c-ink-soft);">
+    Toca una opción para responder. Recibirás retroalimentación inmediata. Al final verás tu puntaje y podrás reintentar.
+  </p>
+
+  <div id="quiz-host"></div>
+
+  <div class="quiz-resumen" id="quiz-resumen">
+    <div style="font-size:13px; color:var(--c-ink-mute); letter-spacing:0.08em; text-transform:uppercase; font-weight:700;">Tu puntaje</div>
+    <div class="puntaje" id="quiz-puntaje">0/8</div>
+    <div class="mensaje" id="quiz-mensaje"></div>
+    <button class="btn-reintentar" onclick="reiniciarQuiz()">↻ Reintentar quiz</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     11. REFERENCIAS DEL STECK-VAUGHN
+     ============================================================ -->
+<section class="referencias" id="referencias">
+  <h2>11. Referencias del libro de texto</h2>
+  <p>
+    Para ampliar y reforzar lo aprendido en esta lección, consulta el libro:
+  </p>
+  <p class="libro">
+    Steck-Vaughn Ciencias: Preparación para la prueba de GED 2014 (Libro del estudiante) <br>
+    <span style="font-style:normal; font-weight:400; color:var(--c-ink-soft); font-size:13px;">Houghton Mifflin Harcourt / Paxen — ISBN: 978-0544301290 — 135 páginas</span>
+  </p>
+
+  <table class="tabla tabla-paginas" style="margin-top:14px;">
+    <thead>
+      <tr>
+        <th>Tema</th>
+        <th>Páginas (estimadas)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>ADN, cromosomas y genes</td>
+        <td><span class="pag">pp. ~24–33</span></td>
+      </tr>
+      <tr>
+        <td>Herencia mendeliana y cuadros de Punnett</td>
+        <td><span class="pag">pp. ~34–43</span></td>
+      </tr>
+      <tr>
+        <td>Mutaciones e ingeniería genética</td>
+        <td><span class="pag">pp. ~44–53</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p class="nota-paginas">
+    ⚠️ <strong>Verifica las páginas con tu edición.</strong> Las referencias son estimadas. Cuando confirmes
+    las páginas exactas en tu ejemplar, ajústalas — el patrón se replica en las siguientes
+    sub-páginas (Evolución, Ecosistemas, Cuerpo humano).
+  </p>
+</section>
+
+<footer class="pie">
+  <p>
+    <a href="https://www.gedparahispanos.com/ciencias/ciencias-de-la-vida/célula">← Sub-lección anterior: La célula</a> ·
+    <a href="https://www.gedparahispanos.com/ciencias/ciencias-de-la-vida">Ciencias de la vida</a> ·
+    <a href="https://www.gedparahispanos.com/ciencias">Ciencias</a>
+  </p>
+  <p style="margin-top:10px;">
+    📚 Sub-lección 2 de 5 de Ciencias de la vida · Próxima: <em>Evolución</em>
+  </p>
+</footer>
+
+</div>
+
+<script>
+/* ============================================================
+   QUIZ — 8 preguntas tipo GED sobre genética y herencia
+   ============================================================ */
+
+const PREGUNTAS_QUIZ = [
+  {
+    pregunta: 'En los chícharos de Mendel, el alelo de semilla amarilla (B) es dominante sobre el de semilla verde (b). Si una planta tiene genotipo Bb, ¿qué color de semillas tendrá?',
+    opciones: [
+      'Verde, porque tiene un alelo recesivo.',
+      'Amarilla, porque el alelo dominante B se expresa.',
+      'Mitad amarilla, mitad verde.',
+      'No se puede saber sin más información.'
+    ],
+    correcta: 1,
+    explicacion: 'En genotipos heterocigotos como Bb, el alelo dominante (B) "tapa" al recesivo (b), y el fenotipo es amarillo. La planta produce semillas amarillas, aunque sigue portando el alelo recesivo y puede transmitirlo a sus hijos.'
+  },
+  {
+    pregunta: '¿Cuál es la proporción fenotípica esperada en un cruce Bb × Bb?',
+    opciones: [
+      '1 amarilla : 1 verde',
+      '3 amarillas : 1 verde',
+      '1 amarilla : 3 verdes',
+      'Todas amarillas'
+    ],
+    correcta: 1,
+    explicacion: 'En un cruce de dos heterocigotos Bb × Bb, el cuadro de Punnett produce 1 BB : 2 Bb : 1 bb. Como BB y Bb tienen fenotipo amarillo, la proporción fenotípica es 3 amarillas : 1 verde — el clásico resultado mendeliano 3:1.'
+  },
+  {
+    pregunta: '¿Cuántos cromosomas tiene una célula humana NO sexual (somática)?',
+    opciones: [
+      '23',
+      '46',
+      '92',
+      'Depende del sexo de la persona'
+    ],
+    correcta: 1,
+    explicacion: 'Las células humanas somáticas (no sexuales) tienen 46 cromosomas organizados en 23 pares. Las células sexuales (óvulos y espermatozoides), formadas por meiosis, tienen 23 cromosomas — la mitad.'
+  },
+  {
+    pregunta: 'Una pareja tiene 3 hijos. ¿Por qué los tres hijos pueden parecerse mucho pero no ser idénticos?',
+    opciones: [
+      'Porque el ADN cambia con la edad.',
+      'Porque cada gameto producido por meiosis tiene una combinación única de cromosomas y recombinación.',
+      'Porque las mutaciones son muy frecuentes.',
+      'Porque los padres tienen ADN distinto cada año.'
+    ],
+    correcta: 1,
+    explicacion: 'La meiosis produce gametos genéticamente únicos por dos mecanismos: (1) cada óvulo o espermatozoide recibe una mezcla aleatoria de cromosomas paternos y maternos, y (2) hay recombinación o "crossing over" que intercambia fragmentos. Por eso los hermanos comparten genes pero no son idénticos — excepto los gemelos monocigóticos.'
+  },
+  {
+    pregunta: '¿Qué genotipo corresponde a una persona con tipo de sangre O?',
+    opciones: [
+      'I^A I^B',
+      'I^A i',
+      'I^B i',
+      'i i'
+    ],
+    correcta: 3,
+    explicacion: 'El tipo O requiere genotipo homocigoto recesivo "ii". Los alelos I^A e I^B son codominantes entre sí y dominantes sobre i. Una persona con I^A i sería tipo A; con I^B i, tipo B; con I^A I^B, tipo AB.'
+  },
+  {
+    pregunta: '¿Por qué el daltonismo es mucho más frecuente en hombres que en mujeres?',
+    opciones: [
+      'Porque los hombres tienen ojos más sensibles.',
+      'Porque el gen está en el cromosoma X y los hombres solo tienen uno (XY), así que un solo alelo recesivo basta para expresarlo.',
+      'Porque las mujeres no producen el gen.',
+      'Porque el daltonismo es dominante en hombres y recesivo en mujeres.'
+    ],
+    correcta: 1,
+    explicacion: 'El daltonismo es un rasgo recesivo ligado al cromosoma X. Las mujeres (XX) necesitarían dos copias del alelo recesivo para ser daltónicas — el otro X las "protege". Los hombres (XY) no tienen esa segunda X, así que un solo alelo recesivo en su único X causa el daltonismo.'
+  },
+  {
+    pregunta: '¿Cuál de las siguientes NO es una posible consecuencia de una mutación?',
+    opciones: [
+      'Causar una enfermedad genética.',
+      'Dar al organismo una ventaja evolutiva.',
+      'No tener ningún efecto observable.',
+      'Hacer que el organismo cambie de especie inmediatamente.'
+    ],
+    correcta: 3,
+    explicacion: 'Una mutación individual nunca causa un cambio inmediato de especie. La especiación es un proceso gradual que ocurre durante muchas generaciones por la acumulación de cambios. Las otras tres opciones son efectos posibles: perjudicial, beneficioso o neutro.'
+  },
+  {
+    pregunta: 'Una mujer portadora de hemofilia (X^h X^H) tiene hijos con un hombre sano (X^H Y). ¿Qué probabilidad tienen sus hijos VARONES de ser hemofílicos?',
+    opciones: [
+      '0% (ninguno)',
+      '25%',
+      '50%',
+      '100% (todos)'
+    ],
+    correcta: 2,
+    explicacion: 'La madre puede pasar X^h o X^H con igual probabilidad. El padre siempre pasa Y a los varones. Entonces los hijos varones serán X^h Y (hemofílicos) o X^H Y (sanos), cada uno con 50% de probabilidad. Las hijas serían X^h X^H (portadoras) o X^H X^H (no portadoras), también 50/50.'
+  }
+];
+
+let respuestasUsuario = [];
+
+function renderQuiz() {
+  const host = document.getElementById('quiz-host');
+  host.innerHTML = '';
+  respuestasUsuario = [];
+
+  PREGUNTAS_QUIZ.forEach((p, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-pregunta';
+    const letras = ['A', 'B', 'C', 'D'];
+    div.innerHTML = `
+      <span class="num">Pregunta ${idx + 1}</span>
+      <p class="texto">${p.pregunta}</p>
+      <div class="quiz-opciones" id="opciones-${idx}">
+        ${p.opciones.map((op, i) => `
+          <button class="quiz-op" data-preg="${idx}" data-op="${i}">
+            <span class="letra">${letras[i]}</span>
+            <span>${op}</span>
+          </button>
+        `).join('')}
+      </div>
+      <div class="quiz-feedback" id="feedback-${idx}"></div>
+    `;
+    host.appendChild(div);
+  });
+
+  document.querySelectorAll('.quiz-op').forEach(btn => {
+    btn.addEventListener('click', responderQuiz);
+  });
+
+  document.getElementById('quiz-resumen').classList.remove('activo');
+}
+
+function responderQuiz(e) {
+  const btn = e.currentTarget;
+  const idxPreg = parseInt(btn.dataset.preg);
+  const idxOp = parseInt(btn.dataset.op);
+  if (respuestasUsuario[idxPreg] !== undefined) return;
+
+  const p = PREGUNTAS_QUIZ[idxPreg];
+  const correcta = p.correcta;
+  const acierto = idxOp === correcta;
+  respuestasUsuario[idxPreg] = acierto;
+
+  document.querySelectorAll(`#opciones-${idxPreg} .quiz-op`).forEach((b, i) => {
+    b.disabled = true;
+    if (i === correcta) b.classList.add('correcta');
+    if (i === idxOp && i !== correcta) b.classList.add('incorrecta');
+  });
+
+  const fb = document.getElementById(`feedback-${idxPreg}`);
+  fb.className = `quiz-feedback activo ${acierto ? 'bien' : 'mal'}`;
+  fb.innerHTML = `<strong>${acierto ? '✓ Correcto.' : '✗ Incorrecto.'}</strong> ${p.explicacion}`;
+
+  if (respuestasUsuario.filter(r => r !== undefined).length === PREGUNTAS_QUIZ.length) {
+    mostrarResumen();
+  }
+}
+
+function mostrarResumen() {
+  const correctas = respuestasUsuario.filter(r => r === true).length;
+  const total = PREGUNTAS_QUIZ.length;
+  const pct = Math.round((correctas / total) * 100);
+  document.getElementById('quiz-puntaje').textContent = `${correctas}/${total} (${pct}%)`;
+
+  let msg = '';
+  if (pct >= 90) msg = '¡Excelente! Dominas la genética. Listo para Evolución.';
+  else if (pct >= 75) msg = 'Muy buen trabajo. Repasa lo que fallaste y avanza.';
+  else if (pct >= 50) msg = 'Vas bien. Repasa especialmente los cuadros de Punnett y vuelve a intentarlo.';
+  else msg = 'Tómate tu tiempo para releer la lección. La genética requiere práctica con los cuadros de Punnett.';
+  document.getElementById('quiz-mensaje').textContent = msg;
+
+  document.getElementById('quiz-resumen').classList.add('activo');
+  document.getElementById('quiz-resumen').scrollIntoView({behavior: 'smooth', block: 'center'});
+}
+
+function reiniciarQuiz() {
+  renderQuiz();
+  document.getElementById('quiz').scrollIntoView({behavior: 'smooth'});
+}
+
+renderQuiz();
+
+/* ============================================================
+   CONTROL DE SECCIONES (abrir todo / cerrar todo + TOC)
+   ============================================================ */
+
+function toggleTodas(abrir) {
+  document.querySelectorAll('details.seccion-grande').forEach(d => {
+    d.open = abrir;
+  });
+}
+
+document.querySelectorAll('.toc a').forEach(enlace => {
+  enlace.addEventListener('click', e => {
+    const href = enlace.getAttribute('href');
+    if (!href || !href.startsWith('#')) return;
+    const id = href.substring(1);
+    const dest = document.getElementById(id);
+    if (dest && dest.tagName === 'DETAILS') {
+      dest.open = true;
+    }
+  });
+});
+
+window.addEventListener('load', () => {
+  if (window.location.hash) {
+    const id = window.location.hash.substring(1);
+    const dest = document.getElementById(id);
+    if (dest && dest.tagName === 'DETAILS') {
+      dest.open = true;
+      setTimeout(() => dest.scrollIntoView({behavior: 'smooth', block: 'start'}), 100);
+    }
+  }
+});
+</script>
+</body>
+</html>
