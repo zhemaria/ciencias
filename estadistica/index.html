@@ -1,1 +1,1698 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CientíEstad — Estadística y datos en ciencia | GEDparaHispanos</title>
+<style>
+/* ============================================================
+   CientíEstad — Estadística y probabilidad en contexto científico
+   Práctica para GED: Assessment Target SP.8
+   Estilo DUA · colores sólidos · self-contained
+   ============================================================ */
 
+:root {
+  --c-bg:       #fafafa;
+  --c-surface:  #ffffff;
+  --c-ink:      #1a1a1a;
+  --c-ink-soft: #4a4a4a;
+  --c-ink-mute: #6a6a6a;
+  --c-line:     #e0e0e0;
+  --c-line-str: #b0b0b0;
+
+  --c-ciencias: #0f7a5c;
+  --c-ciencias-bg: #e8f5ee;
+  --c-accent:   #1e5aa6;
+  --c-accent-bg: #eaf2fb;
+
+  --c-good:     #0f7a5c;
+  --c-good-bg:  #e8f5ee;
+  --c-bad:      #a63d1e;
+  --c-bad-bg:   #fbe9e7;
+  --c-warn:     #8a5a00;
+  --c-warn-bg:  #fdf6e3;
+
+  --c-bio:      #0f7a5c;
+  --c-bio-bg:   #e8f5ee;
+  --c-qui:      #1e5aa6;
+  --c-qui-bg:   #eaf2fb;
+  --c-fis:      #5a2a8a;
+  --c-fis-bg:   #f0e8f7;
+  --c-tie:      #8a5a00;
+  --c-tie-bg:   #fdf6e3;
+
+  --c-serie-1:  #1e5aa6;
+  --c-serie-2:  #a63d1e;
+  --c-serie-3:  #0f7a5c;
+  --c-serie-4:  #8a5a00;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--c-ink);
+  background: var(--c-bg);
+  margin: 0;
+  padding: 0;
+}
+
+.contenedor {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+}
+
+/* ---------- Cabecera ---------- */
+header {
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-top: 6px solid var(--c-ciencias);
+  border-radius: 6px;
+  padding: 28px 28px 24px;
+  margin-bottom: 28px;
+}
+.eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--c-ciencias);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+header h1 {
+  font-size: 30px;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+  color: var(--c-ink);
+  letter-spacing: -0.01em;
+}
+header .subtitulo {
+  font-size: 17px;
+  color: var(--c-ink-soft);
+  margin: 0 0 16px 0;
+}
+header .meta {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-size: 14px;
+  color: var(--c-ink-mute);
+  padding-top: 14px;
+  border-top: 1px solid var(--c-line);
+}
+header .meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ---------- Tarjetas / Secciones ---------- */
+.tarjeta {
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: 6px;
+  padding: 26px 28px;
+  margin-bottom: 22px;
+}
+.tarjeta h2 {
+  font-size: 21px;
+  font-weight: 700;
+  margin: 0 0 6px 0;
+  color: var(--c-ink);
+}
+.tarjeta h3 {
+  font-size: 17px;
+  font-weight: 700;
+  margin: 22px 0 10px 0;
+  color: var(--c-ink);
+}
+.tarjeta p {
+  margin: 0 0 14px 0;
+  color: var(--c-ink-soft);
+}
+.tarjeta .descripcion {
+  margin-bottom: 22px;
+  color: var(--c-ink-soft);
+}
+
+/* ---------- Chips de categoría ---------- */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 14px 0 20px 0;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border: 2px solid var(--c-line-str);
+  border-radius: 24px;
+  background: var(--c-surface);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--c-ink-soft);
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.12s, background 0.12s, border-color 0.12s;
+}
+.chip:hover { transform: translateY(-1px); }
+.chip .punto {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.chip.bio .punto { background: var(--c-bio); }
+.chip.qui .punto { background: var(--c-qui); }
+.chip.fis .punto { background: var(--c-fis); }
+.chip.tie .punto { background: var(--c-tie); }
+
+.chip.activo { color: var(--c-surface); border-color: transparent; }
+.chip.activo.bio { background: var(--c-bio); }
+.chip.activo.qui { background: var(--c-qui); }
+.chip.activo.fis { background: var(--c-fis); }
+.chip.activo.tie { background: var(--c-tie); }
+
+/* ---------- Selector de cantidad ---------- */
+.cantidad {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 12px 0 20px 0;
+}
+.cantidad button {
+  padding: 12px 22px;
+  border: 2px solid var(--c-line-str);
+  border-radius: 6px;
+  background: var(--c-surface);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--c-ink-soft);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.12s;
+}
+.cantidad button:hover { border-color: var(--c-ciencias); transform: translateY(-1px); }
+.cantidad button.activo {
+  background: var(--c-ciencias);
+  border-color: var(--c-ciencias);
+  color: var(--c-surface);
+}
+
+/* ---------- Botones principales ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px 28px;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  background: var(--c-ciencias);
+  color: var(--c-surface);
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  transition: transform 0.12s, opacity 0.12s;
+}
+.btn:hover { transform: translateY(-1px); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.btn.secundario {
+  background: var(--c-surface);
+  color: var(--c-ciencias);
+  border-color: var(--c-ciencias);
+}
+.btn.peligro { background: var(--c-bad); }
+
+/* ---------- Quiz ---------- */
+.barra-progreso {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: 6px;
+  padding: 14px 20px;
+  margin-bottom: 16px;
+  font-size: 14px;
+  color: var(--c-ink-soft);
+  font-weight: 600;
+}
+.barra-progreso .progreso-track {
+  flex: 1;
+  height: 8px;
+  background: var(--c-line);
+  border-radius: 4px;
+  margin: 0 18px;
+  overflow: hidden;
+}
+.barra-progreso .progreso-fill {
+  height: 100%;
+  background: var(--c-ciencias);
+  border-radius: 4px;
+  transition: width 0.3s;
+}
+.barra-progreso .crono {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: var(--c-ink);
+}
+
+.escenario {
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: 6px;
+  padding: 24px 28px;
+  margin-bottom: 16px;
+}
+.escenario .etiqueta-categoria {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 14px;
+}
+.escenario .etiqueta-categoria.bio { background: var(--c-bio-bg); color: var(--c-bio); }
+.escenario .etiqueta-categoria.qui { background: var(--c-qui-bg); color: var(--c-qui); }
+.escenario .etiqueta-categoria.fis { background: var(--c-fis-bg); color: var(--c-fis); }
+.escenario .etiqueta-categoria.tie { background: var(--c-tie-bg); color: var(--c-tie); }
+
+.escenario .contexto {
+  font-size: 16px;
+  color: var(--c-ink);
+  margin-bottom: 18px;
+  line-height: 1.65;
+}
+.escenario .visual {
+  background: var(--c-bg);
+  border: 1px solid var(--c-line);
+  border-radius: 6px;
+  padding: 18px;
+  margin-bottom: 18px;
+  display: flex;
+  justify-content: center;
+  overflow-x: auto;
+}
+.escenario .pregunta {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--c-ink);
+  margin-bottom: 16px;
+}
+
+/* ---------- Tabla de datos ---------- */
+.tabla-datos {
+  border-collapse: collapse;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+}
+.tabla-datos th, .tabla-datos td {
+  padding: 8px 14px;
+  border: 1px solid var(--c-line-str);
+  text-align: center;
+}
+.tabla-datos th {
+  background: var(--c-bg);
+  color: var(--c-ink);
+  font-weight: 700;
+}
+.tabla-datos td { color: var(--c-ink-soft); }
+
+/* ---------- Opciones ---------- */
+.opciones { display: flex; flex-direction: column; gap: 10px; }
+.opcion {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 18px;
+  border: 2px solid var(--c-line-str);
+  border-radius: 6px;
+  background: var(--c-surface);
+  font-size: 15px;
+  color: var(--c-ink);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  line-height: 1.5;
+  transition: border-color 0.12s, background 0.12s;
+}
+.opcion:hover:not(:disabled) { border-color: var(--c-ciencias); }
+.opcion:disabled { cursor: default; }
+.opcion .letra {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--c-bg);
+  border: 2px solid var(--c-line-str);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--c-ink-soft);
+}
+.opcion.correcta { border-color: var(--c-good); background: var(--c-good-bg); }
+.opcion.correcta .letra { background: var(--c-good); border-color: var(--c-good); color: var(--c-surface); }
+.opcion.incorrecta { border-color: var(--c-bad); background: var(--c-bad-bg); }
+.opcion.incorrecta .letra { background: var(--c-bad); border-color: var(--c-bad); color: var(--c-surface); }
+
+/* ---------- Feedback ---------- */
+.feedback {
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-left: 5px solid var(--c-good);
+  border-radius: 6px;
+  padding: 18px 22px;
+  margin-top: 16px;
+}
+.feedback.malo { border-left-color: var(--c-bad); }
+.feedback h4 {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  color: var(--c-good);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.feedback.malo h4 { color: var(--c-bad); }
+.feedback p {
+  margin: 0;
+  color: var(--c-ink-soft);
+  font-size: 15px;
+  line-height: 1.6;
+}
+.feedback .nav {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 14px;
+}
+
+/* ---------- Resultados ---------- */
+.resultado-encabezado {
+  text-align: center;
+  padding: 40px 30px;
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-top: 6px solid var(--c-ciencias);
+  border-radius: 6px;
+  margin-bottom: 22px;
+}
+.resultado-encabezado .puntaje-grande {
+  font-size: 64px;
+  font-weight: 700;
+  color: var(--c-ciencias);
+  line-height: 1;
+  margin: 12px 0;
+  font-variant-numeric: tabular-nums;
+}
+.resultado-encabezado .puntaje-pct {
+  font-size: 22px;
+  color: var(--c-ink-soft);
+  font-weight: 600;
+}
+.resultado-encabezado .mensaje {
+  font-size: 16px;
+  color: var(--c-ink-soft);
+  margin-top: 18px;
+  max-width: 480px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.resultado-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-top: 22px;
+}
+.stat {
+  background: var(--c-bg);
+  border: 1px solid var(--c-line);
+  border-radius: 6px;
+  padding: 14px;
+}
+.stat .stat-label {
+  font-size: 12px;
+  color: var(--c-ink-mute);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.stat .stat-valor {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--c-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Desglose por categoría ---------- */
+.desglose-cat {
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: 6px;
+  padding: 22px 26px;
+  margin-bottom: 22px;
+}
+.desglose-cat h3 {
+  margin: 0 0 16px 0;
+  font-size: 18px;
+  font-weight: 700;
+}
+.fila-cat {
+  display: grid;
+  grid-template-columns: 130px 60px 1fr 80px;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--c-line);
+}
+.fila-cat:last-child { border-bottom: none; }
+.fila-cat .nombre {
+  font-weight: 600;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.fila-cat .nombre .punto {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+.fila-cat .conteo {
+  font-size: 13px;
+  color: var(--c-ink-mute);
+  font-variant-numeric: tabular-nums;
+}
+.fila-cat .barra-cat {
+  background: var(--c-line);
+  height: 12px;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.fila-cat .barra-cat-fill {
+  height: 100%;
+  border-radius: 6px;
+  transition: width 0.5s;
+}
+.fila-cat.bio .barra-cat-fill { background: var(--c-bio); }
+.fila-cat.qui .barra-cat-fill { background: var(--c-qui); }
+.fila-cat.fis .barra-cat-fill { background: var(--c-fis); }
+.fila-cat.tie .barra-cat-fill { background: var(--c-tie); }
+.fila-cat.bio .nombre .punto { background: var(--c-bio); }
+.fila-cat.qui .nombre .punto { background: var(--c-qui); }
+.fila-cat.fis .nombre .punto { background: var(--c-fis); }
+.fila-cat.tie .nombre .punto { background: var(--c-tie); }
+.fila-cat .pct { text-align: right; font-weight: 700; color: var(--c-ink); font-variant-numeric: tabular-nums; }
+
+/* ---------- Repaso de falladas ---------- */
+.repaso-item {
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-left: 5px solid var(--c-bad);
+  border-radius: 6px;
+  padding: 18px 22px;
+  margin-bottom: 12px;
+}
+.repaso-item .num-pregunta {
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-ink-mute);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.repaso-item .pregunta-repaso {
+  font-weight: 700;
+  margin: 0 0 10px 0;
+  color: var(--c-ink);
+}
+.repaso-item .respuestas-repaso {
+  font-size: 14px;
+  color: var(--c-ink-soft);
+  margin: 8px 0;
+}
+.repaso-item .tu-resp { color: var(--c-bad); font-weight: 600; }
+.repaso-item .corr-resp { color: var(--c-good); font-weight: 600; }
+.repaso-item .explicacion-repaso {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--c-line);
+  font-size: 14px;
+  color: var(--c-ink-soft);
+  line-height: 1.6;
+}
+
+/* ---------- Acciones finales ---------- */
+.acciones-finales {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 22px;
+}
+
+/* ---------- Pantallas ---------- */
+.pantalla { display: none; }
+.pantalla.activa { display: block; }
+
+/* ---------- Pie ---------- */
+footer {
+  text-align: center;
+  margin-top: 60px;
+  padding-top: 30px;
+  border-top: 1px solid var(--c-line);
+  font-size: 13px;
+  color: var(--c-ink-mute);
+}
+footer a { color: var(--c-ciencias); text-decoration: none; }
+footer a:hover { text-decoration: underline; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 640px) {
+  .contenedor { padding: 20px 16px 60px; }
+  header { padding: 22px 20px 18px; }
+  header h1 { font-size: 24px; }
+  .tarjeta, .escenario { padding: 20px 18px; }
+  .resultado-encabezado .puntaje-grande { font-size: 50px; }
+  .fila-cat {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .fila-cat .pct { text-align: left; }
+}
+</style>
+</head>
+<body>
+<div class="contenedor">
+
+<header>
+  <div class="eyebrow">CIENCIAS · PRÁCTICA SP.8</div>
+  <h1>CientíEstad</h1>
+  <p class="subtitulo">Estadística y probabilidad en contexto científico</p>
+  <div class="meta">
+    <span>📊 24 escenarios reales</span>
+    <span>⏱️ Tu propio ritmo</span>
+    <span>🔬 Las 4 áreas del GED Science</span>
+  </div>
+</header>
+
+<!-- =========================================================
+     PANTALLA 1: CONFIGURACIÓN
+     ========================================================= -->
+<div class="pantalla activa" id="pantalla-config">
+
+  <div class="tarjeta">
+    <h2>Practica el razonamiento estadístico en ciencia</h2>
+    <p class="descripcion">
+      En el GED de Ciencias, alrededor de un cuarto de las preguntas requieren leer datos, calcular
+      tendencia central, distinguir correlación de causalidad o interpretar probabilidades.
+      Esta práctica te entrena en esos seis tipos de razonamiento usando datos auténticos de
+      biología, química, física y ciencias de la tierra.
+    </p>
+
+    <h3>Selecciona las áreas que quieres practicar</h3>
+    <p style="font-size:14px; color:var(--c-ink-mute); margin-bottom:8px;">
+      Toca las áreas para activarlas. Si quieres todas, deja las cuatro encendidas.
+    </p>
+    <div class="chips" id="chips-cat">
+      <button class="chip bio activo" data-cat="bio"><span class="punto"></span>Biología</button>
+      <button class="chip qui activo" data-cat="qui"><span class="punto"></span>Química</button>
+      <button class="chip fis activo" data-cat="fis"><span class="punto"></span>Física</button>
+      <button class="chip tie activo" data-cat="tie"><span class="punto"></span>Tierra y espacio</button>
+    </div>
+
+    <h3>¿Cuántas preguntas?</h3>
+    <div class="cantidad" id="cantidad-btns">
+      <button data-n="5">5</button>
+      <button data-n="10" class="activo">10</button>
+      <button data-n="15">15</button>
+      <button data-n="20">20</button>
+    </div>
+
+    <div style="margin-top:24px;">
+      <button class="btn" id="btn-comenzar">Comenzar práctica →</button>
+    </div>
+  </div>
+
+  <div class="tarjeta">
+    <h3 style="margin-top:0;">¿Qué tipos de razonamiento entrena?</h3>
+    <ul style="margin:0; padding-left:20px; color:var(--c-ink-soft); line-height:1.9;">
+      <li><strong>Tendencia central:</strong> media, mediana y moda en datos experimentales.</li>
+      <li><strong>Dispersión:</strong> rango y variabilidad en mediciones repetidas.</li>
+      <li><strong>Lectura de datos:</strong> interpretar tablas de frecuencia, histogramas, gráficas.</li>
+      <li><strong>Correlación vs causalidad:</strong> distinguir relación estadística de causa-efecto.</li>
+      <li><strong>Muestreo:</strong> evaluar si una muestra es representativa.</li>
+      <li><strong>Probabilidad:</strong> calcular e interpretar en herencia, decaimiento, fenómenos naturales.</li>
+      <li><strong>Predicción:</strong> proyectar tendencias a partir de datos observados.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- =========================================================
+     PANTALLA 2: QUIZ
+     ========================================================= -->
+<div class="pantalla" id="pantalla-quiz">
+  <div class="barra-progreso">
+    <span id="progreso-texto">Pregunta 1 de 10</span>
+    <div class="progreso-track"><div class="progreso-fill" id="progreso-fill" style="width:10%;"></div></div>
+    <span class="crono" id="crono">00:00</span>
+  </div>
+
+  <div class="escenario" id="escenario-host"></div>
+
+  <div id="feedback-host"></div>
+</div>
+
+<!-- =========================================================
+     PANTALLA 3: RESULTADOS
+     ========================================================= -->
+<div class="pantalla" id="pantalla-resultados">
+
+  <div class="resultado-encabezado">
+    <div style="font-size:14px; color:var(--c-ink-mute); letter-spacing:0.1em; text-transform:uppercase; font-weight:700;">Tu puntaje</div>
+    <div class="puntaje-grande" id="puntaje-fraccion">0/0</div>
+    <div class="puntaje-pct" id="puntaje-pct">0%</div>
+    <div class="mensaje" id="mensaje-resultado"></div>
+
+    <div class="resultado-stats">
+      <div class="stat">
+        <div class="stat-label">Correctas</div>
+        <div class="stat-valor" id="stat-correctas">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Incorrectas</div>
+        <div class="stat-valor" id="stat-incorrectas">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Tiempo total</div>
+        <div class="stat-valor" id="stat-tiempo">0:00</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Promedio/preg</div>
+        <div class="stat-valor" id="stat-promedio">0s</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="desglose-cat">
+    <h3>Desempeño por área</h3>
+    <div id="desglose-host"></div>
+  </div>
+
+  <div id="repaso-host"></div>
+
+  <div class="acciones-finales">
+    <button class="btn secundario" id="btn-repetir">↻ Repetir con las mismas áreas</button>
+    <button class="btn" id="btn-config">Cambiar configuración</button>
+  </div>
+</div>
+
+<footer>
+  <p>
+    CientíEstad · Práctica para GED Science (SP.8) ·
+    <a href="https://www.gedparahispanos.com/ciencias">Volver a Ciencias</a> ·
+    <a href="https://www.gedparahispanos.com">GEDparaHispanos.com</a>
+  </p>
+</footer>
+
+</div>
+
+<script>
+/* ============================================================
+   CientíEstad — Lógica del quiz y pool de escenarios
+   ============================================================ */
+
+/* ============================================================
+   POOL DE ESCENARIOS (24 — 6 por categoría)
+   Cada escenario tiene:
+   - id: identificador único
+   - cat: bio | qui | fis | tie
+   - tipo: tipo de razonamiento estadístico
+   - contexto: descripción del experimento o situación
+   - visual: HTML/SVG/tabla embedida para mostrar los datos
+   - pregunta: la pregunta concreta
+   - opciones: array de 4 strings
+   - correcta: índice (0-3) de la opción correcta
+   - explicacion: feedback didáctico
+   ============================================================ */
+
+const POOL = [
+
+  /* ---------- BIOLOGÍA (6) ---------- */
+
+  {
+    id: 'bio-01',
+    cat: 'bio',
+    tipo: 'Media · tendencia central',
+    contexto: 'Una bióloga mide la altura (en cm) de seis plantas de tomate después de 30 días con un nuevo fertilizante. Sus mediciones son: 18, 22, 19, 24, 20, 21.',
+    visual: tablaSimple(['Planta', '1', '2', '3', '4', '5', '6'], ['Altura (cm)', '18', '22', '19', '24', '20', '21']),
+    pregunta: '¿Cuál es la altura media (promedio) de las plantas?',
+    opciones: ['19 cm', '20.5 cm', '21 cm', '24 cm'],
+    correcta: 2,
+    explicacion: 'La media es la suma dividida entre el número de datos: (18+22+19+24+20+21) / 6 = 124 / 6 ≈ 20.67 cm, que se redondea a 21 cm. La opción de 20.5 cm es la mediana, no la media.'
+  },
+
+  {
+    id: 'bio-02',
+    cat: 'bio',
+    tipo: 'Probabilidad · genética mendeliana',
+    contexto: 'En un cruce de plantas heterocigóticas Bb × Bb, donde B (semilla amarilla) es dominante sobre b (semilla verde), se obtiene la siguiente proporción genotípica esperada.',
+    visual: cuadroPunnett(),
+    pregunta: 'Si se obtienen 200 semillas, ¿aproximadamente cuántas se espera que sean verdes (genotipo bb)?',
+    opciones: ['25', '50', '100', '150'],
+    correcta: 1,
+    explicacion: 'En un cruce Bb × Bb, la probabilidad del genotipo bb (homocigótico recesivo, semillas verdes) es 1/4 = 0.25. De 200 semillas, se espera 200 × 0.25 = 50 semillas verdes.'
+  },
+
+  {
+    id: 'bio-03',
+    cat: 'bio',
+    tipo: 'Lectura de datos · distribución',
+    contexto: 'Un equipo midió la longitud del caparazón (en cm) de 40 tortugas marinas en una playa de anidación. Los datos se agruparon en este histograma.',
+    visual: histogramaTortugas(),
+    pregunta: 'Según el histograma, ¿en qué intervalo de longitud cae la mayor cantidad de tortugas?',
+    opciones: ['80–90 cm', '90–100 cm', '100–110 cm', '110–120 cm'],
+    correcta: 2,
+    explicacion: 'La barra más alta corresponde al intervalo 100–110 cm, con 14 tortugas. Esa es la moda (intervalo modal) del conjunto de datos. Identificar el intervalo modal de un histograma es una habilidad clave en SP.8.'
+  },
+
+  {
+    id: 'bio-04',
+    cat: 'bio',
+    tipo: 'Correlación vs causalidad',
+    contexto: 'Un estudio observa que en pueblos donde la gente come más helado, también hay más casos de quemaduras solares. La correlación entre venta de helado y quemaduras es muy fuerte.',
+    visual: scatterCorrelacion('Ventas de helado', 'Quemaduras solares', 'fuerte-positiva'),
+    pregunta: '¿Cuál es la conclusión científicamente correcta?',
+    opciones: [
+      'Comer helado causa quemaduras solares.',
+      'Las quemaduras solares hacen que la gente compre más helado.',
+      'Una tercera variable (el calor del verano) probablemente causa ambos fenómenos.',
+      'No hay relación real entre las dos variables, es coincidencia.'
+    ],
+    correcta: 2,
+    explicacion: 'Esta es una falacia clásica de "correlación implica causalidad". Una variable confusoria (el verano: días calurosos y soleados) causa ambas: la gente come más helado por el calor, y se quema más por la exposición al sol. Correlación NO es causalidad.'
+  },
+
+  {
+    id: 'bio-05',
+    cat: 'bio',
+    tipo: 'Muestreo · representatividad',
+    contexto: 'Un ecólogo quiere estimar el número promedio de huevos por nido en una especie de ave migratoria. Tiene cuatro opciones para tomar la muestra.',
+    visual: '',
+    pregunta: '¿Cuál muestra produciría el estimado más representativo?',
+    opciones: [
+      '10 nidos seleccionados al azar de toda el área de anidación.',
+      '10 nidos del lugar más fácil de acceder.',
+      '10 nidos que el biólogo ya ha estudiado en años anteriores.',
+      'Solo nidos visibles desde el camino.'
+    ],
+    correcta: 0,
+    explicacion: 'Una muestra aleatoria reduce el sesgo de selección y permite generalizar al resto de la población. Las otras opciones tienen sesgo: el lugar fácil puede tener condiciones distintas, los nidos previos podrían no ser típicos, y los visibles desde el camino subrepresentan los nidos escondidos.'
+  },
+
+  {
+    id: 'bio-06',
+    cat: 'bio',
+    tipo: 'Predicción desde datos',
+    contexto: 'Un cultivo de bacterias se duplica cada 30 minutos. A las 9:00 AM hay 1,000 bacterias.',
+    visual: lineaCrecimientoExpo(),
+    pregunta: 'Si la tendencia continúa, ¿cuántas bacterias habrá a las 11:00 AM?',
+    opciones: ['4,000', '8,000', '16,000', '32,000'],
+    correcta: 2,
+    explicacion: 'En 2 horas hay 4 períodos de 30 minutos. La población se duplica 4 veces: 1,000 → 2,000 → 4,000 → 8,000 → 16,000. Es crecimiento exponencial: N = 1000 × 2⁴ = 16,000.'
+  },
+
+  /* ---------- QUÍMICA (6) ---------- */
+
+  {
+    id: 'qui-01',
+    cat: 'qui',
+    tipo: 'Mediana · tendencia central',
+    contexto: 'Un químico mide el pH del agua en siete puntos de un río contaminado. Las mediciones, ordenadas, son: 5.8, 6.1, 6.3, 6.5, 6.8, 7.1, 8.2.',
+    visual: tablaSimple(['Punto', '1', '2', '3', '4', '5', '6', '7'], ['pH', '5.8', '6.1', '6.3', '6.5', '6.8', '7.1', '8.2']),
+    pregunta: '¿Cuál es la mediana del pH y por qué es preferible a la media en este caso?',
+    opciones: [
+      'Mediana = 6.5; preferible porque hay un valor extremo (8.2) que distorsiona la media.',
+      'Mediana = 6.7; es siempre preferible a la media.',
+      'Mediana = 6.8; preferible porque es el valor más común.',
+      'Mediana = 7.0; no hay diferencia con la media.'
+    ],
+    correcta: 0,
+    explicacion: 'Con 7 datos ordenados, la mediana es el cuarto valor: 6.5. La media sería 6.69, levemente inflada por el valor atípico 8.2. La mediana es resistente a valores extremos, por eso es preferible cuando hay outliers.'
+  },
+
+  {
+    id: 'qui-02',
+    cat: 'qui',
+    tipo: 'Rango · dispersión',
+    contexto: 'Para evaluar la precisión de una balanza, un técnico pesa la misma muestra cinco veces. Obtiene: 12.45 g, 12.47 g, 12.46 g, 12.48 g, 12.44 g.',
+    visual: tablaSimple(['Medición', '1', '2', '3', '4', '5'], ['Masa (g)', '12.45', '12.47', '12.46', '12.48', '12.44']),
+    pregunta: '¿Cuál es el rango de las mediciones?',
+    opciones: ['0.02 g', '0.04 g', '0.46 g', '12.46 g'],
+    correcta: 1,
+    explicacion: 'El rango es la diferencia entre el valor máximo y el mínimo: 12.48 − 12.44 = 0.04 g. Un rango pequeño indica buena precisión (poca dispersión en las mediciones repetidas).'
+  },
+
+  {
+    id: 'qui-03',
+    cat: 'qui',
+    tipo: 'Probabilidad · eventos independientes',
+    contexto: 'En una mezcla de iones, el 40% son Na⁺ y el 60% son K⁺. Se extraen dos iones al azar (con reemplazo, así que las probabilidades no cambian).',
+    visual: '',
+    pregunta: '¿Cuál es la probabilidad de extraer dos iones Na⁺ seguidos?',
+    opciones: ['0.04 (4%)', '0.16 (16%)', '0.40 (40%)', '0.80 (80%)'],
+    correcta: 1,
+    explicacion: 'Para eventos independientes, la probabilidad conjunta es el producto: P(Na⁺ y Na⁺) = 0.40 × 0.40 = 0.16. Es una aplicación directa de la regla del producto en probabilidad.'
+  },
+
+  {
+    id: 'qui-04',
+    cat: 'qui',
+    tipo: 'Lectura de datos · histograma',
+    contexto: 'En un experimento de cinética, se midió el tiempo de reacción (en segundos) para 20 ensayos de la misma reacción.',
+    visual: histogramaTiempos(),
+    pregunta: '¿Aproximadamente qué porcentaje de los ensayos tardó entre 4 y 6 segundos?',
+    opciones: ['25%', '40%', '60%', '75%'],
+    correcta: 2,
+    explicacion: 'Sumando las barras de los intervalos 4–5 s (7 ensayos) y 5–6 s (5 ensayos) = 12 ensayos. De 20 ensayos totales, eso es 12/20 = 60%. La habilidad clave es leer y sumar frecuencias de intervalos contiguos.'
+  },
+
+  {
+    id: 'qui-05',
+    cat: 'qui',
+    tipo: 'Correlación · interpretación',
+    contexto: 'Un químico grafica la velocidad de una reacción contra la temperatura, controlando todas las demás variables.',
+    visual: scatterCorrelacion('Temperatura (°C)', 'Velocidad (mol/s)', 'fuerte-positiva'),
+    pregunta: 'A diferencia del ejemplo de helado y quemaduras, ¿por qué SÍ podemos inferir aquí que la temperatura causa el aumento de velocidad?',
+    opciones: [
+      'Porque la correlación es más fuerte.',
+      'Porque es un experimento controlado donde se varió solo la temperatura.',
+      'Porque la velocidad y la temperatura siempre están relacionadas.',
+      'Porque el químico es un experto.'
+    ],
+    correcta: 1,
+    explicacion: 'La diferencia clave es el control experimental: cuando se manipula deliberadamente una variable y se mantienen constantes las demás, se puede inferir causalidad. En estudios observacionales (como helado-quemaduras) no se puede.'
+  },
+
+  {
+    id: 'qui-06',
+    cat: 'qui',
+    tipo: 'Predicción desde datos',
+    contexto: 'Un químico mide la concentración de un reactivo a distintos tiempos. Los datos siguen una clara tendencia lineal decreciente.',
+    visual: lineaTendencia(),
+    pregunta: 'Si la tendencia continúa, ¿cuál será la concentración a los 50 segundos?',
+    opciones: ['0.10 M', '0.20 M', '0.40 M', '0.50 M'],
+    correcta: 1,
+    explicacion: 'Extrapolando la tendencia lineal: comienza en 1.00 M a t=0 y disminuye 0.16 M cada 10 segundos aproximadamente. A los 50 s: 1.00 − 5×0.16 = 0.20 M. La habilidad es proyectar una recta más allá de los puntos medidos.'
+  },
+
+  /* ---------- FÍSICA (6) ---------- */
+
+  {
+    id: 'fis-01',
+    cat: 'fis',
+    tipo: 'Media · datos experimentales',
+    contexto: 'En un experimento de caída libre, un estudiante mide el tiempo (en segundos) que tarda una pelota en caer desde 4.9 m de altura. Realiza cinco intentos: 1.02 s, 0.98 s, 1.05 s, 1.00 s, 0.99 s.',
+    visual: tablaSimple(['Intento', '1', '2', '3', '4', '5'], ['Tiempo (s)', '1.02', '0.98', '1.05', '1.00', '0.99']),
+    pregunta: '¿Cuál es el tiempo promedio de caída?',
+    opciones: ['0.99 s', '1.00 s', '1.01 s', '1.05 s'],
+    correcta: 1,
+    explicacion: 'Suma: 1.02 + 0.98 + 1.05 + 1.00 + 0.99 = 5.04. Dividido entre 5 = 1.008 s, que se redondea a 1.00 s. Promediar mediciones repetidas es una técnica básica para reducir el efecto del error aleatorio.'
+  },
+
+  {
+    id: 'fis-02',
+    cat: 'fis',
+    tipo: 'Dispersión · precisión',
+    contexto: 'Dos estudiantes miden la velocidad del sonido. Sus cinco mediciones (en m/s) son:',
+    visual: tablaSimple(
+      ['Medición', '1', '2', '3', '4', '5', 'Promedio'],
+      ['Estudiante A', '340', '345', '343', '342', '345', '343'],
+      ['Estudiante B', '310', '375', '340', '360', '320', '341']
+    ),
+    pregunta: '¿Cuál estudiante hizo mediciones más precisas y por qué?',
+    opciones: [
+      'Estudiante A, porque tiene mayor promedio.',
+      'Estudiante B, porque sus valores son más diversos.',
+      'Estudiante A, porque sus mediciones tienen menor dispersión (rango).',
+      'Ninguno; ambos son igualmente precisos porque tienen promedios similares.'
+    ],
+    correcta: 2,
+    explicacion: 'Precisión se refiere a qué tan agrupadas están las mediciones repetidas, NO al promedio. Rango A: 345−340 = 5 m/s. Rango B: 375−310 = 65 m/s. A es mucho más preciso. (Una cosa es precisión, otra es exactitud, que sería qué tan cerca está del valor real.)'
+  },
+
+  {
+    id: 'fis-03',
+    cat: 'fis',
+    tipo: 'Probabilidad · decaimiento',
+    contexto: 'Un isótopo radiactivo tiene una vida media de 10 años. Esto significa que en cada período de 10 años, la probabilidad de que un átomo dado decaiga es del 50%.',
+    visual: '',
+    pregunta: 'Si comienzas con 800 átomos, ¿cuántos átomos quedarán sin decaer después de 30 años?',
+    opciones: ['50', '100', '200', '400'],
+    correcta: 1,
+    explicacion: 'Cada vida media reduce la cantidad a la mitad. Tres vidas medias (30 años): 800 → 400 → 200 → 100 átomos. Es la aplicación de la ley de decaimiento exponencial usando probabilidad básica.'
+  },
+
+  {
+    id: 'fis-04',
+    cat: 'fis',
+    tipo: 'Lectura de datos · tabla de frecuencia',
+    contexto: 'Un físico analiza la frecuencia de las ondas detectadas por un sismógrafo durante un evento. La tabla muestra cuántas ondas se detectaron en cada rango de frecuencia.',
+    visual: tablaSimple(
+      ['Frecuencia (Hz)', '0–2', '2–4', '4–6', '6–8', '8–10'],
+      ['Número de ondas', '8', '15', '22', '12', '3']
+    ),
+    pregunta: '¿En qué intervalo de frecuencia se detectaron MÁS ondas, y qué porcentaje del total representan?',
+    opciones: ['2–4 Hz, 25%', '4–6 Hz, 37%', '4–6 Hz, 22%', '6–8 Hz, 20%'],
+    correcta: 1,
+    explicacion: 'Total de ondas: 8+15+22+12+3 = 60. El intervalo modal es 4–6 Hz con 22 ondas. Porcentaje: 22/60 ≈ 0.367 = 36.7%, redondeado a 37%. Identificar el intervalo modal y calcular su porcentaje son habilidades centrales de SP.8.'
+  },
+
+  {
+    id: 'fis-05',
+    cat: 'fis',
+    tipo: 'Correlación · análisis',
+    contexto: 'En un experimento de péndulos, se grafica el período (T) contra la longitud (L) de varios péndulos.',
+    visual: scatterCorrelacion('Longitud L (m)', 'Período T (s)', 'fuerte-positiva'),
+    pregunta: 'La correlación es fuerte y positiva. ¿Qué se puede concluir DIRECTAMENTE de los datos?',
+    opciones: [
+      'La longitud causa el período, sin más.',
+      'A mayor longitud, mayor período: existe una relación predecible.',
+      'No hay manera de saber si están relacionados.',
+      'El período causa la longitud.'
+    ],
+    correcta: 1,
+    explicacion: 'De una gráfica con correlación positiva, lo que se puede concluir directamente es la relación predecible entre las variables. Aunque en este caso conocemos teóricamente la causa (la fórmula del péndulo), la pregunta limita lo concluible al patrón observado en los datos.'
+  },
+
+  {
+    id: 'fis-06',
+    cat: 'fis',
+    tipo: 'Predicción desde datos',
+    contexto: 'Se mide la distancia recorrida por un auto bajo aceleración constante. Los datos muestran:',
+    visual: tablaSimple(
+      ['Tiempo (s)', '1', '2', '3', '4'],
+      ['Distancia (m)', '5', '20', '45', '80']
+    ),
+    pregunta: 'Observando el patrón (cuadrático: d ∝ t²), ¿qué distancia se predice a los 5 segundos?',
+    opciones: ['100 m', '115 m', '125 m', '160 m'],
+    correcta: 2,
+    explicacion: 'Los datos siguen d = 5t². A t=5 s: d = 5(25) = 125 m. Reconocer un patrón cuadrático (las diferencias son 15, 25, 35... aumentando 10 cada paso) y extrapolarlo es una destreza típica de SP.8.'
+  },
+
+  /* ---------- TIERRA Y ESPACIO (6) ---------- */
+
+  {
+    id: 'tie-01',
+    cat: 'tie',
+    tipo: 'Mediana · datos climáticos',
+    contexto: 'Las temperaturas máximas (en °C) registradas en una ciudad durante una semana fueron: 28, 32, 30, 45, 31, 29, 33. El día con 45°C fue una ola de calor anómala.',
+    visual: tablaSimple(
+      ['Día', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'],
+      ['Temp (°C)', '28', '32', '30', '45', '31', '29', '33']
+    ),
+    pregunta: '¿Cuál medida de tendencia central representa MEJOR la temperatura típica de la semana?',
+    opciones: [
+      'La media (32.6°C), porque usa todos los datos.',
+      'La mediana (31°C), porque no se ve afectada por el valor extremo.',
+      'La moda, porque es la más fácil de calcular.',
+      'El rango, porque muestra la variación.'
+    ],
+    correcta: 1,
+    explicacion: 'La mediana (31°C) es resistente a valores atípicos. La media (32.6°C) está inflada por el día anómalo de 45°C. Cuando hay outliers en datos científicos o ambientales, la mediana suele ser la medida más representativa.'
+  },
+
+  {
+    id: 'tie-02',
+    cat: 'tie',
+    tipo: 'Rango · variabilidad',
+    contexto: 'En el último año, la magnitud de los terremotos detectados en una región fue: mínimo 2.1, máximo 6.8 (escala Richter).',
+    visual: '',
+    pregunta: '¿Cuál es el rango de magnitudes y qué nos dice sobre la actividad sísmica?',
+    opciones: [
+      'Rango = 4.7; indica alta variabilidad en la intensidad de los sismos.',
+      'Rango = 8.9; indica baja variabilidad.',
+      'Rango = 6.8; indica que solo hubo un sismo grande.',
+      'Rango = 2.1; indica que todos los sismos fueron pequeños.'
+    ],
+    correcta: 0,
+    explicacion: 'Rango = máximo − mínimo = 6.8 − 2.1 = 4.7. Un rango grande en datos sísmicos indica que la región experimentó tanto temblores leves como sismos significativos, mostrando alta variabilidad en la actividad.'
+  },
+
+  {
+    id: 'tie-03',
+    cat: 'tie',
+    tipo: 'Probabilidad · datos históricos',
+    contexto: 'En los últimos 50 años, una región costera ha recibido 15 huracanes. Asumiendo que la frecuencia se mantiene constante, se quiere estimar la probabilidad anual.',
+    visual: '',
+    pregunta: '¿Cuál es la probabilidad estimada de que un huracán impacte la región en cualquier año dado?',
+    opciones: ['3%', '15%', '30%', '50%'],
+    correcta: 2,
+    explicacion: 'Probabilidad anual estimada = casos / total = 15 / 50 = 0.30 = 30%. Estimar probabilidades a partir de frecuencias históricas es una técnica fundamental en climatología y evaluación de riesgo natural.'
+  },
+
+  {
+    id: 'tie-04',
+    cat: 'tie',
+    tipo: 'Lectura de datos · histograma climático',
+    contexto: 'El siguiente histograma muestra la precipitación anual (en mm) registrada en una estación meteorológica durante 25 años.',
+    visual: histogramaPrecipitacion(),
+    pregunta: 'Según el histograma, ¿cuántos años tuvieron precipitación entre 600 y 1000 mm?',
+    opciones: ['8', '12', '15', '18'],
+    correcta: 2,
+    explicacion: 'Sumando las barras de los intervalos 600–800 mm (8 años) y 800–1000 mm (7 años) = 15 años. La habilidad clave es sumar frecuencias de intervalos consecutivos para responder preguntas de "cuántos están entre X y Y".'
+  },
+
+  {
+    id: 'tie-05',
+    cat: 'tie',
+    tipo: 'Correlación · cambio climático',
+    contexto: 'Datos de los últimos 100 años muestran una correlación muy fuerte entre concentración atmosférica de CO₂ y temperatura global promedio.',
+    visual: scatterCorrelacion('CO₂ atmosférico (ppm)', 'Temperatura global (°C)', 'fuerte-positiva'),
+    pregunta: '¿Cuál es la conclusión científicamente más sólida que se puede sacar de estos datos por sí solos?',
+    opciones: [
+      'El CO₂ definitivamente causa el aumento de temperatura.',
+      'La temperatura causa el aumento de CO₂.',
+      'Existe una correlación fuerte; la causalidad debe establecerse con experimentos y modelos físicos adicionales.',
+      'No hay relación significativa.'
+    ],
+    correcta: 2,
+    explicacion: 'Aunque el consenso científico (basado en física del efecto invernadero, modelos y experimentos) confirma que el CO₂ causa calentamiento, ESTOS DATOS por sí solos solamente muestran correlación. La causalidad se establece con la teoría física adicional, no únicamente con la correlación observacional.'
+  },
+
+  {
+    id: 'tie-06',
+    cat: 'tie',
+    tipo: 'Predicción · proyección lineal',
+    contexto: 'El nivel del mar en una estación de medición ha subido a una tasa promedio de 3.2 mm por año durante las últimas dos décadas.',
+    visual: '',
+    pregunta: 'Si la tasa se mantiene constante, ¿cuánto subirá el nivel del mar en los próximos 25 años?',
+    opciones: ['3.2 mm', '32 mm', '80 mm', '320 mm'],
+    correcta: 2,
+    explicacion: 'Proyección lineal: 3.2 mm/año × 25 años = 80 mm (8 cm). Es importante notar que esta es una proyección lineal simple; los modelos climáticos reales sugieren tasas aceleradas, por lo que el aumento real podría ser mayor.'
+  }
+
+];
+
+/* ============================================================
+   GENERADORES DE VISUALES (SVG y tablas)
+   ============================================================ */
+
+function tablaSimple(...filas) {
+  let html = '<table class="tabla-datos"><tbody>';
+  filas.forEach((fila, idx) => {
+    if (idx === 0) {
+      html += '<tr>';
+      fila.forEach(c => html += `<th>${c}</th>`);
+      html += '</tr>';
+    } else {
+      html += '<tr>';
+      fila.forEach((c, j) => {
+        if (j === 0) html += `<th>${c}</th>`;
+        else html += `<td>${c}</td>`;
+      });
+      html += '</tr>';
+    }
+  });
+  html += '</tbody></table>';
+  return html;
+}
+
+function cuadroPunnett() {
+  return `
+<svg viewBox="0 0 280 240" xmlns="http://www.w3.org/2000/svg" style="max-width:280px; width:100%; height:auto;">
+  <text x="140" y="22" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">Cruce Bb × Bb</text>
+  <text x="100" y="58" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">B</text>
+  <text x="180" y="58" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">b</text>
+  <text x="40" y="115" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">B</text>
+  <text x="40" y="185" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">b</text>
+  <rect x="60" y="70" width="80" height="60" fill="#fdf6e3" stroke="#1a1a1a" stroke-width="1.5"/>
+  <text x="100" y="105" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">BB</text>
+  <rect x="140" y="70" width="80" height="60" fill="#fdf6e3" stroke="#1a1a1a" stroke-width="1.5"/>
+  <text x="180" y="105" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">Bb</text>
+  <rect x="60" y="130" width="80" height="60" fill="#fdf6e3" stroke="#1a1a1a" stroke-width="1.5"/>
+  <text x="100" y="165" text-anchor="middle" font-size="14" font-weight="700" fill="#1a1a1a">Bb</text>
+  <rect x="140" y="130" width="80" height="60" fill="#0f7a5c" stroke="#1a1a1a" stroke-width="1.5"/>
+  <text x="180" y="165" text-anchor="middle" font-size="14" font-weight="700" fill="#ffffff">bb</text>
+  <text x="140" y="220" text-anchor="middle" font-size="11" fill="#4a4a4a">3 amarillas : 1 verde</text>
+</svg>`;
+}
+
+function histogramaTortugas() {
+  // Intervalos: 80-90 (5), 90-100 (10), 100-110 (14), 110-120 (8), 120-130 (3)
+  const datos = [
+    {label: '80–90', valor: 5},
+    {label: '90–100', valor: 10},
+    {label: '100–110', valor: 14},
+    {label: '110–120', valor: 8},
+    {label: '120–130', valor: 3}
+  ];
+  return histogramaSVG(datos, 'Longitud caparazón (cm)', 'Número de tortugas', 16);
+}
+
+function histogramaTiempos() {
+  const datos = [
+    {label: '2–3', valor: 2},
+    {label: '3–4', valor: 4},
+    {label: '4–5', valor: 7},
+    {label: '5–6', valor: 5},
+    {label: '6–7', valor: 2}
+  ];
+  return histogramaSVG(datos, 'Tiempo de reacción (s)', 'Número de ensayos', 8);
+}
+
+function histogramaPrecipitacion() {
+  const datos = [
+    {label: '200–400', valor: 2},
+    {label: '400–600', valor: 6},
+    {label: '600–800', valor: 8},
+    {label: '800–1000', valor: 7},
+    {label: '1000–1200', valor: 2}
+  ];
+  return histogramaSVG(datos, 'Precipitación (mm)', 'Número de años', 10);
+}
+
+function histogramaSVG(datos, ejeX, ejeY, maxY) {
+  const W = 480, H = 260;
+  const ml = 50, mr = 16, mt = 18, mb = 60;
+  const plotW = W - ml - mr;
+  const plotH = H - mt - mb;
+  const barW = plotW / datos.length;
+  const colores = ['#1e5aa6', '#1e5aa6', '#1e5aa6', '#1e5aa6', '#1e5aa6'];
+
+  let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="max-width:${W}px; width:100%; height:auto;">`;
+
+  // Grid horizontal
+  for (let i = 0; i <= 4; i++) {
+    const y = mt + plotH - (i / 4) * plotH;
+    svg += `<line x1="${ml}" y1="${y}" x2="${W - mr}" y2="${y}" stroke="#e0e0e0" stroke-width="1"/>`;
+    svg += `<text x="${ml - 8}" y="${y + 4}" text-anchor="end" font-size="11" fill="#6a6a6a">${Math.round(i * maxY / 4)}</text>`;
+  }
+
+  // Eje Y
+  svg += `<line x1="${ml}" y1="${mt}" x2="${ml}" y2="${mt + plotH}" stroke="#1a1a1a" stroke-width="1.5"/>`;
+  // Eje X
+  svg += `<line x1="${ml}" y1="${mt + plotH}" x2="${W - mr}" y2="${mt + plotH}" stroke="#1a1a1a" stroke-width="1.5"/>`;
+
+  // Barras
+  datos.forEach((d, i) => {
+    const h = (d.valor / maxY) * plotH;
+    const x = ml + i * barW + 4;
+    const y = mt + plotH - h;
+    const w = barW - 8;
+    svg += `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${colores[i % colores.length]}" stroke="#0f3a6a" stroke-width="1"/>`;
+    svg += `<text x="${x + w / 2}" y="${y - 4}" text-anchor="middle" font-size="11" font-weight="700" fill="#1a1a1a">${d.valor}</text>`;
+    svg += `<text x="${x + w / 2}" y="${mt + plotH + 18}" text-anchor="middle" font-size="11" fill="#4a4a4a">${d.label}</text>`;
+  });
+
+  // Etiquetas de ejes
+  svg += `<text x="${ml + plotW / 2}" y="${H - 14}" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1a1a">${ejeX}</text>`;
+  svg += `<text x="14" y="${mt + plotH / 2}" text-anchor="middle" font-size="12" font-weight="700" fill="#1a1a1a" transform="rotate(-90, 14, ${mt + plotH / 2})">${ejeY}</text>`;
+
+  svg += '</svg>';
+  return svg;
+}
+
+function scatterCorrelacion(ejeX, ejeY, tipo) {
+  const W = 480, H = 280;
+  const ml = 56, mr = 16, mt = 18, mb = 56;
+  const plotW = W - ml - mr;
+  const plotH = H - mt - mb;
+
+  // Generar puntos según tipo
+  let puntos = [];
+  if (tipo === 'fuerte-positiva') {
+    const seed = ejeX.length;
+    for (let i = 0; i < 14; i++) {
+      const px = (i + 0.5) / 14;
+      const noise = ((Math.sin(seed * i * 1.31) + 1) / 2 - 0.5) * 0.18;
+      const py = px * 0.85 + 0.05 + noise;
+      puntos.push({x: px, y: Math.max(0.02, Math.min(0.98, py))});
+    }
+  }
+
+  let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="max-width:${W}px; width:100%; height:auto;">`;
+
+  // Grid
+  for (let i = 0; i <= 4; i++) {
+    const y = mt + plotH - (i / 4) * plotH;
+    svg += `<line x1="${ml}" y1="${y}" x2="${W - mr}" y2="${y}" stroke="#e0e0e0" stroke-width="1"/>`;
+  }
+  for (let i = 0; i <= 4; i++) {
+    const x = ml + (i / 4) * plotW;
+    svg += `<line x1="${x}" y1="${mt}" x2="${x}" y2="${mt + plotH}" stroke="#e0e0e0" stroke-width="1"/>`;
+  }
+
+  // Ejes
+  svg += `<line x1="${ml}" y1="${mt}" x2="${ml}" y2="${mt + plotH}" stroke="#1a1a1a" stroke-width="1.5"/>`;
+  svg += `<line x1="${ml}" y1="${mt + plotH}" x2="${W - mr}" y2="${mt + plotH}" stroke="#1a1a1a" stroke-width="1.5"/>`;
+
+  // Puntos
+  puntos.forEach(p => {
+    const cx = ml + p.x * plotW;
+    const cy = mt + (1 - p.y) * plotH;
+    svg += `<circle cx="${cx}" cy="${cy}" r="5" fill="#1e5aa6" stroke="#0f3a6a" stroke-width="1.5"/>`;
+  });
+
+  // Etiquetas de ejes
+  svg += `<text x="${ml + plotW / 2}" y="${H - 14}" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">${ejeX}</text>`;
+  svg += `<text x="18" y="${mt + plotH / 2}" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a" transform="rotate(-90, 18, ${mt + plotH / 2})">${ejeY}</text>`;
+
+  // Etiqueta correlación
+  svg += `<text x="${W - mr - 6}" y="${mt + 16}" text-anchor="end" font-size="11" font-style="italic" fill="#6a6a6a">Correlación fuerte positiva</text>`;
+
+  svg += '</svg>';
+  return svg;
+}
+
+function lineaCrecimientoExpo() {
+  const W = 480, H = 260;
+  const ml = 56, mr = 16, mt = 18, mb = 56;
+  const plotW = W - ml - mr;
+  const plotH = H - mt - mb;
+
+  // Datos: t=0:1000, t=30:2000, t=60:4000, t=90:8000, t=120:16000
+  const tiempos = [0, 30, 60, 90, 120];
+  const valores = [1000, 2000, 4000, 8000, 16000];
+  const maxY = 16000;
+
+  let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="max-width:${W}px; width:100%; height:auto;">`;
+
+  // Grid
+  for (let i = 0; i <= 4; i++) {
+    const y = mt + plotH - (i / 4) * plotH;
+    svg += `<line x1="${ml}" y1="${y}" x2="${W - mr}" y2="${y}" stroke="#e0e0e0" stroke-width="1"/>`;
+    svg += `<text x="${ml - 8}" y="${y + 4}" text-anchor="end" font-size="11" fill="#6a6a6a">${Math.round(i * maxY / 4 / 1000)}k</text>`;
+  }
+
+  // Ejes
+  svg += `<line x1="${ml}" y1="${mt}" x2="${ml}" y2="${mt + plotH}" stroke="#1a1a1a" stroke-width="1.5"/>`;
+  svg += `<line x1="${ml}" y1="${mt + plotH}" x2="${W - mr}" y2="${mt + plotH}" stroke="#1a1a1a" stroke-width="1.5"/>`;
+
+  // Marcas eje X
+  tiempos.forEach((t, i) => {
+    const x = ml + (t / 120) * plotW;
+    svg += `<text x="${x}" y="${mt + plotH + 18}" text-anchor="middle" font-size="11" fill="#4a4a4a">${t}</text>`;
+  });
+
+  // Línea
+  let path = '';
+  tiempos.forEach((t, i) => {
+    const x = ml + (t / 120) * plotW;
+    const y = mt + plotH - (valores[i] / maxY) * plotH;
+    path += (i === 0 ? `M ${x} ${y}` : ` L ${x} ${y}`);
+  });
+  svg += `<path d="${path}" fill="none" stroke="#0f7a5c" stroke-width="2.5"/>`;
+
+  // Puntos
+  tiempos.forEach((t, i) => {
+    const x = ml + (t / 120) * plotW;
+    const y = mt + plotH - (valores[i] / maxY) * plotH;
+    svg += `<circle cx="${x}" cy="${y}" r="5" fill="#0f7a5c" stroke="#073d2d" stroke-width="1.5"/>`;
+  });
+
+  // Etiquetas
+  svg += `<text x="${ml + plotW / 2}" y="${H - 14}" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">Tiempo (minutos)</text>`;
+  svg += `<text x="18" y="${mt + plotH / 2}" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a" transform="rotate(-90, 18, ${mt + plotH / 2})">Bacterias</text>`;
+
+  svg += '</svg>';
+  return svg;
+}
+
+function lineaTendencia() {
+  const W = 480, H = 260;
+  const ml = 56, mr = 16, mt = 18, mb = 56;
+  const plotW = W - ml - mr;
+  const plotH = H - mt - mb;
+
+  // Concentración decreciente: t=0:1.00, t=10:0.84, t=20:0.68, t=30:0.52, t=40:0.36
+  const tiempos = [0, 10, 20, 30, 40];
+  const valores = [1.00, 0.84, 0.68, 0.52, 0.36];
+  const maxY = 1.0;
+
+  let svg = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style="max-width:${W}px; width:100%; height:auto;">`;
+
+  for (let i = 0; i <= 4; i++) {
+    const y = mt + plotH - (i / 4) * plotH;
+    svg += `<line x1="${ml}" y1="${y}" x2="${W - mr}" y2="${y}" stroke="#e0e0e0" stroke-width="1"/>`;
+    svg += `<text x="${ml - 8}" y="${y + 4}" text-anchor="end" font-size="11" fill="#6a6a6a">${(i * maxY / 4).toFixed(2)}</text>`;
+  }
+
+  svg += `<line x1="${ml}" y1="${mt}" x2="${ml}" y2="${mt + plotH}" stroke="#1a1a1a" stroke-width="1.5"/>`;
+  svg += `<line x1="${ml}" y1="${mt + plotH}" x2="${W - mr}" y2="${mt + plotH}" stroke="#1a1a1a" stroke-width="1.5"/>`;
+
+  tiempos.forEach(t => {
+    const x = ml + (t / 40) * plotW;
+    svg += `<text x="${x}" y="${mt + plotH + 18}" text-anchor="middle" font-size="11" fill="#4a4a4a">${t}</text>`;
+  });
+
+  let path = '';
+  tiempos.forEach((t, i) => {
+    const x = ml + (t / 40) * plotW;
+    const y = mt + plotH - (valores[i] / maxY) * plotH;
+    path += (i === 0 ? `M ${x} ${y}` : ` L ${x} ${y}`);
+  });
+  svg += `<path d="${path}" fill="none" stroke="#1e5aa6" stroke-width="2.5"/>`;
+
+  tiempos.forEach((t, i) => {
+    const x = ml + (t / 40) * plotW;
+    const y = mt + plotH - (valores[i] / maxY) * plotH;
+    svg += `<circle cx="${x}" cy="${y}" r="5" fill="#1e5aa6" stroke="#0f3a6a" stroke-width="1.5"/>`;
+  });
+
+  svg += `<text x="${ml + plotW / 2}" y="${H - 14}" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a">Tiempo (s)</text>`;
+  svg += `<text x="18" y="${mt + plotH / 2}" text-anchor="middle" font-size="13" font-weight="700" fill="#1a1a1a" transform="rotate(-90, 18, ${mt + plotH / 2})">Concentración (M)</text>`;
+
+  svg += '</svg>';
+  return svg;
+}
+
+/* ============================================================
+   ESTADO DEL QUIZ
+   ============================================================ */
+
+const NOMBRES_CAT = {
+  bio: 'Biología',
+  qui: 'Química',
+  fis: 'Física',
+  tie: 'Tierra y espacio'
+};
+
+let estado = {
+  catsActivas: new Set(['bio', 'qui', 'fis', 'tie']),
+  numPreguntas: 10,
+  preguntas: [],
+  indiceActual: 0,
+  respuestas: [],
+  inicioTotal: 0,
+  inicioPregunta: 0
+};
+
+let cronoInterval = null;
+
+/* ============================================================
+   FISHER-YATES SHUFFLE
+   ============================================================ */
+function mezclar(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* ============================================================
+   POOL BALANCEADO
+   Selecciona N preguntas distribuidas equitativamente entre las
+   categorías activas
+   ============================================================ */
+function seleccionarPreguntas(catsActivas, n) {
+  const cats = Array.from(catsActivas);
+  const porCat = Math.ceil(n / cats.length);
+  let seleccion = [];
+  cats.forEach(cat => {
+    const delCat = mezclar(POOL.filter(p => p.cat === cat)).slice(0, porCat);
+    seleccion = seleccion.concat(delCat);
+  });
+  // Si tenemos más, recortar; si menos, completar con cualquiera de las cats
+  seleccion = mezclar(seleccion).slice(0, n);
+  if (seleccion.length < n) {
+    const extras = mezclar(POOL.filter(p => cats.includes(p.cat) && !seleccion.includes(p))).slice(0, n - seleccion.length);
+    seleccion = seleccion.concat(extras);
+  }
+  return seleccion;
+}
+
+/* ============================================================
+   PANTALLAS — navegación
+   ============================================================ */
+function mostrarPantalla(id) {
+  document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('activa'));
+  document.getElementById(id).classList.add('activa');
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+/* ============================================================
+   CONFIGURACIÓN — chips y cantidad
+   ============================================================ */
+document.querySelectorAll('#chips-cat .chip').forEach(chip => {
+  chip.addEventListener('click', () => {
+    const cat = chip.dataset.cat;
+    if (chip.classList.contains('activo')) {
+      // No permitir desactivar la última
+      if (estado.catsActivas.size > 1) {
+        chip.classList.remove('activo');
+        estado.catsActivas.delete(cat);
+      }
+    } else {
+      chip.classList.add('activo');
+      estado.catsActivas.add(cat);
+    }
+  });
+});
+
+document.querySelectorAll('#cantidad-btns button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#cantidad-btns button').forEach(b => b.classList.remove('activo'));
+    btn.classList.add('activo');
+    estado.numPreguntas = parseInt(btn.dataset.n);
+  });
+});
+
+document.getElementById('btn-comenzar').addEventListener('click', comenzarQuiz);
+
+/* ============================================================
+   COMENZAR QUIZ
+   ============================================================ */
+function comenzarQuiz() {
+  estado.preguntas = seleccionarPreguntas(estado.catsActivas, estado.numPreguntas);
+  estado.indiceActual = 0;
+  estado.respuestas = [];
+  estado.inicioTotal = Date.now();
+  mostrarPantalla('pantalla-quiz');
+  iniciarCrono();
+  renderPregunta();
+}
+
+function iniciarCrono() {
+  if (cronoInterval) clearInterval(cronoInterval);
+  cronoInterval = setInterval(() => {
+    const seg = Math.floor((Date.now() - estado.inicioTotal) / 1000);
+    const m = Math.floor(seg / 60);
+    const s = seg % 60;
+    document.getElementById('crono').textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  }, 1000);
+}
+
+function detenerCrono() {
+  if (cronoInterval) { clearInterval(cronoInterval); cronoInterval = null; }
+}
+
+/* ============================================================
+   RENDER PREGUNTA
+   ============================================================ */
+function renderPregunta() {
+  const p = estado.preguntas[estado.indiceActual];
+  const i = estado.indiceActual;
+  const total = estado.preguntas.length;
+  estado.inicioPregunta = Date.now();
+
+  // Barra
+  document.getElementById('progreso-texto').textContent = `Pregunta ${i + 1} de ${total}`;
+  document.getElementById('progreso-fill').style.width = `${((i + 1) / total) * 100}%`;
+
+  // Mezclar las opciones manteniendo registro del índice correcto
+  const indicesOriginales = [0, 1, 2, 3];
+  const mezcla = mezclar(indicesOriginales);
+  const opcionesMezcladas = mezcla.map(idx => p.opciones[idx]);
+  const nuevaCorrecta = mezcla.indexOf(p.correcta);
+
+  estado.preguntas[i]._mezcla = mezcla;
+  estado.preguntas[i]._correctaMezcla = nuevaCorrecta;
+
+  const letras = ['A', 'B', 'C', 'D'];
+  const host = document.getElementById('escenario-host');
+  host.innerHTML = `
+    <span class="etiqueta-categoria ${p.cat}">${NOMBRES_CAT[p.cat]} · ${p.tipo}</span>
+    <p class="contexto">${p.contexto}</p>
+    ${p.visual ? `<div class="visual">${p.visual}</div>` : ''}
+    <p class="pregunta">${p.pregunta}</p>
+    <div class="opciones" id="opciones-host">
+      ${opcionesMezcladas.map((op, idx) => `
+        <button class="opcion" data-idx="${idx}">
+          <span class="letra">${letras[idx]}</span>
+          <span>${op}</span>
+        </button>
+      `).join('')}
+    </div>
+  `;
+
+  document.querySelectorAll('#opciones-host .opcion').forEach(btn => {
+    btn.addEventListener('click', () => responder(parseInt(btn.dataset.idx)));
+  });
+
+  document.getElementById('feedback-host').innerHTML = '';
+}
+
+/* ============================================================
+   RESPONDER
+   ============================================================ */
+function responder(idxElegida) {
+  const i = estado.indiceActual;
+  const p = estado.preguntas[i];
+  const correctaMezcla = p._correctaMezcla;
+  const tiempoSeg = Math.round((Date.now() - estado.inicioPregunta) / 1000);
+  const acierto = idxElegida === correctaMezcla;
+
+  // Marcar opciones
+  document.querySelectorAll('#opciones-host .opcion').forEach((btn, idx) => {
+    btn.disabled = true;
+    if (idx === correctaMezcla) btn.classList.add('correcta');
+    if (idx === idxElegida && idx !== correctaMezcla) btn.classList.add('incorrecta');
+  });
+
+  // Guardar respuesta
+  estado.respuestas.push({
+    preguntaId: p.id,
+    cat: p.cat,
+    tiempoSeg: tiempoSeg,
+    acierto: acierto,
+    idxElegida: idxElegida,
+    idxCorrecta: correctaMezcla,
+    opcionElegida: p.opciones[p._mezcla[idxElegida]],
+    opcionCorrecta: p.opciones[p.correcta],
+    pregunta: p.pregunta,
+    explicacion: p.explicacion
+  });
+
+  // Feedback
+  const esUltima = i === estado.preguntas.length - 1;
+  const fbHost = document.getElementById('feedback-host');
+  fbHost.innerHTML = `
+    <div class="feedback ${acierto ? '' : 'malo'}">
+      <h4>${acierto ? '✓ Correcto' : '✗ Incorrecto'}</h4>
+      <p>${p.explicacion}</p>
+      <div class="nav">
+        <button class="btn" id="btn-siguiente">${esUltima ? 'Ver resultados →' : 'Siguiente pregunta →'}</button>
+      </div>
+    </div>
+  `;
+  document.getElementById('btn-siguiente').addEventListener('click', siguiente);
+}
+
+/* ============================================================
+   SIGUIENTE PREGUNTA / FIN
+   ============================================================ */
+function siguiente() {
+  if (estado.indiceActual === estado.preguntas.length - 1) {
+    detenerCrono();
+    mostrarResultados();
+  } else {
+    estado.indiceActual++;
+    renderPregunta();
+  }
+}
+
+/* ============================================================
+   RESULTADOS
+   ============================================================ */
+function mostrarResultados() {
+  const total = estado.respuestas.length;
+  const correctas = estado.respuestas.filter(r => r.acierto).length;
+  const incorrectas = total - correctas;
+  const pct = Math.round((correctas / total) * 100);
+  const segTotal = Math.floor((Date.now() - estado.inicioTotal) / 1000);
+  const mTotal = Math.floor(segTotal / 60);
+  const sTotal = segTotal % 60;
+  const promedio = Math.round(segTotal / total);
+
+  document.getElementById('puntaje-fraccion').textContent = `${correctas}/${total}`;
+  document.getElementById('puntaje-pct').textContent = `${pct}%`;
+  document.getElementById('stat-correctas').textContent = correctas;
+  document.getElementById('stat-incorrectas').textContent = incorrectas;
+  document.getElementById('stat-tiempo').textContent = `${mTotal}:${String(sTotal).padStart(2, '0')}`;
+  document.getElementById('stat-promedio').textContent = `${promedio}s`;
+
+  // Mensaje según puntaje
+  let msg = '';
+  if (pct >= 90) msg = '¡De cine, asere! Dominas el razonamiento estadístico en ciencia. Listo para esta área del GED.';
+  else if (pct >= 75) msg = 'Muy buen desempeño. Repasa las fallas y estás listo.';
+  else if (pct >= 60) msg = 'Vas bien. Repasa las áreas que se te dificultaron y vuelve a practicar.';
+  else if (pct >= 40) msg = 'Necesitas más práctica en este tema. Repasa la guía y vuelve a intentarlo.';
+  else msg = 'Empieza repasando la guía de la materia. Después regresa a esta práctica.';
+  document.getElementById('mensaje-resultado').textContent = msg;
+
+  // Desglose por categoría
+  const desgloseHost = document.getElementById('desglose-host');
+  desgloseHost.innerHTML = '';
+  ['bio', 'qui', 'fis', 'tie'].forEach(cat => {
+    const delCat = estado.respuestas.filter(r => r.cat === cat);
+    if (delCat.length === 0) return;
+    const aciertosCat = delCat.filter(r => r.acierto).length;
+    const pctCat = Math.round((aciertosCat / delCat.length) * 100);
+    desgloseHost.innerHTML += `
+      <div class="fila-cat ${cat}">
+        <span class="nombre"><span class="punto"></span>${NOMBRES_CAT[cat]}</span>
+        <span class="conteo">${aciertosCat}/${delCat.length}</span>
+        <div class="barra-cat"><div class="barra-cat-fill" style="width:${pctCat}%;"></div></div>
+        <span class="pct">${pctCat}%</span>
+      </div>
+    `;
+  });
+
+  // Repaso de falladas
+  const repasoHost = document.getElementById('repaso-host');
+  const falladas = estado.respuestas.filter(r => !r.acierto);
+  if (falladas.length === 0) {
+    repasoHost.innerHTML = `
+      <div class="tarjeta" style="text-align:center; padding:30px;">
+        <h3 style="margin:0; color:var(--c-good);">🎯 ¡Ninguna pregunta fallada!</h3>
+        <p style="margin:10px 0 0 0; color:var(--c-ink-soft);">Excelente desempeño en esta práctica.</p>
+      </div>
+    `;
+  } else {
+    let html = `<div class="tarjeta"><h3 style="margin-top:0;">Repaso: preguntas que fallaste (${falladas.length})</h3></div>`;
+    falladas.forEach((r, i) => {
+      html += `
+        <div class="repaso-item">
+          <div class="num-pregunta">${NOMBRES_CAT[r.cat]} · pregunta fallada</div>
+          <p class="pregunta-repaso">${r.pregunta}</p>
+          <div class="respuestas-repaso">
+            <div>Tu respuesta: <span class="tu-resp">${r.opcionElegida}</span></div>
+            <div>Respuesta correcta: <span class="corr-resp">${r.opcionCorrecta}</span></div>
+          </div>
+          <div class="explicacion-repaso">${r.explicacion}</div>
+        </div>
+      `;
+    });
+    repasoHost.innerHTML = html;
+  }
+
+  mostrarPantalla('pantalla-resultados');
+}
+
+/* ============================================================
+   BOTONES DE ACCIONES FINALES
+   ============================================================ */
+document.getElementById('btn-repetir').addEventListener('click', comenzarQuiz);
+document.getElementById('btn-config').addEventListener('click', () => {
+  mostrarPantalla('pantalla-config');
+});
+</script>
+</body>
+</html>
