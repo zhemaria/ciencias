@@ -1,1 +1,1633 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La célula | Ciencias de la vida | GEDparaHispanos</title>
+<style>
+/* ============================================================
+   Sub-página: La célula
+   Sección: Ciencias > Ciencias de la vida > La célula
+   Estilo DUA · self-contained
+   ============================================================ */
 
+:root {
+  --c-bg:       #fafafa;
+  --c-surface:  #ffffff;
+  --c-ink:      #1a1a1a;
+  --c-ink-soft: #4a4a4a;
+  --c-ink-mute: #6a6a6a;
+  --c-line:     #e0e0e0;
+  --c-line-str: #b0b0b0;
+
+  --c-ciencias: #0f7a5c;
+  --c-ciencias-bg: #e8f5ee;
+  --c-ciencias-dk: #073d2d;
+
+  --c-accent:   #1e5aa6;
+  --c-accent-bg: #eaf2fb;
+
+  --c-good:     #0f7a5c;
+  --c-good-bg:  #e8f5ee;
+  --c-bad:      #a63d1e;
+  --c-bad-bg:   #fbe9e7;
+  --c-warn:     #8a5a00;
+  --c-warn-bg:  #fdf6e3;
+
+  --c-animal:   #a63d1e;
+  --c-animal-bg:#fbe9e7;
+  --c-vegetal:  #0f7a5c;
+  --c-vegetal-bg:#e8f5ee;
+  --c-procar:   #5a2a8a;
+  --c-procar-bg:#f0e8f7;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, "Helvetica Neue", Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--c-ink);
+  background: var(--c-bg);
+  margin: 0;
+  padding: 0;
+}
+
+.contenedor {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 28px 24px 80px;
+}
+
+/* ---------- Breadcrumb ---------- */
+.breadcrumb {
+  font-size: 13px;
+  color: var(--c-ink-mute);
+  margin-bottom: 20px;
+}
+.breadcrumb a {
+  color: var(--c-ciencias);
+  text-decoration: none;
+}
+.breadcrumb a:hover { text-decoration: underline; }
+.breadcrumb .sep { margin: 0 8px; color: var(--c-line-str); }
+
+/* ---------- Cabecera ---------- */
+header.principal {
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-top: 6px solid var(--c-ciencias);
+  border-radius: 6px;
+  padding: 28px 28px 24px;
+  margin-bottom: 24px;
+}
+.eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--c-ciencias);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+header.principal h1 {
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+  color: var(--c-ink);
+  letter-spacing: -0.01em;
+}
+header.principal .subtitulo {
+  font-size: 17px;
+  color: var(--c-ink-soft);
+  margin: 0 0 16px 0;
+}
+header.principal .meta {
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-size: 14px;
+  color: var(--c-ink-mute);
+  padding-top: 14px;
+  border-top: 1px solid var(--c-line);
+}
+
+/* ---------- Tabla de contenido ---------- */
+.toc {
+  background: var(--c-ciencias-bg);
+  border: 1px solid var(--c-ciencias);
+  border-radius: 6px;
+  padding: 18px 22px;
+  margin-bottom: 28px;
+}
+.toc h3 {
+  margin: 0 0 10px 0;
+  color: var(--c-ciencias-dk);
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.toc ol {
+  margin: 0;
+  padding-left: 22px;
+  columns: 2;
+  column-gap: 24px;
+  font-size: 14px;
+}
+.toc ol li {
+  margin-bottom: 4px;
+  break-inside: avoid;
+}
+.toc ol li a {
+  color: var(--c-ciencias-dk);
+  text-decoration: none;
+}
+.toc ol li a:hover { text-decoration: underline; }
+@media (max-width: 600px) {
+  .toc ol { columns: 1; }
+}
+
+/* ---------- Secciones grandes (details/summary) ---------- */
+details.seccion-grande {
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: 6px;
+  margin-bottom: 14px;
+  scroll-margin-top: 16px;
+  overflow: hidden;
+  transition: border-color 0.15s;
+}
+details.seccion-grande[open] {
+  border-color: var(--c-ciencias);
+}
+details.seccion-grande > summary {
+  padding: 18px 26px;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  font-size: 19px;
+  font-weight: 700;
+  color: var(--c-ink);
+  background: var(--c-surface);
+  user-select: none;
+  border-left: 5px solid var(--c-ciencias);
+}
+details.seccion-grande > summary::-webkit-details-marker { display: none; }
+details.seccion-grande > summary::after {
+  content: "▼";
+  color: var(--c-ciencias);
+  font-size: 14px;
+  flex-shrink: 0;
+  transition: transform 0.2s;
+}
+details.seccion-grande[open] > summary::after {
+  transform: rotate(180deg);
+}
+details.seccion-grande[open] > summary {
+  background: var(--c-ciencias-bg);
+  border-bottom: 1px solid var(--c-ciencias);
+}
+details.seccion-grande > summary:hover {
+  background: var(--c-ciencias-bg);
+}
+details.seccion-grande .num-seccion {
+  display: inline-block;
+  background: var(--c-ciencias);
+  color: var(--c-surface);
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+  border-radius: 50%;
+  font-size: 13px;
+  font-weight: 700;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+details.seccion-grande .titulo-seccion { flex: 1; }
+details.seccion-grande > .seccion-contenido {
+  padding: 22px 30px 26px 30px;
+}
+details.seccion-grande h3 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 22px 0 10px 0;
+  color: var(--c-ink);
+}
+details.seccion-grande > .seccion-contenido > h3:first-child { margin-top: 0; }
+details.seccion-grande h4 {
+  font-size: 15px;
+  font-weight: 700;
+  margin: 16px 0 6px 0;
+  color: var(--c-ink-soft);
+  letter-spacing: 0.02em;
+}
+details.seccion-grande p {
+  margin: 0 0 14px 0;
+  color: var(--c-ink-soft);
+}
+details.seccion-grande p strong { color: var(--c-ink); }
+details.seccion-grande ul, details.seccion-grande ol {
+  margin: 0 0 14px 0;
+  padding-left: 22px;
+  color: var(--c-ink-soft);
+}
+details.seccion-grande ul li, details.seccion-grande ol li {
+  margin-bottom: 6px;
+}
+
+/* ---------- Botones de vista ---------- */
+.acciones-vista {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.btn-vista {
+  background: var(--c-surface);
+  color: var(--c-ciencias);
+  border: 2px solid var(--c-ciencias);
+  padding: 8px 18px;
+  border-radius: 5px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 13px;
+  transition: background 0.12s, color 0.12s;
+}
+.btn-vista:hover {
+  background: var(--c-ciencias);
+  color: var(--c-surface);
+}
+
+/* ---------- Tooltip de vocabulario ---------- */
+.tip {
+  position: relative;
+  border-bottom: 2px dotted var(--c-ciencias);
+  cursor: help;
+  color: var(--c-ciencias-dk);
+  font-weight: 600;
+}
+.tip::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: 130%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--c-ink);
+  color: var(--c-surface);
+  padding: 8px 12px;
+  border-radius: 5px;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.45;
+  white-space: normal;
+  width: max-content;
+  max-width: 280px;
+  text-align: left;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+  z-index: 100;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+.tip:hover::after, .tip:focus::after { opacity: 1; }
+
+/* ---------- Cajas de información ---------- */
+.caja {
+  background: var(--c-bg);
+  border: 1px solid var(--c-line);
+  border-left: 5px solid var(--c-ciencias);
+  border-radius: 5px;
+  padding: 16px 20px;
+  margin: 18px 0;
+}
+.caja.dato {
+  border-left-color: var(--c-accent);
+  background: var(--c-accent-bg);
+}
+.caja.atencion {
+  border-left-color: var(--c-warn);
+  background: var(--c-warn-bg);
+}
+.caja.idea {
+  border-left-color: var(--c-ciencias);
+  background: var(--c-ciencias-bg);
+}
+.caja h4 {
+  margin: 0 0 8px 0;
+  color: var(--c-ink);
+  font-size: 14px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.caja p:last-child { margin-bottom: 0; }
+
+/* ---------- Tablas ---------- */
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  margin: 16px 0;
+  background: var(--c-surface);
+}
+.tabla th, .tabla td {
+  padding: 10px 14px;
+  border: 1px solid var(--c-line-str);
+  text-align: left;
+  vertical-align: top;
+}
+.tabla th {
+  background: var(--c-bg);
+  color: var(--c-ink);
+  font-weight: 700;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+}
+.tabla td { color: var(--c-ink-soft); }
+.tabla .si { color: var(--c-good); font-weight: 700; text-align: center; }
+.tabla .no { color: var(--c-bad); font-weight: 700; text-align: center; }
+.tabla.compara th:first-child { background: var(--c-ink); color: var(--c-surface); }
+
+/* ---------- Diagrama SVG ---------- */
+.diagrama {
+  background: var(--c-bg);
+  border: 1px solid var(--c-line);
+  border-radius: 6px;
+  padding: 20px;
+  margin: 18px 0;
+  text-align: center;
+  overflow-x: auto;
+}
+.diagrama .leyenda {
+  font-size: 13px;
+  color: var(--c-ink-mute);
+  margin-top: 10px;
+  font-style: italic;
+}
+
+/* ---------- Acordeón nativo (details/summary) ---------- */
+details.acordeon {
+  background: var(--c-surface);
+  border: 1px solid var(--c-line);
+  border-radius: 5px;
+  margin: 10px 0;
+  overflow: hidden;
+}
+details.acordeon[open] {
+  border-color: var(--c-ciencias);
+}
+details.acordeon summary {
+  padding: 14px 18px;
+  cursor: pointer;
+  font-weight: 700;
+  color: var(--c-ink);
+  background: var(--c-bg);
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 15px;
+  user-select: none;
+}
+details.acordeon summary::-webkit-details-marker { display: none; }
+details.acordeon summary::after {
+  content: "+";
+  color: var(--c-ciencias);
+  font-size: 22px;
+  font-weight: 700;
+  transition: transform 0.2s;
+}
+details.acordeon[open] summary::after {
+  content: "−";
+}
+details.acordeon[open] summary {
+  background: var(--c-ciencias-bg);
+  color: var(--c-ciencias-dk);
+}
+details.acordeon .contenido-acord {
+  padding: 16px 22px 18px 22px;
+  font-size: 14.5px;
+  color: var(--c-ink-soft);
+  line-height: 1.65;
+}
+details.acordeon .contenido-acord p { margin: 0 0 10px 0; }
+details.acordeon .contenido-acord p:last-child { margin-bottom: 0; }
+
+/* ---------- Quiz integrado ---------- */
+.quiz-bloque {
+  background: var(--c-surface);
+  border: 2px solid var(--c-ciencias);
+  border-radius: 6px;
+  padding: 26px 30px;
+  margin-bottom: 22px;
+}
+.quiz-bloque h2 {
+  border-bottom: none;
+  padding-bottom: 0;
+  color: var(--c-ciencias-dk);
+  margin-top: 0;
+}
+.quiz-pregunta {
+  background: var(--c-bg);
+  border: 1px solid var(--c-line);
+  border-radius: 5px;
+  padding: 16px 20px;
+  margin-bottom: 14px;
+}
+.quiz-pregunta .num {
+  display: inline-block;
+  background: var(--c-ciencias);
+  color: var(--c-surface);
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+.quiz-pregunta .texto {
+  font-weight: 600;
+  color: var(--c-ink);
+  margin-bottom: 12px;
+}
+.quiz-opciones {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.quiz-op {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  border: 2px solid var(--c-line-str);
+  border-radius: 5px;
+  background: var(--c-surface);
+  font-size: 14.5px;
+  color: var(--c-ink);
+  cursor: pointer;
+  text-align: left;
+  font-family: inherit;
+  line-height: 1.5;
+  transition: border-color 0.12s, background 0.12s;
+}
+.quiz-op:hover:not(:disabled) { border-color: var(--c-ciencias); }
+.quiz-op:disabled { cursor: default; }
+.quiz-op .letra {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--c-bg);
+  border: 2px solid var(--c-line-str);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--c-ink-soft);
+}
+.quiz-op.correcta { border-color: var(--c-good); background: var(--c-good-bg); }
+.quiz-op.correcta .letra { background: var(--c-good); border-color: var(--c-good); color: var(--c-surface); }
+.quiz-op.incorrecta { border-color: var(--c-bad); background: var(--c-bad-bg); }
+.quiz-op.incorrecta .letra { background: var(--c-bad); border-color: var(--c-bad); color: var(--c-surface); }
+
+.quiz-feedback {
+  margin-top: 10px;
+  padding: 12px 16px;
+  border-radius: 5px;
+  font-size: 14px;
+  display: none;
+  line-height: 1.55;
+}
+.quiz-feedback.bien {
+  background: var(--c-good-bg);
+  border-left: 4px solid var(--c-good);
+  color: var(--c-ciencias-dk);
+}
+.quiz-feedback.mal {
+  background: var(--c-bad-bg);
+  border-left: 4px solid var(--c-bad);
+  color: #5a1d0c;
+}
+.quiz-feedback.activo { display: block; }
+
+.quiz-resumen {
+  text-align: center;
+  background: var(--c-ciencias-bg);
+  border: 2px solid var(--c-ciencias);
+  border-radius: 6px;
+  padding: 22px;
+  margin-top: 18px;
+  display: none;
+}
+.quiz-resumen.activo { display: block; }
+.quiz-resumen .puntaje {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--c-ciencias-dk);
+  margin: 8px 0;
+}
+.quiz-resumen .mensaje {
+  color: var(--c-ink-soft);
+  margin-bottom: 14px;
+}
+.btn-reintentar {
+  background: var(--c-ciencias);
+  color: var(--c-surface);
+  border: none;
+  padding: 10px 22px;
+  border-radius: 5px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 14px;
+}
+.btn-reintentar:hover { background: var(--c-ciencias-dk); }
+
+/* ---------- Referencias / Steck-Vaughn ---------- */
+.referencias {
+  background: var(--c-warn-bg);
+  border: 1px solid var(--c-warn);
+  border-radius: 6px;
+  padding: 22px 26px;
+}
+.referencias h2 {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-top: 0;
+  color: #5a3a00;
+  font-size: 19px;
+}
+.referencias .libro {
+  font-style: italic;
+  color: var(--c-ink);
+  font-weight: 600;
+}
+.referencias .nota-paginas {
+  font-size: 13px;
+  color: var(--c-ink-mute);
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 1px solid var(--c-warn);
+}
+.tabla-paginas { font-size: 14px; }
+.tabla-paginas th { background: var(--c-warn); color: var(--c-surface); }
+.tabla-paginas td .pag {
+  display: inline-block;
+  background: var(--c-warn);
+  color: var(--c-surface);
+  padding: 2px 10px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.04em;
+}
+
+/* ---------- Pie ---------- */
+footer.pie {
+  text-align: center;
+  margin-top: 48px;
+  padding-top: 28px;
+  border-top: 1px solid var(--c-line);
+  font-size: 13px;
+  color: var(--c-ink-mute);
+}
+footer.pie a { color: var(--c-ciencias); text-decoration: none; }
+footer.pie a:hover { text-decoration: underline; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 640px) {
+  .contenedor { padding: 20px 14px 60px; }
+  header.principal { padding: 22px 18px 18px; }
+  header.principal h1 { font-size: 26px; }
+  .quiz-bloque { padding: 20px 18px; }
+  details.seccion-grande > summary { padding: 16px 18px; font-size: 17px; }
+  details.seccion-grande > .seccion-contenido { padding: 20px 18px; }
+  details.seccion-grande .num-seccion { width: 26px; height: 26px; line-height: 26px; font-size: 12px; }
+  .tabla { font-size: 13px; }
+  .tabla th, .tabla td { padding: 8px 10px; }
+}
+</style>
+</head>
+<body>
+<div class="contenedor">
+
+<nav class="breadcrumb" aria-label="Ruta de navegación">
+  <a href="https://www.gedparahispanos.com">Inicio</a>
+  <span class="sep">›</span>
+  <a href="https://www.gedparahispanos.com/ciencias">Ciencias</a>
+  <span class="sep">›</span>
+  <a href="https://www.gedparahispanos.com/ciencias/ciencias-de-la-vida">Ciencias de la vida</a>
+  <span class="sep">›</span>
+  <span>La célula</span>
+</nav>
+
+<header class="principal">
+  <div class="eyebrow">CIENCIAS DE LA VIDA · UNIDAD 1</div>
+  <h1>La célula: unidad básica de la vida</h1>
+  <p class="subtitulo">Estructura, función y procesos de la unidad fundamental de los seres vivos</p>
+  <div class="meta">
+    <span>📚 Tema fundamental del GED Science</span>
+    <span>⏱️ 25–35 min de estudio</span>
+    <span>🧬 8 preguntas de práctica</span>
+  </div>
+</header>
+
+<div class="toc">
+  <h3>Contenido de esta lección</h3>
+  <ol>
+    <li><a href="#intro">¿Qué es la célula?</a></li>
+    <li><a href="#niveles">Niveles de organización</a></li>
+    <li><a href="#tipos">Tipos de células: procariota y eucariota</a></li>
+    <li><a href="#estructura">Estructura de la célula eucariota</a></li>
+    <li><a href="#animal-vegetal">Célula animal vs. célula vegetal</a></li>
+    <li><a href="#funciones">Funciones celulares clave</a></li>
+    <li><a href="#transporte">Transporte a través de la membrana</a></li>
+    <li><a href="#division">División celular: la mitosis</a></li>
+    <li><a href="#vocabulario">Vocabulario clave</a></li>
+    <li><a href="#quiz">Práctica: 8 preguntas tipo GED</a></li>
+    <li><a href="#referencias">Referencias del Steck-Vaughn</a></li>
+  </ol>
+</div>
+
+<div class="acciones-vista">
+  <button class="btn-vista" onclick="toggleTodas(true)">📖 Abrir todo</button>
+  <button class="btn-vista" onclick="toggleTodas(false)">📑 Cerrar todo</button>
+</div>
+
+<!-- ============================================================
+     1. ¿QUÉ ES LA CÉLULA?
+     ============================================================ -->
+<details class="seccion-grande" open id="intro">
+  <summary><span class="num-seccion">1</span><span class="titulo-seccion">¿Qué es la célula?</span></summary>
+  <div class="seccion-contenido">
+
+  <p>
+    La <strong>célula</strong> es la <strong>unidad básica de la vida</strong>. Todos los seres vivos —desde
+    una bacteria microscópica hasta una ballena azul— están formados por células. Algunos
+    organismos consisten en una sola célula (<span class="tip" data-tip="Organismo formado por una sola célula. Ejemplos: bacterias, levaduras, amebas.">unicelulares</span>),
+    mientras que otros contienen miles de millones de células (<span class="tip" data-tip="Organismo formado por muchas células que trabajan en conjunto. Ejemplos: plantas, animales, hongos como los champiñones.">pluricelulares</span>).
+  </p>
+
+  <div class="caja idea">
+    <h4>💡 Tres ideas centrales de la teoría celular</h4>
+    <p style="margin:0;">
+      <strong>1.</strong> Todos los seres vivos están compuestos por células. <br>
+      <strong>2.</strong> La célula es la unidad básica de estructura y función de la vida. <br>
+      <strong>3.</strong> Toda célula proviene de otra célula preexistente.
+    </p>
+  </div>
+
+  <p>
+    Las células son tan pequeñas que la mayoría no se ven a simple vista. Una célula típica mide
+    entre <strong>10 y 100 micrómetros</strong> (μm) — un milímetro contiene 1,000 micrómetros. Para
+    estudiarlas se necesita un <strong>microscopio</strong>.
+  </p>
+</div>
+</details>
+
+<!-- ============================================================
+     2. NIVELES DE ORGANIZACIÓN
+     ============================================================ -->
+<details class="seccion-grande" id="niveles">
+  <summary><span class="num-seccion">2</span><span class="titulo-seccion">Niveles de organización biológica</span></summary>
+  <div class="seccion-contenido">
+
+  <p>
+    En los organismos pluricelulares, las células se agrupan en estructuras cada vez más complejas.
+    Esta jerarquía es uno de los conceptos más evaluados en el GED.
+  </p>
+
+  <div class="diagrama">
+    <svg viewBox="0 0 720 130" xmlns="http://www.w3.org/2000/svg" style="max-width:720px; width:100%; height:auto;">
+      <!-- 6 niveles en cadena -->
+      <g font-family="-apple-system, sans-serif" font-size="13" font-weight="700" fill="#1a1a1a">
+        <rect x="10" y="40" width="100" height="50" rx="6" fill="#e8f5ee" stroke="#0f7a5c" stroke-width="2"/>
+        <text x="60" y="70" text-anchor="middle">Célula</text>
+
+        <rect x="130" y="40" width="100" height="50" rx="6" fill="#e8f5ee" stroke="#0f7a5c" stroke-width="2"/>
+        <text x="180" y="70" text-anchor="middle">Tejido</text>
+
+        <rect x="250" y="40" width="100" height="50" rx="6" fill="#e8f5ee" stroke="#0f7a5c" stroke-width="2"/>
+        <text x="300" y="70" text-anchor="middle">Órgano</text>
+
+        <rect x="370" y="40" width="100" height="50" rx="6" fill="#e8f5ee" stroke="#0f7a5c" stroke-width="2"/>
+        <text x="420" y="65" text-anchor="middle">Sistema de</text>
+        <text x="420" y="80" text-anchor="middle">órganos</text>
+
+        <rect x="490" y="40" width="100" height="50" rx="6" fill="#e8f5ee" stroke="#0f7a5c" stroke-width="2"/>
+        <text x="540" y="70" text-anchor="middle">Organismo</text>
+
+        <rect x="610" y="40" width="100" height="50" rx="6" fill="#e8f5ee" stroke="#0f7a5c" stroke-width="2"/>
+        <text x="660" y="70" text-anchor="middle">Población</text>
+      </g>
+      <!-- Flechas -->
+      <g stroke="#0f7a5c" stroke-width="2" fill="none">
+        <path d="M 113 65 L 127 65" marker-end="url(#flecha1)"/>
+        <path d="M 233 65 L 247 65" marker-end="url(#flecha1)"/>
+        <path d="M 353 65 L 367 65" marker-end="url(#flecha1)"/>
+        <path d="M 473 65 L 487 65" marker-end="url(#flecha1)"/>
+        <path d="M 593 65 L 607 65" marker-end="url(#flecha1)"/>
+      </g>
+      <defs>
+        <marker id="flecha1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+          <path d="M 0 0 L 10 5 L 0 10 z" fill="#0f7a5c"/>
+        </marker>
+      </defs>
+    </svg>
+    <p class="leyenda">De la célula al organismo y a la población — los seis niveles principales</p>
+  </div>
+
+  <h3>Ejemplo concreto: el ser humano</h3>
+  <ul>
+    <li><strong>Célula:</strong> una célula muscular individual.</li>
+    <li><strong>Tejido:</strong> muchas células musculares juntas forman <em>tejido muscular</em>.</li>
+    <li><strong>Órgano:</strong> el corazón es un órgano formado por tejido muscular, tejido nervioso y tejido conectivo.</li>
+    <li><strong>Sistema de órganos:</strong> el corazón junto con los vasos sanguíneos forman el <em>sistema circulatorio</em>.</li>
+    <li><strong>Organismo:</strong> la persona completa.</li>
+    <li><strong>Población:</strong> todos los seres humanos de una región.</li>
+  </ul>
+</div>
+</details>
+
+<!-- ============================================================
+     3. TIPOS DE CÉLULAS
+     ============================================================ -->
+<details class="seccion-grande" id="tipos">
+  <summary><span class="num-seccion">3</span><span class="titulo-seccion">Tipos de células: procariota y eucariota</span></summary>
+  <div class="seccion-contenido">
+
+  <p>
+    Existen dos tipos fundamentales de células, distinguidos por una característica clave: si tienen
+    o no <span class="tip" data-tip="Estructura celular rodeada de una membrana doble que contiene el ADN. Solo las eucariotas lo tienen.">núcleo verdadero</span>.
+  </p>
+
+  <div class="diagrama">
+    <svg viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg" style="max-width:700px; width:100%; height:auto;">
+      <!-- Procariota -->
+      <g>
+        <text x="160" y="22" text-anchor="middle" font-size="15" font-weight="700" fill="#5a2a8a">CÉLULA PROCARIOTA</text>
+        <text x="160" y="42" text-anchor="middle" font-size="11" fill="#6a6a6a">Ejemplo: bacteria</text>
+        <!-- forma -->
+        <ellipse cx="160" cy="155" rx="120" ry="80" fill="#f0e8f7" stroke="#5a2a8a" stroke-width="2.5"/>
+        <!-- material genético disperso -->
+        <path d="M 110 130 Q 130 110, 160 125 Q 190 140, 170 165 Q 150 185, 120 175 Q 100 160, 110 130 Z"
+              fill="none" stroke="#5a2a8a" stroke-width="1.8" stroke-dasharray="3 2"/>
+        <text x="105" y="105" font-size="10" fill="#5a2a8a" font-weight="700">ADN circular</text>
+        <text x="105" y="118" font-size="10" fill="#5a2a8a">(sin núcleo)</text>
+        <!-- ribosomas como puntos -->
+        <circle cx="200" cy="120" r="3" fill="#5a2a8a"/>
+        <circle cx="215" cy="135" r="3" fill="#5a2a8a"/>
+        <circle cx="195" cy="155" r="3" fill="#5a2a8a"/>
+        <circle cx="220" cy="170" r="3" fill="#5a2a8a"/>
+        <circle cx="205" cy="190" r="3" fill="#5a2a8a"/>
+        <circle cx="180" cy="210" r="3" fill="#5a2a8a"/>
+        <text x="245" y="155" font-size="10" fill="#5a2a8a" font-weight="700">Ribosomas</text>
+        <!-- flagelo -->
+        <path d="M 280 155 Q 305 145, 295 130 Q 285 115, 310 110" fill="none" stroke="#5a2a8a" stroke-width="2"/>
+        <text x="290" y="100" font-size="10" fill="#5a2a8a" font-weight="700">Flagelo</text>
+        <!-- pared y membrana -->
+        <text x="40" y="180" font-size="10" fill="#5a2a8a" font-weight="700">Pared</text>
+        <text x="40" y="193" font-size="10" fill="#5a2a8a">celular</text>
+        <line x1="68" y1="180" x2="92" y2="170" stroke="#5a2a8a" stroke-width="1.5"/>
+      </g>
+
+      <!-- separador -->
+      <line x1="350" y1="50" x2="350" y2="240" stroke="#e0e0e0" stroke-width="2" stroke-dasharray="6 4"/>
+
+      <!-- Eucariota -->
+      <g>
+        <text x="540" y="22" text-anchor="middle" font-size="15" font-weight="700" fill="#0f7a5c">CÉLULA EUCARIOTA</text>
+        <text x="540" y="42" text-anchor="middle" font-size="11" fill="#6a6a6a">Ejemplo: célula animal</text>
+        <ellipse cx="540" cy="155" rx="120" ry="80" fill="#e8f5ee" stroke="#0f7a5c" stroke-width="2.5"/>
+        <!-- núcleo -->
+        <circle cx="540" cy="155" r="32" fill="#ffffff" stroke="#0f7a5c" stroke-width="2"/>
+        <circle cx="540" cy="155" r="8" fill="#0f7a5c"/>
+        <text x="540" y="158" text-anchor="middle" font-size="10" font-weight="700" fill="#0f7a5c"></text>
+        <text x="540" y="115" text-anchor="middle" font-size="10" fill="#0f7a5c" font-weight="700">Núcleo</text>
+        <!-- mitocondria -->
+        <ellipse cx="475" cy="115" rx="16" ry="9" fill="#a63d1e" stroke="#5a1d0c" stroke-width="1.5"/>
+        <text x="447" y="100" font-size="10" fill="#a63d1e" font-weight="700">Mitocondria</text>
+        <!-- otra mito -->
+        <ellipse cx="610" cy="195" rx="16" ry="9" fill="#a63d1e" stroke="#5a1d0c" stroke-width="1.5"/>
+        <!-- ribosomas -->
+        <circle cx="490" cy="195" r="3" fill="#1e5aa6"/>
+        <circle cx="500" cy="210" r="3" fill="#1e5aa6"/>
+        <circle cx="585" cy="125" r="3" fill="#1e5aa6"/>
+        <circle cx="600" cy="135" r="3" fill="#1e5aa6"/>
+        <text x="450" y="225" font-size="10" fill="#1e5aa6" font-weight="700">Ribosomas</text>
+      </g>
+    </svg>
+    <p class="leyenda">Comparación visual: la procariota no tiene núcleo; la eucariota sí, y posee organelos especializados</p>
+  </div>
+
+  <table class="tabla compara">
+    <thead>
+      <tr>
+        <th>Característica</th>
+        <th>Procariota</th>
+        <th>Eucariota</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th>Núcleo verdadero</th>
+        <td class="no">No (ADN libre en el citoplasma)</td>
+        <td class="si">Sí (ADN dentro del núcleo)</td>
+      </tr>
+      <tr>
+        <th>Tamaño</th>
+        <td>Pequeñas (1–10 μm)</td>
+        <td>Más grandes (10–100 μm)</td>
+      </tr>
+      <tr>
+        <th>Organelos con membrana</th>
+        <td class="no">No tienen</td>
+        <td class="si">Mitocondrias, retículo, Golgi, etc.</td>
+      </tr>
+      <tr>
+        <th>Pared celular</th>
+        <td>Sí, de peptidoglicano</td>
+        <td>Solo en plantas, hongos y algas</td>
+      </tr>
+      <tr>
+        <th>Ejemplos</th>
+        <td>Bacterias, arqueas</td>
+        <td>Animales, plantas, hongos, protistas</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="caja dato">
+    <h4>📌 Dato clave para el GED</h4>
+    <p style="margin:0;">
+      Recuerda: <strong>"pro" significa "antes de"</strong> y <strong>"eu" significa "verdadero"</strong>.
+      Las procariotas existieron <em>antes</em> que las eucariotas en la evolución, y las eucariotas
+      tienen un núcleo <em>verdadero</em>.
+    </p>
+  </div>
+</div>
+</details>
+
+<!-- ============================================================
+     4. ESTRUCTURA DE LA CÉLULA EUCARIOTA
+     ============================================================ -->
+<details class="seccion-grande" id="estructura">
+  <summary><span class="num-seccion">4</span><span class="titulo-seccion">Estructura de la célula eucariota</span></summary>
+  <div class="seccion-contenido">
+
+  <p>
+    Una célula eucariota contiene varios <strong>organelos</strong> — pequeñas estructuras especializadas, cada
+    una con una función específica. Piensa en la célula como una pequeña fábrica donde cada
+    organelo es un departamento diferente.
+  </p>
+
+  <p style="margin-bottom:16px;"><strong>Toca cada organelo para ver su función:</strong></p>
+
+  <details class="acordeon">
+    <summary>🛡️ Membrana plasmática (membrana celular)</summary>
+    <div class="contenido-acord">
+      <p>
+        Es una capa delgada que <strong>rodea toda la célula</strong>. Está formada por una doble capa de
+        <span class="tip" data-tip="Moléculas con una parte que atrae al agua (cabeza) y otra que la repele (cola). Forman naturalmente capas dobles en agua.">fosfolípidos</span>
+        con proteínas insertadas.
+      </p>
+      <p>
+        <strong>Función:</strong> controla qué entra y sale de la célula. Es <strong>selectivamente permeable</strong>,
+        lo que significa que deja pasar algunas sustancias y bloquea otras. Esto permite a la célula
+        mantener su ambiente interno estable (homeostasis).
+      </p>
+    </div>
+  </details>
+
+  <details class="acordeon">
+    <summary>💧 Citoplasma</summary>
+    <div class="contenido-acord">
+      <p>
+        Es el <strong>"líquido" gelatinoso</strong> que llena el interior de la célula, entre la membrana y el núcleo.
+      </p>
+      <p>
+        <strong>Función:</strong> contiene a todos los organelos suspendidos. Allí ocurren muchas reacciones
+        químicas necesarias para la vida, como los primeros pasos de la respiración celular.
+      </p>
+    </div>
+  </details>
+
+  <details class="acordeon">
+    <summary>🧬 Núcleo</summary>
+    <div class="contenido-acord">
+      <p>
+        Es el <strong>"centro de control"</strong> de la célula. Está rodeado por una doble membrana llamada
+        <strong>envoltura nuclear</strong>, que tiene poros para permitir el paso de moléculas.
+      </p>
+      <p>
+        <strong>Función:</strong> contiene el <strong>ADN</strong>, que es el material genético con las instrucciones para
+        construir y operar toda la célula. Dentro del núcleo se produce el ARN, que luego sale al
+        citoplasma para fabricar proteínas. También contiene un <em>nucléolo</em> que fabrica los
+        ribosomas.
+      </p>
+    </div>
+  </details>
+
+  <details class="acordeon">
+    <summary>⚡ Mitocondrias</summary>
+    <div class="contenido-acord">
+      <p>
+        Son las <strong>"centrales de energía"</strong> de la célula. Tienen forma de frijol y poseen una membrana
+        doble: la externa lisa, y la interna plegada en crestas para aumentar la superficie.
+      </p>
+      <p>
+        <strong>Función:</strong> realizan la <strong>respiración celular</strong>, donde transforman la glucosa y el oxígeno
+        en <span class="tip" data-tip="Adenosín trifosfato — la 'moneda energética' de las células. Toda actividad celular requiere ATP.">ATP</span>,
+        la energía que la célula utiliza para todas sus actividades. Por eso, las células que más
+        trabajo hacen (musculares, nerviosas, hepáticas) tienen muchísimas mitocondrias.
+      </p>
+    </div>
+  </details>
+
+  <details class="acordeon">
+    <summary>🏭 Ribosomas</summary>
+    <div class="contenido-acord">
+      <p>
+        Son <strong>pequeñas máquinas</strong> que pueden estar libres en el citoplasma o pegadas al retículo
+        endoplasmático rugoso. No tienen membrana, así que técnicamente son los únicos
+        "organelos" presentes también en las procariotas.
+      </p>
+      <p>
+        <strong>Función:</strong> fabrican <strong>proteínas</strong> siguiendo las instrucciones del ARN mensajero. Las
+        proteínas son las moléculas que hacen casi todo el trabajo en los seres vivos: enzimas,
+        hormonas, anticuerpos, estructura.
+      </p>
+    </div>
+  </details>
+
+  <details class="acordeon">
+    <summary>🚂 Retículo endoplasmático (RE)</summary>
+    <div class="contenido-acord">
+      <p>
+        Es una red de <strong>tubos y bolsas membranosas</strong> conectada al núcleo. Hay dos tipos:
+      </p>
+      <ul>
+        <li><strong>RE rugoso:</strong> tiene ribosomas adheridos en su superficie. Procesa y transporta las proteínas que los ribosomas fabrican.</li>
+        <li><strong>RE liso:</strong> sin ribosomas. Sintetiza lípidos (grasas) y desintoxica sustancias tóxicas en el hígado.</li>
+      </ul>
+    </div>
+  </details>
+
+  <details class="acordeon">
+    <summary>📦 Aparato de Golgi</summary>
+    <div class="contenido-acord">
+      <p>
+        Conjunto de <strong>sacos membranosos apilados</strong>, parecidos a un montón de tortillas.
+      </p>
+      <p>
+        <strong>Función:</strong> recibe las proteínas y lípidos del retículo endoplasmático, los <strong>modifica,
+        empaqueta y envía</strong> a su destino dentro o fuera de la célula. Es como la oficina de correos
+        celular: etiqueta los paquetes y los despacha.
+      </p>
+    </div>
+  </details>
+
+  <details class="acordeon">
+    <summary>🗑️ Lisosomas</summary>
+    <div class="contenido-acord">
+      <p>
+        <strong>Pequeñas vesículas</strong> con enzimas digestivas potentes en su interior.
+      </p>
+      <p>
+        <strong>Función:</strong> son el <strong>"sistema de digestión y reciclaje"</strong> de la célula. Descomponen alimentos
+        que la célula ingiere, organelos viejos y dañados, y bacterias invasoras. Sin lisosomas
+        funcionales, la célula acumula desechos y muere.
+      </p>
+    </div>
+  </details>
+</div>
+</details>
+
+<!-- ============================================================
+     5. ANIMAL VS VEGETAL
+     ============================================================ -->
+<details class="seccion-grande" id="animal-vegetal">
+  <summary><span class="num-seccion">5</span><span class="titulo-seccion">Célula animal vs. célula vegetal</span></summary>
+  <div class="seccion-contenido">
+
+  <p>
+    Ambas son <strong>eucariotas</strong> y comparten muchos organelos. Sin embargo, las células vegetales
+    tienen tres estructuras adicionales que les permiten su modo de vida característico
+    (fotosíntesis, soporte rígido, reserva).
+  </p>
+
+  <table class="tabla compara">
+    <thead>
+      <tr>
+        <th>Estructura</th>
+        <th style="background: var(--c-animal); color:#fff;">Célula animal</th>
+        <th style="background: var(--c-vegetal); color:#fff;">Célula vegetal</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th>Núcleo</th>
+        <td class="si">Sí</td>
+        <td class="si">Sí</td>
+      </tr>
+      <tr>
+        <th>Membrana plasmática</th>
+        <td class="si">Sí</td>
+        <td class="si">Sí</td>
+      </tr>
+      <tr>
+        <th>Mitocondrias</th>
+        <td class="si">Sí</td>
+        <td class="si">Sí</td>
+      </tr>
+      <tr>
+        <th>Ribosomas, RE, Golgi</th>
+        <td class="si">Sí</td>
+        <td class="si">Sí</td>
+      </tr>
+      <tr>
+        <th>Pared celular (de celulosa)</th>
+        <td class="no">No</td>
+        <td class="si">Sí — proporciona rigidez y forma</td>
+      </tr>
+      <tr>
+        <th>Cloroplastos</th>
+        <td class="no">No</td>
+        <td class="si">Sí — realizan fotosíntesis</td>
+      </tr>
+      <tr>
+        <th>Vacuola central grande</th>
+        <td class="no">Vacuolas pequeñas</td>
+        <td class="si">Sí, una vacuola enorme con agua y nutrientes</td>
+      </tr>
+      <tr>
+        <th>Lisosomas</th>
+        <td class="si">Sí, abundantes</td>
+        <td>Raros (la vacuola hace funciones similares)</td>
+      </tr>
+      <tr>
+        <th>Forma</th>
+        <td>Variable, redondeada</td>
+        <td>Rectangular, geometría rígida por la pared</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="caja idea">
+    <h4>🧠 Truco para recordar</h4>
+    <p style="margin:0;">
+      Las células vegetales tienen <strong>tres "cosas verdes" propias</strong>: pared celular, <strong>c</strong>loroplastos y
+      una <strong>v</strong>acuola gigante. Si una pregunta del GED te muestra una célula con cualquiera de
+      estas, es vegetal.
+    </p>
+  </div>
+</div>
+</details>
+
+<!-- ============================================================
+     6. FUNCIONES CELULARES CLAVE
+     ============================================================ -->
+<details class="seccion-grande" id="funciones">
+  <summary><span class="num-seccion">6</span><span class="titulo-seccion">Funciones celulares clave</span></summary>
+  <div class="seccion-contenido">
+
+  <p>
+    Las células no son contenedores estáticos: son fábricas químicas activas. Dos procesos
+    fundamentales son la <strong>respiración celular</strong> y la <strong>fotosíntesis</strong>.
+  </p>
+
+  <h3>Respiración celular</h3>
+  <p>
+    Ocurre principalmente en las <strong>mitocondrias</strong> de todas las células eucariotas. Convierte la
+    glucosa en energía utilizable (ATP).
+  </p>
+  <div class="caja dato">
+    <h4>Ecuación general</h4>
+    <p style="margin:0; text-align:center; font-size:16px; font-weight:700; color:var(--c-ink);">
+      Glucosa + Oxígeno → Dióxido de carbono + Agua + ATP (energía)
+    </p>
+    <p style="margin:8px 0 0 0; text-align:center; font-family:monospace; color:var(--c-ink-soft);">
+      C<sub>6</sub>H<sub>12</sub>O<sub>6</sub> + 6 O<sub>2</sub> → 6 CO<sub>2</sub> + 6 H<sub>2</sub>O + ATP
+    </p>
+  </div>
+
+  <h3>Fotosíntesis</h3>
+  <p>
+    Ocurre solo en plantas, algas y algunas bacterias, dentro de los <strong>cloroplastos</strong>. Es lo
+    contrario de la respiración: usa energía del sol para fabricar glucosa.
+  </p>
+  <div class="caja dato">
+    <h4>Ecuación general</h4>
+    <p style="margin:0; text-align:center; font-size:16px; font-weight:700; color:var(--c-ink);">
+      Dióxido de carbono + Agua + Luz solar → Glucosa + Oxígeno
+    </p>
+    <p style="margin:8px 0 0 0; text-align:center; font-family:monospace; color:var(--c-ink-soft);">
+      6 CO<sub>2</sub> + 6 H<sub>2</sub>O + luz → C<sub>6</sub>H<sub>12</sub>O<sub>6</sub> + 6 O<sub>2</sub>
+    </p>
+  </div>
+
+  <div class="caja idea">
+    <h4>🔄 Ciclo complementario</h4>
+    <p style="margin:0;">
+      Las plantas <strong>liberan oxígeno</strong> que respiramos los animales. Los animales liberamos <strong>CO<sub>2</sub></strong>
+      que las plantas usan para fotosíntesis. Es uno de los ciclos más importantes de la
+      biosfera, y se evalúa frecuentemente en el GED.
+    </p>
+  </div>
+</div>
+</details>
+
+<!-- ============================================================
+     7. TRANSPORTE A TRAVÉS DE LA MEMBRANA
+     ============================================================ -->
+<details class="seccion-grande" id="transporte">
+  <summary><span class="num-seccion">7</span><span class="titulo-seccion">Transporte a través de la membrana</span></summary>
+  <div class="seccion-contenido">
+
+  <p>
+    La membrana plasmática controla qué entra y sale de la célula. Existen dos grandes tipos de
+    transporte: <strong>pasivo</strong> (no requiere energía) y <strong>activo</strong> (requiere energía en forma de ATP).
+  </p>
+
+  <h3>Transporte pasivo</h3>
+  <ul>
+    <li>
+      <strong>Difusión:</strong> el movimiento de moléculas desde donde hay más concentración hacia donde
+      hay menos. Imagina una gota de tinta esparciéndose en agua.
+    </li>
+    <li>
+      <strong>Ósmosis:</strong> la difusión específicamente del <strong>agua</strong> a través de una membrana
+      semipermeable. El agua se mueve de donde hay menos solutos hacia donde hay más.
+    </li>
+    <li>
+      <strong>Difusión facilitada:</strong> moléculas grandes (como la glucosa) que cruzan la membrana con
+      ayuda de proteínas, pero sin gastar ATP, siempre a favor del gradiente.
+    </li>
+  </ul>
+
+  <h3>Transporte activo</h3>
+  <ul>
+    <li>
+      <strong>Bomba de sodio-potasio:</strong> mueve iones <em>en contra</em> de su gradiente de concentración,
+      gastando ATP. Es esencial para la transmisión de impulsos nerviosos.
+    </li>
+    <li>
+      <strong>Endocitosis:</strong> la célula engulle partículas grandes formando una vesícula desde su
+      membrana. La <span class="tip" data-tip="'Comer celular' — la célula rodea y absorbe partículas sólidas como bacterias.">fagocitosis</span>
+      es un tipo de endocitosis.
+    </li>
+    <li>
+      <strong>Exocitosis:</strong> la célula expulsa contenido empaquetado en vesículas hacia afuera. Las
+      neuronas usan exocitosis para liberar neurotransmisores.
+    </li>
+  </ul>
+
+  <div class="caja atencion">
+    <h4>⚠️ Cuidado con la dirección de la ósmosis</h4>
+    <p style="margin:0;">
+      El agua se mueve hacia donde hay <strong>más sal o azúcar disuelto</strong> (mayor concentración de
+      solutos). Esto se debe a que el agua "diluye" lo concentrado. Es un concepto que el GED
+      pregunta frecuentemente con células colocadas en agua salada vs. agua pura.
+    </p>
+  </div>
+</div>
+</details>
+
+<!-- ============================================================
+     8. DIVISIÓN CELULAR (MITOSIS - GENERAL)
+     ============================================================ -->
+<details class="seccion-grande" id="division">
+  <summary><span class="num-seccion">8</span><span class="titulo-seccion">División celular: la mitosis</span></summary>
+  <div class="seccion-contenido">
+
+  <p>
+    Las células no viven para siempre. Para crecer, reparar tejidos dañados o reemplazar células
+    muertas, las células deben <strong>dividirse</strong>. La división celular más común es la <strong>mitosis</strong>.
+  </p>
+
+  <p>
+    En la mitosis, una célula <strong>"madre"</strong> se divide y produce <strong>dos células hijas idénticas</strong> a la
+    original, cada una con la misma cantidad de cromosomas.
+  </p>
+
+  <h3>Las cuatro fases principales</h3>
+  <ol>
+    <li>
+      <strong>Profase:</strong> el ADN se condensa en cromosomas visibles. La envoltura nuclear desaparece.
+    </li>
+    <li>
+      <strong>Metafase:</strong> los cromosomas se alinean en el centro de la célula.
+    </li>
+    <li>
+      <strong>Anafase:</strong> los cromosomas se separan y migran hacia los polos opuestos.
+    </li>
+    <li>
+      <strong>Telofase:</strong> se forman dos núcleos nuevos, y la célula se divide en dos (citocinesis).
+    </li>
+  </ol>
+
+  <div class="caja idea">
+    <h4>📌 Para recordar las fases en orden</h4>
+    <p style="margin:0;">
+      Memoriza la mnemotecnia <strong>"PMAT"</strong>: <strong>P</strong>rofase → <strong>M</strong>etafase → <strong>A</strong>nafase → <strong>T</strong>elofase.
+    </p>
+  </div>
+
+  <p style="margin-top:16px;">
+    Existe también otro tipo de división celular llamada <strong>meiosis</strong>, que produce células
+    sexuales (óvulos y espermatozoides) con la mitad de cromosomas. La meiosis se cubre en
+    detalle en la sub-página de <em>Genética y herencia</em>.
+  </p>
+</div>
+</details>
+
+<!-- ============================================================
+     9. VOCABULARIO CLAVE
+     ============================================================ -->
+<details class="seccion-grande" id="vocabulario">
+  <summary><span class="num-seccion">9</span><span class="titulo-seccion">Vocabulario clave de la lección</span></summary>
+  <div class="seccion-contenido">
+
+  <p>Términos que aparecen frecuentemente en preguntas del GED. Toca cada término para ver su definición.</p>
+
+  <details class="acordeon">
+    <summary>Célula</summary>
+    <div class="contenido-acord">
+      <p>Unidad básica de estructura y función de todos los seres vivos.</p>
+    </div>
+  </details>
+
+  <details class="acordeon">
+    <summary>Procariota / Eucariota</summary>
+    <div class="contenido-acord">
+      <p><strong>Procariota:</strong> célula sin núcleo verdadero (bacterias, arqueas).</p>
+      <p><strong>Eucariota:</strong> célula con núcleo verdadero rodeado por membrana (animales, plantas, hongos, protistas).</p>
+    </div>
+  </details>
+
+  <details class="acordeon">
+    <summary>Organelo</summary>
+    <div class="contenido-acord">
+      <p>Estructura especializada dentro de una célula eucariota, generalmente rodeada por una membrana, que realiza una función específica (mitocondria, núcleo, Golgi, etc.).</p>
+    </div>
+  </details>
+
+  <details class="acordeon">
+    <summary>Membrana plasmática</summary>
+    <div class="contenido-acord">
+      <p>Capa selectivamente permeable que rodea a la célula y controla la entrada y salida de sustancias. Está formada por una bicapa lipídica con proteínas.</p>
+    </div>
+  </details>
+
+  <details class="acordeon">
+    <summary>Núcleo</summary>
+    <div class="contenido-acord">
+      <p>Organelo que contiene el ADN. Es el centro de control de la célula eucariota.</p>
+    </div>
+  </details>
+
+  <details class="acordeon">
+    <summary>Mitocondria</summary>
+    <div class="contenido-acord">
+      <p>Organelo donde ocurre la respiración celular. Produce ATP (energía) a partir de glucosa y oxígeno.</p>
+    </div>
+  </details>
+
+  <details class="acordeon">
+    <summary>Cloroplasto</summary>
+    <div class="contenido-acord">
+      <p>Organelo presente solo en células vegetales y algunas algas. Contiene clorofila y realiza fotosíntesis.</p>
+    </div>
+  </details>
+
+  <details class="acordeon">
+    <summary>ATP</summary>
+    <div class="contenido-acord">
+      <p>Adenosín trifosfato. La molécula que las células usan como "moneda energética". Toda actividad celular consume ATP.</p>
+    </div>
+  </details>
+
+  <details class="acordeon">
+    <summary>Ósmosis</summary>
+    <div class="contenido-acord">
+      <p>Movimiento del agua a través de una membrana semipermeable, desde una región con menos solutos hacia una con más solutos.</p>
+    </div>
+  </details>
+
+  <details class="acordeon">
+    <summary>Mitosis</summary>
+    <div class="contenido-acord">
+      <p>Tipo de división celular que produce dos células hijas genéticamente idénticas a la célula madre. Tiene cuatro fases: profase, metafase, anafase, telofase.</p>
+    </div>
+  </details>
+</div>
+</details>
+
+<!-- ============================================================
+     10. QUIZ
+     ============================================================ -->
+<div class="quiz-bloque" id="quiz">
+  <h2 style="border-bottom:none; padding-bottom:0; margin-top:0;">10. Práctica: 8 preguntas tipo GED</h2>
+  <p style="color:var(--c-ink-soft);">
+    Toca una opción para responder. Recibirás retroalimentación inmediata. Al final verás tu puntaje y podrás reintentar.
+  </p>
+
+  <div id="quiz-host"></div>
+
+  <div class="quiz-resumen" id="quiz-resumen">
+    <div style="font-size:13px; color:var(--c-ink-mute); letter-spacing:0.08em; text-transform:uppercase; font-weight:700;">Tu puntaje</div>
+    <div class="puntaje" id="quiz-puntaje">0/8</div>
+    <div class="mensaje" id="quiz-mensaje"></div>
+    <button class="btn-reintentar" onclick="reiniciarQuiz()">↻ Reintentar quiz</button>
+  </div>
+</div>
+
+<!-- ============================================================
+     11. REFERENCIAS DEL STECK-VAUGHN
+     ============================================================ -->
+<section class="referencias" id="referencias">
+  <h2>11. Referencias del libro de texto</h2>
+  <p>
+    Para ampliar y reforzar lo aprendido en esta lección, consulta el libro:
+  </p>
+  <p class="libro">
+    Steck-Vaughn Ciencias: Preparación para la prueba de GED 2014 (Libro del estudiante) <br>
+    <span style="font-style:normal; font-weight:400; color:var(--c-ink-soft); font-size:13px;">Houghton Mifflin Harcourt / Paxen — ISBN: 978-0544301290 — 135 páginas</span>
+  </p>
+
+  <table class="tabla tabla-paginas" style="margin-top:14px;">
+    <thead>
+      <tr>
+        <th>Tema</th>
+        <th>Páginas (estimadas)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Estructura y función celular</td>
+        <td><span class="pag">pp. ~4–13</span></td>
+      </tr>
+      <tr>
+        <td>Procesos celulares (respiración, fotosíntesis)</td>
+        <td><span class="pag">pp. ~14–23</span></td>
+      </tr>
+      <tr>
+        <td>Transporte y división celular</td>
+        <td><span class="pag">pp. ~24–33</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p class="nota-paginas">
+    ⚠️ <strong>Verifica las páginas con tu edición.</strong> Las referencias de páginas son estimadas a partir de la
+    estructura típica del libro (Ciencias de la vida → Ciencias físicas → Ciencias de la tierra → Práctica).
+    Cuando confirmes las páginas exactas en tu ejemplar, puedes ajustarlas — el patrón se replicará
+    en las siguientes sub-páginas (Genética, Evolución, Ecosistemas, Cuerpo humano).
+  </p>
+</section>
+
+<footer class="pie">
+  <p>
+    <a href="https://www.gedparahispanos.com/ciencias/ciencias-de-la-vida">← Volver a Ciencias de la vida</a> ·
+    <a href="https://www.gedparahispanos.com/ciencias">Ciencias</a> ·
+    <a href="https://www.gedparahispanos.com">GEDparaHispanos.com</a>
+  </p>
+  <p style="margin-top:10px;">
+    📚 Sub-lección 1 de 5 de Ciencias de la vida · Próxima: <em>Genética y herencia</em>
+  </p>
+</footer>
+
+</div>
+
+<script>
+/* ============================================================
+   QUIZ — 8 preguntas tipo GED sobre la célula
+   ============================================================ */
+
+const PREGUNTAS_QUIZ = [
+  {
+    pregunta: '¿Cuál de las siguientes estructuras NO se encuentra en una célula procariota?',
+    opciones: [
+      'Membrana plasmática',
+      'Citoplasma',
+      'Núcleo verdadero rodeado por membrana',
+      'Ribosomas'
+    ],
+    correcta: 2,
+    explicacion: 'Las células procariotas (como las bacterias) no tienen núcleo verdadero; su ADN está libre en el citoplasma. Las otras tres estructuras sí están presentes en procariotas y eucariotas.'
+  },
+  {
+    pregunta: 'Una célula tiene cloroplastos, pared celular y una vacuola central grande. ¿De qué tipo de célula se trata?',
+    opciones: [
+      'Célula bacteriana',
+      'Célula animal',
+      'Célula vegetal',
+      'Célula procariota'
+    ],
+    correcta: 2,
+    explicacion: 'Las tres estructuras mencionadas son características exclusivas de las células vegetales: la pared celular les da rigidez, los cloroplastos realizan fotosíntesis, y la vacuola central almacena agua y nutrientes.'
+  },
+  {
+    pregunta: '¿En qué organelo ocurre principalmente la respiración celular?',
+    opciones: [
+      'Núcleo',
+      'Mitocondria',
+      'Ribosoma',
+      'Aparato de Golgi'
+    ],
+    correcta: 1,
+    explicacion: 'La respiración celular ocurre principalmente en las mitocondrias, donde la glucosa se transforma en ATP (energía utilizable) usando oxígeno. Por eso las mitocondrias se conocen como las "centrales de energía" celulares.'
+  },
+  {
+    pregunta: 'Una célula vegetal se coloca en agua pura. ¿Qué ocurrirá por ósmosis?',
+    opciones: [
+      'El agua saldrá de la célula y la célula se encogerá.',
+      'El agua entrará a la célula porque adentro hay más solutos.',
+      'No habrá movimiento de agua.',
+      'La célula liberará glucosa.'
+    ],
+    correcta: 1,
+    explicacion: 'En ósmosis, el agua se mueve de donde hay menos solutos (agua pura) hacia donde hay más solutos (interior celular). Por eso el agua entrará. La pared celular impide que la célula reviente, simplemente se vuelve túrgida.'
+  },
+  {
+    pregunta: '¿Cuál es el orden correcto de las fases de la mitosis?',
+    opciones: [
+      'Anafase, profase, metafase, telofase',
+      'Profase, metafase, anafase, telofase',
+      'Metafase, telofase, profase, anafase',
+      'Telofase, anafase, metafase, profase'
+    ],
+    correcta: 1,
+    explicacion: 'El orden correcto es: Profase → Metafase → Anafase → Telofase (mnemotecnia: PMAT). En cada fase ocurren eventos específicos para que el material genético se reparta equitativamente entre las dos células hijas.'
+  },
+  {
+    pregunta: 'La fotosíntesis convierte dióxido de carbono y agua en:',
+    opciones: [
+      'Proteínas y minerales',
+      'ATP y mitocondrias',
+      'Glucosa y oxígeno',
+      'Agua salada y CO₂'
+    ],
+    correcta: 2,
+    explicacion: 'La ecuación de la fotosíntesis es: 6 CO₂ + 6 H₂O + luz → glucosa (C₆H₁₂O₆) + 6 O₂. Las plantas usan esta glucosa como alimento y liberan el oxígeno que respiramos los animales.'
+  },
+  {
+    pregunta: '¿Cuál es la función principal del núcleo celular?',
+    opciones: [
+      'Producir energía en forma de ATP.',
+      'Almacenar el ADN y controlar las actividades celulares.',
+      'Digerir partículas y eliminar desechos.',
+      'Transportar proteínas hacia afuera de la célula.'
+    ],
+    correcta: 1,
+    explicacion: 'El núcleo contiene el ADN, que tiene las instrucciones genéticas para todas las funciones celulares. Por eso se llama el "centro de control". Las otras opciones describen funciones de mitocondrias, lisosomas y aparato de Golgi respectivamente.'
+  },
+  {
+    pregunta: 'Un investigador observa una célula al microscopio: tiene núcleo, mitocondrias, ribosomas, pero no tiene pared celular ni cloroplastos. La célula es probablemente:',
+    opciones: [
+      'Bacteriana',
+      'Vegetal',
+      'Animal',
+      'Una arquea procariota'
+    ],
+    correcta: 2,
+    explicacion: 'Tiene núcleo y organelos con membrana, así que es eucariota (descarta bacterias y arqueas). Pero no tiene pared celular ni cloroplastos, así que tampoco es vegetal. Por eliminación es animal: las células animales son eucariotas pero carecen de pared y cloroplastos.'
+  }
+];
+
+let respuestasUsuario = [];
+
+function renderQuiz() {
+  const host = document.getElementById('quiz-host');
+  host.innerHTML = '';
+  respuestasUsuario = [];
+
+  PREGUNTAS_QUIZ.forEach((p, idx) => {
+    const div = document.createElement('div');
+    div.className = 'quiz-pregunta';
+    const letras = ['A', 'B', 'C', 'D'];
+    div.innerHTML = `
+      <span class="num">Pregunta ${idx + 1}</span>
+      <p class="texto">${p.pregunta}</p>
+      <div class="quiz-opciones" id="opciones-${idx}">
+        ${p.opciones.map((op, i) => `
+          <button class="quiz-op" data-preg="${idx}" data-op="${i}">
+            <span class="letra">${letras[i]}</span>
+            <span>${op}</span>
+          </button>
+        `).join('')}
+      </div>
+      <div class="quiz-feedback" id="feedback-${idx}"></div>
+    `;
+    host.appendChild(div);
+  });
+
+  document.querySelectorAll('.quiz-op').forEach(btn => {
+    btn.addEventListener('click', responderQuiz);
+  });
+
+  document.getElementById('quiz-resumen').classList.remove('activo');
+}
+
+function responderQuiz(e) {
+  const btn = e.currentTarget;
+  const idxPreg = parseInt(btn.dataset.preg);
+  const idxOp = parseInt(btn.dataset.op);
+  if (respuestasUsuario[idxPreg] !== undefined) return;
+
+  const p = PREGUNTAS_QUIZ[idxPreg];
+  const correcta = p.correcta;
+  const acierto = idxOp === correcta;
+  respuestasUsuario[idxPreg] = acierto;
+
+  // Marcar opciones
+  document.querySelectorAll(`#opciones-${idxPreg} .quiz-op`).forEach((b, i) => {
+    b.disabled = true;
+    if (i === correcta) b.classList.add('correcta');
+    if (i === idxOp && i !== correcta) b.classList.add('incorrecta');
+  });
+
+  // Feedback
+  const fb = document.getElementById(`feedback-${idxPreg}`);
+  fb.className = `quiz-feedback activo ${acierto ? 'bien' : 'mal'}`;
+  fb.innerHTML = `<strong>${acierto ? '✓ Correcto.' : '✗ Incorrecto.'}</strong> ${p.explicacion}`;
+
+  // Si todas respondidas, mostrar resumen
+  if (respuestasUsuario.filter(r => r !== undefined).length === PREGUNTAS_QUIZ.length) {
+    mostrarResumen();
+  }
+}
+
+function mostrarResumen() {
+  const correctas = respuestasUsuario.filter(r => r === true).length;
+  const total = PREGUNTAS_QUIZ.length;
+  const pct = Math.round((correctas / total) * 100);
+  document.getElementById('quiz-puntaje').textContent = `${correctas}/${total} (${pct}%)`;
+
+  let msg = '';
+  if (pct >= 90) msg = '¡Excelente! Dominas la célula. Listo para Genética.';
+  else if (pct >= 75) msg = 'Muy buen trabajo. Repasa las que fallaste y estás listo.';
+  else if (pct >= 50) msg = 'Vas bien. Repasa el contenido y vuelve a intentarlo.';
+  else msg = 'Tómate tu tiempo para releer la lección antes de seguir.';
+  document.getElementById('quiz-mensaje').textContent = msg;
+
+  document.getElementById('quiz-resumen').classList.add('activo');
+  document.getElementById('quiz-resumen').scrollIntoView({behavior: 'smooth', block: 'center'});
+}
+
+function reiniciarQuiz() {
+  renderQuiz();
+  document.getElementById('quiz').scrollIntoView({behavior: 'smooth'});
+}
+
+renderQuiz();
+
+/* ============================================================
+   CONTROL DE SECCIONES (abrir todo / cerrar todo + TOC)
+   ============================================================ */
+
+function toggleTodas(abrir) {
+  document.querySelectorAll('details.seccion-grande').forEach(d => {
+    d.open = abrir;
+  });
+}
+
+// Cuando el usuario hace click en un enlace del TOC, abre automáticamente
+// la sección destino para que el scroll lo lleve al contenido (no a un
+// summary cerrado).
+document.querySelectorAll('.toc a').forEach(enlace => {
+  enlace.addEventListener('click', e => {
+    const href = enlace.getAttribute('href');
+    if (!href || !href.startsWith('#')) return;
+    const id = href.substring(1);
+    const dest = document.getElementById(id);
+    if (dest && dest.tagName === 'DETAILS') {
+      dest.open = true;
+    }
+  });
+});
+
+// Si la URL tiene un hash al cargar (link directo a una sección),
+// abrir esa sección
+window.addEventListener('load', () => {
+  if (window.location.hash) {
+    const id = window.location.hash.substring(1);
+    const dest = document.getElementById(id);
+    if (dest && dest.tagName === 'DETAILS') {
+      dest.open = true;
+      setTimeout(() => dest.scrollIntoView({behavior: 'smooth', block: 'start'}), 100);
+    }
+  }
+});
+</script>
+</body>
+</html>
