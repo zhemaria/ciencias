@@ -1,13 +1,1256 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>En preparacion</title>
-  </head>
-  <body>
-    <header>
-      <h1>Tema en preparación</h1>
-    </header>
-  </body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evolución | GED para Hispanos</title>
+<link rel="stylesheet" href="../../estilos-dua-unificado.css">
+<style>
+:root {
+  --verde-bio: #2e7d32;
+  --verde-bio-claro: #c8e6c9;
+  --verde-bio-suave: #e8f5e9;
+  --verde-bio-oscuro: #1b5e20;
+  --azul-info: #1565c0;
+  --azul-info-claro: #bbdefb;
+  --azul-info-suave: #e3f2fd;
+  --naranja-clave: #e65100;
+  --naranja-suave: #fff3e0;
+  --rojo-error: #c62828;
+  --rojo-suave: #ffebee;
+  --gris-texto: #212121;
+  --gris-suave: #f5f5f5;
+  --amarillo-mito: #fff8e1;
+  --amarillo-borde: #f9a825;
+}
+
+body {
+  font-family: 'Verdana', 'Geneva', sans-serif;
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--gris-texto);
+  background-color: #ffffff;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1.titulo-pagina {
+  font-size: 2.4em;
+  color: var(--verde-bio-oscuro);
+  text-align: center;
+  border-bottom: 4px solid var(--verde-bio);
+  padding-bottom: 12px;
+  margin-bottom: 8px;
+}
+
+.subtitulo-pagina {
+  text-align: center;
+  font-style: italic;
+  color: #555;
+  margin-top: 0;
+  margin-bottom: 30px;
+  font-size: 1.15em;
+}
+
+.breadcrumbs {
+  background-color: var(--verde-bio-suave);
+  padding: 10px 16px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-size: 0.95em;
+}
+
+.breadcrumbs a {
+  color: var(--verde-bio-oscuro);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.breadcrumbs a:hover {
+  text-decoration: underline;
+}
+
+.tabla-contenidos {
+  background-color: var(--verde-bio-suave);
+  border-left: 5px solid var(--verde-bio);
+  padding: 18px 24px;
+  border-radius: 6px;
+  margin: 20px 0;
+}
+
+.tabla-contenidos h2 {
+  margin-top: 0;
+  color: var(--verde-bio-oscuro);
+  font-size: 1.3em;
+}
+
+.tabla-contenidos ol {
+  margin-bottom: 0;
+  padding-left: 28px;
+}
+
+.tabla-contenidos li {
+  margin-bottom: 8px;
+}
+
+.tabla-contenidos a {
+  color: var(--verde-bio-oscuro);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.tabla-contenidos a:hover {
+  text-decoration: underline;
+}
+
+.botones-control {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin: 24px 0;
+  flex-wrap: wrap;
+}
+
+.btn-control {
+  background-color: var(--verde-bio);
+  color: white;
+  border: none;
+  padding: 10px 22px;
+  font-size: 1em;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.btn-control:hover {
+  background-color: var(--verde-bio-oscuro);
+}
+
+details.seccion-grande {
+  margin: 18px 0;
+  border: 2px solid var(--verde-bio);
+  border-radius: 8px;
+  background-color: #ffffff;
+  overflow: hidden;
+}
+
+details.seccion-grande > summary {
+  padding: 16px 20px;
+  background-color: var(--verde-bio-suave);
+  cursor: pointer;
+  list-style: none;
+  font-size: 1.25em;
+  font-weight: 600;
+  color: var(--verde-bio-oscuro);
+  border-left: 5px solid var(--verde-bio);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  user-select: none;
+}
+
+details.seccion-grande > summary::-webkit-details-marker {
+  display: none;
+}
+
+details.seccion-grande > summary::after {
+  content: "▼";
+  margin-left: auto;
+  font-size: 0.85em;
+  color: var(--verde-bio);
+  transition: transform 0.2s;
+}
+
+details.seccion-grande[open] > summary::after {
+  content: "▲";
+}
+
+details.seccion-grande[open] > summary {
+  background-color: var(--verde-bio-claro);
+}
+
+.num-seccion {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background-color: var(--verde-bio);
+  color: white;
+  border-radius: 50%;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.titulo-seccion {
+  flex: 1;
+}
+
+.seccion-contenido {
+  padding: 22px 28px;
+  background-color: #ffffff;
+}
+
+.seccion-contenido h3 {
+  color: var(--verde-bio-oscuro);
+  border-bottom: 2px solid var(--verde-bio-claro);
+  padding-bottom: 6px;
+  margin-top: 24px;
+}
+
+.seccion-contenido h4 {
+  color: var(--verde-bio);
+  margin-top: 18px;
+  margin-bottom: 8px;
+}
+
+.caja-clave {
+  background-color: var(--azul-info-suave);
+  border-left: 5px solid var(--azul-info);
+  padding: 14px 20px;
+  margin: 16px 0;
+  border-radius: 4px;
+}
+
+.caja-clave strong {
+  color: var(--azul-info);
+}
+
+.caja-importante {
+  background-color: var(--naranja-suave);
+  border-left: 5px solid var(--naranja-clave);
+  padding: 14px 20px;
+  margin: 16px 0;
+  border-radius: 4px;
+}
+
+.caja-importante strong {
+  color: var(--naranja-clave);
+}
+
+.caja-mito {
+  background-color: var(--amarillo-mito);
+  border-left: 5px solid var(--amarillo-borde);
+  padding: 14px 20px;
+  margin: 14px 0;
+  border-radius: 4px;
+}
+
+.mito-falso {
+  color: var(--rojo-error);
+  font-weight: 700;
+  display: block;
+  margin-bottom: 6px;
+}
+
+.mito-correcto {
+  color: var(--verde-bio-oscuro);
+  font-weight: 700;
+  display: block;
+  margin-top: 6px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 18px 0;
+  background-color: #ffffff;
+}
+
+th {
+  background-color: var(--verde-bio);
+  color: white;
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+}
+
+td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e0e0e0;
+  vertical-align: top;
+}
+
+tr:nth-child(even) td {
+  background-color: var(--gris-suave);
+}
+
+.tooltip-dua {
+  border-bottom: 2px dotted var(--azul-info);
+  cursor: help;
+  position: relative;
+  font-weight: 600;
+  color: var(--azul-info);
+}
+
+.tooltip-dua:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 130%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--azul-info);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  white-space: normal;
+  width: 260px;
+  z-index: 10;
+  font-weight: normal;
+  line-height: 1.4;
+}
+
+details.sub-acordeon {
+  margin: 10px 0;
+  border: 1px solid var(--verde-bio-claro);
+  border-radius: 5px;
+  background-color: var(--gris-suave);
+}
+
+details.sub-acordeon > summary {
+  padding: 10px 14px;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--verde-bio-oscuro);
+  list-style: none;
+  background-color: var(--verde-bio-suave);
+  border-radius: 5px;
+}
+
+details.sub-acordeon[open] > summary {
+  border-radius: 5px 5px 0 0;
+  border-bottom: 1px solid var(--verde-bio-claro);
+}
+
+details.sub-acordeon > summary::-webkit-details-marker {
+  display: none;
+}
+
+details.sub-acordeon > summary::before {
+  content: "▶ ";
+  font-size: 0.8em;
+  color: var(--verde-bio);
+}
+
+details.sub-acordeon[open] > summary::before {
+  content: "▼ ";
+}
+
+.sub-contenido {
+  padding: 12px 18px;
+  background-color: #ffffff;
+}
+
+.svg-figura {
+  text-align: center;
+  margin: 20px 0;
+  background-color: var(--gris-suave);
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.svg-figura figcaption {
+  font-size: 0.92em;
+  color: #555;
+  margin-top: 10px;
+  font-style: italic;
+}
+
+.seccion-quiz {
+  background-color: var(--azul-info-suave);
+  border: 3px solid var(--azul-info);
+  border-radius: 10px;
+  padding: 24px;
+  margin: 30px 0;
+}
+
+.seccion-quiz h2 {
+  color: var(--azul-info);
+  margin-top: 0;
+  text-align: center;
+  font-size: 1.6em;
+}
+
+.pregunta-quiz {
+  background-color: #ffffff;
+  border: 2px solid var(--azul-info-claro);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin: 18px 0;
+}
+
+.pregunta-quiz .num-pregunta {
+  display: inline-block;
+  background-color: var(--azul-info);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.9em;
+  margin-bottom: 10px;
+}
+
+.opcion-quiz {
+  background-color: var(--gris-suave);
+  border: 2px solid #cfd8dc;
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin: 8px 0;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s;
+  user-select: none;
+}
+
+.opcion-quiz:hover {
+  background-color: var(--azul-info-claro);
+  border-color: var(--azul-info);
+}
+
+.opcion-quiz.correcta {
+  background-color: var(--verde-bio-claro);
+  border-color: var(--verde-bio);
+  color: var(--verde-bio-oscuro);
+  font-weight: 600;
+}
+
+.opcion-quiz.incorrecta {
+  background-color: var(--rojo-suave);
+  border-color: var(--rojo-error);
+  color: var(--rojo-error);
+  font-weight: 600;
+}
+
+.feedback-quiz {
+  display: none;
+  margin-top: 12px;
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.feedback-quiz.acierto {
+  background-color: var(--verde-bio-suave);
+  border-left: 5px solid var(--verde-bio);
+  color: var(--verde-bio-oscuro);
+}
+
+.feedback-quiz.fallo {
+  background-color: var(--rojo-suave);
+  border-left: 5px solid var(--rojo-error);
+  color: var(--rojo-error);
+}
+
+.referencias-bloque {
+  background-color: var(--naranja-suave);
+  border-left: 5px solid var(--naranja-clave);
+  padding: 18px 24px;
+  border-radius: 6px;
+  margin: 30px 0;
+}
+
+.referencias-bloque h2 {
+  color: var(--naranja-clave);
+  margin-top: 0;
+}
+
+.nav-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  background-color: var(--verde-bio-suave);
+  border-top: 4px solid var(--verde-bio);
+  padding: 16px 20px;
+  margin-top: 40px;
+  border-radius: 6px;
+}
+
+.nav-footer a {
+  color: var(--verde-bio-oscuro);
+  text-decoration: none;
+  font-weight: 600;
+  padding: 8px 14px;
+  background-color: white;
+  border: 2px solid var(--verde-bio);
+  border-radius: 6px;
+}
+
+.nav-footer a:hover {
+  background-color: var(--verde-bio);
+  color: white;
+}
+
+@media (max-width: 700px) {
+  body { padding: 12px; font-size: 16px; }
+  h1.titulo-pagina { font-size: 1.8em; }
+  details.seccion-grande > summary { font-size: 1.1em; padding: 12px 14px; }
+  .seccion-contenido { padding: 16px 18px; }
+  .num-seccion { width: 30px; height: 30px; font-size: 0.95em; }
+  table { font-size: 0.92em; }
+  th, td { padding: 8px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1 class="titulo-pagina">🌳 Evolución</h1>
+  <p class="subtitulo-pagina">Cómo cambian las especies a través del tiempo</p>
+</header>
+
+<nav class="breadcrumbs">
+  <a href="../../index.html">Inicio</a> ›
+  <a href="../index.html">Ciencias</a> ›
+  <a href="index.html">Ciencias de la vida</a> ›
+  <strong>Evolución</strong>
+</nav>
+
+<nav class="tabla-contenidos">
+  <h2>📑 Contenido de esta página</h2>
+  <ol>
+    <li><a href="#que-es">¿Qué es la evolución?</a></li>
+    <li><a href="#evidencias">Evidencias de la evolución</a></li>
+    <li><a href="#darwin">Darwin y la selección natural</a></li>
+    <li><a href="#mecanismos">Mecanismos evolutivos</a></li>
+    <li><a href="#tipos-seleccion">Tipos de selección natural</a></li>
+    <li><a href="#especiacion">Especiación</a></li>
+    <li><a href="#humana">Evolución humana y mitos comunes</a></li>
+    <li><a href="#ejemplos">Ejemplos clásicos del GED</a></li>
+    <li><a href="#vocabulario">Vocabulario clave</a></li>
+  </ol>
+</nav>
+
+<div class="botones-control">
+  <button class="btn-control" onclick="abrirTodo()">📖 Abrir todo</button>
+  <button class="btn-control" onclick="cerrarTodo()">📕 Cerrar todo</button>
+</div>
+
+<details class="seccion-grande" id="que-es" open>
+  <summary>
+    <span class="num-seccion">1</span>
+    <span class="titulo-seccion">¿Qué es la evolución?</span>
+  </summary>
+  <div class="seccion-contenido">
+    <p>La <strong>evolución</strong> es el cambio en las características hereditarias de las poblaciones de seres vivos a lo largo de generaciones sucesivas. Es el proceso que explica la enorme diversidad de vida que existe en la Tierra y la similitud entre todos los organismos.</p>
+
+    <div class="caja-clave">
+      <strong>Concepto crucial:</strong> Quien evoluciona es la <strong>población</strong>, NO el individuo. Un organismo nace, vive y muere con los mismos genes — no puede "evolucionar" durante su vida. Lo que cambia, generación tras generación, es la frecuencia con que aparecen ciertos rasgos en el grupo completo.
+    </div>
+
+    <h3>Definición técnica</h3>
+    <p>En términos científicos, la evolución es un <strong>cambio en las frecuencias alélicas</strong> de una población a través del tiempo. Si en el año 1900 el 90% de las polillas de un bosque eran claras y solo el 10% oscuras, y para el año 1950 esa proporción se invirtió, hubo evolución — aunque ninguna polilla individual cambió de color.</p>
+
+    <h3>Escala de tiempo</h3>
+    <p>La evolución puede ser <strong>lenta o rápida</strong>:</p>
+    <ul>
+      <li><strong>Lenta:</strong> el desarrollo de un nuevo grupo de animales como los mamíferos tomó decenas de millones de años.</li>
+      <li><strong>Rápida:</strong> las bacterias pueden volverse resistentes a un antibiótico en pocos años porque se reproducen muy rápido y tienen poblaciones enormes.</li>
+    </ul>
+
+    <div class="caja-importante">
+      <strong>Para el GED:</strong> Reconocer que la <span class="tooltip-dua" data-tooltip="Cambio hereditario en una población a lo largo del tiempo, no en un solo individuo.">evolución</span> opera sobre poblaciones es uno de los conceptos más evaluados — y el más confundido por los estudiantes.
+    </div>
+  </div>
+</details>
+
+<details class="seccion-grande" id="evidencias">
+  <summary>
+    <span class="num-seccion">2</span>
+    <span class="titulo-seccion">Evidencias de la evolución</span>
+  </summary>
+  <div class="seccion-contenido">
+    <p>La evolución no es una idea aislada — está respaldada por <strong>cinco líneas independientes de evidencia</strong> que apuntan todas en la misma dirección.</p>
+
+    <details class="sub-acordeon">
+      <summary>🦴 1. Registro fósil</summary>
+      <div class="sub-contenido">
+        <p>Los <strong>fósiles</strong> son restos o huellas de organismos que vivieron en el pasado, preservados en rocas. El registro fósil muestra una progresión clara: las rocas más antiguas contienen organismos más simples; las más recientes, organismos más complejos y diversos.</p>
+        <p><strong>Fósiles transicionales</strong> — formas intermedias entre grupos:</p>
+        <ul>
+          <li><em>Tiktaalik</em> (375 millones de años) — entre peces y los primeros tetrápodos terrestres.</li>
+          <li><em>Archaeopteryx</em> (150 millones de años) — entre dinosaurios reptiles y aves.</li>
+          <li><em>Ambulocetus</em> (49 millones de años) — entre mamíferos terrestres y ballenas modernas.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>🦴 2. Anatomía comparada</summary>
+      <div class="sub-contenido">
+        <p>Comparar la estructura interna de diferentes organismos revela parentescos sorprendentes.</p>
+
+        <table>
+          <tr>
+            <th>Tipo de estructura</th>
+            <th>Definición</th>
+            <th>Ejemplo</th>
+            <th>Qué indica</th>
+          </tr>
+          <tr>
+            <td><strong>Homólogas</strong></td>
+            <td>Mismo origen, distinta función</td>
+            <td>Mano humana, ala de murciélago, aleta de ballena, pata de gato — todas tienen los mismos huesos básicos</td>
+            <td>Ancestro común</td>
+          </tr>
+          <tr>
+            <td><strong>Análogas</strong></td>
+            <td>Distinto origen, misma función</td>
+            <td>Ala de mariposa vs. ala de pájaro — cumplen la misma función pero su estructura interna es completamente diferente</td>
+            <td>Evolución convergente (el mismo ambiente favorece soluciones parecidas)</td>
+          </tr>
+          <tr>
+            <td><strong>Vestigiales</strong></td>
+            <td>Estructuras reducidas que perdieron su función original</td>
+            <td>Apéndice y muelas del juicio en humanos; huesos de pelvis en serpientes y ballenas; ojos no funcionales en peces de cuevas</td>
+            <td>El organismo desciende de ancestros que sí usaban esa estructura</td>
+          </tr>
+        </table>
+
+        <div class="caja-importante">
+          <strong>¡Cuidado!</strong> Las estructuras <strong>homólogas</strong> son evidencia FUERTE de parentesco evolutivo. Las <strong>análogas</strong> NO indican parentesco — solo presiones ambientales similares. Esta distinción aparece mucho en el GED.
+        </div>
+      </div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>🐣 3. Embriología comparada</summary>
+      <div class="sub-contenido">
+        <p>Los embriones tempranos de los vertebrados (peces, reptiles, aves, mamíferos) son sorprendentemente similares: todos presentan, por ejemplo, hendiduras branquiales y cola en alguna fase. Esa similitud se explica si todos los vertebrados comparten un ancestro común y luego cada grupo desarrolló sus rasgos característicos.</p>
+      </div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>🌍 4. Biogeografía</summary>
+      <div class="sub-contenido">
+        <p>La <strong>biogeografía</strong> estudia cómo se distribuyen las especies en el planeta. Hay patrones que solo tienen sentido si la evolución es real:</p>
+        <ul>
+          <li>Las islas Galápagos tienen <strong>14 especies de pinzones</strong> únicos en el mundo, todos descendientes de un ancestro común que llegó del continente.</li>
+          <li>Australia, aislada por millones de años, tiene <strong>marsupiales</strong> (canguros, koalas) en lugar de mamíferos placentarios. La evolución siguió un camino distinto allí.</li>
+          <li>Especies similares aparecen en continentes que estuvieron unidos en el pasado (América del Sur y África).</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>🧬 5. Evidencia molecular (la más reciente y poderosa)</summary>
+      <div class="sub-contenido">
+        <p>El <strong>ADN</strong> y las <strong>proteínas</strong> permiten medir el parentesco entre especies con precisión matemática:</p>
+        <ul>
+          <li>Los humanos compartimos el <strong>~98.8%</strong> del ADN con los chimpancés, ~85% con los ratones y ~60% con las moscas de la fruta. La similitud refleja exactamente lo que predice el árbol evolutivo construido a partir de fósiles.</li>
+          <li>Todos los seres vivos usan el <strong>mismo código genético</strong> (las mismas tres bases del ADN codifican el mismo aminoácido en bacterias, plantas y humanos). Esa universalidad indica un origen común.</li>
+        </ul>
+      </div>
+    </details>
+  </div>
+</details>
+
+<details class="seccion-grande" id="darwin">
+  <summary>
+    <span class="num-seccion">3</span>
+    <span class="titulo-seccion">Darwin y la selección natural</span>
+  </summary>
+  <div class="seccion-contenido">
+    <p><strong>Charles Darwin</strong> (1809-1882) fue el naturalista británico que propuso el mecanismo principal de la evolución: la <strong>selección natural</strong>. En 1831, a los 22 años, se embarcó en el HMS Beagle para un viaje de cinco años por el mundo. Sus observaciones, especialmente en las islas <strong>Galápagos</strong>, le permitieron formular su teoría.</p>
+
+    <div class="caja-clave">
+      <strong>1859 — "El origen de las especies":</strong> Darwin publica su libro tras 23 años de recopilar evidencia. Cambió la biología para siempre.
+    </div>
+
+    <h3>Los 4 postulados de la selección natural</h3>
+    <p>Darwin propuso que la evolución por selección natural ocurre cuando se cumplen estos cuatro requisitos:</p>
+
+    <table>
+      <tr>
+        <th>#</th>
+        <th>Postulado</th>
+        <th>Explicación</th>
+      </tr>
+      <tr>
+        <td><strong>1</strong></td>
+        <td><strong>Variación</strong></td>
+        <td>Los individuos de una población tienen rasgos diferentes (color, tamaño, velocidad, resistencia, etc.).</td>
+      </tr>
+      <tr>
+        <td><strong>2</strong></td>
+        <td><strong>Herencia</strong></td>
+        <td>Muchos de esos rasgos se transmiten de padres a hijos a través de los genes.</td>
+      </tr>
+      <tr>
+        <td><strong>3</strong></td>
+        <td><strong>Sobreproducción</strong></td>
+        <td>Nacen más individuos de los que el ambiente puede sostener — no todos llegan a reproducirse.</td>
+      </tr>
+      <tr>
+        <td><strong>4</strong></td>
+        <td><strong>Supervivencia y reproducción diferencial</strong></td>
+        <td>Los individuos con rasgos mejor <span class="tooltip-dua" data-tooltip="Característica que aumenta la probabilidad de sobrevivir y reproducirse en un ambiente determinado.">adaptados</span> al ambiente sobreviven y se reproducen más, transmitiendo sus rasgos a la siguiente generación.</td>
+      </tr>
+    </table>
+
+    <p><strong>El resultado, a lo largo de muchas generaciones:</strong> los rasgos ventajosos se vuelven más comunes en la población, y los desventajosos desaparecen. La población <em>cambia</em> — evoluciona.</p>
+
+    <div class="caja-importante">
+      <strong>Aptitud (fitness):</strong> En biología evolutiva, "estar adaptado" o tener "alta aptitud" NO significa ser el más fuerte o el más rápido. Significa <strong>dejar más descendencia fértil</strong> que los demás. Un individuo que vive 100 años pero no se reproduce tiene aptitud cero desde el punto de vista evolutivo.
+    </div>
+  </div>
+</details>
+
+<details class="seccion-grande" id="mecanismos">
+  <summary>
+    <span class="num-seccion">4</span>
+    <span class="titulo-seccion">Mecanismos evolutivos</span>
+  </summary>
+  <div class="seccion-contenido">
+    <p>La selección natural es el mecanismo más importante, pero no el único. Hay <strong>cinco fuerzas</strong> que pueden cambiar las frecuencias alélicas en una población:</p>
+
+    <table>
+      <tr>
+        <th>Mecanismo</th>
+        <th>Cómo funciona</th>
+        <th>Ejemplo</th>
+      </tr>
+      <tr>
+        <td><strong>Selección natural</strong></td>
+        <td>El ambiente "filtra" qué rasgos sobreviven y se reproducen más</td>
+        <td>Polillas oscuras sobreviven mejor en árboles oscurecidos por el hollín industrial</td>
+      </tr>
+      <tr>
+        <td><strong>Mutación</strong></td>
+        <td>Cambios al azar en el ADN — fuente original de toda variación</td>
+        <td>Una mutación produce un nuevo color de pelaje que antes no existía</td>
+      </tr>
+      <tr>
+        <td><strong>Deriva genética</strong></td>
+        <td>Cambios <strong>al azar</strong> en frecuencias — más fuerte en poblaciones pequeñas</td>
+        <td>Un huracán mata al 90% de una población; los sobrevivientes tienen rasgos al azar, no necesariamente los "mejores"</td>
+      </tr>
+      <tr>
+        <td><strong>Flujo génico</strong></td>
+        <td>Movimiento de individuos (y sus genes) entre poblaciones</td>
+        <td>Una persona se muda de un país a otro y tiene hijos allí, mezclando genes entre poblaciones</td>
+      </tr>
+      <tr>
+        <td><strong>Selección sexual</strong></td>
+        <td>Algunos rasgos se favorecen porque atraen a una pareja, aunque no aumenten la supervivencia</td>
+        <td>La cola del pavo real macho — estorba para huir, pero atrae hembras</td>
+      </tr>
+    </table>
+
+    <div class="caja-clave">
+      <strong>Deriva genética vs. selección natural:</strong> La deriva opera al azar. La selección natural opera porque <em>el rasgo importa</em> para sobrevivir o reproducirse. Distinguir estos dos mecanismos aparece con frecuencia en el GED.
+    </div>
+
+    <h3>Casos especiales de deriva genética</h3>
+    <ul>
+      <li><strong>Efecto fundador:</strong> Un grupo pequeño coloniza un nuevo lugar. Los genes de ese grupo no representan a la población original, y por azar establecen una frecuencia muy distinta.</li>
+      <li><strong>Cuello de botella:</strong> Un evento catastrófico (incendio, enfermedad, caza) reduce drásticamente la población. Los sobrevivientes son una muestra al azar, no necesariamente los mejor adaptados.</li>
+    </ul>
+  </div>
+</details>
+
+<details class="seccion-grande" id="tipos-seleccion">
+  <summary>
+    <span class="num-seccion">5</span>
+    <span class="titulo-seccion">Tipos de selección natural</span>
+  </summary>
+  <div class="seccion-contenido">
+    <p>Cuando un rasgo varía a lo largo de una escala (por ejemplo, el tamaño de los picos de los pinzones), la selección natural puede actuar de tres formas diferentes:</p>
+
+    <figure class="svg-figura">
+      <svg viewBox="0 0 720 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Tres curvas mostrando los tres tipos de selección natural">
+        <text x="120" y="25" text-anchor="middle" font-size="16" font-weight="bold" fill="#1b5e20">Direccional</text>
+        <text x="360" y="25" text-anchor="middle" font-size="16" font-weight="bold" fill="#1b5e20">Estabilizadora</text>
+        <text x="600" y="25" text-anchor="middle" font-size="16" font-weight="bold" fill="#1b5e20">Disruptiva</text>
+
+        <line x1="20" y1="200" x2="220" y2="200" stroke="#212121" stroke-width="2"/>
+        <path d="M 30 195 Q 90 100 150 130 Q 200 160 215 195" fill="#c8e6c9" stroke="#2e7d32" stroke-width="2.5"/>
+        <path d="M 30 195 Q 70 50 110 90 Q 170 130 215 195" fill="none" stroke="#1565c0" stroke-width="2.5" stroke-dasharray="6,4"/>
+        <text x="120" y="225" text-anchor="middle" font-size="12" fill="#555">Característica</text>
+        <text x="120" y="245" text-anchor="middle" font-size="11" fill="#555">— antes  - - después</text>
+        <text x="120" y="265" text-anchor="middle" font-size="11" fill="#e65100" font-weight="600">Un extremo se favorece</text>
+
+        <line x1="260" y1="200" x2="460" y2="200" stroke="#212121" stroke-width="2"/>
+        <path d="M 270 195 Q 360 80 450 195" fill="#c8e6c9" stroke="#2e7d32" stroke-width="2.5"/>
+        <path d="M 270 195 Q 360 30 450 195" fill="none" stroke="#1565c0" stroke-width="2.5" stroke-dasharray="6,4"/>
+        <text x="360" y="225" text-anchor="middle" font-size="12" fill="#555">Característica</text>
+        <text x="360" y="245" text-anchor="middle" font-size="11" fill="#555">— antes  - - después</text>
+        <text x="360" y="265" text-anchor="middle" font-size="11" fill="#e65100" font-weight="600">El medio se favorece</text>
+
+        <line x1="500" y1="200" x2="700" y2="200" stroke="#212121" stroke-width="2"/>
+        <path d="M 510 195 Q 600 80 690 195" fill="#c8e6c9" stroke="#2e7d32" stroke-width="2.5"/>
+        <path d="M 510 195 Q 540 80 580 150 Q 600 195 620 150 Q 660 80 690 195" fill="none" stroke="#1565c0" stroke-width="2.5" stroke-dasharray="6,4"/>
+        <text x="600" y="225" text-anchor="middle" font-size="12" fill="#555">Característica</text>
+        <text x="600" y="245" text-anchor="middle" font-size="11" fill="#555">— antes  - - después</text>
+        <text x="600" y="265" text-anchor="middle" font-size="11" fill="#e65100" font-weight="600">Los dos extremos</text>
+      </svg>
+      <figcaption>Los tres tipos de selección natural muestran cómo cambia la distribución de un rasgo en la población.</figcaption>
+    </figure>
+
+    <h3>1. Selección direccional</h3>
+    <p>El ambiente favorece un extremo del rango de rasgos. La población se "desplaza" en esa dirección.</p>
+    <p><strong>Ejemplo:</strong> Durante la Revolución Industrial inglesa, el hollín oscureció los troncos de los abedules. Las polillas oscuras (antes raras) sobrevivían mejor que las claras porque las aves las veían menos. Las polillas oscuras pasaron de ser ~1% de la población a ~95%.</p>
+
+    <h3>2. Selección estabilizadora</h3>
+    <p>El ambiente favorece el valor intermedio. Los extremos son penalizados.</p>
+    <p><strong>Ejemplo:</strong> El peso al nacer en humanos. Bebés muy pequeños sobreviven menos por falta de reservas; bebés muy grandes tienen partos complicados. El peso intermedio (~3-4 kg) es el más exitoso.</p>
+
+    <h3>3. Selección disruptiva</h3>
+    <p>El ambiente favorece los dos extremos y penaliza los valores intermedios.</p>
+    <p><strong>Ejemplo:</strong> En una especie de pinzón africano, los individuos con picos grandes pueden romper semillas duras y los de picos pequeños pueden manejar semillas suaves. Los de pico mediano no pueden hacer ninguna cosa bien.</p>
+  </div>
+</details>
+
+<details class="seccion-grande" id="especiacion">
+  <summary>
+    <span class="num-seccion">6</span>
+    <span class="titulo-seccion">Especiación: cómo surgen nuevas especies</span>
+  </summary>
+  <div class="seccion-contenido">
+    <p>La <strong>especiación</strong> es el proceso por el cual una población se divide en dos especies distintas que ya no pueden cruzarse y producir descendencia fértil.</p>
+
+    <div class="caja-clave">
+      <strong>¿Qué es una especie?</strong> El concepto biológico más usado: un grupo de organismos que pueden cruzarse entre sí y producir descendencia <strong>fértil</strong>. Por eso un caballo y un burro pueden producir una mula — pero las mulas son estériles, así que caballos y burros son especies diferentes.
+    </div>
+
+    <h3>El paso clave: aislamiento reproductivo</h3>
+    <p>Para que dos poblaciones se conviertan en especies separadas, deben dejar de intercambiar genes. Las barreras pueden ser:</p>
+    <ul>
+      <li><strong>Precigóticas</strong> (impiden el apareamiento o la fecundación): geografía, distintas épocas de reproducción, comportamientos de cortejo distintos, incompatibilidad de gametos.</li>
+      <li><strong>Postcigóticas</strong> (la cría no es viable o es estéril): mortalidad embrionaria, descendencia estéril como las mulas.</li>
+    </ul>
+
+    <h3>Tipos de especiación</h3>
+
+    <table>
+      <tr>
+        <th>Tipo</th>
+        <th>Cómo ocurre</th>
+        <th>Ejemplo</th>
+      </tr>
+      <tr>
+        <td><strong>Alopátrica</strong></td>
+        <td>Una barrera <strong>geográfica</strong> separa una población en dos (un río, una montaña, una nueva isla). Cada grupo evoluciona por su lado.</td>
+        <td>Las ardillas de Kaibab y Abert se separaron al formarse el Gran Cañón del Colorado.</td>
+      </tr>
+      <tr>
+        <td><strong>Simpátrica</strong></td>
+        <td>Nuevas especies surgen <strong>en el mismo lugar</strong>, sin barrera geográfica — por uso de recursos distintos, mutaciones cromosómicas, o selección sexual.</td>
+        <td>Los cíclidos del lago Victoria africano: cientos de especies surgieron en un solo lago en pocos miles de años.</td>
+      </tr>
+    </table>
+
+    <h3>Ritmo de la evolución</h3>
+    <ul>
+      <li><strong>Gradualismo:</strong> Cambios pequeños y constantes acumulados durante mucho tiempo (Darwin pensaba que era el modelo principal).</li>
+      <li><strong>Equilibrio puntuado:</strong> Largos períodos de poco cambio interrumpidos por episodios cortos de cambio rápido (propuesto en 1972 por Eldredge y Gould — explica mejor algunos patrones del registro fósil).</li>
+    </ul>
+  </div>
+</details>
+
+<details class="seccion-grande" id="humana">
+  <summary>
+    <span class="num-seccion">7</span>
+    <span class="titulo-seccion">Evolución humana y mitos comunes</span>
+  </summary>
+  <div class="seccion-contenido">
+    <p>Los humanos somos un producto de la evolución como cualquier otra especie. Nuestra historia evolutiva está bien documentada por fósiles, ADN antiguo y estudios genéticos comparativos.</p>
+
+    <details class="sub-acordeon" open>
+      <summary>🦴 7.1 Línea de homínidos: nuestros antepasados</summary>
+      <div class="sub-contenido">
+        <p>Los <strong>homínidos</strong> son el grupo de primates que incluye a los humanos modernos y nuestros parientes extintos. La línea humana se separó de la línea que llevó a los chimpancés hace aproximadamente <strong>6-7 millones de años</strong>.</p>
+
+        <table>
+          <tr>
+            <th>Especie</th>
+            <th>Cuándo vivió</th>
+            <th>Característica clave</th>
+          </tr>
+          <tr>
+            <td><em>Australopithecus afarensis</em><br>("Lucy")</td>
+            <td>~3.9 a 2.9 millones de años</td>
+            <td>Bipedalismo claro pero cerebro pequeño (~400 cm³, similar al chimpancé). Lucy fue descubierta en Etiopía en 1974.</td>
+          </tr>
+          <tr>
+            <td><em>Homo habilis</em></td>
+            <td>~2.4 a 1.4 millones de años</td>
+            <td>Primer uso documentado de herramientas de piedra. Cerebro de ~600 cm³.</td>
+          </tr>
+          <tr>
+            <td><em>Homo erectus</em></td>
+            <td>~1.9 millones a 110,000 años</td>
+            <td>Primera especie humana en salir de África. Uso del fuego. Cerebro de ~900 cm³.</td>
+          </tr>
+          <tr>
+            <td><em>Homo neanderthalensis</em><br>(neandertales)</td>
+            <td>~400,000 a 40,000 años</td>
+            <td>Convivieron con los <em>Homo sapiens</em>. Cerebro grande (~1500 cm³). Los humanos modernos no africanos llevamos un 1-2% de ADN neandertal.</td>
+          </tr>
+          <tr>
+            <td><em>Homo sapiens</em><br>(nosotros)</td>
+            <td>~300,000 años hasta hoy</td>
+            <td>Cerebro de ~1350 cm³. Lenguaje complejo, arte, agricultura, civilizaciones.</td>
+          </tr>
+        </table>
+      </div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>🧠 7.2 Características clave de la evolución humana</summary>
+      <div class="sub-contenido">
+        <ul>
+          <li><strong>Bipedalismo</strong> (caminar sobre dos piernas): apareció primero, hace ~6 millones de años. Liberó las manos para usar herramientas y cargar objetos.</li>
+          <li><strong>Encefalización</strong> (cerebro grande en relación al cuerpo): aumentó gradualmente en los últimos 2 millones de años. El cerebro humano triplicó su tamaño desde Lucy hasta nosotros.</li>
+          <li><strong>Reducción de la mandíbula y dientes</strong>: con el uso del fuego y la cocina, los alimentos se hicieron más fáciles de masticar.</li>
+          <li><strong>Lenguaje</strong>: la capacidad simbólica compleja es exclusiva del <em>Homo sapiens</em>.</li>
+          <li><strong>Cultura acumulativa</strong>: cada generación hereda no solo genes, sino también conocimiento.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>⚠️ 7.3 Los 5 mitos más comunes sobre la evolución</summary>
+      <div class="sub-contenido">
+        <p>Estos mitos circulan ampliamente y son responsables de la mayoría de errores en preguntas de evolución del GED. Aprenderlos a corregir vale por muchas preguntas:</p>
+
+        <div class="caja-mito">
+          <span class="mito-falso">❌ MITO 1: "Los humanos evolucionamos del mono."</span>
+          <span class="mito-correcto">✅ CORRECTO: Los humanos y los chimpancés (no "monos") <strong>compartimos un ancestro común</strong> que vivió hace ~6-7 millones de años. NO descendemos de los chimpancés actuales — ellos también han estado evolucionando todo este tiempo. Es como decir que tú "vienes" de tu primo: no, ambos vienen del mismo abuelo.</span>
+        </div>
+
+        <div class="caja-mito">
+          <span class="mito-falso">❌ MITO 2: "La evolución tiene un propósito o una meta."</span>
+          <span class="mito-correcto">✅ CORRECTO: La selección natural <strong>no tiene dirección, intención ni meta</strong>. Solo responde al ambiente del momento. Si el ambiente cambia, lo que era ventajoso ayer puede ser desventajoso mañana. La evolución no "intenta" producir humanos ni nada — simplemente filtra lo que funciona <em>ahora</em>.</span>
+        </div>
+
+        <div class="caja-mito">
+          <span class="mito-falso">❌ MITO 3: "Lo más complejo es lo más evolucionado."</span>
+          <span class="mito-correcto">✅ CORRECTO: Una bacteria moderna está <strong>tan evolucionada</strong> como un humano. Ambos linajes han tenido ~3,500 millones de años de evolución. Las bacterias son simples porque la simplicidad les funciona — no porque sean "primitivas". No existe una jerarquía: los organismos están <em>adaptados</em> a sus ambientes, no en una escala de "más" o "menos" evolucionados.</span>
+        </div>
+
+        <div class="caja-mito">
+          <span class="mito-falso">❌ MITO 4: "La evolución es solo una teoría."</span>
+          <span class="mito-correcto">✅ CORRECTO: En el lenguaje cotidiano, "teoría" significa "suposición". Pero en ciencia, una <strong>teoría</strong> es una explicación amplia respaldada por <strong>evidencia masiva</strong> de muchas fuentes independientes. La teoría de la evolución tiene la misma solidez científica que la teoría celular o la teoría atómica. No es una "suposición" — es la explicación mejor sustentada que tenemos.</span>
+        </div>
+
+        <div class="caja-mito">
+          <span class="mito-falso">❌ MITO 5: "Los individuos evolucionan durante su vida."</span>
+          <span class="mito-correcto">✅ CORRECTO: Quien evoluciona es la <strong>población</strong>, no el individuo. Tu cuerpo puede adaptarse a la altura, broncearse al sol o aumentar masa muscular — pero esas son adaptaciones individuales (plasticidad), no evolución. La evolución requiere cambios <strong>hereditarios</strong> que pasan de una generación a la siguiente.</span>
+        </div>
+      </div>
+    </details>
+  </div>
+</details>
+
+<details class="seccion-grande" id="ejemplos">
+  <summary>
+    <span class="num-seccion">8</span>
+    <span class="titulo-seccion">Ejemplos clásicos del GED</span>
+  </summary>
+  <div class="seccion-contenido">
+    <p>Estos cuatro ejemplos aparecen una y otra vez en el examen. Vale la pena conocerlos al detalle.</p>
+
+    <h3>🐦 1. Pinzones de Darwin (radiación adaptativa)</h3>
+    <p>En las islas Galápagos, un solo tipo ancestral de pinzón llegó del continente y, al colonizar islas distintas con alimentos distintos, evolucionó en <strong>14 especies</strong> diferentes. Cada una tiene un pico especializado: gruesos para semillas duras, finos para insectos, en forma de pinza para cactus. Este patrón de muchas especies emergiendo de una sola se llama <strong>radiación adaptativa</strong>.</p>
+
+    <h3>🦋 2. Polilla del abedul (<em>Biston betularia</em>)</h3>
+    <p>Antes de 1800, casi todas las polillas eran claras y se camuflaban en los abedules de Inglaterra. Con la Revolución Industrial, el hollín oscureció los árboles. Las polillas oscuras (antes muy raras) ahora se camuflaban mejor; las claras se volvieron presa fácil de las aves. En 50 años, las oscuras pasaron del 1% al 95% de la población. Cuando las leyes ambientales redujeron la contaminación, las claras volvieron a ser mayoría. <strong>Selección direccional en tiempo real.</strong></p>
+
+    <h3>💊 3. Resistencia a antibióticos (el más relevante hoy)</h3>
+    <p>Cuando se trata una infección con un antibiótico, la mayoría de las bacterias mueren — pero algunas, por mutación al azar, son resistentes. Estas sobreviven y se reproducen, pasando la resistencia a sus descendientes. En pocos años, el antibiótico ya no funciona contra esa cepa.</p>
+    <div class="caja-importante">
+      <strong>¡Punto crucial para el GED!</strong> Las bacterias <strong>NO desarrollan</strong> resistencia "porque la necesitan". La mutación que las hace resistentes ya existía al azar antes del antibiótico. El antibiótico solo <em>selecciona</em> a las que ya eran resistentes. Esta es la confusión número uno.
+    </div>
+
+    <h3>🦒 4. Lamarck vs. Darwin: las jirafas</h3>
+    <p>Comparar las dos teorías más famosas sobre cómo cambian las especies:</p>
+
+    <table>
+      <tr>
+        <th>Pregunta</th>
+        <th>Lamarck (incorrecto)</th>
+        <th>Darwin (correcto)</th>
+      </tr>
+      <tr>
+        <td>¿Por qué las jirafas tienen cuello largo?</td>
+        <td>Cada jirafa estiraba su cuello para alcanzar hojas altas; ese estiramiento se heredaba a sus crías.</td>
+        <td>Las jirafas variaban en largo de cuello al nacer. Las de cuello más largo comían mejor, sobrevivían más, dejaban más crías. Generación tras generación, el cuello promedio aumentó.</td>
+      </tr>
+      <tr>
+        <td>¿Qué se hereda?</td>
+        <td>Los rasgos adquiridos durante la vida.</td>
+        <td>Solo los rasgos genéticos.</td>
+      </tr>
+    </table>
+
+    <p>La teoría de Lamarck (herencia de caracteres adquiridos) es <strong>incorrecta</strong> — pero aparece en el GED como "trampa" para distinguirla de la teoría de Darwin.</p>
+  </div>
+</details>
+
+<details class="seccion-grande" id="vocabulario">
+  <summary>
+    <span class="num-seccion">9</span>
+    <span class="titulo-seccion">Vocabulario clave</span>
+  </summary>
+  <div class="seccion-contenido">
+    <p>Estos diez términos son esenciales para la evolución. Memorízalos con sus ejemplos.</p>
+
+    <details class="sub-acordeon">
+      <summary>📖 Evolución</summary>
+      <div class="sub-contenido">Cambio en las características hereditarias de una población a lo largo de generaciones. Mide en frecuencias alélicas, no en cambios individuales.</div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>📖 Selección natural</summary>
+      <div class="sub-contenido">Mecanismo evolutivo por el cual los individuos mejor adaptados al ambiente sobreviven y se reproducen más, transmitiendo sus rasgos a la siguiente generación.</div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>📖 Adaptación</summary>
+      <div class="sub-contenido">Característica heredada que aumenta la probabilidad de sobrevivir y reproducirse en un ambiente determinado. Ejemplo: el pelaje grueso de los osos polares.</div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>📖 Mutación</summary>
+      <div class="sub-contenido">Cambio al azar en la secuencia del ADN. Es la fuente original de toda variación genética. Puede ser ventajosa, perjudicial o neutra.</div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>📖 Deriva genética</summary>
+      <div class="sub-contenido">Cambio al azar en las frecuencias alélicas de una población. Es más fuerte en poblaciones pequeñas. Incluye el efecto fundador y el cuello de botella.</div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>📖 Flujo génico</summary>
+      <div class="sub-contenido">Movimiento de genes entre poblaciones por migración. Tiende a hacer que las poblaciones se parezcan más entre sí.</div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>📖 Especiación</summary>
+      <div class="sub-contenido">Proceso por el cual una población se divide en dos especies distintas que ya no pueden cruzarse y producir descendencia fértil.</div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>📖 Estructuras homólogas</summary>
+      <div class="sub-contenido">Estructuras con el mismo origen evolutivo aunque tengan funciones distintas. Ejemplo: la mano humana, el ala del murciélago, la aleta de la ballena. Son evidencia de ancestro común.</div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>📖 Estructuras análogas</summary>
+      <div class="sub-contenido">Estructuras con la misma función pero distinto origen evolutivo. Ejemplo: el ala del pájaro y el ala de la mariposa. NO son evidencia de parentesco.</div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>📖 Aptitud (fitness)</summary>
+      <div class="sub-contenido">Medida del éxito reproductivo de un individuo: cuántos descendientes fértiles deja. NO es lo mismo que ser fuerte o longevo.</div>
+    </details>
+  </div>
+</details>
+
+<section class="seccion-quiz" id="quiz">
+  <h2>🎯 Comprueba lo aprendido</h2>
+  <p style="text-align:center; font-style:italic;">Ocho preguntas estilo GED. Pulsa la opción que creas correcta para ver la retroalimentación.</p>
+
+  <div class="pregunta-quiz">
+    <span class="num-pregunta">Pregunta 1</span>
+    <p><strong>Un científico observa que las bacterias en un hospital se han vuelto resistentes a un antibiótico común. ¿Qué afirmación describe MEJOR cómo ocurrió esto?</strong></p>
+    <div class="opcion-quiz" onclick="responder(this, 1, false)">A) Las bacterias decidieron volverse resistentes para sobrevivir al antibiótico.</div>
+    <div class="opcion-quiz" onclick="responder(this, 1, false)">B) Cada bacteria desarrolló resistencia durante su vida y la transmitió.</div>
+    <div class="opcion-quiz" onclick="responder(this, 1, true)">C) Algunas bacterias ya tenían mutaciones de resistencia al azar; el antibiótico mató al resto y las resistentes se reprodujeron.</div>
+    <div class="opcion-quiz" onclick="responder(this, 1, false)">D) El antibiótico causó las mutaciones que hicieron resistentes a las bacterias.</div>
+    <div class="feedback-quiz acierto" id="feedback-1-correcto">✅ ¡Correcto! La selección natural opera sobre variación que YA EXISTÍA al azar. El antibiótico no crea la resistencia — solo selecciona a las bacterias que ya eran resistentes por mutación previa. Este es uno de los conceptos más evaluados en el GED.</div>
+    <div class="feedback-quiz fallo" id="feedback-1-incorrecto">❌ La opción correcta es C. Las bacterias no "deciden" ni "desarrollan" resistencia por necesidad. La mutación de resistencia surge al azar antes del antibiótico; cuando el antibiótico aparece, mata a las que no tienen la mutación, dejando solo las resistentes. Eso es selección natural.</div>
+  </div>
+
+  <div class="pregunta-quiz">
+    <span class="num-pregunta">Pregunta 2</span>
+    <p><strong>La aleta de un delfín y la aleta de un tiburón sirven para nadar, pero los huesos internos del delfín son los mismos que los de la mano humana. ¿Qué tipo de estructuras son la aleta del delfín y la aleta del tiburón entre sí?</strong></p>
+    <div class="opcion-quiz" onclick="responder(this, 2, false)">A) Estructuras homólogas, porque tienen la misma función.</div>
+    <div class="opcion-quiz" onclick="responder(this, 2, true)">B) Estructuras análogas, porque tienen la misma función pero distinto origen evolutivo.</div>
+    <div class="opcion-quiz" onclick="responder(this, 2, false)">C) Estructuras vestigiales, porque ya no se usan.</div>
+    <div class="opcion-quiz" onclick="responder(this, 2, false)">D) Estructuras idénticas, porque ambos animales viven en el mar.</div>
+    <div class="feedback-quiz acierto" id="feedback-2-correcto">✅ ¡Correcto! Los delfines son mamíferos y los tiburones son peces — sus aletas evolucionaron de forma independiente para resolver el mismo problema (nadar). Estructura interna distinta pero función similar = análogas. La aleta del delfín y la mano humana, en cambio, sí son homólogas (mismos huesos, distinto uso).</div>
+    <div class="feedback-quiz fallo" id="feedback-2-incorrecto">❌ La respuesta correcta es B. Recuerda: <strong>homólogas</strong> = mismo origen, distinta función (mano humana y aleta de delfín). <strong>Análogas</strong> = misma función, distinto origen (aleta de delfín y aleta de tiburón).</div>
+  </div>
+
+  <div class="pregunta-quiz">
+    <span class="num-pregunta">Pregunta 3</span>
+    <p><strong>Un agricultor usa todos los días pesticida en su campo. Después de 10 años, observa que el pesticida ya no mata a los insectos. Una persona dice: "los insectos individuales se hicieron más fuertes con cada exposición al pesticida". ¿Qué corrección científica es MÁS precisa?</strong></p>
+    <div class="opcion-quiz" onclick="responder(this, 3, false)">A) Los insectos no se hacen "más fuertes" — el pesticida se debilita con el tiempo.</div>
+    <div class="opcion-quiz" onclick="responder(this, 3, true)">B) Los insectos individuales no cambian; lo que evoluciona es la población. Algunos insectos tenían mutaciones de resistencia desde antes; ellos sobrevivieron y se reprodujeron.</div>
+    <div class="opcion-quiz" onclick="responder(this, 3, false)">C) Los insectos se acostumbran al pesticida y aprenden a resistirlo.</div>
+    <div class="opcion-quiz" onclick="responder(this, 3, false)">D) El pesticida cambia los genes de los insectos que entran en contacto con él.</div>
+    <div class="feedback-quiz acierto" id="feedback-3-correcto">✅ ¡Excelente! Has identificado el error central: la evolución NO ocurre en individuos. Cada insecto nace y muere con los mismos genes. Lo que cambia, generación tras generación, es la frecuencia de la resistencia en la población completa. Esto se llama "trampa Lamarck" — confundir cambios individuales con cambios poblacionales.</div>
+    <div class="feedback-quiz fallo" id="feedback-3-incorrecto">❌ La respuesta correcta es B. Esta es la "trampa Lamarck": confundir adaptación individual (que no se hereda) con evolución poblacional (que sí se hereda). Los insectos individuales no cambian — la población sí, porque los resistentes (que ya existían) son los que se reproducen.</div>
+  </div>
+
+  <div class="pregunta-quiz">
+    <span class="num-pregunta">Pregunta 4</span>
+    <p><strong>Una erupción volcánica mata al 95% de una población de lagartijas en una isla pequeña. Los pocos sobrevivientes resultan ser todos de color verde claro, aunque la población original tenía individuos de muchos colores. ¿Qué mecanismo evolutivo describe MEJOR este escenario?</strong></p>
+    <div class="opcion-quiz" onclick="responder(this, 4, false)">A) Selección natural — el color verde claro era ventajoso.</div>
+    <div class="opcion-quiz" onclick="responder(this, 4, true)">B) Deriva genética por cuello de botella — los sobrevivientes son una muestra al azar.</div>
+    <div class="opcion-quiz" onclick="responder(this, 4, false)">C) Flujo génico — los genes se movieron entre poblaciones.</div>
+    <div class="opcion-quiz" onclick="responder(this, 4, false)">D) Mutación — los sobrevivientes mutaron al color verde claro.</div>
+    <div class="feedback-quiz acierto" id="feedback-4-correcto">✅ ¡Correcto! Un evento catastrófico (erupción) que mata indiscriminadamente y deja una muestra pequeña al azar es un cuello de botella poblacional — un caso clásico de deriva genética. NO hay selección natural porque el color no determinó quién sobrevivió: fue puro azar.</div>
+    <div class="feedback-quiz fallo" id="feedback-4-incorrecto">❌ La respuesta correcta es B. La clave está en que la erupción es un evento al azar — no "filtró" por color. Cuando una población pierde la mayoría de sus miembros por un evento azaroso, los sobrevivientes pueden tener una composición muy distinta de la original solo por mala suerte. Eso es deriva genética por cuello de botella.</div>
+  </div>
+
+  <div class="pregunta-quiz">
+    <span class="num-pregunta">Pregunta 5</span>
+    <p><strong>¿Cuál de las siguientes afirmaciones sobre la evolución humana es CORRECTA?</strong></p>
+    <div class="opcion-quiz" onclick="responder(this, 5, false)">A) Los humanos descienden directamente de los chimpancés modernos.</div>
+    <div class="opcion-quiz" onclick="responder(this, 5, true)">B) Los humanos y los chimpancés comparten un ancestro común que vivió hace 6-7 millones de años.</div>
+    <div class="opcion-quiz" onclick="responder(this, 5, false)">C) Los humanos somos la cima de la evolución; ya no evolucionamos.</div>
+    <div class="opcion-quiz" onclick="responder(this, 5, false)">D) La evolución humana se detuvo cuando aparecieron las civilizaciones.</div>
+    <div class="feedback-quiz acierto" id="feedback-5-correcto">✅ ¡Correcto! Los humanos NO descendemos de los chimpancés actuales. Ambas especies descendemos de un ancestro común que ya está extinto. Y los humanos seguimos evolucionando hoy: por ejemplo, la tolerancia a la lactosa en adultos es una mutación reciente (~10,000 años) que se ha extendido en poblaciones que dependen del ganado.</div>
+    <div class="feedback-quiz fallo" id="feedback-5-incorrecto">❌ La respuesta correcta es B. Compartir un ancestro común NO es lo mismo que descender uno del otro. Es como tú y tu primo: vienen del mismo abuelo, pero tú no vienes de tu primo. Igual con humanos y chimpancés.</div>
+  </div>
+
+  <div class="pregunta-quiz">
+    <span class="num-pregunta">Pregunta 6</span>
+    <p><strong>El peso de los bebés humanos al nacer tiende a permanecer cercano a un promedio de 3-4 kg. Bebés muy pequeños o muy grandes tienen menor probabilidad de sobrevivir. ¿Qué tipo de selección natural describe esta situación?</strong></p>
+    <div class="opcion-quiz" onclick="responder(this, 6, false)">A) Selección direccional.</div>
+    <div class="opcion-quiz" onclick="responder(this, 6, true)">B) Selección estabilizadora.</div>
+    <div class="opcion-quiz" onclick="responder(this, 6, false)">C) Selección disruptiva.</div>
+    <div class="opcion-quiz" onclick="responder(this, 6, false)">D) Deriva genética.</div>
+    <div class="feedback-quiz acierto" id="feedback-6-correcto">✅ ¡Correcto! La selección estabilizadora favorece el valor intermedio y penaliza ambos extremos. El peso de los bebés es el ejemplo más usado: muy pequeños no tienen reservas suficientes; muy grandes tienen partos complicados. El intermedio gana.</div>
+    <div class="feedback-quiz fallo" id="feedback-6-incorrecto">❌ La respuesta correcta es B. Recuerda los tres tipos: <strong>direccional</strong> favorece UN extremo (mueve la población hacia un lado); <strong>estabilizadora</strong> favorece el medio; <strong>disruptiva</strong> favorece los DOS extremos. Aquí el medio gana, así que es estabilizadora.</div>
+  </div>
+
+  <div class="pregunta-quiz">
+    <span class="num-pregunta">Pregunta 7</span>
+    <p><strong>En las islas Galápagos hay 14 especies de pinzones, todos descendientes de un solo ancestro común. ¿Qué proceso explica MEJOR esta diversidad?</strong></p>
+    <div class="opcion-quiz" onclick="responder(this, 7, false)">A) Mutación al azar — todos los pinzones mutaron por su cuenta.</div>
+    <div class="opcion-quiz" onclick="responder(this, 7, true)">B) Especiación alopátrica con radiación adaptativa — al colonizar islas distintas con recursos distintos, las poblaciones se separaron y cada una se adaptó a su nicho.</div>
+    <div class="opcion-quiz" onclick="responder(this, 7, false)">C) Selección estabilizadora — todas las poblaciones se mantuvieron iguales al ancestro.</div>
+    <div class="opcion-quiz" onclick="responder(this, 7, false)">D) Flujo génico — los pinzones intercambiaron genes constantemente.</div>
+    <div class="feedback-quiz acierto" id="feedback-7-correcto">✅ ¡Correcto! La separación geográfica entre islas (especiación alopátrica) más la disponibilidad de muchos nichos ecológicos (radiación adaptativa) produjo un caso de libro de texto. Cada especie se especializó en un alimento diferente, desarrollando picos distintos.</div>
+    <div class="feedback-quiz fallo" id="feedback-7-incorrecto">❌ La respuesta correcta es B. Las islas separan poblaciones (especiación alopátrica), y cuando hay muchos recursos sin explotar, una sola especie puede diversificarse rápidamente para ocupar todos los nichos disponibles (radiación adaptativa). Es el patrón clásico que Darwin observó.</div>
+  </div>
+
+  <div class="pregunta-quiz">
+    <span class="num-pregunta">Pregunta 8</span>
+    <p><strong>Un estudiante afirma: "La evolución no puede ser real porque solo es una teoría". ¿Qué corrección científica es MÁS precisa?</strong></p>
+    <div class="opcion-quiz" onclick="responder(this, 8, false)">A) La evolución no es una teoría, es una ley.</div>
+    <div class="opcion-quiz" onclick="responder(this, 8, true)">B) En ciencia, una "teoría" es una explicación amplia respaldada por evidencia masiva — no una suposición. La teoría de la evolución tiene la misma solidez que la teoría celular o la teoría atómica.</div>
+    <div class="opcion-quiz" onclick="responder(this, 8, false)">C) La evolución sí es una suposición, pero es la mejor que tenemos.</div>
+    <div class="opcion-quiz" onclick="responder(this, 8, false)">D) Las teorías científicas son solo opiniones de los científicos.</div>
+    <div class="feedback-quiz acierto" id="feedback-8-correcto">✅ ¡Correcto! Esta es la confusión más común sobre la naturaleza de la ciencia. En el lenguaje cotidiano "teoría" significa "suposición". En ciencia, una teoría es lo OPUESTO: una explicación amplia y bien sustentada. Llegar a ser teoría es una distinción muy alta. La evolución, la teoría celular, la teoría atómica y la teoría de la gravedad son todas teorías científicas.</div>
+    <div class="feedback-quiz fallo" id="feedback-8-incorrecto">❌ La respuesta correcta es B. El error está en confundir el sentido cotidiano de "teoría" (suposición) con el sentido científico (explicación respaldada por evidencia). En ciencia, "teoría" es una distinción muy alta — no una debilidad. Esta pregunta evalúa tu comprensión de la naturaleza de la ciencia, algo muy importante en el GED.</div>
+  </div>
+
+  <div id="resumen-quiz" style="display:none; margin-top:24px; padding:18px; background-color:#ffffff; border:3px solid var(--verde-bio); border-radius:8px; text-align:center;">
+    <h3 style="margin-top:0; color: var(--verde-bio-oscuro);">📊 Tu resultado</h3>
+    <p style="font-size:1.4em; font-weight:bold;" id="texto-resultado"></p>
+    <button class="btn-control" onclick="reiniciarQuiz()">🔄 Intentar de nuevo</button>
+  </div>
+</section>
+
+<section class="referencias-bloque" id="referencias">
+  <h2>📚 Referencias en Steck-Vaughn — GED Senderos: Ciencias</h2>
+  <p>Para profundizar cada tema con explicaciones del libro y ejercicios adicionales:</p>
+  <ul>
+    <li><strong>¿Qué es la evolución? y evidencias:</strong> pp. 54-58</li>
+    <li><strong>Darwin y selección natural:</strong> pp. 58-63</li>
+    <li><strong>Mecanismos evolutivos y deriva genética:</strong> pp. 64-69</li>
+    <li><strong>Tipos de selección y especiación:</strong> pp. 70-75</li>
+    <li><strong>Evolución humana:</strong> pp. 76-80</li>
+  </ul>
+  <p style="font-size:0.9em; font-style:italic; margin-bottom:0;">⚠️ Páginas estimadas — verifica con tu ejemplar del Steck-Vaughn y ajusta si es necesario.</p>
+</section>
+
+<footer class="nav-footer">
+  <a href="genetica.html">← Genética y herencia</a>
+  <a href="index.html">🏠 Hub Ciencias de la vida</a>
+  <a href="ecosistemas.html">Ecosistemas →</a>
+</footer>
+
+<script>
+function abrirTodo() {
+  document.querySelectorAll('details.seccion-grande').forEach(function(d) { d.open = true; });
+}
+
+function cerrarTodo() {
+  document.querySelectorAll('details.seccion-grande').forEach(function(d) { d.open = false; });
+}
+
+document.querySelectorAll('.tabla-contenidos a').forEach(function(link) {
+  link.addEventListener('click', function(e) {
+    var id = link.getAttribute('href').substring(1);
+    var target = document.getElementById(id);
+    if (target && target.tagName === 'DETAILS') {
+      target.open = true;
+      setTimeout(function() {
+        target.scrollIntoView({behavior: 'smooth', block: 'start'});
+      }, 50);
+      e.preventDefault();
+    }
+  });
+});
+
+window.addEventListener('load', function() {
+  if (location.hash) {
+    var target = document.querySelector(location.hash);
+    if (target && target.tagName === 'DETAILS') {
+      target.open = true;
+      setTimeout(function() {
+        target.scrollIntoView({behavior: 'smooth', block: 'start'});
+      }, 100);
+    }
+  }
+});
+
+var respuestasCorrectas = 0;
+var preguntasRespondidas = {};
+var totalPreguntas = 8;
+
+function responder(elemento, numPregunta, esCorrecta) {
+  if (preguntasRespondidas[numPregunta]) return;
+  preguntasRespondidas[numPregunta] = true;
+
+  var contenedor = elemento.parentElement;
+  var opciones = contenedor.querySelectorAll('.opcion-quiz');
+
+  opciones.forEach(function(op) {
+    op.style.cursor = 'default';
+    op.onclick = null;
+  });
+
+  if (esCorrecta) {
+    elemento.classList.add('correcta');
+    respuestasCorrectas++;
+    document.getElementById('feedback-' + numPregunta + '-correcto').style.display = 'block';
+  } else {
+    elemento.classList.add('incorrecta');
+    opciones.forEach(function(op) {
+      if (op.getAttribute('onclick') && op.getAttribute('onclick').indexOf('true') !== -1) {
+        op.classList.add('correcta');
+      }
+    });
+    document.getElementById('feedback-' + numPregunta + '-incorrecto').style.display = 'block';
+  }
+
+  if (Object.keys(preguntasRespondidas).length === totalPreguntas) {
+    var resumen = document.getElementById('resumen-quiz');
+    var texto = document.getElementById('texto-resultado');
+    var porcentaje = Math.round((respuestasCorrectas / totalPreguntas) * 100);
+    var emoji = porcentaje >= 80 ? '🎉' : (porcentaje >= 60 ? '👍' : '📚');
+    texto.innerHTML = emoji + ' ' + respuestasCorrectas + ' de ' + totalPreguntas + ' correctas (' + porcentaje + '%)';
+    resumen.style.display = 'block';
+    setTimeout(function() {
+      resumen.scrollIntoView({behavior: 'smooth', block: 'center'});
+    }, 200);
+  }
+}
+
+function reiniciarQuiz() {
+  location.reload();
+}
+</script>
+
+</body>
 </html>
