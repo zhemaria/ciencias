@@ -1,13 +1,1470 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>En preparacion</title>
-  </head>
-  <body>
-    <header>
-      <h1>Tema en preparación</h1>
-    </header>
-  </body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cuerpo humano | GED para Hispanos</title>
+<link rel="stylesheet" href="../../estilos-dua-unificado.css">
+<style>
+:root {
+  --verde-bio: #2e7d32;
+  --verde-bio-claro: #c8e6c9;
+  --verde-bio-suave: #e8f5e9;
+  --verde-bio-oscuro: #1b5e20;
+  --azul-info: #1565c0;
+  --azul-info-claro: #bbdefb;
+  --azul-info-suave: #e3f2fd;
+  --naranja-clave: #e65100;
+  --naranja-suave: #fff3e0;
+  --rojo-error: #c62828;
+  --rojo-suave: #ffebee;
+  --rojo-corazon: #b71c1c;
+  --azul-venoso: #0d47a1;
+  --gris-texto: #212121;
+  --gris-suave: #f5f5f5;
+  --amarillo-mito: #fff8e1;
+  --amarillo-borde: #f9a825;
+  --morado-nervio: #6a1b9a;
+  --morado-suave: #f3e5f5;
+}
+
+body {
+  font-family: 'Verdana', 'Geneva', sans-serif;
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--gris-texto);
+  background-color: #ffffff;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1.titulo-pagina {
+  font-size: 2.4em;
+  color: var(--verde-bio-oscuro);
+  text-align: center;
+  border-bottom: 4px solid var(--verde-bio);
+  padding-bottom: 12px;
+  margin-bottom: 8px;
+}
+
+.subtitulo-pagina {
+  text-align: center;
+  font-style: italic;
+  color: #555;
+  margin-top: 0;
+  margin-bottom: 30px;
+  font-size: 1.15em;
+}
+
+.breadcrumbs {
+  background-color: var(--verde-bio-suave);
+  padding: 10px 16px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-size: 0.95em;
+}
+
+.breadcrumbs a {
+  color: var(--verde-bio-oscuro);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.breadcrumbs a:hover { text-decoration: underline; }
+
+.tabla-contenidos {
+  background-color: var(--verde-bio-suave);
+  border-left: 5px solid var(--verde-bio);
+  padding: 18px 24px;
+  border-radius: 6px;
+  margin: 20px 0;
+}
+
+.tabla-contenidos h2 {
+  margin-top: 0;
+  color: var(--verde-bio-oscuro);
+  font-size: 1.3em;
+}
+
+.tabla-contenidos ol {
+  margin-bottom: 0;
+  padding-left: 28px;
+}
+
+.tabla-contenidos li { margin-bottom: 8px; }
+
+.tabla-contenidos a {
+  color: var(--verde-bio-oscuro);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.tabla-contenidos a:hover { text-decoration: underline; }
+
+.botones-control {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin: 24px 0;
+  flex-wrap: wrap;
+}
+
+.btn-control {
+  background-color: var(--verde-bio);
+  color: white;
+  border: none;
+  padding: 10px 22px;
+  font-size: 1em;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.btn-control:hover { background-color: var(--verde-bio-oscuro); }
+
+details.seccion-grande {
+  margin: 18px 0;
+  border: 2px solid var(--verde-bio);
+  border-radius: 8px;
+  background-color: #ffffff;
+  overflow: hidden;
+}
+
+details.seccion-grande > summary {
+  padding: 16px 20px;
+  background-color: var(--verde-bio-suave);
+  cursor: pointer;
+  list-style: none;
+  font-size: 1.25em;
+  font-weight: 600;
+  color: var(--verde-bio-oscuro);
+  border-left: 5px solid var(--verde-bio);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  user-select: none;
+}
+
+details.seccion-grande > summary::-webkit-details-marker { display: none; }
+
+details.seccion-grande > summary::after {
+  content: "▼";
+  margin-left: auto;
+  font-size: 0.85em;
+  color: var(--verde-bio);
+  transition: transform 0.2s;
+}
+
+details.seccion-grande[open] > summary::after { content: "▲"; }
+
+details.seccion-grande[open] > summary { background-color: var(--verde-bio-claro); }
+
+.num-seccion {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background-color: var(--verde-bio);
+  color: white;
+  border-radius: 50%;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.titulo-seccion { flex: 1; }
+
+.seccion-contenido {
+  padding: 22px 28px;
+  background-color: #ffffff;
+}
+
+.seccion-contenido h3 {
+  color: var(--verde-bio-oscuro);
+  border-bottom: 2px solid var(--verde-bio-claro);
+  padding-bottom: 6px;
+  margin-top: 24px;
+}
+
+.seccion-contenido h4 {
+  color: var(--verde-bio);
+  margin-top: 18px;
+  margin-bottom: 8px;
+}
+
+.caja-clave {
+  background-color: var(--azul-info-suave);
+  border-left: 5px solid var(--azul-info);
+  padding: 14px 20px;
+  margin: 16px 0;
+  border-radius: 4px;
+}
+
+.caja-clave strong { color: var(--azul-info); }
+
+.caja-importante {
+  background-color: var(--naranja-suave);
+  border-left: 5px solid var(--naranja-clave);
+  padding: 14px 20px;
+  margin: 16px 0;
+  border-radius: 4px;
+}
+
+.caja-importante strong { color: var(--naranja-clave); }
+
+.caja-salud {
+  background-color: var(--rojo-suave);
+  border-left: 5px solid var(--rojo-error);
+  padding: 14px 20px;
+  margin: 16px 0;
+  border-radius: 4px;
+}
+
+.caja-salud strong { color: var(--rojo-error); }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 18px 0;
+  background-color: #ffffff;
+}
+
+th {
+  background-color: var(--verde-bio);
+  color: white;
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+}
+
+td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e0e0e0;
+  vertical-align: top;
+}
+
+tr:nth-child(even) td { background-color: var(--gris-suave); }
+
+.tooltip-dua {
+  border-bottom: 2px dotted var(--azul-info);
+  cursor: help;
+  position: relative;
+  font-weight: 600;
+  color: var(--azul-info);
+}
+
+.tooltip-dua:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 130%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--azul-info);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  white-space: normal;
+  width: 260px;
+  z-index: 10;
+  font-weight: normal;
+  line-height: 1.4;
+}
+
+details.sub-acordeon {
+  margin: 10px 0;
+  border: 1px solid var(--verde-bio-claro);
+  border-radius: 5px;
+  background-color: var(--gris-suave);
+}
+
+details.sub-acordeon > summary {
+  padding: 10px 14px;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--verde-bio-oscuro);
+  list-style: none;
+  background-color: var(--verde-bio-suave);
+  border-radius: 5px;
+}
+
+details.sub-acordeon[open] > summary {
+  border-radius: 5px 5px 0 0;
+  border-bottom: 1px solid var(--verde-bio-claro);
+}
+
+details.sub-acordeon > summary::-webkit-details-marker { display: none; }
+
+details.sub-acordeon > summary::before {
+  content: "▶ ";
+  font-size: 0.8em;
+  color: var(--verde-bio);
+}
+
+details.sub-acordeon[open] > summary::before { content: "▼ "; }
+
+.sub-contenido {
+  padding: 12px 18px;
+  background-color: #ffffff;
+}
+
+.svg-figura {
+  text-align: center;
+  margin: 20px 0;
+  background-color: var(--gris-suave);
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.svg-figura figcaption {
+  font-size: 0.92em;
+  color: #555;
+  margin-top: 10px;
+  font-style: italic;
+}
+
+.seccion-quiz {
+  background-color: var(--azul-info-suave);
+  border: 3px solid var(--azul-info);
+  border-radius: 10px;
+  padding: 24px;
+  margin: 30px 0;
+}
+
+.seccion-quiz h2 {
+  color: var(--azul-info);
+  margin-top: 0;
+  text-align: center;
+  font-size: 1.6em;
+}
+
+.pregunta-quiz {
+  background-color: #ffffff;
+  border: 2px solid var(--azul-info-claro);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin: 18px 0;
+}
+
+.pregunta-quiz .num-pregunta {
+  display: inline-block;
+  background-color: var(--azul-info);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.9em;
+  margin-bottom: 10px;
+}
+
+.opcion-quiz {
+  background-color: var(--gris-suave);
+  border: 2px solid #cfd8dc;
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin: 8px 0;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s;
+  user-select: none;
+}
+
+.opcion-quiz:hover {
+  background-color: var(--azul-info-claro);
+  border-color: var(--azul-info);
+}
+
+.opcion-quiz.correcta {
+  background-color: var(--verde-bio-claro);
+  border-color: var(--verde-bio);
+  color: var(--verde-bio-oscuro);
+  font-weight: 600;
+}
+
+.opcion-quiz.incorrecta {
+  background-color: var(--rojo-suave);
+  border-color: var(--rojo-error);
+  color: var(--rojo-error);
+  font-weight: 600;
+}
+
+.feedback-quiz {
+  display: none;
+  margin-top: 12px;
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.feedback-quiz.acierto {
+  background-color: var(--verde-bio-suave);
+  border-left: 5px solid var(--verde-bio);
+  color: var(--verde-bio-oscuro);
+}
+
+.feedback-quiz.fallo {
+  background-color: var(--rojo-suave);
+  border-left: 5px solid var(--rojo-error);
+  color: var(--rojo-error);
+}
+
+.referencias-bloque {
+  background-color: var(--naranja-suave);
+  border-left: 5px solid var(--naranja-clave);
+  padding: 18px 24px;
+  border-radius: 6px;
+  margin: 30px 0;
+}
+
+.referencias-bloque h2 {
+  color: var(--naranja-clave);
+  margin-top: 0;
+}
+
+.nav-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  background-color: var(--verde-bio-suave);
+  border-top: 4px solid var(--verde-bio);
+  padding: 16px 20px;
+  margin-top: 40px;
+  border-radius: 6px;
+}
+
+.nav-footer a {
+  color: var(--verde-bio-oscuro);
+  text-decoration: none;
+  font-weight: 600;
+  padding: 8px 14px;
+  background-color: white;
+  border: 2px solid var(--verde-bio);
+  border-radius: 6px;
+}
+
+.nav-footer a:hover {
+  background-color: var(--verde-bio);
+  color: white;
+}
+
+@media (max-width: 700px) {
+  body { padding: 12px; font-size: 16px; }
+  h1.titulo-pagina { font-size: 1.8em; }
+  details.seccion-grande > summary { font-size: 1.1em; padding: 12px 14px; }
+  .seccion-contenido { padding: 16px 18px; }
+  .num-seccion { width: 30px; height: 30px; font-size: 0.95em; }
+  table { font-size: 0.92em; }
+  th, td { padding: 8px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1 class="titulo-pagina">🧠 Cuerpo humano</h1>
+  <p class="subtitulo-pagina">Sistemas, homeostasis y salud</p>
+</header>
+
+<nav class="breadcrumbs">
+  <a href="../../index.html">Inicio</a> ›
+  <a href="../index.html">Ciencias</a> ›
+  <a href="index.html">Ciencias de la vida</a> ›
+  <strong>Cuerpo humano</strong>
+</nav>
+
+<nav class="tabla-contenidos">
+  <h2>📑 Contenido de esta página</h2>
+  <ol>
+    <li><a href="#homeostasis">Homeostasis: el concepto central</a></li>
+    <li><a href="#digestivo">Sistema digestivo</a></li>
+    <li><a href="#respiratorio">Sistema respiratorio</a></li>
+    <li><a href="#circulatorio">Sistema circulatorio</a></li>
+    <li><a href="#nervioso">Sistema nervioso</a></li>
+    <li><a href="#endocrino">Sistema endocrino y diabetes</a></li>
+    <li><a href="#inmunologico">Sistema inmunológico y vacunas</a></li>
+    <li><a href="#otros">Otros sistemas en breve</a></li>
+    <li><a href="#salud">Salud humana</a></li>
+    <li><a href="#vocabulario">Vocabulario clave</a></li>
+  </ol>
+</nav>
+
+<div class="botones-control">
+  <button class="btn-control" onclick="abrirTodo()">📖 Abrir todo</button>
+  <button class="btn-control" onclick="cerrarTodo()">📕 Cerrar todo</button>
+</div>
+
+<details class="seccion-grande" id="homeostasis" open>
+  <summary>
+    <span class="num-seccion">1</span>
+    <span class="titulo-seccion">Homeostasis: el concepto central</span>
+  </summary>
+  <div class="seccion-contenido">
+    <p>La <strong>homeostasis</strong> es la capacidad del cuerpo para mantener un ambiente interno estable a pesar de los cambios en el ambiente externo. Es el concepto que conecta todos los sistemas del cuerpo humano — y es <strong>el más evaluado</strong> en el bloque "Salud Humana y Sistemas Vivos" del GED.</p>
+
+    <div class="caja-clave">
+      <strong>Ejemplos rápidos de homeostasis:</strong>
+      <ul style="margin-top:8px; margin-bottom:0;">
+        <li>Tu temperatura corporal se mantiene cerca de <strong>37 °C</strong> aunque hagas ejercicio o esté frío afuera.</li>
+        <li>Tu glucosa en sangre se mantiene estable después de comer dulce o de pasar varias horas sin comer.</li>
+        <li>El pH de tu sangre se mantiene cerca de <strong>7.4</strong> aunque comas alimentos muy ácidos.</li>
+      </ul>
+    </div>
+
+    <h3>Retroalimentación negativa: el mecanismo principal</h3>
+    <p>La <strong>retroalimentación negativa</strong> (feedback negativo) es el mecanismo más común de la homeostasis. Funciona así:</p>
+
+    <ol>
+      <li>Un <strong>cambio</strong> aleja al cuerpo del valor normal (por ejemplo, sube la temperatura).</li>
+      <li>Un <strong>sensor</strong> detecta el cambio (en este caso, el hipotálamo).</li>
+      <li>El cuerpo activa una <strong>respuesta</strong> que <em>contrarresta</em> el cambio (sudar, dilatar vasos sanguíneos).</li>
+      <li>El valor regresa a su rango normal.</li>
+    </ol>
+
+    <p>Se llama "negativa" porque la respuesta <strong>se opone</strong> al cambio, devolviendo al cuerpo al equilibrio.</p>
+
+    <h3>Retroalimentación positiva: la excepción</h3>
+    <p>La <strong>retroalimentación positiva</strong> es lo opuesto: el cambio inicial provoca una respuesta que lo <em>amplifica</em>. Es menos común y suele ocurrir en eventos puntuales:</p>
+    <ul>
+      <li><strong>Parto:</strong> las contracciones uterinas liberan oxitocina, que provoca más contracciones, hasta el nacimiento.</li>
+      <li><strong>Coagulación de la sangre:</strong> una vez que comienza, las plaquetas atraen más plaquetas hasta sellar la herida.</li>
+    </ul>
+
+    <div class="caja-importante">
+      <strong>Pregunta clásica del GED:</strong> Distinguir retroalimentación negativa (mantiene el equilibrio — la mayoría de los procesos del cuerpo) de retroalimentación positiva (amplifica un cambio — eventos puntuales como el parto). Si la respuesta del cuerpo "deshace" el cambio, es negativa; si lo "agranda", es positiva.
+    </div>
+
+    <h3>Ejemplo paso a paso: regulación de temperatura</h3>
+    <table>
+      <tr>
+        <th>Si tienes calor (T > 37 °C)</th>
+        <th>Si tienes frío (T < 37 °C)</th>
+      </tr>
+      <tr>
+        <td>Sudoración (evaporación enfría la piel)</td>
+        <td>Tiritar (los músculos generan calor al contraerse)</td>
+      </tr>
+      <tr>
+        <td>Vasodilatación (los vasos de la piel se dilatan, liberan calor)</td>
+        <td>Vasoconstricción (los vasos se cierran, conservan el calor en el centro del cuerpo)</td>
+      </tr>
+      <tr>
+        <td>Búsqueda de la sombra, ropa ligera</td>
+        <td>Buscar abrigo, "ponerse la piel de gallina" (ancestralmente esponjaba el vello para retener aire)</td>
+      </tr>
+    </table>
+  </div>
+</details>
+
+<details class="seccion-grande" id="digestivo">
+  <summary>
+    <span class="num-seccion">2</span>
+    <span class="titulo-seccion">Sistema digestivo</span>
+  </summary>
+  <div class="seccion-contenido">
+    <p>El sistema digestivo descompone los alimentos en moléculas pequeñas que las células pueden absorber y usar. Es un tubo de unos <strong>9 metros</strong> de largo, desde la boca hasta el ano, ayudado por órganos accesorios (hígado, páncreas, vesícula biliar).</p>
+
+    <h3>Recorrido del alimento</h3>
+
+    <table>
+      <tr>
+        <th>Órgano</th>
+        <th>Qué pasa allí</th>
+      </tr>
+      <tr>
+        <td><strong>Boca</strong></td>
+        <td>Masticación + saliva (la enzima amilasa empieza a degradar almidones).</td>
+      </tr>
+      <tr>
+        <td><strong>Esófago</strong></td>
+        <td>Tubo que conecta boca y estómago. El alimento avanza por <strong>peristalsis</strong> (contracciones musculares).</td>
+      </tr>
+      <tr>
+        <td><strong>Estómago</strong></td>
+        <td>Mezcla con ácido clorhídrico (HCl) y pepsina, una enzima que digiere proteínas. El pH del estómago es muy ácido (~2).</td>
+      </tr>
+      <tr>
+        <td><strong>Intestino delgado</strong></td>
+        <td>Donde ocurre <strong>la mayor parte de la digestión y casi toda la absorción</strong>. Recibe bilis (del hígado) y enzimas pancreáticas. Las <span class="tooltip-dua" data-tooltip="Pequeñas proyecciones del intestino delgado que aumentan enormemente la superficie de absorción.">vellosidades</span> aumentan la superficie ~600 veces.</td>
+      </tr>
+      <tr>
+        <td><strong>Intestino grueso (colon)</strong></td>
+        <td>Reabsorbe <strong>agua y electrolitos</strong>. Las bacterias intestinales producen vitamina K y algunas vitaminas B.</td>
+      </tr>
+      <tr>
+        <td><strong>Recto y ano</strong></td>
+        <td>Almacenan y eliminan los desechos sólidos.</td>
+      </tr>
+    </table>
+
+    <h3>Órganos accesorios</h3>
+    <ul>
+      <li><strong>Hígado:</strong> produce <strong>bilis</strong> (que emulsiona las grasas), filtra toxinas, almacena glucosa como glucógeno, produce proteínas del plasma.</li>
+      <li><strong>Vesícula biliar:</strong> almacena la bilis y la libera al intestino delgado cuando hay grasa que digerir.</li>
+      <li><strong>Páncreas:</strong> doble función — produce <strong>enzimas digestivas</strong> (amilasa, lipasa, tripsina) Y produce <strong>insulina y glucagón</strong> (hormonas que veremos en el sistema endocrino).</li>
+    </ul>
+
+    <h3>Las cuatro categorías de nutrientes</h3>
+    <table>
+      <tr>
+        <th>Nutriente</th>
+        <th>Función principal</th>
+        <th>Fuente</th>
+      </tr>
+      <tr>
+        <td><strong>Carbohidratos</strong></td>
+        <td>Energía de uso rápido</td>
+        <td>Pan, arroz, frutas, verduras</td>
+      </tr>
+      <tr>
+        <td><strong>Proteínas</strong></td>
+        <td>Construir tejidos, enzimas, anticuerpos</td>
+        <td>Carne, frijoles, huevos, lácteos</td>
+      </tr>
+      <tr>
+        <td><strong>Lípidos (grasas)</strong></td>
+        <td>Energía a largo plazo, membranas celulares, hormonas</td>
+        <td>Aceites, frutos secos, aguacate, pescado</td>
+      </tr>
+      <tr>
+        <td><strong>Vitaminas y minerales</strong></td>
+        <td>Funciones específicas (cofactores, estructura)</td>
+        <td>Frutas, verduras, lácteos, sal yodada</td>
+      </tr>
+    </table>
+  </div>
+</details>
+
+<details class="seccion-grande" id="respiratorio">
+  <summary>
+    <span class="num-seccion">3</span>
+    <span class="titulo-seccion">Sistema respiratorio</span>
+  </summary>
+  <div class="seccion-contenido">
+    <p>El sistema respiratorio lleva <strong>oxígeno</strong> (O₂) al cuerpo y elimina <strong>dióxido de carbono</strong> (CO₂). Trabaja en estrecha colaboración con el sistema circulatorio.</p>
+
+    <h3>Recorrido del aire</h3>
+    <ol>
+      <li><strong>Fosas nasales</strong> — el aire entra y se calienta, humedece y filtra (los pelos atrapan partículas).</li>
+      <li><strong>Faringe</strong> — la garganta, vía común con el sistema digestivo.</li>
+      <li><strong>Laringe</strong> — donde están las cuerdas vocales.</li>
+      <li><strong>Tráquea</strong> — tubo principal con anillos de cartílago para mantenerse abierta.</li>
+      <li><strong>Bronquios y bronquiolos</strong> — la tráquea se ramifica como un árbol invertido en cada pulmón.</li>
+      <li><strong>Alvéolos</strong> — sacos diminutos al final de los bronquiolos. Hay ~300 millones por pulmón.</li>
+    </ol>
+
+    <h3>Intercambio de gases en los alvéolos</h3>
+    <p>En los alvéolos ocurre <strong>el intercambio gaseoso</strong>, el momento clave del sistema respiratorio:</p>
+
+    <div class="caja-clave">
+      <strong>Por difusión simple:</strong>
+      <ul style="margin-top:8px; margin-bottom:0;">
+        <li>El <strong>O₂</strong> pasa del alvéolo (alta concentración) a la sangre (baja concentración).</li>
+        <li>El <strong>CO₂</strong> pasa de la sangre (alta concentración) al alvéolo (baja concentración).</li>
+      </ul>
+    </div>
+
+    <p>Los alvéolos están rodeados de capilares — la pared entre el aire y la sangre es de solo dos células de espesor. La superficie total combinada de los alvéolos es de unos <strong>70 m²</strong> (como una cancha de bádminton) — todo eso comprimido en tu pecho.</p>
+
+    <h3>Mecánica de la respiración</h3>
+    <ul>
+      <li><strong>Inspiración:</strong> el <strong>diafragma</strong> (músculo en forma de domo bajo los pulmones) se contrae y baja; el pecho se expande; el aire entra por diferencia de presión.</li>
+      <li><strong>Espiración:</strong> el diafragma se relaja y sube; el pecho se contrae; el aire sale.</li>
+    </ul>
+
+    <div class="caja-importante">
+      <strong>Conexión con homeostasis:</strong> Cuando haces ejercicio, tus células producen más CO₂. Sensores en el cerebro detectan el aumento y aceleran tu respiración para eliminarlo. Otra vez, retroalimentación negativa.
+    </div>
+  </div>
+</details>
+
+<details class="seccion-grande" id="circulatorio">
+  <summary>
+    <span class="num-seccion">4</span>
+    <span class="titulo-seccion">Sistema circulatorio</span>
+  </summary>
+  <div class="seccion-contenido">
+    <p>El sistema circulatorio transporta oxígeno, nutrientes, hormonas, dióxido de carbono y desechos por todo el cuerpo. Funciona como una red de "carreteras" cuyos vehículos son los glóbulos sanguíneos y el centro de despacho es el corazón.</p>
+
+    <h3>El corazón: cuatro cámaras</h3>
+
+    <figure class="svg-figura">
+      <svg viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diagrama del corazón mostrando sus cuatro cámaras y el flujo sanguíneo">
+        <line x1="300" y1="50" x2="300" y2="370" stroke="#212121" stroke-width="2" stroke-dasharray="4,4"/>
+
+        <rect x="120" y="80" width="160" height="100" rx="10" fill="#bbdefb" stroke="#0d47a1" stroke-width="2"/>
+        <text x="200" y="115" text-anchor="middle" font-size="14" fill="#0d47a1" font-weight="bold">Aurícula</text>
+        <text x="200" y="135" text-anchor="middle" font-size="14" fill="#0d47a1" font-weight="bold">derecha</text>
+        <text x="200" y="160" text-anchor="middle" font-size="11" fill="#212121">Sangre con CO₂</text>
+
+        <rect x="120" y="200" width="160" height="160" rx="10" fill="#bbdefb" stroke="#0d47a1" stroke-width="3"/>
+        <text x="200" y="245" text-anchor="middle" font-size="14" fill="#0d47a1" font-weight="bold">Ventrículo</text>
+        <text x="200" y="265" text-anchor="middle" font-size="14" fill="#0d47a1" font-weight="bold">derecho</text>
+        <text x="200" y="295" text-anchor="middle" font-size="11" fill="#212121">→ a los pulmones</text>
+
+        <rect x="320" y="80" width="160" height="100" rx="10" fill="#ffcdd2" stroke="#b71c1c" stroke-width="2"/>
+        <text x="400" y="115" text-anchor="middle" font-size="14" fill="#b71c1c" font-weight="bold">Aurícula</text>
+        <text x="400" y="135" text-anchor="middle" font-size="14" fill="#b71c1c" font-weight="bold">izquierda</text>
+        <text x="400" y="160" text-anchor="middle" font-size="11" fill="#212121">Sangre con O₂</text>
+
+        <rect x="320" y="200" width="160" height="160" rx="10" fill="#ffcdd2" stroke="#b71c1c" stroke-width="3"/>
+        <text x="400" y="245" text-anchor="middle" font-size="14" fill="#b71c1c" font-weight="bold">Ventrículo</text>
+        <text x="400" y="265" text-anchor="middle" font-size="14" fill="#b71c1c" font-weight="bold">izquierdo</text>
+        <text x="400" y="295" text-anchor="middle" font-size="11" fill="#212121">→ al cuerpo</text>
+
+        <line x1="200" y1="180" x2="200" y2="200" stroke="#0d47a1" stroke-width="3" marker-end="url(#flecha-azul)"/>
+        <line x1="400" y1="180" x2="400" y2="200" stroke="#b71c1c" stroke-width="3" marker-end="url(#flecha-roja-c)"/>
+
+        <text x="60" y="50" font-size="13" fill="#0d47a1" font-weight="bold">Lado derecho</text>
+        <text x="60" y="65" font-size="11" fill="#0d47a1">(sangre desoxigenada)</text>
+
+        <text x="510" y="50" font-size="13" fill="#b71c1c" font-weight="bold">Lado izquierdo</text>
+        <text x="510" y="65" font-size="11" fill="#b71c1c">(sangre oxigenada)</text>
+
+        <defs>
+          <marker id="flecha-azul" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+            <polygon points="0 0, 10 5, 0 10" fill="#0d47a1"/>
+          </marker>
+          <marker id="flecha-roja-c" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto">
+            <polygon points="0 0, 10 5, 0 10" fill="#b71c1c"/>
+          </marker>
+        </defs>
+      </svg>
+      <figcaption>El corazón tiene 4 cámaras: el lado derecho maneja sangre con CO₂; el lado izquierdo, sangre con O₂.</figcaption>
+    </figure>
+
+    <h3>El camino completo de la sangre</h3>
+    <p>Hay <strong>dos circuitos</strong> que trabajan juntos:</p>
+
+    <h4>Circulación pulmonar (al pulmón)</h4>
+    <ol>
+      <li>Sangre con CO₂ entra a la <strong>aurícula derecha</strong> desde las venas del cuerpo.</li>
+      <li>Pasa al <strong>ventrículo derecho</strong>.</li>
+      <li>Sale por la <strong>arteria pulmonar</strong> hacia los pulmones.</li>
+      <li>En los alvéolos: descarga CO₂, recoge O₂.</li>
+      <li>Regresa por las <strong>venas pulmonares</strong> a la aurícula izquierda.</li>
+    </ol>
+
+    <h4>Circulación sistémica (al cuerpo)</h4>
+    <ol>
+      <li>Sangre con O₂ pasa de la aurícula izquierda al <strong>ventrículo izquierdo</strong>.</li>
+      <li>Sale por la <strong>aorta</strong> (la arteria más grande).</li>
+      <li>Se distribuye por todo el cuerpo, entregando O₂ y nutrientes.</li>
+      <li>Regresa cargada de CO₂ por las venas a la aurícula derecha.</li>
+      <li>Y el ciclo se repite.</li>
+    </ol>
+
+    <div class="caja-importante">
+      <strong>¡Cuidado con la trampa de las arterias y venas!</strong>
+      <ul style="margin-top:8px; margin-bottom:0;">
+        <li><strong>Arterias</strong> = sangre que <em>sale</em> del corazón (no necesariamente con O₂).</li>
+        <li><strong>Venas</strong> = sangre que <em>regresa</em> al corazón.</li>
+      </ul>
+      La excepción famosa: la <strong>arteria pulmonar</strong> lleva sangre SIN oxígeno, y la <strong>vena pulmonar</strong> lleva sangre CON oxígeno. Es la única excepción porque conecta corazón y pulmones, no corazón y resto del cuerpo.
+    </div>
+
+    <h3>Componentes de la sangre</h3>
+    <table>
+      <tr>
+        <th>Componente</th>
+        <th>Función</th>
+        <th>Detalles</th>
+      </tr>
+      <tr>
+        <td><strong>Plasma</strong></td>
+        <td>Líquido base (~55% del volumen)</td>
+        <td>Agua, proteínas, hormonas, nutrientes, desechos</td>
+      </tr>
+      <tr>
+        <td><strong>Glóbulos rojos</strong> (eritrocitos)</td>
+        <td>Transportan O₂ y CO₂</td>
+        <td>Contienen <strong>hemoglobina</strong>, una proteína con hierro que se une al O₂</td>
+      </tr>
+      <tr>
+        <td><strong>Glóbulos blancos</strong> (leucocitos)</td>
+        <td>Defensa contra infecciones</td>
+        <td>Parte del sistema inmunológico</td>
+      </tr>
+      <tr>
+        <td><strong>Plaquetas</strong></td>
+        <td>Coagulación</td>
+        <td>Sellan las heridas para detener el sangrado</td>
+      </tr>
+    </table>
+
+    <h3>Presión arterial</h3>
+    <p>La presión arterial se mide en dos números: <strong>sistólica/diastólica</strong> (ej. 120/80 mmHg). El primero es cuando el corazón se contrae; el segundo, cuando se relaja. Una presión sistemáticamente alta (<strong>hipertensión</strong>) daña los vasos sanguíneos y aumenta el riesgo de infarto y derrame cerebral.</p>
+  </div>
+</details>
+
+<details class="seccion-grande" id="nervioso">
+  <summary>
+    <span class="num-seccion">5</span>
+    <span class="titulo-seccion">Sistema nervioso</span>
+  </summary>
+  <div class="seccion-contenido">
+    <p>El sistema nervioso es la red de comunicación rápida del cuerpo. Recibe información del ambiente y del propio cuerpo, la procesa, y envía respuestas. Trabaja en milisegundos — mucho más rápido que el sistema endocrino, que usa hormonas.</p>
+
+    <h3>Las divisiones</h3>
+    <ul>
+      <li><strong>Sistema nervioso central (SNC):</strong> cerebro y médula espinal. El centro de procesamiento.</li>
+      <li><strong>Sistema nervioso periférico (SNP):</strong> todos los nervios fuera del SNC.
+        <ul>
+          <li><strong>Somático:</strong> control voluntario (mover el brazo).</li>
+          <li><strong>Autónomo:</strong> control involuntario (latido del corazón, digestión).
+            <ul>
+              <li><strong>Simpático:</strong> "lucha o huida" — acelera el corazón, dilata pupilas.</li>
+              <li><strong>Parasimpático:</strong> "descanso y digestión" — calma el cuerpo.</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+
+    <h3>La neurona: la célula del sistema nervioso</h3>
+    <p>Una <strong>neurona</strong> tiene tres partes:</p>
+    <ul>
+      <li><strong>Dendritas</strong> — ramificaciones que reciben señales de otras neuronas.</li>
+      <li><strong>Cuerpo celular (soma)</strong> — contiene el núcleo.</li>
+      <li><strong>Axón</strong> — fibra larga que envía señales eléctricas a otras células.</li>
+    </ul>
+    <p>Las neuronas se comunican entre sí en uniones llamadas <strong>sinapsis</strong>, donde liberan <strong>neurotransmisores</strong> (serotonina, dopamina, acetilcolina, etc.) que cruzan el espacio entre dos neuronas.</p>
+
+    <h3>Arco reflejo: la respuesta más rápida</h3>
+    <p>Un <strong>reflejo</strong> es una respuesta automática que evita el cerebro consciente — la médula espinal procesa la información directamente. Por eso retiras la mano de algo caliente <em>antes</em> de sentir el dolor.</p>
+
+    <figure class="svg-figura">
+      <svg viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diagrama del arco reflejo">
+        <circle cx="60" cy="170" r="30" fill="#ff8a80" stroke="#212121" stroke-width="2"/>
+        <text x="60" y="175" text-anchor="middle" font-size="22">🔥</text>
+        <text x="60" y="220" text-anchor="middle" font-size="11" font-weight="bold">Estímulo</text>
+        <text x="60" y="235" text-anchor="middle" font-size="10">(calor)</text>
+
+        <line x1="95" y1="170" x2="135" y2="170" stroke="#212121" stroke-width="2" marker-end="url(#flecha-arco)"/>
+
+        <rect x="140" y="140" width="120" height="60" rx="8" fill="#f3e5f5" stroke="#6a1b9a" stroke-width="2"/>
+        <text x="200" y="165" text-anchor="middle" font-size="12" fill="#6a1b9a" font-weight="bold">Receptor</text>
+        <text x="200" y="185" text-anchor="middle" font-size="11">(piel)</text>
+        <text x="200" y="220" text-anchor="middle" font-size="10">Detecta el calor</text>
+
+        <line x1="265" y1="170" x2="305" y2="170" stroke="#212121" stroke-width="2" marker-end="url(#flecha-arco)"/>
+        <text x="285" y="160" text-anchor="middle" font-size="9" fill="#6a1b9a">neurona</text>
+        <text x="285" y="172" text-anchor="middle" font-size="9" fill="#6a1b9a">sensorial</text>
+
+        <rect x="310" y="120" width="120" height="100" rx="8" fill="#e1bee7" stroke="#6a1b9a" stroke-width="3"/>
+        <text x="370" y="155" text-anchor="middle" font-size="12" fill="#6a1b9a" font-weight="bold">Médula</text>
+        <text x="370" y="175" text-anchor="middle" font-size="12" fill="#6a1b9a" font-weight="bold">espinal</text>
+        <text x="370" y="200" text-anchor="middle" font-size="10">(procesa sin</text>
+        <text x="370" y="212" text-anchor="middle" font-size="10">pasar al cerebro)</text>
+
+        <line x1="435" y1="170" x2="475" y2="170" stroke="#212121" stroke-width="2" marker-end="url(#flecha-arco)"/>
+        <text x="455" y="160" text-anchor="middle" font-size="9" fill="#6a1b9a">neurona</text>
+        <text x="455" y="172" text-anchor="middle" font-size="9" fill="#6a1b9a">motora</text>
+
+        <rect x="480" y="140" width="120" height="60" rx="8" fill="#f3e5f5" stroke="#6a1b9a" stroke-width="2"/>
+        <text x="540" y="165" text-anchor="middle" font-size="12" fill="#6a1b9a" font-weight="bold">Efector</text>
+        <text x="540" y="185" text-anchor="middle" font-size="11">(músculo)</text>
+        <text x="540" y="220" text-anchor="middle" font-size="10">Contrae el brazo</text>
+
+        <line x1="605" y1="170" x2="645" y2="170" stroke="#212121" stroke-width="2" marker-end="url(#flecha-arco)"/>
+
+        <text x="660" y="155" text-anchor="middle" font-size="22">✋</text>
+        <text x="660" y="190" text-anchor="middle" font-size="11" font-weight="bold">Respuesta</text>
+        <text x="660" y="205" text-anchor="middle" font-size="10">(retirar mano)</text>
+
+        <text x="370" y="50" text-anchor="middle" font-size="14" font-weight="bold" fill="#212121">Arco reflejo: en milisegundos, sin pasar por el cerebro</text>
+        <text x="370" y="70" text-anchor="middle" font-size="11" fill="#555" font-style="italic">El cerebro recibe la información después — por eso sientes el dolor luego de mover la mano</text>
+
+        <defs>
+          <marker id="flecha-arco" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+            <polygon points="0 0, 8 4, 0 8" fill="#212121"/>
+          </marker>
+        </defs>
+      </svg>
+      <figcaption>El arco reflejo: estímulo → receptor → neurona sensorial → médula espinal → neurona motora → efector → respuesta.</figcaption>
+    </figure>
+
+    <h3>Los cinco sentidos</h3>
+    <table>
+      <tr>
+        <th>Sentido</th>
+        <th>Órgano principal</th>
+        <th>Detecta</th>
+      </tr>
+      <tr><td>Vista</td><td>Ojo (retina, conos y bastones)</td><td>Luz, color</td></tr>
+      <tr><td>Oído</td><td>Oreja, cóclea</td><td>Ondas sonoras, equilibrio</td></tr>
+      <tr><td>Olfato</td><td>Nariz</td><td>Moléculas químicas en el aire</td></tr>
+      <tr><td>Gusto</td><td>Lengua (papilas gustativas)</td><td>Sabores: dulce, salado, ácido, amargo, umami</td></tr>
+      <tr><td>Tacto</td><td>Piel</td><td>Presión, temperatura, dolor</td></tr>
+    </table>
+  </div>
+</details>
+
+<details class="seccion-grande" id="endocrino">
+  <summary>
+    <span class="num-seccion">6</span>
+    <span class="titulo-seccion">Sistema endocrino y diabetes</span>
+  </summary>
+  <div class="seccion-contenido">
+    <p>El sistema endocrino es la red de <strong>comunicación química</strong> del cuerpo. Funciona con <strong>hormonas</strong> — moléculas que las glándulas liberan a la sangre para regular procesos en órganos lejanos. Es más lento que el sistema nervioso, pero sus efectos duran más.</p>
+
+    <h3>Glándulas y hormonas principales</h3>
+
+    <table>
+      <tr>
+        <th>Glándula</th>
+        <th>Hormona principal</th>
+        <th>Función</th>
+      </tr>
+      <tr>
+        <td><strong>Hipotálamo</strong></td>
+        <td>Varias (controla otras glándulas)</td>
+        <td>Centro de control del sistema endocrino, conecta con sistema nervioso</td>
+      </tr>
+      <tr>
+        <td><strong>Pituitaria</strong></td>
+        <td>Hormona del crecimiento, ADH, otras</td>
+        <td>"Glándula maestra" — controla a otras glándulas</td>
+      </tr>
+      <tr>
+        <td><strong>Tiroides</strong></td>
+        <td>Tiroxina</td>
+        <td>Regula metabolismo (qué tan rápido el cuerpo usa energía)</td>
+      </tr>
+      <tr>
+        <td><strong>Páncreas</strong></td>
+        <td>Insulina y glucagón</td>
+        <td>Regulan glucosa en sangre</td>
+      </tr>
+      <tr>
+        <td><strong>Glándulas suprarrenales</strong></td>
+        <td>Adrenalina, cortisol</td>
+        <td>Respuesta al estrés (lucha o huida)</td>
+      </tr>
+      <tr>
+        <td><strong>Ovarios / Testículos</strong></td>
+        <td>Estrógenos / Testosterona</td>
+        <td>Caracteres sexuales, reproducción</td>
+      </tr>
+    </table>
+
+    <h3>Diabetes y la regulación de la glucosa</h3>
+    <p>Este es <strong>uno de los temas más relevantes del GED</strong> y especialmente importante para tus estudiantes adultos, ya que la diabetes afecta de manera desproporcionada a la comunidad hispana.</p>
+
+    <h4>Cómo funciona la regulación normal</h4>
+
+    <figure class="svg-figura">
+      <svg viewBox="0 0 600 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Regulación de glucosa en sangre con insulina y glucagón">
+        <line x1="50" y1="280" x2="560" y2="280" stroke="#212121" stroke-width="2"/>
+        <line x1="50" y1="280" x2="50" y2="40" stroke="#212121" stroke-width="2"/>
+
+        <text x="30" y="50" font-size="11" fill="#212121">Glucosa</text>
+        <text x="30" y="65" font-size="11" fill="#212121">en sangre</text>
+        <text x="305" y="305" text-anchor="middle" font-size="12" fill="#212121">Tiempo</text>
+
+        <line x1="50" y1="160" x2="560" y2="160" stroke="#2e7d32" stroke-width="2" stroke-dasharray="4,3"/>
+        <text x="55" y="155" font-size="10" fill="#2e7d32" font-weight="bold">Nivel normal (~90 mg/dL)</text>
+
+        <path d="M 50 160 Q 130 160 170 80 Q 220 80 260 160 Q 320 240 380 240 Q 440 200 480 160 Q 540 160 555 160" fill="none" stroke="#1565c0" stroke-width="3"/>
+
+        <circle cx="170" cy="80" r="6" fill="#e65100"/>
+        <text x="180" y="75" font-size="11" fill="#e65100" font-weight="bold">Comida</text>
+        <text x="180" y="90" font-size="9" fill="#555">↑ glucosa</text>
+
+        <circle cx="260" cy="160" r="6" fill="#1565c0"/>
+        <text x="270" y="175" font-size="11" fill="#1565c0" font-weight="bold">Insulina</text>
+        <text x="270" y="190" font-size="9" fill="#555">↓ glucosa</text>
+
+        <circle cx="380" cy="240" r="6" fill="#c62828"/>
+        <text x="390" y="245" font-size="11" fill="#c62828" font-weight="bold">Ayuno</text>
+        <text x="390" y="260" font-size="9" fill="#555">↓ glucosa</text>
+
+        <circle cx="480" cy="160" r="6" fill="#2e7d32"/>
+        <text x="490" y="175" font-size="11" fill="#2e7d32" font-weight="bold">Glucagón</text>
+        <text x="490" y="190" font-size="9" fill="#555">↑ glucosa</text>
+      </svg>
+      <figcaption>Después de comer, sube la glucosa: el páncreas libera insulina para bajarla. En ayuno, baja la glucosa: el páncreas libera glucagón para subirla. Retroalimentación negativa clásica.</figcaption>
+    </figure>
+
+    <table>
+      <tr>
+        <th>Situación</th>
+        <th>Hormona</th>
+        <th>Acción</th>
+      </tr>
+      <tr>
+        <td>Glucosa <strong>alta</strong> (después de comer)</td>
+        <td><strong>Insulina</strong></td>
+        <td>Indica a las células que absorban glucosa de la sangre y la guarden como glucógeno en hígado y músculo. <strong>Baja la glucosa.</strong></td>
+      </tr>
+      <tr>
+        <td>Glucosa <strong>baja</strong> (en ayuno)</td>
+        <td><strong>Glucagón</strong></td>
+        <td>Indica al hígado que libere glucógeno almacenado, convirtiéndolo en glucosa. <strong>Sube la glucosa.</strong></td>
+      </tr>
+    </table>
+
+    <h4>Diabetes: cuando el sistema falla</h4>
+    <ul>
+      <li><strong>Tipo 1:</strong> el páncreas no produce insulina (enfermedad autoinmune; suele empezar en la infancia). Requiere inyecciones diarias de insulina.</li>
+      <li><strong>Tipo 2:</strong> el páncreas produce insulina, pero las células se vuelven <strong>resistentes</strong> a ella. Es la forma más común y está fuertemente asociada a la obesidad y la dieta. Se puede prevenir y a menudo controlar con dieta, ejercicio y medicamentos.</li>
+    </ul>
+
+    <div class="caja-salud">
+      <strong>Datos relevantes:</strong> La diabetes afecta a más del <strong>14% de los adultos hispanos</strong> en EE.UU. — más alto que el promedio nacional. La prevención (mantener peso saludable, hacer ejercicio, comer pocos azúcares y harinas refinadas) es la mejor estrategia.
+    </div>
+  </div>
+</details>
+
+<details class="seccion-grande" id="inmunologico">
+  <summary>
+    <span class="num-seccion">7</span>
+    <span class="titulo-seccion">Sistema inmunológico y vacunas</span>
+  </summary>
+  <div class="seccion-contenido">
+    <p>El sistema inmunológico defiende al cuerpo de bacterias, virus, hongos y otros agentes que pueden causar enfermedad. Tiene dos niveles que trabajan juntos.</p>
+
+    <h3>Inmunidad innata: la primera línea</h3>
+    <p>Es la defensa <strong>general</strong> con la que naces. No distingue entre patógenos específicos — solo "lo que pertenece al cuerpo" y "lo que no pertenece".</p>
+    <ul>
+      <li><strong>Barreras físicas:</strong> piel, mucosas, ácido del estómago, lágrimas (con lisozima).</li>
+      <li><strong>Glóbulos blancos generalistas:</strong> macrófagos que "comen" a los invasores (fagocitosis); neutrófilos que atacan bacterias.</li>
+      <li><strong>Inflamación:</strong> respuesta local — el área se enrojece, se hincha, se calienta y duele. Atrae glóbulos blancos al sitio.</li>
+      <li><strong>Fiebre:</strong> aumento de temperatura corporal que dificulta la replicación de patógenos.</li>
+    </ul>
+
+    <h3>Inmunidad adaptativa: la respuesta específica</h3>
+    <p>Es la defensa <strong>dirigida</strong> contra patógenos específicos. Aprende y recuerda. Sus protagonistas son los <strong>linfocitos</strong>:</p>
+    <ul>
+      <li><strong>Linfocitos B</strong> — producen <strong>anticuerpos</strong>, proteínas en forma de Y que se pegan a un patógeno específico y lo marcan para destrucción.</li>
+      <li><strong>Linfocitos T</strong> — atacan directamente a células infectadas o coordinan la respuesta inmune.</li>
+    </ul>
+
+    <h3>Memoria inmunológica</h3>
+    <p>Después de una infección, algunas células B y T se convierten en <strong>células de memoria</strong>. Si el mismo patógeno regresa, la respuesta es <strong>mucho más rápida y fuerte</strong> — por eso la mayoría de enfermedades de la infancia (sarampión, varicela) las pasas una sola vez.</p>
+
+    <h3>Vacunas: entrenar al sistema inmune sin enfermarse</h3>
+    <p>Una <strong>vacuna</strong> contiene patógenos muertos, debilitados, o solo partes de ellos (proteínas, ARN mensajero como las de COVID-19). Al inyectarse:</p>
+
+    <ol>
+      <li>El sistema inmune lo identifica como "extraño".</li>
+      <li>Produce anticuerpos específicos contra ese patógeno.</li>
+      <li>Genera <strong>células de memoria</strong>.</li>
+      <li>Si más adelante el patógeno real entra al cuerpo, la respuesta es inmediata — la persona <strong>no se enferma</strong> o se enferma de forma muy leve.</li>
+    </ol>
+
+    <div class="caja-clave">
+      <strong>Inmunidad de rebaño:</strong> Cuando un porcentaje suficientemente alto de la población está vacunado (~70-95% según la enfermedad), el patógeno no encuentra suficientes huéspedes para propagarse. Esto protege a personas que no pueden vacunarse — bebés, ancianos frágiles, inmunocomprometidos.
+    </div>
+
+    <h3>Cuando el sistema falla</h3>
+    <ul>
+      <li><strong>Alergias:</strong> el sistema reacciona exageradamente a sustancias inofensivas (polen, polvo, ciertos alimentos).</li>
+      <li><strong>Enfermedades autoinmunes:</strong> el sistema ataca al propio cuerpo. Ejemplos: diabetes tipo 1, lupus, artritis reumatoide, esclerosis múltiple.</li>
+      <li><strong>Inmunodeficiencia:</strong> el sistema es muy débil. El VIH ataca específicamente a los linfocitos T, debilitando la respuesta y causando el SIDA.</li>
+    </ul>
+  </div>
+</details>
+
+<details class="seccion-grande" id="otros">
+  <summary>
+    <span class="num-seccion">8</span>
+    <span class="titulo-seccion">Otros sistemas en breve</span>
+  </summary>
+  <div class="seccion-contenido">
+    <p>Estos sistemas son importantes pero el GED no los evalúa con la misma profundidad que los anteriores. Aquí lo esencial.</p>
+
+    <details class="sub-acordeon">
+      <summary>💧 Sistema excretor (urinario)</summary>
+      <div class="sub-contenido">
+        <p>Filtra desechos de la sangre y mantiene el equilibrio de agua y electrolitos. <strong>Componentes principales:</strong></p>
+        <ul>
+          <li><strong>Riñones</strong> — dos órganos en forma de frijol que filtran ~180 litros de sangre por día. Producen orina.</li>
+          <li><strong>Uréteres</strong> — tubos que llevan la orina de los riñones a la vejiga.</li>
+          <li><strong>Vejiga</strong> — almacena la orina.</li>
+          <li><strong>Uretra</strong> — tubo por el que sale la orina al exterior.</li>
+        </ul>
+        <p>Los riñones eliminan <strong>urea</strong> (desecho del metabolismo de proteínas), exceso de agua, sales y otros desechos. Son <strong>esenciales para la homeostasis</strong> — controlan el volumen de sangre, la presión arterial y el pH.</p>
+      </div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>🦴 Sistema esquelético</summary>
+      <div class="sub-contenido">
+        <p>Los <strong>206 huesos</strong> del cuerpo adulto cumplen varias funciones:</p>
+        <ul>
+          <li><strong>Soporte y forma</strong> del cuerpo.</li>
+          <li><strong>Protección</strong> de órganos (cráneo protege el cerebro, costillas protegen corazón y pulmones).</li>
+          <li><strong>Movimiento</strong> — son los puntos de anclaje de los músculos.</li>
+          <li><strong>Producción de células sanguíneas</strong> en la médula ósea (rojos, blancos y plaquetas).</li>
+          <li><strong>Almacenamiento de calcio</strong> y otros minerales.</li>
+        </ul>
+        <p>Las <strong>articulaciones</strong> son donde dos huesos se conectan. Los <strong>tendones</strong> conectan músculo a hueso; los <strong>ligamentos</strong> conectan hueso a hueso.</p>
+      </div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>💪 Sistema muscular</summary>
+      <div class="sub-contenido">
+        <p>Hay <strong>tres tipos de músculo</strong>:</p>
+        <ul>
+          <li><strong>Esquelético:</strong> voluntario, anclado a los huesos. Mueve el cuerpo. Los músculos siempre <strong>tiran</strong>, nunca empujan — por eso trabajan en pares opuestos (bíceps/tríceps).</li>
+          <li><strong>Cardiaco:</strong> involuntario, exclusivo del corazón. Se contrae rítmicamente toda la vida sin descansar.</li>
+          <li><strong>Liso:</strong> involuntario, en órganos internos (estómago, intestinos, vasos sanguíneos, útero).</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>👶 Sistema reproductor (resumen)</summary>
+      <div class="sub-contenido">
+        <p>Su función es producir descendencia. El GED no evalúa anatomía detallada, pero sí algunos conceptos:</p>
+        <ul>
+          <li><strong>Femenino:</strong> ovarios producen óvulos y hormonas (estrógenos, progesterona); útero alberga al embrión durante el embarazo.</li>
+          <li><strong>Masculino:</strong> testículos producen espermatozoides y testosterona.</li>
+          <li><strong>Fecundación:</strong> espermatozoide + óvulo = cigoto, que se desarrollará en embrión.</li>
+          <li><strong>Las gónadas usan meiosis</strong> (vista en Genética) para producir gametos con la mitad de cromosomas.</li>
+          <li><strong>Las ITS</strong> (infecciones de transmisión sexual) — VIH, sífilis, gonorrea, clamidia, VPH — pueden prevenirse con métodos de barrera y, para algunas, con vacunas (VPH).</li>
+        </ul>
+        <p>👉 Para la herencia genética y enfermedades genéticas, consulta la sub-página de <a href="genetica.html">Genética y herencia</a>.</p>
+      </div>
+    </details>
+  </div>
+</details>
+
+<details class="seccion-grande" id="salud">
+  <summary>
+    <span class="num-seccion">9</span>
+    <span class="titulo-seccion">Salud humana: nutrición, ejercicio y enfermedad</span>
+  </summary>
+  <div class="seccion-contenido">
+    <p>Esta sección integra los sistemas anteriores con conceptos de salud que aparecen recurrentemente en el GED.</p>
+
+    <h3>Nutrición básica</h3>
+    <p>Una dieta equilibrada incluye los cuatro tipos de nutrientes (carbohidratos, proteínas, grasas, vitaminas y minerales) en proporciones adecuadas. <strong>MyPlate</strong>, el sistema actual del USDA, recomienda:</p>
+    <ul>
+      <li>50% del plato: <strong>frutas y verduras</strong>.</li>
+      <li>~25% del plato: <strong>granos enteros</strong> (arroz integral, avena, pan integral).</li>
+      <li>~25% del plato: <strong>proteínas magras</strong> (pescado, pollo, frijoles, tofu).</li>
+      <li>Lácteos bajos en grasa al lado.</li>
+      <li>Limitar: azúcar añadida, sal, grasas saturadas y trans.</li>
+    </ul>
+
+    <h3>Ejercicio</h3>
+    <p>Beneficios documentados: fortalece el corazón, mejora la circulación, reduce la presión arterial, ayuda a controlar el peso, mejora la sensibilidad a la insulina (previniendo diabetes tipo 2), fortalece huesos y músculos, mejora el ánimo (al liberar endorfinas y serotonina). Recomendación general: <strong>150 minutos por semana</strong> de actividad moderada.</p>
+
+    <h3>Enfermedades infecciosas vs. no infecciosas</h3>
+    <table>
+      <tr>
+        <th></th>
+        <th>Enfermedades infecciosas</th>
+        <th>Enfermedades no infecciosas (crónicas)</th>
+      </tr>
+      <tr>
+        <td><strong>Causa</strong></td>
+        <td>Patógenos: bacterias, virus, hongos, parásitos</td>
+        <td>Genética, estilo de vida, ambiente, edad</td>
+      </tr>
+      <tr>
+        <td><strong>¿Se contagian?</strong></td>
+        <td>Sí, pueden transmitirse de persona a persona</td>
+        <td>No</td>
+      </tr>
+      <tr>
+        <td><strong>Ejemplos</strong></td>
+        <td>Influenza, COVID-19, tuberculosis, malaria, sarampión, VIH</td>
+        <td>Diabetes tipo 2, hipertensión, cáncer, enfermedad cardiaca, Alzheimer</td>
+      </tr>
+      <tr>
+        <td><strong>Prevención</strong></td>
+        <td>Higiene, vacunas, antibióticos, condones</td>
+        <td>Estilo de vida saludable: dieta, ejercicio, no fumar, controles médicos</td>
+      </tr>
+    </table>
+
+    <h3>Bacterias vs. virus — distinguir es esencial</h3>
+    <table>
+      <tr>
+        <th></th>
+        <th>Bacterias</th>
+        <th>Virus</th>
+      </tr>
+      <tr><td>Tamaño</td><td>Más grandes (~1-10 μm)</td><td>Mucho más pequeños (~20-300 nm)</td></tr>
+      <tr><td>¿Son células?</td><td>Sí</td><td>No (no se consideran "vivos" en sentido estricto)</td></tr>
+      <tr><td>¿Cómo se reproducen?</td><td>Solas, dividiéndose</td><td>Solo dentro de células huésped</td></tr>
+      <tr><td>Tratamiento</td><td><strong>Antibióticos</strong></td><td><strong>Antivirales</strong> (los antibióticos NO sirven)</td></tr>
+      <tr><td>Ejemplos</td><td>Tuberculosis, sífilis, neumonía bacteriana, salmonelosis</td><td>Influenza, COVID-19, VIH, sarampión, hepatitis</td></tr>
+    </table>
+
+    <div class="caja-importante">
+      <strong>¡Punto crucial para el GED!</strong> Los <strong>antibióticos NO funcionan contra virus</strong>. Tomarlos para una gripe (que es viral) no ayuda y, peor aún, contribuye al desarrollo de bacterias resistentes a antibióticos (recuerda el ejemplo evolutivo de la sub-página de <a href="evolucion.html">Evolución</a>).
+    </div>
+  </div>
+</details>
+
+<details class="seccion-grande" id="vocabulario">
+  <summary>
+    <span class="num-seccion">10</span>
+    <span class="titulo-seccion">Vocabulario clave</span>
+  </summary>
+  <div class="seccion-contenido">
+    <p>Diez términos esenciales del cuerpo humano. Memorízalos con sus ejemplos.</p>
+
+    <details class="sub-acordeon">
+      <summary>📖 Homeostasis</summary>
+      <div class="sub-contenido">Capacidad del cuerpo para mantener un ambiente interno estable a pesar de los cambios externos. Ejemplos: temperatura, glucosa, pH.</div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>📖 Retroalimentación negativa</summary>
+      <div class="sub-contenido">Mecanismo donde la respuesta del cuerpo CONTRARRESTA un cambio para devolver al equilibrio. La mayoría de procesos del cuerpo funcionan así.</div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>📖 Alvéolo</summary>
+      <div class="sub-contenido">Saco diminuto en los pulmones donde ocurre el intercambio de O₂ y CO₂ con la sangre. Hay ~300 millones por pulmón.</div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>📖 Hemoglobina</summary>
+      <div class="sub-contenido">Proteína de los glóbulos rojos, contiene hierro, transporta oxígeno desde los pulmones hasta los tejidos.</div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>📖 Neurona</summary>
+      <div class="sub-contenido">Célula del sistema nervioso. Tiene dendritas (reciben), cuerpo celular y axón (envía). Se comunican en sinapsis con neurotransmisores.</div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>📖 Insulina</summary>
+      <div class="sub-contenido">Hormona del páncreas que BAJA la glucosa en sangre indicando a las células que la absorban. Su falla causa diabetes.</div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>📖 Glucagón</summary>
+      <div class="sub-contenido">Hormona del páncreas que SUBE la glucosa en sangre haciendo que el hígado libere glucógeno almacenado.</div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>📖 Anticuerpo</summary>
+      <div class="sub-contenido">Proteína en forma de Y producida por linfocitos B. Se une específicamente a un patógeno y lo marca para destrucción.</div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>📖 Vacuna</summary>
+      <div class="sub-contenido">Preparado que entrena al sistema inmune sin causar enfermedad. Estimula la producción de anticuerpos y células de memoria.</div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>📖 Patógeno</summary>
+      <div class="sub-contenido">Agente que causa enfermedad: bacteria, virus, hongo o parásito. Su tipo determina el tratamiento (antibióticos solo contra bacterias).</div>
+    </details>
+  </div>
+</details>
+
+<section class="seccion-quiz" id="quiz">
+  <h2>🎯 Comprueba lo aprendido</h2>
+  <p style="text-align:center; font-style:italic;">Ocho preguntas estilo GED. Pulsa la opción que creas correcta para ver la retroalimentación.</p>
+
+  <div class="pregunta-quiz">
+    <span class="num-pregunta">Pregunta 1</span>
+    <p><strong>Cuando hace mucho calor, una persona suda y los vasos sanguíneos de la piel se dilatan, lo que enfría el cuerpo. ¿Qué tipo de mecanismo describe esto?</strong></p>
+    <div class="opcion-quiz" onclick="responder(this, 1, true)">A) Retroalimentación negativa — la respuesta contrarresta el cambio (calor) y devuelve al equilibrio.</div>
+    <div class="opcion-quiz" onclick="responder(this, 1, false)">B) Retroalimentación positiva — la respuesta amplifica el cambio.</div>
+    <div class="opcion-quiz" onclick="responder(this, 1, false)">C) No hay mecanismo de control — el cuerpo solo reacciona al azar.</div>
+    <div class="opcion-quiz" onclick="responder(this, 1, false)">D) Selección natural a corto plazo.</div>
+    <div class="feedback-quiz acierto" id="feedback-1-correcto">✅ ¡Correcto! La retroalimentación negativa es el mecanismo principal de la homeostasis: cuando algo se aleja del valor normal, la respuesta del cuerpo lo "deshace". El parto y la coagulación son retroalimentación POSITIVA, donde la respuesta amplifica el cambio.</div>
+    <div class="feedback-quiz fallo" id="feedback-1-incorrecto">❌ La respuesta correcta es A. Truco para distinguir: si el cuerpo "deshace" el cambio (devuelve al equilibrio) → negativa. Si lo "agranda" hasta un evento puntual (parto, coagulación) → positiva. Sudar para enfriarse contrarresta el calor → negativa.</div>
+  </div>
+
+  <div class="pregunta-quiz">
+    <span class="num-pregunta">Pregunta 2</span>
+    <p><strong>¿Cuál es el orden correcto del flujo sanguíneo a través del corazón después de que la sangre regresa cargada de CO₂ desde el cuerpo?</strong></p>
+    <div class="opcion-quiz" onclick="responder(this, 2, true)">A) Aurícula derecha → ventrículo derecho → pulmones → aurícula izquierda → ventrículo izquierdo → cuerpo</div>
+    <div class="opcion-quiz" onclick="responder(this, 2, false)">B) Aurícula izquierda → ventrículo izquierdo → pulmones → aurícula derecha → ventrículo derecho → cuerpo</div>
+    <div class="opcion-quiz" onclick="responder(this, 2, false)">C) Aurícula derecha → aurícula izquierda → ventrículo derecho → ventrículo izquierdo</div>
+    <div class="opcion-quiz" onclick="responder(this, 2, false)">D) Ventrículo izquierdo → aurícula izquierda → pulmones → ventrículo derecho → aurícula derecha</div>
+    <div class="feedback-quiz acierto" id="feedback-2-correcto">✅ ¡Correcto! La sangre cargada de CO₂ entra siempre al lado DERECHO (aurícula → ventrículo), va a los pulmones para descargar CO₂ y recoger O₂, y regresa al lado IZQUIERDO (aurícula → ventrículo) para salir al cuerpo. Truco: derecho = "sangre azul" (con CO₂); izquierdo = "sangre roja" (con O₂).</div>
+    <div class="feedback-quiz fallo" id="feedback-2-incorrecto">❌ La respuesta correcta es A. Recuerda: la sangre con CO₂ del cuerpo entra al lado DERECHO; va a los pulmones; regresa con O₂ al lado IZQUIERDO; sale al cuerpo. Auricula → ventrículo siempre (la aurícula está arriba y recibe; el ventrículo está abajo y bombea).</div>
+  </div>
+
+  <div class="pregunta-quiz">
+    <span class="num-pregunta">Pregunta 3</span>
+    <p><strong>En los alvéolos de los pulmones, el oxígeno pasa del aire a la sangre, y el dióxido de carbono pasa de la sangre al aire. ¿Qué proceso explica MEJOR este intercambio?</strong></p>
+    <div class="opcion-quiz" onclick="responder(this, 3, false)">A) Transporte activo — los gases son bombeados con energía.</div>
+    <div class="opcion-quiz" onclick="responder(this, 3, true)">B) Difusión — los gases se mueven de zonas de mayor concentración a menor concentración.</div>
+    <div class="opcion-quiz" onclick="responder(this, 3, false)">C) Filtración — los gases atraviesan un filtro físico.</div>
+    <div class="opcion-quiz" onclick="responder(this, 3, false)">D) Fagocitosis — las células engullen los gases.</div>
+    <div class="feedback-quiz acierto" id="feedback-3-correcto">✅ ¡Correcto! En los alvéolos hay alta concentración de O₂ (acabas de inhalar) y baja de CO₂; en la sangre que llega es al revés. Los gases se mueven SIEMPRE de mayor a menor concentración por difusión simple — no necesita energía. Las paredes finísimas de los alvéolos permiten que esto ocurra muy rápido.</div>
+    <div class="feedback-quiz fallo" id="feedback-3-incorrecto">❌ La respuesta correcta es B. La difusión es el movimiento de moléculas de zonas de alta concentración a baja concentración — es PASIVA, no requiere energía. El transporte activo sí gasta energía pero se usa para mover sustancias contra el gradiente. La fagocitosis es cuando una célula "se come" a otra (ocurre con bacterias, no con gases).</div>
+  </div>
+
+  <div class="pregunta-quiz">
+    <span class="num-pregunta">Pregunta 4</span>
+    <p><strong>Una persona con diabetes tipo 1 no produce insulina. ¿Qué efecto tiene esto en sus niveles de glucosa después de comer?</strong></p>
+    <div class="opcion-quiz" onclick="responder(this, 4, false)">A) La glucosa baja drásticamente porque sin insulina no se puede absorber el azúcar.</div>
+    <div class="opcion-quiz" onclick="responder(this, 4, true)">B) La glucosa permanece muy alta porque sin insulina las células no pueden absorberla y queda acumulada en la sangre.</div>
+    <div class="opcion-quiz" onclick="responder(this, 4, false)">C) La glucosa se mantiene normal porque otras hormonas la regulan.</div>
+    <div class="opcion-quiz" onclick="responder(this, 4, false)">D) La glucosa solo cambia si la persona hace ejercicio.</div>
+    <div class="feedback-quiz acierto" id="feedback-4-correcto">✅ ¡Correcto! La insulina es la "llave" que permite a las células absorber glucosa. Sin insulina, la glucosa se queda atrapada en la sangre — niveles altos persistentes (hiperglucemia). Por eso las personas con diabetes tipo 1 necesitan inyectarse insulina; sin ella, los niveles de glucosa se vuelven peligrosamente altos.</div>
+    <div class="feedback-quiz fallo" id="feedback-4-incorrecto">❌ La respuesta correcta es B. La insulina ABRE las puertas de las células para que absorban la glucosa. Sin insulina, la glucosa entra al torrente sanguíneo (al comer) pero las células no pueden capturarla — queda acumulándose en la sangre. Esa hiperglucemia crónica es lo que daña los vasos, riñones, ojos y nervios en la diabetes no controlada.</div>
+  </div>
+
+  <div class="pregunta-quiz">
+    <span class="num-pregunta">Pregunta 5</span>
+    <p><strong>Cuando tocas accidentalmente un objeto muy caliente, retiras la mano automáticamente antes de que tu cerebro registre el dolor. ¿Por qué la respuesta es tan rápida?</strong></p>
+    <div class="opcion-quiz" onclick="responder(this, 5, false)">A) Porque el cerebro procesa el dolor más rápido que cualquier otra señal.</div>
+    <div class="opcion-quiz" onclick="responder(this, 5, true)">B) Porque la médula espinal procesa la respuesta directamente sin esperar al cerebro — es un arco reflejo.</div>
+    <div class="opcion-quiz" onclick="responder(this, 5, false)">C) Porque el sistema endocrino libera adrenalina inmediatamente.</div>
+    <div class="opcion-quiz" onclick="responder(this, 5, false)">D) Porque los músculos tienen mente propia y deciden retirarse.</div>
+    <div class="feedback-quiz acierto" id="feedback-5-correcto">✅ ¡Correcto! Un arco reflejo evita el cerebro consciente: la señal va del receptor (piel) → neurona sensorial → médula espinal → neurona motora → músculo. Solo después la información sube al cerebro, y por eso "sientes" el dolor unos instantes DESPUÉS de retirar la mano.</div>
+    <div class="feedback-quiz fallo" id="feedback-5-incorrecto">❌ La respuesta correcta es B. El cerebro NO es lo más rápido — al contrario, es relativamente lento porque el procesamiento consciente toma tiempo. Para situaciones de peligro inmediato (como una quemadura), el cuerpo usa un atajo: la médula espinal decide y actúa sin esperar al cerebro. Eso es un arco reflejo.</div>
+  </div>
+
+  <div class="pregunta-quiz">
+    <span class="num-pregunta">Pregunta 6</span>
+    <p><strong>Después de recibir una vacuna contra el sarampión, una persona queda protegida contra esta enfermedad por muchos años. ¿Cuál es la explicación científica MÁS precisa?</strong></p>
+    <div class="opcion-quiz" onclick="responder(this, 6, false)">A) La vacuna mata directamente al virus del sarampión cada vez que entra al cuerpo.</div>
+    <div class="opcion-quiz" onclick="responder(this, 6, true)">B) La vacuna estimula la producción de anticuerpos y células de memoria, así que cuando el virus real aparece, la respuesta es inmediata y fuerte.</div>
+    <div class="opcion-quiz" onclick="responder(this, 6, false)">C) La vacuna cambia los genes de la persona para hacerla inmune.</div>
+    <div class="opcion-quiz" onclick="responder(this, 6, false)">D) La vacuna actúa como un antibiótico permanente.</div>
+    <div class="feedback-quiz acierto" id="feedback-6-correcto">✅ ¡Correcto! Las vacunas no matan virus directamente ni cambian genes. Lo que hacen es entrenar al sistema inmune: presentan al patógeno (o partes de él) en un contexto seguro, los linfocitos B producen anticuerpos específicos, y se generan células de memoria. Cuando el virus real aparece años después, la memoria inmunológica produce anticuerpos inmediatamente.</div>
+    <div class="feedback-quiz fallo" id="feedback-6-incorrecto">❌ La respuesta correcta es B. Las vacunas no matan virus, no modifican genes, ni son antibióticos (los antibióticos solo funcionan contra bacterias, no contra virus). Lo que hacen es activar el sistema inmune para que produzca anticuerpos y células de memoria, generando inmunidad de largo plazo.</div>
+  </div>
+
+  <div class="pregunta-quiz">
+    <span class="num-pregunta">Pregunta 7</span>
+    <p><strong>Los riñones filtran la sangre, eliminan desechos, regulan el balance de agua y mantienen el pH. ¿Cuál concepto general describe MEJOR el papel de los riñones?</strong></p>
+    <div class="opcion-quiz" onclick="responder(this, 7, false)">A) Producción de hormonas digestivas.</div>
+    <div class="opcion-quiz" onclick="responder(this, 7, false)">B) Almacenamiento de nutrientes a largo plazo.</div>
+    <div class="opcion-quiz" onclick="responder(this, 7, true)">C) Mantenimiento de la homeostasis del medio interno.</div>
+    <div class="opcion-quiz" onclick="responder(this, 7, false)">D) Producción de células sanguíneas nuevas.</div>
+    <div class="feedback-quiz acierto" id="feedback-7-correcto">✅ ¡Correcto! Los riñones son uno de los órganos más importantes para la homeostasis. Regulan el volumen y composición de la sangre, eliminan desechos como la urea, y ajustan el pH. Sin ellos, el medio interno del cuerpo perdería su equilibrio rápidamente.</div>
+    <div class="feedback-quiz fallo" id="feedback-7-incorrecto">❌ La respuesta correcta es C. Los riñones no producen hormonas digestivas (eso es el páncreas e intestino), no almacenan nutrientes (eso es el hígado y tejido adiposo), y no producen células sanguíneas nuevas (eso es la médula ósea). Su función principal es mantener el medio interno estable — la definición misma de homeostasis.</div>
+  </div>
+
+  <div class="pregunta-quiz">
+    <span class="num-pregunta">Pregunta 8</span>
+    <p><strong>Una persona desarrolla diabetes tipo 2 después de muchos años de obesidad y dieta poco saludable. ¿Cómo se clasifica esta enfermedad y qué la diferencia de la influenza?</strong></p>
+    <div class="opcion-quiz" onclick="responder(this, 8, false)">A) Es infecciosa, igual que la influenza.</div>
+    <div class="opcion-quiz" onclick="responder(this, 8, true)">B) Es no infecciosa (crónica) — causada por estilo de vida y genética; no se contagia. La influenza, en cambio, es infecciosa, causada por un virus.</div>
+    <div class="opcion-quiz" onclick="responder(this, 8, false)">C) Ambas son infecciosas pero la diabetes se transmite por contacto.</div>
+    <div class="opcion-quiz" onclick="responder(this, 8, false)">D) Ambas son no infecciosas porque dependen del cuerpo del paciente.</div>
+    <div class="feedback-quiz acierto" id="feedback-8-correcto">✅ ¡Correcto! La diabetes tipo 2 es una enfermedad NO infecciosa: no se contagia. Es resultado de la combinación de factores genéticos y de estilo de vida (peso, dieta, ejercicio). La influenza, en cambio, es infecciosa: la causa un virus que se transmite de persona a persona. La distinción es importante porque las estrategias de prevención son completamente diferentes.</div>
+    <div class="feedback-quiz fallo" id="feedback-8-incorrecto">❌ La respuesta correcta es B. La diabetes tipo 2 NO se contagia — es crónica, asociada a factores genéticos y de estilo de vida. La influenza SÍ se contagia — es viral. Esta distinción es fundamental: las enfermedades infecciosas se previenen con higiene y vacunas; las no infecciosas, con estilo de vida saludable.</div>
+  </div>
+
+  <div id="resumen-quiz" style="display:none; margin-top:24px; padding:18px; background-color:#ffffff; border:3px solid var(--verde-bio); border-radius:8px; text-align:center;">
+    <h3 style="margin-top:0; color: var(--verde-bio-oscuro);">📊 Tu resultado</h3>
+    <p style="font-size:1.4em; font-weight:bold;" id="texto-resultado"></p>
+    <button class="btn-control" onclick="reiniciarQuiz()">🔄 Intentar de nuevo</button>
+  </div>
+</section>
+
+<section class="referencias-bloque" id="referencias">
+  <h2>📚 Referencias en Steck-Vaughn — GED Senderos: Ciencias</h2>
+  <p>Para profundizar cada tema con explicaciones del libro y ejercicios adicionales:</p>
+  <ul>
+    <li><strong>Homeostasis y retroalimentación:</strong> pp. 119-123</li>
+    <li><strong>Sistemas digestivo y respiratorio:</strong> pp. 124-132</li>
+    <li><strong>Sistema circulatorio y sangre:</strong> pp. 133-141</li>
+    <li><strong>Sistemas nervioso y endocrino (incluye diabetes):</strong> pp. 142-152</li>
+    <li><strong>Sistema inmunológico y vacunas:</strong> pp. 153-160</li>
+    <li><strong>Otros sistemas y salud humana:</strong> pp. 161-170</li>
+  </ul>
+  <p style="font-size:0.9em; font-style:italic; margin-bottom:0;">⚠️ Páginas estimadas — verifica con tu ejemplar del Steck-Vaughn y ajusta si es necesario.</p>
+</section>
+
+<footer class="nav-footer">
+  <a href="ecosistemas.html">← Ecosistemas</a>
+  <a href="index.html">🏠 Hub Ciencias de la vida</a>
+  <a href="../index.html">Hub Ciencias →</a>
+</footer>
+
+<script>
+function abrirTodo() {
+  document.querySelectorAll('details.seccion-grande').forEach(function(d) { d.open = true; });
+}
+
+function cerrarTodo() {
+  document.querySelectorAll('details.seccion-grande').forEach(function(d) { d.open = false; });
+}
+
+document.querySelectorAll('.tabla-contenidos a').forEach(function(link) {
+  link.addEventListener('click', function(e) {
+    var id = link.getAttribute('href').substring(1);
+    var target = document.getElementById(id);
+    if (target && target.tagName === 'DETAILS') {
+      target.open = true;
+      setTimeout(function() {
+        target.scrollIntoView({behavior: 'smooth', block: 'start'});
+      }, 50);
+      e.preventDefault();
+    }
+  });
+});
+
+window.addEventListener('load', function() {
+  if (location.hash) {
+    var target = document.querySelector(location.hash);
+    if (target && target.tagName === 'DETAILS') {
+      target.open = true;
+      setTimeout(function() {
+        target.scrollIntoView({behavior: 'smooth', block: 'start'});
+      }, 100);
+    }
+  }
+});
+
+var respuestasCorrectas = 0;
+var preguntasRespondidas = {};
+var totalPreguntas = 8;
+
+function responder(elemento, numPregunta, esCorrecta) {
+  if (preguntasRespondidas[numPregunta]) return;
+  preguntasRespondidas[numPregunta] = true;
+
+  var contenedor = elemento.parentElement;
+  var opciones = contenedor.querySelectorAll('.opcion-quiz');
+
+  opciones.forEach(function(op) {
+    op.style.cursor = 'default';
+    op.onclick = null;
+  });
+
+  if (esCorrecta) {
+    elemento.classList.add('correcta');
+    respuestasCorrectas++;
+    document.getElementById('feedback-' + numPregunta + '-correcto').style.display = 'block';
+  } else {
+    elemento.classList.add('incorrecta');
+    opciones.forEach(function(op) {
+      if (op.getAttribute('onclick') && op.getAttribute('onclick').indexOf('true') !== -1) {
+        op.classList.add('correcta');
+      }
+    });
+    document.getElementById('feedback-' + numPregunta + '-incorrecto').style.display = 'block';
+  }
+
+  if (Object.keys(preguntasRespondidas).length === totalPreguntas) {
+    var resumen = document.getElementById('resumen-quiz');
+    var texto = document.getElementById('texto-resultado');
+    var porcentaje = Math.round((respuestasCorrectas / totalPreguntas) * 100);
+    var emoji = porcentaje >= 80 ? '🎉' : (porcentaje >= 60 ? '👍' : '📚');
+    texto.innerHTML = emoji + ' ' + respuestasCorrectas + ' de ' + totalPreguntas + ' correctas (' + porcentaje + '%)';
+    resumen.style.display = 'block';
+    setTimeout(function() {
+      resumen.scrollIntoView({behavior: 'smooth', block: 'center'});
+    }, 200);
+  }
+}
+
+function reiniciarQuiz() {
+  location.reload();
+}
+</script>
+
+</body>
 </html>
