@@ -1,13 +1,1361 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>En preparacion</title>
-  </head>
-  <body>
-    <header>
-      <h1>Tema en preparación</h1>
-    </header>
-  </body>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ecosistemas | GED para Hispanos</title>
+<link rel="stylesheet" href="../../estilos-dua-unificado.css">
+<style>
+:root {
+  --verde-bio: #2e7d32;
+  --verde-bio-claro: #c8e6c9;
+  --verde-bio-suave: #e8f5e9;
+  --verde-bio-oscuro: #1b5e20;
+  --azul-info: #1565c0;
+  --azul-info-claro: #bbdefb;
+  --azul-info-suave: #e3f2fd;
+  --naranja-clave: #e65100;
+  --naranja-suave: #fff3e0;
+  --rojo-error: #c62828;
+  --rojo-suave: #ffebee;
+  --gris-texto: #212121;
+  --gris-suave: #f5f5f5;
+  --amarillo-mito: #fff8e1;
+  --amarillo-borde: #f9a825;
+  --marron-tierra: #6d4c41;
+  --marron-suave: #efebe9;
+}
+
+body {
+  font-family: 'Verdana', 'Geneva', sans-serif;
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--gris-texto);
+  background-color: #ffffff;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1.titulo-pagina {
+  font-size: 2.4em;
+  color: var(--verde-bio-oscuro);
+  text-align: center;
+  border-bottom: 4px solid var(--verde-bio);
+  padding-bottom: 12px;
+  margin-bottom: 8px;
+}
+
+.subtitulo-pagina {
+  text-align: center;
+  font-style: italic;
+  color: #555;
+  margin-top: 0;
+  margin-bottom: 30px;
+  font-size: 1.15em;
+}
+
+.breadcrumbs {
+  background-color: var(--verde-bio-suave);
+  padding: 10px 16px;
+  border-radius: 6px;
+  margin-bottom: 20px;
+  font-size: 0.95em;
+}
+
+.breadcrumbs a {
+  color: var(--verde-bio-oscuro);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.breadcrumbs a:hover {
+  text-decoration: underline;
+}
+
+.tabla-contenidos {
+  background-color: var(--verde-bio-suave);
+  border-left: 5px solid var(--verde-bio);
+  padding: 18px 24px;
+  border-radius: 6px;
+  margin: 20px 0;
+}
+
+.tabla-contenidos h2 {
+  margin-top: 0;
+  color: var(--verde-bio-oscuro);
+  font-size: 1.3em;
+}
+
+.tabla-contenidos ol {
+  margin-bottom: 0;
+  padding-left: 28px;
+}
+
+.tabla-contenidos li {
+  margin-bottom: 8px;
+}
+
+.tabla-contenidos a {
+  color: var(--verde-bio-oscuro);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.tabla-contenidos a:hover {
+  text-decoration: underline;
+}
+
+.botones-control {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin: 24px 0;
+  flex-wrap: wrap;
+}
+
+.btn-control {
+  background-color: var(--verde-bio);
+  color: white;
+  border: none;
+  padding: 10px 22px;
+  font-size: 1em;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.btn-control:hover {
+  background-color: var(--verde-bio-oscuro);
+}
+
+details.seccion-grande {
+  margin: 18px 0;
+  border: 2px solid var(--verde-bio);
+  border-radius: 8px;
+  background-color: #ffffff;
+  overflow: hidden;
+}
+
+details.seccion-grande > summary {
+  padding: 16px 20px;
+  background-color: var(--verde-bio-suave);
+  cursor: pointer;
+  list-style: none;
+  font-size: 1.25em;
+  font-weight: 600;
+  color: var(--verde-bio-oscuro);
+  border-left: 5px solid var(--verde-bio);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  user-select: none;
+}
+
+details.seccion-grande > summary::-webkit-details-marker {
+  display: none;
+}
+
+details.seccion-grande > summary::after {
+  content: "▼";
+  margin-left: auto;
+  font-size: 0.85em;
+  color: var(--verde-bio);
+  transition: transform 0.2s;
+}
+
+details.seccion-grande[open] > summary::after {
+  content: "▲";
+}
+
+details.seccion-grande[open] > summary {
+  background-color: var(--verde-bio-claro);
+}
+
+.num-seccion {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background-color: var(--verde-bio);
+  color: white;
+  border-radius: 50%;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.titulo-seccion {
+  flex: 1;
+}
+
+.seccion-contenido {
+  padding: 22px 28px;
+  background-color: #ffffff;
+}
+
+.seccion-contenido h3 {
+  color: var(--verde-bio-oscuro);
+  border-bottom: 2px solid var(--verde-bio-claro);
+  padding-bottom: 6px;
+  margin-top: 24px;
+}
+
+.seccion-contenido h4 {
+  color: var(--verde-bio);
+  margin-top: 18px;
+  margin-bottom: 8px;
+}
+
+.caja-clave {
+  background-color: var(--azul-info-suave);
+  border-left: 5px solid var(--azul-info);
+  padding: 14px 20px;
+  margin: 16px 0;
+  border-radius: 4px;
+}
+
+.caja-clave strong {
+  color: var(--azul-info);
+}
+
+.caja-importante {
+  background-color: var(--naranja-suave);
+  border-left: 5px solid var(--naranja-clave);
+  padding: 14px 20px;
+  margin: 16px 0;
+  border-radius: 4px;
+}
+
+.caja-importante strong {
+  color: var(--naranja-clave);
+}
+
+.caja-tierra {
+  background-color: var(--marron-suave);
+  border-left: 5px solid var(--marron-tierra);
+  padding: 14px 20px;
+  margin: 16px 0;
+  border-radius: 4px;
+}
+
+.caja-tierra strong {
+  color: var(--marron-tierra);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 18px 0;
+  background-color: #ffffff;
+}
+
+th {
+  background-color: var(--verde-bio);
+  color: white;
+  padding: 12px;
+  text-align: left;
+  font-weight: 600;
+}
+
+td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #e0e0e0;
+  vertical-align: top;
+}
+
+tr:nth-child(even) td {
+  background-color: var(--gris-suave);
+}
+
+.tooltip-dua {
+  border-bottom: 2px dotted var(--azul-info);
+  cursor: help;
+  position: relative;
+  font-weight: 600;
+  color: var(--azul-info);
+}
+
+.tooltip-dua:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: 130%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--azul-info);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  white-space: normal;
+  width: 260px;
+  z-index: 10;
+  font-weight: normal;
+  line-height: 1.4;
+}
+
+details.sub-acordeon {
+  margin: 10px 0;
+  border: 1px solid var(--verde-bio-claro);
+  border-radius: 5px;
+  background-color: var(--gris-suave);
+}
+
+details.sub-acordeon > summary {
+  padding: 10px 14px;
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--verde-bio-oscuro);
+  list-style: none;
+  background-color: var(--verde-bio-suave);
+  border-radius: 5px;
+}
+
+details.sub-acordeon[open] > summary {
+  border-radius: 5px 5px 0 0;
+  border-bottom: 1px solid var(--verde-bio-claro);
+}
+
+details.sub-acordeon > summary::-webkit-details-marker {
+  display: none;
+}
+
+details.sub-acordeon > summary::before {
+  content: "▶ ";
+  font-size: 0.8em;
+  color: var(--verde-bio);
+}
+
+details.sub-acordeon[open] > summary::before {
+  content: "▼ ";
+}
+
+.sub-contenido {
+  padding: 12px 18px;
+  background-color: #ffffff;
+}
+
+.svg-figura {
+  text-align: center;
+  margin: 20px 0;
+  background-color: var(--gris-suave);
+  padding: 16px;
+  border-radius: 8px;
+}
+
+.svg-figura figcaption {
+  font-size: 0.92em;
+  color: #555;
+  margin-top: 10px;
+  font-style: italic;
+}
+
+.seccion-quiz {
+  background-color: var(--azul-info-suave);
+  border: 3px solid var(--azul-info);
+  border-radius: 10px;
+  padding: 24px;
+  margin: 30px 0;
+}
+
+.seccion-quiz h2 {
+  color: var(--azul-info);
+  margin-top: 0;
+  text-align: center;
+  font-size: 1.6em;
+}
+
+.pregunta-quiz {
+  background-color: #ffffff;
+  border: 2px solid var(--azul-info-claro);
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin: 18px 0;
+}
+
+.pregunta-quiz .num-pregunta {
+  display: inline-block;
+  background-color: var(--azul-info);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.9em;
+  margin-bottom: 10px;
+}
+
+.opcion-quiz {
+  background-color: var(--gris-suave);
+  border: 2px solid #cfd8dc;
+  border-radius: 6px;
+  padding: 10px 14px;
+  margin: 8px 0;
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s;
+  user-select: none;
+}
+
+.opcion-quiz:hover {
+  background-color: var(--azul-info-claro);
+  border-color: var(--azul-info);
+}
+
+.opcion-quiz.correcta {
+  background-color: var(--verde-bio-claro);
+  border-color: var(--verde-bio);
+  color: var(--verde-bio-oscuro);
+  font-weight: 600;
+}
+
+.opcion-quiz.incorrecta {
+  background-color: var(--rojo-suave);
+  border-color: var(--rojo-error);
+  color: var(--rojo-error);
+  font-weight: 600;
+}
+
+.feedback-quiz {
+  display: none;
+  margin-top: 12px;
+  padding: 12px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+}
+
+.feedback-quiz.acierto {
+  background-color: var(--verde-bio-suave);
+  border-left: 5px solid var(--verde-bio);
+  color: var(--verde-bio-oscuro);
+}
+
+.feedback-quiz.fallo {
+  background-color: var(--rojo-suave);
+  border-left: 5px solid var(--rojo-error);
+  color: var(--rojo-error);
+}
+
+.referencias-bloque {
+  background-color: var(--naranja-suave);
+  border-left: 5px solid var(--naranja-clave);
+  padding: 18px 24px;
+  border-radius: 6px;
+  margin: 30px 0;
+}
+
+.referencias-bloque h2 {
+  color: var(--naranja-clave);
+  margin-top: 0;
+}
+
+.nav-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  background-color: var(--verde-bio-suave);
+  border-top: 4px solid var(--verde-bio);
+  padding: 16px 20px;
+  margin-top: 40px;
+  border-radius: 6px;
+}
+
+.nav-footer a {
+  color: var(--verde-bio-oscuro);
+  text-decoration: none;
+  font-weight: 600;
+  padding: 8px 14px;
+  background-color: white;
+  border: 2px solid var(--verde-bio);
+  border-radius: 6px;
+}
+
+.nav-footer a:hover {
+  background-color: var(--verde-bio);
+  color: white;
+}
+
+@media (max-width: 700px) {
+  body { padding: 12px; font-size: 16px; }
+  h1.titulo-pagina { font-size: 1.8em; }
+  details.seccion-grande > summary { font-size: 1.1em; padding: 12px 14px; }
+  .seccion-contenido { padding: 16px 18px; }
+  .num-seccion { width: 30px; height: 30px; font-size: 0.95em; }
+  table { font-size: 0.92em; }
+  th, td { padding: 8px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1 class="titulo-pagina">🌍 Ecosistemas</h1>
+  <p class="subtitulo-pagina">Cómo se relacionan los seres vivos con su ambiente</p>
+</header>
+
+<nav class="breadcrumbs">
+  <a href="../../index.html">Inicio</a> ›
+  <a href="../index.html">Ciencias</a> ›
+  <a href="index.html">Ciencias de la vida</a> ›
+  <strong>Ecosistemas</strong>
+</nav>
+
+<nav class="tabla-contenidos">
+  <h2>📑 Contenido de esta página</h2>
+  <ol>
+    <li><a href="#que-es">¿Qué es un ecosistema?</a></li>
+    <li><a href="#flujo-energia">Flujo de energía</a></li>
+    <li><a href="#ciclos">Ciclos biogeoquímicos</a></li>
+    <li><a href="#relaciones">Relaciones entre organismos</a></li>
+    <li><a href="#dinamica">Dinámica poblacional</a></li>
+    <li><a href="#sucesion">Sucesión ecológica</a></li>
+    <li><a href="#biomas">Biomas principales</a></li>
+    <li><a href="#impacto">Biodiversidad e impacto humano</a></li>
+    <li><a href="#vocabulario">Vocabulario clave</a></li>
+  </ol>
+</nav>
+
+<div class="botones-control">
+  <button class="btn-control" onclick="abrirTodo()">📖 Abrir todo</button>
+  <button class="btn-control" onclick="cerrarTodo()">📕 Cerrar todo</button>
+</div>
+
+<details class="seccion-grande" id="que-es" open>
+  <summary>
+    <span class="num-seccion">1</span>
+    <span class="titulo-seccion">¿Qué es un ecosistema?</span>
+  </summary>
+  <div class="seccion-contenido">
+    <p>Un <strong>ecosistema</strong> es una unidad formada por todos los seres vivos que habitan en un lugar determinado y los componentes no vivos del ambiente con los que interactúan: el aire, el agua, el suelo, la temperatura, la luz solar.</p>
+
+    <p>Un charco con sus algas, mosquitos y bacterias es un ecosistema. Una selva tropical con miles de especies también lo es. Lo que define un ecosistema no es su tamaño, sino las <strong>interacciones</strong> entre lo vivo y lo no vivo.</p>
+
+    <h3>Componentes de un ecosistema</h3>
+
+    <table>
+      <tr>
+        <th>Componentes</th>
+        <th>Definición</th>
+        <th>Ejemplos</th>
+      </tr>
+      <tr>
+        <td><strong>Bióticos</strong></td>
+        <td>Todos los seres vivos del ecosistema y los productos de sus actividades</td>
+        <td>Plantas, animales, hongos, bacterias, hojas caídas</td>
+      </tr>
+      <tr>
+        <td><strong>Abióticos</strong></td>
+        <td>Componentes no vivos del ambiente que afectan a los seres vivos</td>
+        <td>Agua, luz solar, temperatura, suelo, oxígeno, pH, nutrientes minerales</td>
+      </tr>
+    </table>
+
+    <h3>Niveles de organización ecológica</h3>
+    <p>De lo más pequeño a lo más grande:</p>
+
+    <ol>
+      <li><strong>Individuo (organismo):</strong> un solo ser vivo. Un puma.</li>
+      <li><strong>Población:</strong> todos los individuos de la misma especie en un área. Todos los pumas de la sierra.</li>
+      <li><strong>Comunidad:</strong> todas las poblaciones de distintas especies que viven en un área e interactúan. Pumas, venados, árboles, hongos, etc.</li>
+      <li><strong>Ecosistema:</strong> la comunidad más los componentes abióticos. Pumas + venados + árboles + hongos + suelo + clima + agua.</li>
+      <li><strong>Bioma:</strong> conjunto de ecosistemas similares en un clima parecido. Toda la selva amazónica como bioma de selva tropical.</li>
+      <li><strong>Biosfera:</strong> todos los ecosistemas del planeta. La Tierra entera vista como un sistema vivo.</li>
+    </ol>
+
+    <div class="caja-clave">
+      <strong>Concepto crucial:</strong> Distinguir <strong>población</strong> (una sola especie) de <strong>comunidad</strong> (varias especies) de <strong>ecosistema</strong> (comunidad + ambiente). El GED evalúa esta distinción con frecuencia.
+    </div>
+  </div>
+</details>
+
+<details class="seccion-grande" id="flujo-energia">
+  <summary>
+    <span class="num-seccion">2</span>
+    <span class="titulo-seccion">Flujo de energía: cómo se mueve la vida</span>
+  </summary>
+  <div class="seccion-contenido">
+    <p>Toda la vida del planeta funciona con energía que originalmente vino del Sol. La energía entra a los ecosistemas y se va perdiendo en cada paso — siempre fluye en una sola dirección.</p>
+
+    <h3>Niveles tróficos: ¿quién come a quién?</h3>
+
+    <table>
+      <tr>
+        <th>Nivel</th>
+        <th>Quiénes son</th>
+        <th>Cómo obtienen energía</th>
+        <th>Ejemplos</th>
+      </tr>
+      <tr>
+        <td><strong>Productores</strong><br>(autótrofos)</td>
+        <td>Plantas, algas, algunas bacterias</td>
+        <td><span class="tooltip-dua" data-tooltip="Proceso por el cual las plantas convierten luz solar, agua y CO₂ en azúcares y oxígeno.">Fotosíntesis</span> — convierten luz solar en energía química</td>
+        <td>Maíz, hierba, plancton, árboles</td>
+      </tr>
+      <tr>
+        <td><strong>Consumidores primarios</strong><br>(herbívoros)</td>
+        <td>Comen productores</td>
+        <td>Comer plantas</td>
+        <td>Vacas, conejos, ciervos, saltamontes</td>
+      </tr>
+      <tr>
+        <td><strong>Consumidores secundarios</strong><br>(carnívoros y omnívoros)</td>
+        <td>Comen consumidores primarios</td>
+        <td>Cazar herbívoros</td>
+        <td>Zorros, ranas, pájaros insectívoros</td>
+      </tr>
+      <tr>
+        <td><strong>Consumidores terciarios</strong><br>(superdepredadores)</td>
+        <td>Comen otros carnívoros</td>
+        <td>Cazar consumidores secundarios</td>
+        <td>Águilas, pumas, tiburones, leones</td>
+      </tr>
+      <tr>
+        <td><strong>Descomponedores</strong></td>
+        <td>Hongos, bacterias</td>
+        <td>Digieren restos muertos y excrementos</td>
+        <td>Hongos del suelo, bacterias de la putrefacción</td>
+      </tr>
+    </table>
+
+    <div class="caja-importante">
+      <strong>Sin descomponedores no hay ecosistema.</strong> Ellos devuelven los nutrientes al suelo para que los productores puedan reusarlos. Sin ellos, el planeta estaría cubierto de cadáveres y los nutrientes quedarían atrapados sin reciclar.
+    </div>
+
+    <h3>Cadena alimenticia vs. red alimenticia</h3>
+    <ul>
+      <li><strong>Cadena alimenticia:</strong> una secuencia lineal simple. Hierba → conejo → zorro → águila.</li>
+      <li><strong>Red alimenticia:</strong> múltiples cadenas conectadas que muestran lo que ocurre en realidad — la mayoría de animales come varias especies y es comido por varias.</li>
+    </ul>
+
+    <h3>La regla del 10% — el concepto más evaluado en GED</h3>
+    <p>Solo aproximadamente el <strong>10% de la energía</strong> de un nivel trófico pasa al siguiente. El otro 90% se pierde en forma de calor, movimiento, mantenimiento corporal, partes no comestibles, o queda en organismos que no son comidos.</p>
+
+    <figure class="svg-figura">
+      <svg viewBox="0 0 600 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Pirámide ecológica de energía mostrando la regla del 10%">
+        <polygon points="300,30 200,90 400,90" fill="#c62828" stroke="#212121" stroke-width="2"/>
+        <text x="300" y="65" text-anchor="middle" font-size="14" fill="white" font-weight="bold">Águila</text>
+        <text x="500" y="70" text-anchor="middle" font-size="14" fill="#212121" font-weight="bold">10 J</text>
+
+        <polygon points="200,90 130,150 470,150 400,90" fill="#e65100" stroke="#212121" stroke-width="2"/>
+        <text x="300" y="125" text-anchor="middle" font-size="14" fill="white" font-weight="bold">Zorro</text>
+        <text x="510" y="125" text-anchor="middle" font-size="14" fill="#212121" font-weight="bold">100 J</text>
+
+        <polygon points="130,150 70,210 530,210 470,150" fill="#f9a825" stroke="#212121" stroke-width="2"/>
+        <text x="300" y="185" text-anchor="middle" font-size="14" fill="#212121" font-weight="bold">Conejo</text>
+        <text x="555" y="185" text-anchor="middle" font-size="14" fill="#212121" font-weight="bold">1,000 J</text>
+
+        <polygon points="70,210 20,280 580,280 530,210" fill="#2e7d32" stroke="#212121" stroke-width="2"/>
+        <text x="300" y="250" text-anchor="middle" font-size="14" fill="white" font-weight="bold">Hierba (productores)</text>
+        <text x="540" y="250" text-anchor="middle" font-size="14" fill="#212121" font-weight="bold">10,000 J</text>
+
+        <text x="300" y="320" text-anchor="middle" font-size="13" fill="#555">En cada paso solo se transfiere ~10% de la energía</text>
+        <text x="300" y="340" text-anchor="middle" font-size="13" fill="#c62828" font-weight="bold">El 90% se pierde como calor y mantenimiento corporal</text>
+      </svg>
+      <figcaption>Pirámide ecológica de energía. Si los productores capturan 10,000 unidades, solo 10 llegan al superdepredador.</figcaption>
+    </figure>
+
+    <div class="caja-clave">
+      <strong>Por qué hay tan pocos depredadores grandes:</strong> Una pradera puede sostener millones de hierbas, miles de conejos, decenas de zorros — pero apenas un águila por una zona muy grande. Es matemática pura: a cada nivel, queda 10 veces menos energía. Por eso los superdepredadores son siempre raros, sin importar el ecosistema.
+    </div>
+  </div>
+</details>
+
+<details class="seccion-grande" id="ciclos">
+  <summary>
+    <span class="num-seccion">3</span>
+    <span class="titulo-seccion">Ciclos biogeoquímicos: el reciclaje de la materia</span>
+  </summary>
+  <div class="seccion-contenido">
+    <p>A diferencia de la energía (que fluye en una sola dirección y se pierde), la <strong>materia se recicla</strong> en los ecosistemas. Los átomos de carbono, nitrógeno, agua y otros elementos pasan una y otra vez entre los seres vivos y el ambiente. Estos movimientos se llaman <strong>ciclos biogeoquímicos</strong>.</p>
+
+    <details class="sub-acordeon" open>
+      <summary>💧 Ciclo del agua</summary>
+      <div class="sub-contenido">
+        <p>El más fácil de entender. El agua se mueve entre océanos, atmósfera, tierra y seres vivos:</p>
+        <ol>
+          <li><strong>Evaporación:</strong> el calor del Sol convierte el agua de océanos, ríos y lagos en vapor.</li>
+          <li><strong>Transpiración:</strong> las plantas pierden agua por sus hojas, también convirtiéndola en vapor.</li>
+          <li><strong>Condensación:</strong> el vapor se enfría en la atmósfera y forma nubes.</li>
+          <li><strong>Precipitación:</strong> el agua cae como lluvia, nieve o granizo.</li>
+          <li><strong>Escorrentía e infiltración:</strong> el agua regresa a ríos, lagos, océanos, y al subsuelo (acuíferos).</li>
+        </ol>
+      </div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>🌱 Ciclo del carbono — el más relevante para el GED</summary>
+      <div class="sub-contenido">
+        <p>El carbono está en todos los seres vivos (proteínas, ADN, azúcares, grasas) y también en la atmósfera (como CO₂) y en las rocas (carbonatos). Se mueve por:</p>
+
+        <figure class="svg-figura">
+          <svg viewBox="0 0 600 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Diagrama del ciclo del carbono">
+            <ellipse cx="300" cy="50" rx="180" ry="35" fill="#bbdefb" stroke="#1565c0" stroke-width="2"/>
+            <text x="300" y="48" text-anchor="middle" font-size="14" fill="#1565c0" font-weight="bold">CO₂ atmosférico</text>
+            <text x="300" y="68" text-anchor="middle" font-size="11" fill="#212121">(dióxido de carbono)</text>
+
+            <rect x="60" y="160" width="140" height="60" rx="8" fill="#c8e6c9" stroke="#2e7d32" stroke-width="2"/>
+            <text x="130" y="185" text-anchor="middle" font-size="13" fill="#1b5e20" font-weight="bold">Plantas</text>
+            <text x="130" y="205" text-anchor="middle" font-size="11" fill="#212121">(productores)</text>
+
+            <rect x="230" y="160" width="140" height="60" rx="8" fill="#fff3e0" stroke="#e65100" stroke-width="2"/>
+            <text x="300" y="185" text-anchor="middle" font-size="13" fill="#e65100" font-weight="bold">Animales</text>
+            <text x="300" y="205" text-anchor="middle" font-size="11" fill="#212121">(consumidores)</text>
+
+            <rect x="400" y="160" width="140" height="60" rx="8" fill="#efebe9" stroke="#6d4c41" stroke-width="2"/>
+            <text x="470" y="185" text-anchor="middle" font-size="13" fill="#6d4c41" font-weight="bold">Hongos/bacterias</text>
+            <text x="470" y="205" text-anchor="middle" font-size="11" fill="#212121">(descomponedores)</text>
+
+            <rect x="200" y="260" width="200" height="40" rx="6" fill="#212121"/>
+            <text x="300" y="285" text-anchor="middle" font-size="12" fill="white" font-weight="bold">Combustibles fósiles</text>
+
+            <line x1="180" y1="80" x2="130" y2="160" stroke="#2e7d32" stroke-width="2.5" marker-end="url(#flecha-verde)"/>
+            <text x="120" y="125" font-size="10" fill="#2e7d32" font-weight="bold">Fotosíntesis</text>
+
+            <line x1="200" y1="190" x2="230" y2="190" stroke="#212121" stroke-width="2" marker-end="url(#flecha-negra)"/>
+            <line x1="370" y1="190" x2="400" y2="190" stroke="#212121" stroke-width="2" marker-end="url(#flecha-negra)"/>
+
+            <line x1="130" y1="160" x2="200" y2="80" stroke="#c62828" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#flecha-roja)"/>
+            <line x1="300" y1="160" x2="280" y2="80" stroke="#c62828" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#flecha-roja)"/>
+            <line x1="470" y1="160" x2="380" y2="80" stroke="#c62828" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#flecha-roja)"/>
+            <text x="385" y="125" font-size="10" fill="#c62828" font-weight="bold">Respiración</text>
+
+            <line x1="300" y1="260" x2="320" y2="80" stroke="#c62828" stroke-width="3" marker-end="url(#flecha-roja)"/>
+            <text x="335" y="155" font-size="10" fill="#c62828" font-weight="bold">Quema</text>
+            <text x="330" y="170" font-size="10" fill="#c62828" font-weight="bold">(humanos)</text>
+
+            <defs>
+              <marker id="flecha-verde" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                <polygon points="0 0, 8 4, 0 8" fill="#2e7d32"/>
+              </marker>
+              <marker id="flecha-negra" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                <polygon points="0 0, 8 4, 0 8" fill="#212121"/>
+              </marker>
+              <marker id="flecha-roja" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                <polygon points="0 0, 8 4, 0 8" fill="#c62828"/>
+              </marker>
+            </defs>
+          </svg>
+          <figcaption>El carbono se mueve entre la atmósfera, los seres vivos, y el subsuelo (combustibles fósiles).</figcaption>
+        </figure>
+
+        <ul>
+          <li><strong>Fotosíntesis:</strong> las plantas absorben CO₂ del aire y lo convierten en azúcares. <em>El carbono entra a la cadena alimenticia.</em></li>
+          <li><strong>Respiración celular:</strong> todos los seres vivos (incluidas las plantas) liberan CO₂ al respirar.</li>
+          <li><strong>Descomposición:</strong> hongos y bacterias degradan los cuerpos muertos y devuelven CO₂ a la atmósfera.</li>
+          <li><strong>Quema de combustibles fósiles:</strong> al quemar carbón, petróleo o gas, los humanos liberamos CO₂ que llevaba millones de años atrapado en el subsuelo. <strong>Por eso el ciclo del carbono está desbalanceado hoy</strong> — entra más CO₂ a la atmósfera del que se está retirando.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>🌾 Ciclo del nitrógeno</summary>
+      <div class="sub-contenido">
+        <p>El nitrógeno es esencial para fabricar proteínas y ADN. Aunque la atmósfera es 78% nitrógeno (N₂), las plantas y animales <strong>no pueden usarlo directamente</strong> de esa forma. Necesitan que sea "fijado" por bacterias.</p>
+        <ul>
+          <li><strong>Fijación:</strong> bacterias del suelo (algunas viven en raíces de leguminosas como frijol y soya) convierten N₂ en compuestos utilizables (amonio, nitratos).</li>
+          <li><strong>Asimilación:</strong> las plantas absorben los nitratos del suelo y los incorporan a sus proteínas.</li>
+          <li><strong>Consumo:</strong> los animales obtienen nitrógeno comiendo plantas u otros animales.</li>
+          <li><strong>Descomposición:</strong> los descomponedores devuelven nitrógeno al suelo.</li>
+          <li><strong>Desnitrificación:</strong> otras bacterias devuelven el nitrógeno al aire como N₂.</li>
+        </ul>
+        <p>Por eso los agricultores siembran frijoles entre cosechas de maíz: las bacterias en las raíces del frijol enriquecen el suelo con nitrógeno gratis.</p>
+      </div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>🦴 Ciclo del fósforo</summary>
+      <div class="sub-contenido">
+        <p>El fósforo es necesario para los huesos, dientes, ADN y ATP (la "moneda energética" celular). A diferencia de los otros ciclos, <strong>no tiene fase atmosférica importante</strong> — el fósforo se mueve principalmente entre rocas, suelo, agua y seres vivos.</p>
+        <ol>
+          <li>El fósforo está en rocas. Cuando las rocas se erosionan, libera fosfatos al suelo.</li>
+          <li>Las plantas los absorben por las raíces.</li>
+          <li>Animales los obtienen al comer plantas.</li>
+          <li>Descomposición devuelve fósforo al suelo y agua.</li>
+          <li>Eventualmente, sedimentación lleva el fósforo de regreso a las rocas (ciclo lentísimo).</li>
+        </ol>
+        <p>El uso excesivo de fertilizantes con fósforo puede causar <strong>eutrofización</strong> en lagos y ríos (lo veremos en la sección 8).</p>
+      </div>
+    </details>
+  </div>
+</details>
+
+<details class="seccion-grande" id="relaciones">
+  <summary>
+    <span class="num-seccion">4</span>
+    <span class="titulo-seccion">Relaciones entre organismos</span>
+  </summary>
+  <div class="seccion-contenido">
+    <p>En todo ecosistema, las especies interactúan. Algunas relaciones son antagónicas (alguien sale ganando a costa del otro), otras son cooperativas. Estas son las cinco relaciones fundamentales:</p>
+
+    <table>
+      <tr>
+        <th>Relación</th>
+        <th>Especie A</th>
+        <th>Especie B</th>
+        <th>Definición</th>
+        <th>Ejemplo</th>
+      </tr>
+      <tr>
+        <td><strong>Competencia</strong></td>
+        <td>Pierde</td>
+        <td>Pierde</td>
+        <td>Dos especies necesitan el mismo recurso limitado</td>
+        <td>Dos plantas que compiten por luz solar y agua en el mismo lugar</td>
+      </tr>
+      <tr>
+        <td><strong>Depredación</strong></td>
+        <td>Gana</td>
+        <td>Pierde (muere)</td>
+        <td>Una especie caza y come a otra</td>
+        <td>León cazando una cebra; búho cazando un ratón</td>
+      </tr>
+      <tr>
+        <td><strong>Mutualismo</strong></td>
+        <td>Gana</td>
+        <td>Gana</td>
+        <td>Ambas especies se benefician</td>
+        <td>Abeja y flor (la abeja obtiene néctar; la flor es polinizada)</td>
+      </tr>
+      <tr>
+        <td><strong>Comensalismo</strong></td>
+        <td>Gana</td>
+        <td>Indiferente</td>
+        <td>Una especie se beneficia, la otra ni gana ni pierde</td>
+        <td>Pez rémora pegado al tiburón (viaja gratis y come restos; el tiburón ni se entera)</td>
+      </tr>
+      <tr>
+        <td><strong>Parasitismo</strong></td>
+        <td>Gana</td>
+        <td>Pierde (no muere de inmediato)</td>
+        <td>Una especie vive a costa de otra sin matarla rápidamente</td>
+        <td>Garrapata en un perro; tenia en el intestino humano</td>
+      </tr>
+    </table>
+
+    <div class="caja-clave">
+      <strong>Mutualismo, comensalismo y parasitismo</strong> juntos forman la <strong>simbiosis</strong> (vida en común). Distinguir entre ellos aparece en el GED — la pregunta tipo es: "Una orquídea crece sobre un árbol sin dañarlo. ¿Qué relación es?" Respuesta: comensalismo, no mutualismo.
+    </div>
+
+    <h3>Nicho ecológico vs. hábitat</h3>
+    <ul>
+      <li><strong>Hábitat:</strong> el lugar físico donde vive una especie. <em>"Dónde vive"</em>.</li>
+      <li><strong>Nicho ecológico:</strong> el papel completo que juega una especie — qué come, cuándo está activa, con quién compite, qué recursos usa. <em>"Cómo vive"</em>.</li>
+    </ul>
+    <p>Dos especies con el mismo nicho no pueden coexistir mucho tiempo en el mismo lugar — una de ellas desplazaría a la otra (principio de exclusión competitiva).</p>
+  </div>
+</details>
+
+<details class="seccion-grande" id="dinamica">
+  <summary>
+    <span class="num-seccion">5</span>
+    <span class="titulo-seccion">Dinámica poblacional</span>
+  </summary>
+  <div class="seccion-contenido">
+    <p>El número de individuos en una población cambia con el tiempo. Los ecólogos estudian estos cambios para predecir cuándo una especie crecerá, se mantendrá estable o colapsará.</p>
+
+    <h3>Dos modelos de crecimiento</h3>
+
+    <figure class="svg-figura">
+      <svg viewBox="0 0 600 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Comparación entre crecimiento exponencial y logístico">
+        <line x1="60" y1="280" x2="560" y2="280" stroke="#212121" stroke-width="2"/>
+        <line x1="60" y1="280" x2="60" y2="40" stroke="#212121" stroke-width="2"/>
+
+        <text x="40" y="50" font-size="12" fill="#212121">N</text>
+        <text x="310" y="305" text-anchor="middle" font-size="12" fill="#212121">Tiempo</text>
+
+        <path d="M 60 280 Q 200 275 280 250 Q 360 200 420 100 L 460 50" fill="none" stroke="#c62828" stroke-width="3"/>
+        <text x="445" y="40" font-size="13" fill="#c62828" font-weight="bold">Exponencial</text>
+        <text x="445" y="55" font-size="10" fill="#c62828">(forma de J)</text>
+
+        <line x1="60" y1="100" x2="560" y2="100" stroke="#1565c0" stroke-width="1" stroke-dasharray="4,3"/>
+        <text x="540" y="95" text-anchor="end" font-size="11" fill="#1565c0" font-weight="bold">Capacidad de carga (K)</text>
+
+        <path d="M 60 280 Q 180 270 240 230 Q 300 170 360 130 Q 420 110 480 105 Q 540 102 555 102" fill="none" stroke="#2e7d32" stroke-width="3"/>
+        <text x="375" y="155" font-size="13" fill="#2e7d32" font-weight="bold">Logística</text>
+        <text x="375" y="170" font-size="10" fill="#2e7d32">(forma de S)</text>
+      </svg>
+      <figcaption>Crecimiento exponencial (rojo): sin límites. Crecimiento logístico (verde): se estabiliza al llegar a la capacidad de carga K.</figcaption>
+    </figure>
+
+    <table>
+      <tr>
+        <th>Modelo</th>
+        <th>Forma</th>
+        <th>Cuándo ocurre</th>
+        <th>Ejemplos</th>
+      </tr>
+      <tr>
+        <td><strong>Exponencial</strong></td>
+        <td>Curva en J (crecimiento sin límite)</td>
+        <td>Recursos ilimitados, sin depredadores ni enfermedades — situaciones idealizadas o iniciales</td>
+        <td>Bacterias en una placa de Petri al inicio; conejos introducidos en Australia (sin depredadores)</td>
+      </tr>
+      <tr>
+        <td><strong>Logístico</strong></td>
+        <td>Curva en S (crecimiento que se estabiliza)</td>
+        <td>Realidad biológica — los recursos son limitados</td>
+        <td>Casi toda población natural a largo plazo</td>
+      </tr>
+    </table>
+
+    <h3>Capacidad de carga (K)</h3>
+    <p>La <strong>capacidad de carga</strong> de un ecosistema es el número máximo de individuos de una especie que el ambiente puede sostener indefinidamente. Cuando una población llega a K, su crecimiento se detiene porque los nacimientos igualan a las muertes.</p>
+
+    <h3>Factores limitantes</h3>
+    <ul>
+      <li><strong>Densodependientes</strong> (su efecto aumenta con el tamaño de la población): enfermedades, competencia por alimento, parásitos, depredación.</li>
+      <li><strong>Densoindependientes</strong> (afectan igual sin importar el tamaño): incendios, inundaciones, huracanes, sequías, heladas.</li>
+    </ul>
+
+    <div class="caja-importante">
+      <strong>Pregunta típica del GED:</strong> Una población crece exponencialmente al inicio y luego se estabiliza. ¿Por qué? Porque alcanzó la capacidad de carga del ambiente — los recursos limitados no permiten más crecimiento.
+    </div>
+  </div>
+</details>
+
+<details class="seccion-grande" id="sucesion">
+  <summary>
+    <span class="num-seccion">6</span>
+    <span class="titulo-seccion">Sucesión ecológica: cómo cambian los ecosistemas</span>
+  </summary>
+  <div class="seccion-contenido">
+    <p>Los ecosistemas no son estáticos. Después de una perturbación o en un terreno nuevo, las comunidades cambian en una secuencia predecible llamada <strong>sucesión ecológica</strong>.</p>
+
+    <h3>Sucesión primaria</h3>
+    <p>Ocurre en lugares donde <strong>nunca antes hubo vida</strong> o donde no queda suelo: roca recién expuesta por una erupción volcánica, glaciar que se retira, isla nueva.</p>
+
+    <ol>
+      <li><strong>Especies pioneras</strong> — líquenes y musgos colonizan la roca. Liberan ácidos que la van rompiendo.</li>
+      <li><strong>Formación de suelo</strong> — la roca rota más restos de líquenes muertos forma el primer suelo, fino y pobre.</li>
+      <li><strong>Plantas pequeñas</strong> — hierbas y plantas anuales colonizan el suelo joven.</li>
+      <li><strong>Arbustos y árboles pioneros</strong> — pinos, alisos.</li>
+      <li><strong>Comunidad clímax</strong> — bosque maduro estable, con muchas especies y árboles de larga vida.</li>
+    </ol>
+
+    <p>La sucesión primaria toma <strong>siglos o milenios</strong>.</p>
+
+    <h3>Sucesión secundaria</h3>
+    <p>Ocurre en lugares donde <strong>sí había vida pero fue perturbada</strong> sin destruir el suelo: incendio forestal, campo abandonado, área deforestada.</p>
+
+    <ol>
+      <li><strong>Plantas anuales y hierbas</strong> que ya tenían semillas en el suelo brotan rápidamente.</li>
+      <li><strong>Plantas perennes y arbustos</strong> les siguen.</li>
+      <li><strong>Árboles pioneros de crecimiento rápido</strong>.</li>
+      <li><strong>Bosque maduro restaurado</strong>.</li>
+    </ol>
+
+    <p>La sucesión secundaria es <strong>mucho más rápida</strong> (décadas) porque el suelo ya estaba formado y muchas semillas y raíces sobreviven.</p>
+
+    <div class="caja-clave">
+      <strong>Diferencia clave para el GED:</strong> La pregunta más común es distinguir las dos. La pista está en si <strong>queda suelo</strong>: si sí (incendio) → secundaria. Si no (lava, glaciar) → primaria.
+    </div>
+  </div>
+</details>
+
+<details class="seccion-grande" id="biomas">
+  <summary>
+    <span class="num-seccion">7</span>
+    <span class="titulo-seccion">Biomas principales de la Tierra</span>
+  </summary>
+  <div class="seccion-contenido">
+    <p>Un <strong>bioma</strong> es un conjunto de ecosistemas con un clima parecido y comunidades de plantas y animales similares. El clima (temperatura y precipitación) es el factor que más determina qué bioma se forma en cada lugar.</p>
+
+    <h3>Biomas terrestres</h3>
+
+    <table>
+      <tr>
+        <th>Bioma</th>
+        <th>Ubicación</th>
+        <th>Clima</th>
+        <th>Vegetación típica</th>
+        <th>Animales típicos</th>
+      </tr>
+      <tr>
+        <td><strong>Selva tropical</strong></td>
+        <td>Cerca del ecuador (Amazonas, Congo, sudeste de Asia)</td>
+        <td>Caliente y húmedo todo el año</td>
+        <td>Árboles altos, lianas, epífitas, máxima biodiversidad</td>
+        <td>Jaguares, monos, tucanes, ranas venenosas</td>
+      </tr>
+      <tr>
+        <td><strong>Bosque templado</strong></td>
+        <td>Latitudes medias (este de EE.UU., Europa, este de Asia)</td>
+        <td>Cuatro estaciones marcadas</td>
+        <td>Árboles caducifolios (roble, arce, haya)</td>
+        <td>Venados, osos, ardillas, búhos</td>
+      </tr>
+      <tr>
+        <td><strong>Bosque boreal (taiga)</strong></td>
+        <td>Norte de Canadá, Rusia, Escandinavia</td>
+        <td>Inviernos largos y fríos, veranos cortos</td>
+        <td>Coníferas (pinos, abetos)</td>
+        <td>Alces, lobos, linces, osos</td>
+      </tr>
+      <tr>
+        <td><strong>Pradera/sabana</strong></td>
+        <td>Centro de EE.UU., Argentina, África</td>
+        <td>Estacional con incendios periódicos</td>
+        <td>Hierbas, pocos árboles dispersos</td>
+        <td>Bisontes, leones, cebras, gacelas</td>
+      </tr>
+      <tr>
+        <td><strong>Desierto</strong></td>
+        <td>Latitudes 30° N y S (Sahara, Arizona, Australia)</td>
+        <td>Muy seco; temperaturas extremas</td>
+        <td>Cactus, matorrales con espinas, plantas suculentas</td>
+        <td>Camellos, serpientes, escorpiones, lagartos</td>
+      </tr>
+      <tr>
+        <td><strong>Tundra</strong></td>
+        <td>Ártico, alta montaña</td>
+        <td>Muy frío; suelo congelado (permafrost)</td>
+        <td>Líquenes, musgos, hierbas bajas (sin árboles)</td>
+        <td>Caribú, osos polares, zorros árticos, lemmings</td>
+      </tr>
+    </table>
+
+    <h3>Biomas acuáticos</h3>
+
+    <ul>
+      <li><strong>Océanos:</strong> 71% del planeta. Producen la mitad del oxígeno mundial (gracias al plancton). Diversos ambientes: zona costera, mar abierto, profundidades, arrecifes de coral.</li>
+      <li><strong>Estuarios:</strong> donde los ríos se encuentran con el mar. Mezcla de agua dulce y salada; muy ricos en nutrientes y vida.</li>
+      <li><strong>Agua dulce:</strong> ríos, lagos, humedales. Solo el 3% del agua del planeta, pero vital para la mayoría de especies terrestres.</li>
+    </ul>
+
+    <div class="caja-clave">
+      <strong>Patrón clave:</strong> a medida que te alejas del ecuador hacia los polos, los biomas cambian: selva tropical → bosque templado → taiga → tundra. Lo mismo ocurre cuando subes una montaña alta — el cambio de altitud imita el cambio de latitud.
+    </div>
+  </div>
+</details>
+
+<details class="seccion-grande" id="impacto">
+  <summary>
+    <span class="num-seccion">8</span>
+    <span class="titulo-seccion">Biodiversidad e impacto humano ecológico</span>
+  </summary>
+  <div class="seccion-contenido">
+    <p>La <strong>biodiversidad</strong> es la variedad de seres vivos en un ecosistema, una región o el planeta. Incluye diversidad de especies, diversidad genética dentro de cada especie, y diversidad de ecosistemas.</p>
+
+    <p>Una alta biodiversidad hace que los ecosistemas sean más estables y resistentes a perturbaciones. Cuando una especie desaparece, las funciones del ecosistema se debilitan.</p>
+
+    <h3>Las cinco principales amenazas humanas a los ecosistemas</h3>
+
+    <details class="sub-acordeon">
+      <summary>🌳 1. Pérdida y fragmentación del hábitat</summary>
+      <div class="sub-contenido">
+        <p>La causa número uno de extinción. Talar selvas para agricultura o ganadería, urbanizar costas, construir carreteras — todo reduce el espacio disponible para las especies. La <strong>fragmentación</strong> divide hábitats grandes en parches pequeños aislados, lo cual es particularmente dañino: muchas especies necesitan grandes territorios continuos para sobrevivir.</p>
+      </div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>🐍 2. Especies invasoras</summary>
+      <div class="sub-contenido">
+        <p>Especies introducidas (a propósito o por accidente) en lugares donde no tienen depredadores naturales pueden destruir ecosistemas enteros. Compiten con especies nativas, las depredan, o les transmiten enfermedades.</p>
+        <p><strong>Ejemplos clásicos:</strong></p>
+        <ul>
+          <li>Pez león en el Caribe — se come peces nativos sin tener depredadores.</li>
+          <li>Pitón birmana en los Everglades de Florida — ha reducido drásticamente las poblaciones de mapaches y zarigüeyas.</li>
+          <li>Conejos europeos en Australia — sin depredadores, se multiplicaron a cientos de millones y devastaron praderas.</li>
+        </ul>
+      </div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>💧 3. Eutrofización</summary>
+      <div class="sub-contenido">
+        <p>Cuando los fertilizantes agrícolas (con nitrógeno y fósforo) escurren a lagos y ríos, las algas se reproducen explosivamente — un fenómeno llamado <strong>floración algal</strong>. Cuando las algas mueren, los descomponedores las degradan consumiendo el oxígeno disuelto. El resultado: <strong>zonas muertas</strong> donde los peces se asfixian.</p>
+        <p>Hay una zona muerta enorme en el Golfo de México causada por fertilizantes que llegan por el río Misisipi.</p>
+      </div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>🐟 4. Sobreexplotación (sobrepesca, caza)</summary>
+      <div class="sub-contenido">
+        <p>Cuando se extraen organismos más rápido de lo que se reproducen, sus poblaciones colapsan. La pesca industrial ha agotado bancos de bacalao, atún rojo, tiburones y muchas otras especies. La caza de elefantes por marfil y rinocerontes por cuerno los ha llevado al borde de la extinción.</p>
+      </div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>🦅 5. Bioacumulación y biomagnificación</summary>
+      <div class="sub-contenido">
+        <p>Algunos contaminantes (como el <strong>DDT</strong>, el <strong>mercurio</strong> y otros pesticidas) no se descomponen ni se excretan fácilmente. Se acumulan en el cuerpo de los organismos a lo largo de sus vidas — <strong>bioacumulación</strong> — y pasan al siguiente nivel trófico, concentrándose más en cada paso — <strong>biomagnificación</strong>.</p>
+
+        <div class="caja-importante">
+          <strong>El caso clásico:</strong> En los años 50-60, el DDT se rociaba para matar mosquitos. Era de baja concentración en el agua, pero los peces lo acumulaban; las águilas calvas que comían peces concentraban tanto DDT que adelgazaban la cáscara de sus huevos, que se rompían en el nido. Las poblaciones de águila colapsaron. EE.UU. prohibió el DDT en 1972 y las águilas se recuperaron.
+        </div>
+
+        <p>Por la misma razón, los superdepredadores (atunes grandes, tiburones, peces espada) acumulan tanto mercurio que las autoridades sanitarias recomiendan limitar su consumo, especialmente en mujeres embarazadas y niños.</p>
+      </div>
+    </details>
+
+    <div class="caja-tierra">
+      <strong>Lo planetario va aparte:</strong> el cambio climático, el agujero de la capa de ozono y la contaminación atmosférica global se tratarán en la sub-página de <em>Ciencias de la Tierra</em>. Aquí nos enfocamos en los impactos a nivel de ecosistema.
+    </div>
+  </div>
+</details>
+
+<details class="seccion-grande" id="vocabulario">
+  <summary>
+    <span class="num-seccion">9</span>
+    <span class="titulo-seccion">Vocabulario clave</span>
+  </summary>
+  <div class="seccion-contenido">
+    <p>Diez términos esenciales para ecosistemas. Memorízalos con sus ejemplos.</p>
+
+    <details class="sub-acordeon">
+      <summary>📖 Ecosistema</summary>
+      <div class="sub-contenido">Comunidad de seres vivos junto con los componentes abióticos (agua, suelo, aire, clima) con los que interactúan en un área determinada.</div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>📖 Productor (autótrofo)</summary>
+      <div class="sub-contenido">Organismo que produce su propio alimento mediante fotosíntesis (a partir de luz solar) o quimiosíntesis. Plantas, algas y algunas bacterias. Base de toda cadena alimenticia.</div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>📖 Consumidor (heterótrofo)</summary>
+      <div class="sub-contenido">Organismo que obtiene energía comiendo otros organismos. Se clasifican como primarios (herbívoros), secundarios (carnívoros) o terciarios (superdepredadores).</div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>📖 Descomponedor</summary>
+      <div class="sub-contenido">Organismo (hongo o bacteria) que degrada restos muertos y devuelve los nutrientes al ambiente. Sin ellos, no habría reciclaje de materia.</div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>📖 Regla del 10%</summary>
+      <div class="sub-contenido">Solo aproximadamente el 10% de la energía de un nivel trófico pasa al siguiente. El resto se pierde como calor y mantenimiento corporal.</div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>📖 Capacidad de carga (K)</summary>
+      <div class="sub-contenido">Número máximo de individuos de una especie que un ambiente puede sostener indefinidamente con sus recursos disponibles.</div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>📖 Simbiosis</summary>
+      <div class="sub-contenido">Relación cercana y prolongada entre dos especies. Incluye mutualismo (ambas ganan), comensalismo (una gana, la otra ni gana ni pierde) y parasitismo (una gana, la otra pierde).</div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>📖 Sucesión ecológica</summary>
+      <div class="sub-contenido">Cambio gradual y predecible en las comunidades de un área a lo largo del tiempo. Primaria (en suelo nuevo) o secundaria (después de una perturbación).</div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>📖 Bioma</summary>
+      <div class="sub-contenido">Conjunto grande de ecosistemas con clima similar y comunidades parecidas. Selva tropical, desierto, tundra, taiga, etc.</div>
+    </details>
+
+    <details class="sub-acordeon">
+      <summary>📖 Biomagnificación</summary>
+      <div class="sub-contenido">Aumento progresivo de la concentración de un contaminante (como mercurio o DDT) a medida que sube por los niveles tróficos. Los superdepredadores son los más afectados.</div>
+    </details>
+  </div>
+</details>
+
+<section class="seccion-quiz" id="quiz">
+  <h2>🎯 Comprueba lo aprendido</h2>
+  <p style="text-align:center; font-style:italic;">Ocho preguntas estilo GED. Pulsa la opción que creas correcta para ver la retroalimentación.</p>
+
+  <div class="pregunta-quiz">
+    <span class="num-pregunta">Pregunta 1</span>
+    <p><strong>En una pradera, las plantas reciben 10,000 unidades de energía solar (J). Si se aplica la regla del 10%, ¿cuánta energía está disponible para un águila que se come a un zorro que se comió a un conejo que comió la hierba?</strong></p>
+    <div class="opcion-quiz" onclick="responder(this, 1, false)">A) 1,000 J</div>
+    <div class="opcion-quiz" onclick="responder(this, 1, false)">B) 100 J</div>
+    <div class="opcion-quiz" onclick="responder(this, 1, true)">C) 10 J</div>
+    <div class="opcion-quiz" onclick="responder(this, 1, false)">D) 1 J</div>
+    <div class="feedback-quiz acierto" id="feedback-1-correcto">✅ ¡Correcto! Cada paso reduce la energía a 10%: hierba 10,000 J → conejo 1,000 J → zorro 100 J → águila 10 J. Por eso los superdepredadores son siempre raros: hay muy poca energía disponible para ellos.</div>
+    <div class="feedback-quiz fallo" id="feedback-1-incorrecto">❌ La respuesta correcta es C (10 J). Cuenta los niveles tróficos: hierba (10,000) → conejo (10% = 1,000) → zorro (10% = 100) → águila (10% = 10). Cada paso multiplica por 0.10 — son cuatro niveles, así que se reduce 1,000 veces.</div>
+  </div>
+
+  <div class="pregunta-quiz">
+    <span class="num-pregunta">Pregunta 2</span>
+    <p><strong>En una red alimenticia, los conejos se alimentan de hierba. Las hierbas son comidas también por insectos. Los conejos son comidos por zorros y por águilas. Si una enfermedad mata a todos los conejos del área, ¿qué efecto inmediato es MÁS probable?</strong></p>
+    <div class="opcion-quiz" onclick="responder(this, 2, false)">A) Las plantas y los insectos también se extinguirán.</div>
+    <div class="opcion-quiz" onclick="responder(this, 2, true)">B) Las poblaciones de zorros y águilas disminuirán por falta de presas; los insectos pueden aumentar al haber más hierba.</div>
+    <div class="opcion-quiz" onclick="responder(this, 2, false)">C) No habrá ningún efecto en el ecosistema.</div>
+    <div class="opcion-quiz" onclick="responder(this, 2, false)">D) Los zorros se convertirán en herbívoros.</div>
+    <div class="feedback-quiz acierto" id="feedback-2-correcto">✅ ¡Excelente! Una red alimenticia muestra que los efectos viajan en cadena. Sin conejos, los depredadores que dependen de ellos pierden alimento; mientras tanto, los insectos compiten por la hierba con menos consumidores. Los zorros NO cambian de dieta — buscan otras presas o disminuyen.</div>
+    <div class="feedback-quiz fallo" id="feedback-2-incorrecto">❌ La respuesta correcta es B. Pensar en cadena: arriba (depredadores que comían conejos) — bajan. Abajo (hierba que comían conejos) — sube. Los insectos, que también comen hierba, pueden aprovechar el aumento. Las especies no "se vuelven" otra cosa: cambian sus números, no su biología.</div>
+  </div>
+
+  <div class="pregunta-quiz">
+    <span class="num-pregunta">Pregunta 3</span>
+    <p><strong>El siguiente esquema muestra un proceso del ciclo del carbono: CO₂ atmosférico → plantas → animales → CO₂ atmosférico. ¿Qué proceso lleva el carbono de los animales DE VUELTA a la atmósfera?</strong></p>
+    <div class="opcion-quiz" onclick="responder(this, 3, false)">A) Fotosíntesis.</div>
+    <div class="opcion-quiz" onclick="responder(this, 3, true)">B) Respiración celular.</div>
+    <div class="opcion-quiz" onclick="responder(this, 3, false)">C) Fijación de nitrógeno.</div>
+    <div class="opcion-quiz" onclick="responder(this, 3, false)">D) Eutrofización.</div>
+    <div class="feedback-quiz acierto" id="feedback-3-correcto">✅ ¡Correcto! La respiración celular libera CO₂. Todos los seres vivos respiran, incluidas las plantas (sí, las plantas también respiran, además de hacer fotosíntesis). La descomposición también devuelve CO₂ al aire cuando los organismos mueren.</div>
+    <div class="feedback-quiz fallo" id="feedback-3-incorrecto">❌ La respuesta correcta es B. Fotosíntesis hace lo CONTRARIO (toma CO₂ del aire). La fijación de nitrógeno y la eutrofización son del ciclo del nitrógeno y del fósforo, no del carbono. Para devolver carbono al aire desde un animal, el proceso clave es la respiración celular.</div>
+  </div>
+
+  <div class="pregunta-quiz">
+    <span class="num-pregunta">Pregunta 4</span>
+    <p><strong>Una orquídea crece sobre las ramas de un árbol grande sin extraerle nutrientes ni dañarlo. La orquídea recibe más luz solar al estar elevada. El árbol no se ve afectado en absoluto. ¿Qué tipo de relación es esta?</strong></p>
+    <div class="opcion-quiz" onclick="responder(this, 4, false)">A) Mutualismo.</div>
+    <div class="opcion-quiz" onclick="responder(this, 4, true)">B) Comensalismo.</div>
+    <div class="opcion-quiz" onclick="responder(this, 4, false)">C) Parasitismo.</div>
+    <div class="opcion-quiz" onclick="responder(this, 4, false)">D) Competencia.</div>
+    <div class="feedback-quiz acierto" id="feedback-4-correcto">✅ ¡Correcto! Una especie gana (la orquídea consigue luz) y la otra ni gana ni pierde (el árbol es indiferente) = comensalismo. Si el árbol también se beneficiara, sería mutualismo. Si la orquídea le robara nutrientes, sería parasitismo.</div>
+    <div class="feedback-quiz fallo" id="feedback-4-incorrecto">❌ La respuesta correcta es B (comensalismo). La clave está en preguntarse: ¿cómo le va a CADA UNO? La orquídea gana (más luz). El árbol: ni gana ni pierde. Esa combinación de "gana / indiferente" es exactamente comensalismo. En mutualismo, AMBOS ganan; en parasitismo, uno pierde.</div>
+  </div>
+
+  <div class="pregunta-quiz">
+    <span class="num-pregunta">Pregunta 5</span>
+    <p><strong>Una población de venados crece exponencialmente al inicio de una repoblación. Después de varios años, su crecimiento se desacelera y se mantiene estable. ¿Qué explica MEJOR esta estabilización?</strong></p>
+    <div class="opcion-quiz" onclick="responder(this, 5, false)">A) Los venados decidieron tener menos crías.</div>
+    <div class="opcion-quiz" onclick="responder(this, 5, true)">B) La población alcanzó la capacidad de carga del ecosistema; los recursos limitan el crecimiento.</div>
+    <div class="opcion-quiz" onclick="responder(this, 5, false)">C) Los venados evolucionaron a una especie diferente.</div>
+    <div class="opcion-quiz" onclick="responder(this, 5, false)">D) El número de depredadores disminuyó drásticamente.</div>
+    <div class="feedback-quiz acierto" id="feedback-5-correcto">✅ ¡Correcto! El crecimiento logístico (forma de S) es lo que ocurre en la naturaleza: una población crece rápido al inicio y luego se estabiliza al llegar a la capacidad de carga (K). Los recursos limitados — comida, espacio, agua — establecen ese tope.</div>
+    <div class="feedback-quiz fallo" id="feedback-5-incorrecto">❌ La respuesta correcta es B. Los animales no "deciden" reproducirse menos — sus tasas reproductivas y de mortalidad responden a los recursos disponibles. Si la opción D fuera cierta, la población crecería más, no se estabilizaría. La explicación clásica de la estabilización es alcanzar la capacidad de carga.</div>
+  </div>
+
+  <div class="pregunta-quiz">
+    <span class="num-pregunta">Pregunta 6</span>
+    <p><strong>Después de un incendio que destruye un bosque, las semillas que sobrevivieron en el suelo y las raíces protegidas comienzan a brotar rápidamente. ¿Qué tipo de sucesión ecológica es esta?</strong></p>
+    <div class="opcion-quiz" onclick="responder(this, 6, false)">A) Sucesión primaria, porque hay un cambio drástico.</div>
+    <div class="opcion-quiz" onclick="responder(this, 6, true)">B) Sucesión secundaria, porque el suelo y muchas semillas y raíces sobrevivieron.</div>
+    <div class="opcion-quiz" onclick="responder(this, 6, false)">C) Sucesión clímax, porque el bosque vuelve a su estado final.</div>
+    <div class="opcion-quiz" onclick="responder(this, 6, false)">D) No es sucesión, es solo regeneración.</div>
+    <div class="feedback-quiz acierto" id="feedback-6-correcto">✅ ¡Correcto! La pista clave es que el suelo se mantuvo. La sucesión primaria solo ocurre en lugares completamente nuevos sin suelo (lava, glaciares retirados). Como el suelo y muchas semillas sobrevivieron al incendio, la regeneración es mucho más rápida — eso es secundaria.</div>
+    <div class="feedback-quiz fallo" id="feedback-6-incorrecto">❌ La respuesta correcta es B. Recuerda la regla: si queda suelo, es secundaria; si NO queda suelo (lava nueva, glaciar retirado), es primaria. Un incendio quema la vegetación pero deja el suelo, así que la sucesión es secundaria — y mucho más rápida que la primaria.</div>
+  </div>
+
+  <div class="pregunta-quiz">
+    <span class="num-pregunta">Pregunta 7</span>
+    <p><strong>Estudios sobre el río Hudson encuentran que el agua tiene 0.001 ppm de mercurio, las algas tienen 0.04 ppm, los peces pequeños tienen 0.5 ppm, y los peces grandes depredadores tienen 5 ppm. ¿Qué proceso explica MEJOR este patrón?</strong></p>
+    <div class="opcion-quiz" onclick="responder(this, 7, false)">A) Los peces grandes consumen agua contaminada directamente.</div>
+    <div class="opcion-quiz" onclick="responder(this, 7, true)">B) Biomagnificación — el mercurio se concentra cada vez más al subir por los niveles tróficos.</div>
+    <div class="opcion-quiz" onclick="responder(this, 7, false)">C) Los peces grandes producen mercurio en su cuerpo.</div>
+    <div class="opcion-quiz" onclick="responder(this, 7, false)">D) Eutrofización — los nutrientes del agua causan acumulación de mercurio.</div>
+    <div class="feedback-quiz acierto" id="feedback-7-correcto">✅ ¡Correcto! La biomagnificación: cada nivel acumula el mercurio que estaba en todos los organismos que comió a lo largo de su vida. El mercurio no se elimina del cuerpo, así que en cada paso la concentración se multiplica. Un pez grande es 5,000 veces más tóxico que el agua donde nada.</div>
+    <div class="feedback-quiz fallo" id="feedback-7-incorrecto">❌ La respuesta correcta es B (biomagnificación). Los peces no "producen" ni "filtran" mercurio — lo absorben de su comida y no lo eliminan. Como cada pez grande comió cientos de pequeños a lo largo de su vida, acumula todo el mercurio que llevaban esos peces pequeños. Por eso las autoridades sanitarias advierten sobre comer demasiados depredadores grandes (atún, pez espada, tiburón).</div>
+  </div>
+
+  <div class="pregunta-quiz">
+    <span class="num-pregunta">Pregunta 8</span>
+    <p><strong>En la década de 1990, una especie de pez originaria de Asia (la carpa asiática) escapó al río Misisipi en EE.UU. Sin depredadores naturales en esa región, su población creció rápidamente, desplazando a los peces nativos. ¿Cuál es el término que MEJOR describe a la carpa asiática en este contexto?</strong></p>
+    <div class="opcion-quiz" onclick="responder(this, 8, false)">A) Especie pionera.</div>
+    <div class="opcion-quiz" onclick="responder(this, 8, false)">B) Especie clímax.</div>
+    <div class="opcion-quiz" onclick="responder(this, 8, true)">C) Especie invasora.</div>
+    <div class="opcion-quiz" onclick="responder(this, 8, false)">D) Especie en peligro.</div>
+    <div class="feedback-quiz acierto" id="feedback-8-correcto">✅ ¡Correcto! Una especie invasora es la que llega a un lugar donde no es nativa, no tiene depredadores naturales y daña al ecosistema desplazando a las especies locales. Es una de las cinco principales amenazas a los ecosistemas modernos.</div>
+    <div class="feedback-quiz fallo" id="feedback-8-incorrecto">❌ La respuesta correcta es C (especie invasora). Las especies pioneras son las primeras en colonizar un lugar nuevo en sucesión primaria (líquenes, musgos). Las especies clímax son las que dominan al final de una sucesión madura. "En peligro" significa que está cerca de extinguirse — todo lo contrario a la carpa, que está fuera de control.</div>
+  </div>
+
+  <div id="resumen-quiz" style="display:none; margin-top:24px; padding:18px; background-color:#ffffff; border:3px solid var(--verde-bio); border-radius:8px; text-align:center;">
+    <h3 style="margin-top:0; color: var(--verde-bio-oscuro);">📊 Tu resultado</h3>
+    <p style="font-size:1.4em; font-weight:bold;" id="texto-resultado"></p>
+    <button class="btn-control" onclick="reiniciarQuiz()">🔄 Intentar de nuevo</button>
+  </div>
+</section>
+
+<section class="referencias-bloque" id="referencias">
+  <h2>📚 Referencias en Steck-Vaughn — GED Senderos: Ciencias</h2>
+  <p>Para profundizar cada tema con explicaciones del libro y ejercicios adicionales:</p>
+  <ul>
+    <li><strong>Niveles de organización y componentes del ecosistema:</strong> pp. 81-86</li>
+    <li><strong>Flujo de energía, cadenas y redes alimenticias:</strong> pp. 87-93</li>
+    <li><strong>Ciclos biogeoquímicos:</strong> pp. 94-99</li>
+    <li><strong>Relaciones entre organismos y dinámica poblacional:</strong> pp. 100-106</li>
+    <li><strong>Sucesión ecológica y biomas:</strong> pp. 107-112</li>
+    <li><strong>Biodiversidad e impacto humano:</strong> pp. 113-118</li>
+  </ul>
+  <p style="font-size:0.9em; font-style:italic; margin-bottom:0;">⚠️ Páginas estimadas — verifica con tu ejemplar del Steck-Vaughn y ajusta si es necesario.</p>
+</section>
+
+<footer class="nav-footer">
+  <a href="evolucion.html">← Evolución</a>
+  <a href="index.html">🏠 Hub Ciencias de la vida</a>
+  <a href="cuerpo-humano.html">Cuerpo humano →</a>
+</footer>
+
+<script>
+function abrirTodo() {
+  document.querySelectorAll('details.seccion-grande').forEach(function(d) { d.open = true; });
+}
+
+function cerrarTodo() {
+  document.querySelectorAll('details.seccion-grande').forEach(function(d) { d.open = false; });
+}
+
+document.querySelectorAll('.tabla-contenidos a').forEach(function(link) {
+  link.addEventListener('click', function(e) {
+    var id = link.getAttribute('href').substring(1);
+    var target = document.getElementById(id);
+    if (target && target.tagName === 'DETAILS') {
+      target.open = true;
+      setTimeout(function() {
+        target.scrollIntoView({behavior: 'smooth', block: 'start'});
+      }, 50);
+      e.preventDefault();
+    }
+  });
+});
+
+window.addEventListener('load', function() {
+  if (location.hash) {
+    var target = document.querySelector(location.hash);
+    if (target && target.tagName === 'DETAILS') {
+      target.open = true;
+      setTimeout(function() {
+        target.scrollIntoView({behavior: 'smooth', block: 'start'});
+      }, 100);
+    }
+  }
+});
+
+var respuestasCorrectas = 0;
+var preguntasRespondidas = {};
+var totalPreguntas = 8;
+
+function responder(elemento, numPregunta, esCorrecta) {
+  if (preguntasRespondidas[numPregunta]) return;
+  preguntasRespondidas[numPregunta] = true;
+
+  var contenedor = elemento.parentElement;
+  var opciones = contenedor.querySelectorAll('.opcion-quiz');
+
+  opciones.forEach(function(op) {
+    op.style.cursor = 'default';
+    op.onclick = null;
+  });
+
+  if (esCorrecta) {
+    elemento.classList.add('correcta');
+    respuestasCorrectas++;
+    document.getElementById('feedback-' + numPregunta + '-correcto').style.display = 'block';
+  } else {
+    elemento.classList.add('incorrecta');
+    opciones.forEach(function(op) {
+      if (op.getAttribute('onclick') && op.getAttribute('onclick').indexOf('true') !== -1) {
+        op.classList.add('correcta');
+      }
+    });
+    document.getElementById('feedback-' + numPregunta + '-incorrecto').style.display = 'block';
+  }
+
+  if (Object.keys(preguntasRespondidas).length === totalPreguntas) {
+    var resumen = document.getElementById('resumen-quiz');
+    var texto = document.getElementById('texto-resultado');
+    var porcentaje = Math.round((respuestasCorrectas / totalPreguntas) * 100);
+    var emoji = porcentaje >= 80 ? '🎉' : (porcentaje >= 60 ? '👍' : '📚');
+    texto.innerHTML = emoji + ' ' + respuestasCorrectas + ' de ' + totalPreguntas + ' correctas (' + porcentaje + '%)';
+    resumen.style.display = 'block';
+    setTimeout(function() {
+      resumen.scrollIntoView({behavior: 'smooth', block: 'center'});
+    }, 200);
+  }
+}
+
+function reiniciarQuiz() {
+  location.reload();
+}
+</script>
+
+</body>
 </html>
