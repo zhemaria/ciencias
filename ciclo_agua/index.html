@@ -1,1 +1,948 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ciclo del Agua — Simulación 3D</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #050505;
+      color: white;
+    }
+    canvas { display: block; }
 
+    /* ===== Panel de etapa (arriba a la izquierda) ===== */
+    #panel-etapa {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      max-width: 380px;
+      padding: 18px 22px;
+      background: rgba(8, 18, 35, 0.78);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 14px;
+      border-left: 5px solid #38bdf8;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      transition: border-color 0.6s ease;
+      pointer-events: none;
+    }
+    #etapa-numero {
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #7dd3fc;
+      opacity: 0.85;
+      margin: 0 0 4px 0;
+    }
+    #etapa-titulo {
+      font-size: 22px;
+      font-weight: 700;
+      color: #ffffff;
+      margin: 0 0 8px 0;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+    }
+    #etapa-desc {
+      font-size: 14px;
+      line-height: 1.5;
+      opacity: 0.92;
+      margin: 0 0 12px 0;
+    }
+    .barra-progreso {
+      width: 100%;
+      height: 5px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    #barra-relleno {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #38bdf8, #7dd3fc);
+      border-radius: 3px;
+      transition: width 0.1s linear;
+    }
+
+    /* ===== Indicadores de etapas (abajo) ===== */
+    #indicadores {
+      position: absolute;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 10px;
+      padding: 10px 16px;
+      background: rgba(8, 18, 35, 0.7);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border-radius: 30px;
+      pointer-events: none;
+    }
+    .punto {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      background: rgba(255,255,255,0.08);
+      transition: all 0.4s ease;
+      font-size: 12px;
+      opacity: 0.6;
+    }
+    .punto.activo {
+      background: rgba(56, 189, 248, 0.25);
+      opacity: 1;
+      transform: scale(1.05);
+      box-shadow: 0 0 12px rgba(56, 189, 248, 0.4);
+    }
+    .punto-icono { font-size: 16px; }
+
+    /* ===== Ayuda (abajo derecha) ===== */
+    #ayuda {
+      position: absolute;
+      bottom: 22px;
+      right: 22px;
+      color: rgba(255,255,255,0.55);
+      font-size: 11px;
+      text-align: right;
+      line-height: 1.5;
+      pointer-events: none;
+    }
+
+    /* ===== Botón de pausa (arriba derecha) ===== */
+    #btn-pausa {
+      position: absolute;
+      top: 22px;
+      right: 22px;
+      padding: 10px 16px;
+      background: rgba(8, 18, 35, 0.75);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: white;
+      font-size: 13px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    #btn-pausa:hover {
+      background: rgba(56, 189, 248, 0.25);
+      border-color: rgba(56, 189, 248, 0.5);
+    }
+
+    /* Colores por etapa */
+    .stage-0 { border-left-color: #fbbf24 !important; }
+    .stage-0 #etapa-numero { color: #fbbf24 !important; }
+    .stage-1 { border-left-color: #94a3b8 !important; }
+    .stage-1 #etapa-numero { color: #94a3b8 !important; }
+    .stage-2 { border-left-color: #38bdf8 !important; }
+    .stage-2 #etapa-numero { color: #38bdf8 !important; }
+    .stage-3 { border-left-color: #22d3ee !important; }
+    .stage-3 #etapa-numero { color: #22d3ee !important; }
+    .stage-4 { border-left-color: #84cc16 !important; }
+    .stage-4 #etapa-numero { color: #84cc16 !important; }
+  </style>
+</head>
+<body>
+
+  <div id="panel-etapa" class="stage-0">
+    <p id="etapa-numero">Etapa 1 de 5</p>
+    <h1 id="etapa-titulo">Iniciando…</h1>
+    <p id="etapa-desc">Cargando la simulación.</p>
+    <div class="barra-progreso"><div id="barra-relleno"></div></div>
+  </div>
+
+  <div id="indicadores">
+    <div class="punto activo" data-i="0"><span class="punto-icono">☀️</span><span>Evaporación</span></div>
+    <div class="punto" data-i="1"><span class="punto-icono">☁️</span><span>Condensación</span></div>
+    <div class="punto" data-i="2"><span class="punto-icono">🌧️</span><span>Precipitación</span></div>
+    <div class="punto" data-i="3"><span class="punto-icono">🏞️</span><span>Escorrentía</span></div>
+    <div class="punto" data-i="4"><span class="punto-icono">🌱</span><span>Infiltración</span></div>
+  </div>
+
+  <button id="btn-pausa">⏸ Pausar</button>
+
+  <div id="ayuda">
+    Cámara automática siguiendo el ciclo<br>
+    Cada etapa dura ~5 segundos
+  </div>
+
+  <script>
+  /* =========================================================
+     CICLO DEL AGUA — Simulación 3D
+     - 5 etapas sincronizadas
+     - Lluvia visible con estelas verticales
+     - Ríos como cinta plana siguiendo el terreno real
+     - Partículas de evaporación e infiltración
+     ========================================================= */
+
+  // ---------- Variables globales ----------
+  let scene, camera, renderer, clock;
+  let terrain, ocean, sun, sunGlow, sunLight;
+  let clouds = [];
+  let rainPoints, evapPoints, infilPoints;
+  let riverMesh, riverFlow;
+  let pausado = false;
+  let tiempoSimulado = 0;
+  let etapaActual = -1;
+
+  const DURACION_ETAPA = 5.0; // segundos
+  const TOTAL_ETAPAS = 5;
+  const CICLO_TOTAL = DURACION_ETAPA * TOTAL_ETAPAS;
+
+  const ETAPAS = [
+    { num: "Etapa 1 de 5", titulo: "Evaporación",   desc: "El sol calienta el océano y convierte el agua líquida en vapor que asciende a la atmósfera.", clase: "stage-0", colorNiebla: 0x87ceeb },
+    { num: "Etapa 2 de 5", titulo: "Condensación",  desc: "El vapor se enfría al subir y se agrupa en gotitas microscópicas, formando nubes densas.",      clase: "stage-1", colorNiebla: 0x5a6878 },
+    { num: "Etapa 3 de 5", titulo: "Precipitación", desc: "Las gotas se hacen pesadas y caen en forma de lluvia hacia montañas, valles y océanos.",         clase: "stage-2", colorNiebla: 0x4a5568 },
+    { num: "Etapa 3 de 5", titulo: "Escorrentía",   desc: "El agua fluye por la superficie, formando arroyos y ríos que regresan al océano.",               clase: "stage-3", colorNiebla: 0x6b89a8 },
+    { num: "Etapa 5 de 5", titulo: "Infiltración",  desc: "Parte del agua penetra en el suelo y alimenta los acuíferos subterráneos.",                       clase: "stage-4", colorNiebla: 0x8eb4d8 }
+  ];
+  // (Pequeño detalle: corrijo numeración en pantalla — los textos completos abajo)
+  ETAPAS[0].num = "Etapa 1 de 5";
+  ETAPAS[1].num = "Etapa 2 de 5";
+  ETAPAS[2].num = "Etapa 3 de 5";
+  ETAPAS[3].num = "Etapa 4 de 5";
+  ETAPAS[4].num = "Etapa 5 de 5";
+
+  // ---------- Inicialización ----------
+  init();
+  animate();
+
+  function init() {
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x87ceeb);
+    scene.fog = new THREE.Fog(0x87ceeb, 60, 180);
+
+    camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 500);
+    camera.position.set(50, 35, 50);
+    camera.lookAt(0, 5, 0);
+
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    document.body.appendChild(renderer.domElement);
+
+    clock = new THREE.Clock();
+
+    crearLuces();
+    crearTerreno();
+    crearOceano();
+    crearSol();
+    crearNubes();
+    crearLluvia();
+    crearEvaporacion();
+    crearRios();
+    crearInfiltracion();
+
+    window.addEventListener('resize', onResize, false);
+    document.getElementById('btn-pausa').addEventListener('click', () => {
+      pausado = !pausado;
+      document.getElementById('btn-pausa').innerHTML = pausado ? '▶ Reanudar' : '⏸ Pausar';
+    });
+  }
+
+  // ---------- Luces ----------
+  function crearLuces() {
+    const ambient = new THREE.AmbientLight(0xb8d4f0, 0.55);
+    scene.add(ambient);
+
+    sunLight = new THREE.DirectionalLight(0xfff4d6, 1.3);
+    sunLight.position.set(60, 80, 40);
+    sunLight.castShadow = true;
+    sunLight.shadow.mapSize.set(2048, 2048);
+    sunLight.shadow.camera.near = 0.5;
+    sunLight.shadow.camera.far = 250;
+    sunLight.shadow.camera.left = -80;
+    sunLight.shadow.camera.right = 80;
+    sunLight.shadow.camera.top = 80;
+    sunLight.shadow.camera.bottom = -80;
+    scene.add(sunLight);
+
+    // Luz de relleno azulada (cielo)
+    const hemi = new THREE.HemisphereLight(0xa0d8ff, 0x3d2a1a, 0.4);
+    scene.add(hemi);
+  }
+
+  // ---------- Terreno ----------
+  function crearTerreno() {
+    const seg = 96;
+    const geo = new THREE.PlaneGeometry(140, 140, seg, seg);
+    const pos = geo.attributes.position;
+    const colores = [];
+    const color = new THREE.Color();
+
+    for (let i = 0; i < pos.count; i++) {
+      const x = pos.getX(i);
+      const y = pos.getY(i);
+
+      let h = 0;
+      // Montaña en el lado oeste/norte (x negativo)
+      const distMontana = Math.sqrt((x + 35) * (x + 35) + (y + 10) * (y + 10));
+      const masaMontana = 22 * Math.exp(-distMontana * 0.045);
+
+      // Colina secundaria
+      const distColina = Math.sqrt((x + 5) * (x + 5) + (y - 25) * (y - 25));
+      const masaColina = 9 * Math.exp(-distColina * 0.07);
+
+      // Ruido de superficie suave
+      const ruido = Math.sin(x * 0.3) * Math.cos(y * 0.3) * 0.6
+                  + Math.sin(x * 0.8 + 1.3) * 0.3;
+
+      h = masaMontana + masaColina + ruido;
+
+      // Zona de océano: lado este (x positivo) baja al fondo
+      if (x > 12) {
+        const factor = Math.min(1, (x - 12) / 18);
+        h = h * (1 - factor) + (-4 - factor * 2) * factor;
+      }
+
+      pos.setZ(i, h);
+
+      // Color por altura: piedra → césped → arena → bajo agua
+      if (h > 14) {
+        color.setRGB(0.55, 0.5, 0.45);          // roca alta
+      } else if (h > 8) {
+        color.lerpColors(new THREE.Color(0.55, 0.5, 0.45), new THREE.Color(0.32, 0.5, 0.22), (14 - h) / 6);
+      } else if (h > 0.5) {
+        color.setRGB(0.32, 0.5, 0.22);          // césped
+      } else if (h > -1) {
+        color.setRGB(0.78, 0.7, 0.45);          // arena
+      } else {
+        color.setRGB(0.25, 0.4, 0.45);          // fondo marino
+      }
+      colores.push(color.r, color.g, color.b);
+    }
+
+    geo.setAttribute('color', new THREE.Float32BufferAttribute(colores, 3));
+    geo.computeVertexNormals();
+
+    const mat = new THREE.MeshStandardMaterial({
+      vertexColors: true,
+      flatShading: false,
+      roughness: 0.95,
+      metalness: 0.0
+    });
+
+    terrain = new THREE.Mesh(geo, mat);
+    terrain.rotation.x = -Math.PI / 2;
+    terrain.receiveShadow = true;
+    terrain.castShadow = true;
+    scene.add(terrain);
+  }
+
+  // ---------- Océano ----------
+  function crearOceano() {
+    const geo = new THREE.PlaneGeometry(200, 200, 64, 64);
+    const mat = new THREE.MeshStandardMaterial({
+      color: 0x1e6091,
+      transparent: true,
+      opacity: 0.85,
+      roughness: 0.15,
+      metalness: 0.6
+    });
+    ocean = new THREE.Mesh(geo, mat);
+    ocean.rotation.x = -Math.PI / 2;
+    ocean.position.y = 0;
+    ocean.receiveShadow = true;
+    scene.add(ocean);
+
+    // Guardamos posiciones originales para animar olas
+    ocean.userData.posOrig = ocean.geometry.attributes.position.array.slice();
+  }
+
+  function animarOleaje(t) {
+    const pos = ocean.geometry.attributes.position;
+    const orig = ocean.userData.posOrig;
+    for (let i = 0; i < pos.count; i++) {
+      const ix = i * 3;
+      const x = orig[ix];
+      const y = orig[ix + 1];
+      const ola = Math.sin(x * 0.15 + t * 1.2) * 0.25
+                + Math.cos(y * 0.18 + t * 0.9) * 0.25;
+      pos.setZ(i, ola);
+    }
+    pos.needsUpdate = true;
+    ocean.geometry.computeVertexNormals();
+  }
+
+  // ---------- Sol ----------
+  function crearSol() {
+    const geo = new THREE.SphereGeometry(4, 32, 32);
+    const mat = new THREE.MeshBasicMaterial({ color: 0xffe066 });
+    sun = new THREE.Mesh(geo, mat);
+    sun.position.set(60, 55, 40);
+    scene.add(sun);
+
+    // Halo (sprite con textura radial)
+    const haloTex = generarTexturaHalo();
+    const haloMat = new THREE.SpriteMaterial({
+      map: haloTex,
+      color: 0xfff4b8,
+      transparent: true,
+      opacity: 0.85,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false
+    });
+    sunGlow = new THREE.Sprite(haloMat);
+    sunGlow.scale.set(18, 18, 1);
+    sun.add(sunGlow);
+  }
+
+  function generarTexturaHalo() {
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = 128;
+    const ctx = canvas.getContext('2d');
+    const grad = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
+    grad.addColorStop(0,    'rgba(255, 240, 180, 1)');
+    grad.addColorStop(0.25, 'rgba(255, 220, 130, 0.7)');
+    grad.addColorStop(0.6,  'rgba(255, 200, 100, 0.18)');
+    grad.addColorStop(1,    'rgba(255, 200, 100, 0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 128, 128);
+    return new THREE.CanvasTexture(canvas);
+  }
+
+  // ---------- Nubes ----------
+  function crearNubes() {
+    // Posiciones aproximadas sobre la zona de tierra (no encima del océano)
+    const posiciones = [
+      { x: -28, y: 30, z: -10 },
+      { x: -10, y: 32, z:  10 },
+      { x:   5, y: 30, z: -15 },
+      { x:  -5, y: 33, z:  20 },
+      { x: -22, y: 31, z:   5 }
+    ];
+
+    posiciones.forEach((p, idx) => {
+      const grupo = new THREE.Group();
+      const numEsferas = 6 + Math.floor(Math.random() * 3);
+      for (let j = 0; j < numEsferas; j++) {
+        const r = 2.2 + Math.random() * 1.6;
+        const g = new THREE.SphereGeometry(r, 12, 10);
+        const m = new THREE.MeshStandardMaterial({
+          color: 0xffffff,
+          transparent: true,
+          opacity: 0.92,
+          roughness: 1.0,
+          metalness: 0.0
+        });
+        const esfera = new THREE.Mesh(g, m);
+        esfera.position.set(
+          (Math.random() - 0.5) * 7,
+          (Math.random() - 0.5) * 1.8,
+          (Math.random() - 0.5) * 5
+        );
+        esfera.castShadow = true;
+        grupo.add(esfera);
+      }
+      grupo.position.set(p.x, p.y, p.z);
+      grupo.scale.set(0.05, 0.05, 0.05); // empiezan invisibles
+      grupo.userData.escalaObjetivo = 1.0;
+      grupo.userData.driftX = (Math.random() - 0.5) * 0.3;
+      grupo.userData.driftZ = (Math.random() - 0.5) * 0.3;
+      grupo.userData.indice = idx;
+      clouds.push(grupo);
+      scene.add(grupo);
+    });
+  }
+
+  // ---------- Lluvia (estelas verticales) ----------
+  function generarTexturaLluvia() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 16;
+    canvas.height = 64;
+    const ctx = canvas.getContext('2d');
+    const grad = ctx.createLinearGradient(0, 0, 0, 64);
+    grad.addColorStop(0,   'rgba(125, 211, 252, 0)');
+    grad.addColorStop(0.4, 'rgba(186, 230, 253, 0.6)');
+    grad.addColorStop(0.8, 'rgba(255, 255, 255, 0.9)');
+    grad.addColorStop(1,   'rgba(125, 211, 252, 0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(6, 0, 4, 64);
+    return new THREE.CanvasTexture(canvas);
+  }
+
+  function crearLluvia() {
+    const num = 1500;
+    const geo = new THREE.BufferGeometry();
+    const pos = new Float32Array(num * 3);
+    const vel = new Float32Array(num); // velocidad individual
+
+    for (let i = 0; i < num; i++) {
+      // Distribuimos la lluvia en la zona de tierra (no sobre el océano abierto lejano)
+      pos[i * 3]     = -50 + Math.random() * 65;       // x: zona terrestre y costa
+      pos[i * 3 + 1] = 18 + Math.random() * 18;        // y: bajo las nubes
+      pos[i * 3 + 2] = -35 + Math.random() * 70;       // z
+      vel[i] = 0.5 + Math.random() * 0.4;
+    }
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    geo.userData = { vel };
+
+    const mat = new THREE.PointsMaterial({
+      size: 1.4,
+      map: generarTexturaLluvia(),
+      transparent: true,
+      opacity: 0,
+      depthWrite: false,
+      blending: THREE.NormalBlending,
+      sizeAttenuation: true,
+      alphaTest: 0.01
+    });
+
+    rainPoints = new THREE.Points(geo, mat);
+    scene.add(rainPoints);
+  }
+
+  // ---------- Evaporación ----------
+  function generarTexturaVapor() {
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = 64;
+    const ctx = canvas.getContext('2d');
+    const grad = ctx.createRadialGradient(32, 32, 0, 32, 32, 32);
+    grad.addColorStop(0,   'rgba(255, 255, 255, 0.85)');
+    grad.addColorStop(0.5, 'rgba(255, 255, 255, 0.35)');
+    grad.addColorStop(1,   'rgba(255, 255, 255, 0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 64, 64);
+    return new THREE.CanvasTexture(canvas);
+  }
+
+  function crearEvaporacion() {
+    const num = 350;
+    const geo = new THREE.BufferGeometry();
+    const pos = new Float32Array(num * 3);
+    const fase = new Float32Array(num);
+    const yIni = new Float32Array(num);
+
+    for (let i = 0; i < num; i++) {
+      // Sobre la superficie del océano (x > 15)
+      pos[i * 3]     = 18 + Math.random() * 50;
+      pos[i * 3 + 1] = 0.3 + Math.random() * 1;
+      pos[i * 3 + 2] = -50 + Math.random() * 100;
+      fase[i] = Math.random() * Math.PI * 2;
+      yIni[i] = pos[i * 3 + 1];
+    }
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    geo.userData = { fase, yIni };
+
+    const mat = new THREE.PointsMaterial({
+      size: 2.2,
+      map: generarTexturaVapor(),
+      transparent: true,
+      opacity: 0,
+      depthWrite: false,
+      blending: THREE.AdditiveBlending,
+      sizeAttenuation: true
+    });
+
+    evapPoints = new THREE.Points(geo, mat);
+    scene.add(evapPoints);
+  }
+
+  // ---------- Ríos (cinta plana que sigue el terreno) ----------
+
+  // Altura del terreno en un punto (x, z) del mundo. Replica la fórmula
+  // usada al esculpir el terreno, considerando la rotación -π/2 en X
+  // (planeY = -worldZ).
+  function alturaTerreno(worldX, worldZ) {
+    const px = worldX;
+    const py = -worldZ;
+    const distMontana = Math.sqrt((px + 35) * (px + 35) + (py + 10) * (py + 10));
+    const masaMontana = 22 * Math.exp(-distMontana * 0.045);
+    const distColina = Math.sqrt((px + 5) * (px + 5) + (py - 25) * (py - 25));
+    const masaColina = 9 * Math.exp(-distColina * 0.07);
+    const ruido = Math.sin(px * 0.3) * Math.cos(py * 0.3) * 0.6
+                + Math.sin(px * 0.8 + 1.3) * 0.3;
+    let h = masaMontana + masaColina + ruido;
+    if (px > 12) {
+      const factor = Math.min(1, (px - 12) / 18);
+      h = h * (1 - factor) + (-4 - factor * 2) * factor;
+    }
+    return h;
+  }
+
+  // Construye una cinta plana de triángulos a lo largo de una curva,
+  // muestreando la altura REAL del terreno en cada vértice para que la
+  // cinta siga todas las ondulaciones del terreno (no solo la pendiente
+  // general entre puntos de control).
+  function crearCintaRio(curva, anchura, segmentos, offsetSobreTerreno) {
+    const positions = [];
+    const uvs = [];
+    const indices = [];
+    const right = new THREE.Vector3();
+
+    // Helper: dado un (x, z), devuelve la y que debe tener la cinta
+    // (altura del terreno + offset, nunca por debajo del nivel del mar)
+    function yEn(x, z) {
+      return Math.max(alturaTerreno(x, z), 0) + offsetSobreTerreno;
+    }
+
+    for (let i = 0; i <= segmentos; i++) {
+      const t = i / segmentos;
+      const p = curva.getPoint(t);            // posición central (x, *, z) - ignoramos la y
+      const tan = curva.getTangent(t);
+      right.set(-tan.z, 0, tan.x).normalize(); // perpendicular horizontal
+
+      // Vértice izquierdo y derecho: cada uno toma su propia altura del terreno
+      const izqX = p.x + right.x * (-anchura / 2);
+      const izqZ = p.z + right.z * (-anchura / 2);
+      positions.push(izqX, yEn(izqX, izqZ), izqZ);
+
+      const derX = p.x + right.x * ( anchura / 2);
+      const derZ = p.z + right.z * ( anchura / 2);
+      positions.push(derX, yEn(derX, derZ), derZ);
+
+      uvs.push(0, t * 8);
+      uvs.push(1, t * 8);
+
+      if (i < segmentos) {
+        const a = i * 2;
+        const b = i * 2 + 1;
+        const c = (i + 1) * 2;
+        const d = (i + 1) * 2 + 1;
+        indices.push(a, b, c);
+        indices.push(b, d, c);
+      }
+    }
+
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    geo.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+    geo.setIndex(indices);
+    geo.computeVertexNormals();
+    return geo;
+  }
+
+  function crearRios() {
+    // Camino del río en coordenadas (x, z) del mundo. La montaña está
+    // centrada en world (x=-35, z=10). Bajamos serpenteando hacia el océano (x>12).
+    const camino = [
+      [-33,  9],   // cerca de la cima
+      [-30,  8],
+      [-26,  6],
+      [-21,  4.5],
+      [-15,  3],
+      [-9,   2],
+      [-3,   1.5],
+      [ 4,   1],
+      [ 11,  0.5],
+      [ 17,  0],
+      [ 22,  0]
+    ];
+
+    // Construir Vector3 con y=0 (la altura real la pondrá la cinta vértice por
+    // vértice). Solo nos interesa el camino XZ a través del cual fluye el río.
+    const puntos = camino.map(([x, z]) => new THREE.Vector3(x, 0, z));
+
+    const curva = new THREE.CatmullRomCurve3(puntos, false, 'catmullrom', 0.4);
+    // 220 segmentos ⇒ muestreo denso del terreno; offset 0.35 sobre la superficie.
+    const geo = crearCintaRio(curva, 1.7, 220, 0.35);
+
+    const texFlujo = generarTexturaFlujo();
+    texFlujo.wrapS = texFlujo.wrapT = THREE.RepeatWrapping;
+
+    const mat = new THREE.MeshStandardMaterial({
+      color: 0x5dc8fa,
+      transparent: true,
+      opacity: 0,
+      roughness: 0.18,
+      metalness: 0.55,
+      map: texFlujo,
+      emissive: 0x1976d2,
+      emissiveIntensity: 0.18,
+      side: THREE.DoubleSide,
+      depthWrite: false
+    });
+
+    riverMesh = new THREE.Mesh(geo, mat);
+    riverMesh.userData.curva = curva;
+    riverMesh.userData.textura = texFlujo;
+    riverMesh.renderOrder = 1; // se dibuja después del terreno
+    scene.add(riverMesh);
+  }
+
+  function generarTexturaFlujo() {
+    const canvas = document.createElement('canvas');
+    canvas.width = 32;
+    canvas.height = 128;
+    const ctx = canvas.getContext('2d');
+    // Base azul agua
+    const grad = ctx.createLinearGradient(0, 0, 32, 0);
+    grad.addColorStop(0,    '#3aa8e0');
+    grad.addColorStop(0.5,  '#7fd9ff');
+    grad.addColorStop(1,    '#3aa8e0');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 32, 128);
+    // Espuma blanca en franjas horizontales que se moverán a lo largo del cauce
+    ctx.fillStyle = 'rgba(255,255,255,0.55)';
+    for (let i = 0; i < 128; i += 18) {
+      ctx.fillRect(4, i, 24, 2.5);
+    }
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    for (let i = 9; i < 128; i += 18) {
+      ctx.fillRect(8, i, 16, 1.5);
+    }
+    return new THREE.CanvasTexture(canvas);
+  }
+
+  // ---------- Infiltración ----------
+  function crearInfiltracion() {
+    const num = 200;
+    const geo = new THREE.BufferGeometry();
+    const pos = new Float32Array(num * 3);
+    const yIni = new Float32Array(num);
+
+    // Distribuir sobre el terreno (no en el océano)
+    for (let i = 0; i < num; i++) {
+      pos[i * 3]     = -45 + Math.random() * 50;
+      pos[i * 3 + 1] = 1 + Math.random() * 3;
+      pos[i * 3 + 2] = -35 + Math.random() * 65;
+      yIni[i] = pos[i * 3 + 1];
+    }
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    geo.userData = { yIni };
+
+    const mat = new THREE.PointsMaterial({
+      size: 0.8,
+      color: 0x4fc3f7,
+      transparent: true,
+      opacity: 0,
+      depthWrite: false,
+      sizeAttenuation: true
+    });
+
+    infilPoints = new THREE.Points(geo, mat);
+    scene.add(infilPoints);
+  }
+
+  // =========================================================
+  // ANIMACIÓN
+  // =========================================================
+  function animate() {
+    requestAnimationFrame(animate);
+    const delta = clock.getDelta();
+    if (!pausado) tiempoSimulado += delta;
+
+    actualizarEtapa();
+    animarOleaje(tiempoSimulado);
+    animarSol(tiempoSimulado);
+    animarCamara(tiempoSimulado);
+
+    renderer.render(scene, camera);
+  }
+
+  function actualizarEtapa() {
+    const t = tiempoSimulado % CICLO_TOTAL;
+    const idx = Math.floor(t / DURACION_ETAPA);
+    const progreso = (t % DURACION_ETAPA) / DURACION_ETAPA;
+
+    if (idx !== etapaActual) {
+      etapaActual = idx;
+      const e = ETAPAS[idx];
+      const panel = document.getElementById('panel-etapa');
+      panel.className = e.clase;
+      document.getElementById('etapa-numero').textContent = e.num;
+      document.getElementById('etapa-titulo').textContent = e.titulo;
+      document.getElementById('etapa-desc').textContent = e.desc;
+
+      // Indicadores
+      document.querySelectorAll('.punto').forEach((p, i) => {
+        p.classList.toggle('activo', i === idx);
+      });
+    }
+    document.getElementById('barra-relleno').style.width = (progreso * 100) + '%';
+
+    // Niebla y fondo: transición suave entre etapas
+    const idxSig = (idx + 1) % TOTAL_ETAPAS;
+    const colorActual = new THREE.Color(ETAPAS[idx].colorNiebla);
+    const colorSig    = new THREE.Color(ETAPAS[idxSig].colorNiebla);
+    const colorMezcla = colorActual.clone().lerp(colorSig, progreso);
+    scene.background.copy(colorMezcla);
+    scene.fog.color.copy(colorMezcla);
+
+    // Llamamos a cada animación de etapa con su progreso
+    animarEvaporacion(idx, progreso);
+    animarCondensacion(idx, progreso);
+    animarPrecipitacion(idx, progreso);
+    animarEscorrentia(idx, progreso);
+    animarInfiltracion(idx, progreso);
+  }
+
+  // ----- Evaporación: vapor sube desde el océano -----
+  function animarEvaporacion(idx, prog) {
+    const mat = evapPoints.material;
+    let opacidadObjetivo = 0;
+    if (idx === 0)      opacidadObjetivo = Math.min(prog * 2, 1) * 0.85;
+    else if (idx === 1) opacidadObjetivo = (1 - prog) * 0.4; // se desvanece al condensarse
+    mat.opacity += (opacidadObjetivo - mat.opacity) * 0.08;
+
+    // Movimiento ascendente con sinuosidad
+    const pos = evapPoints.geometry.attributes.position;
+    const fase = evapPoints.geometry.userData.fase;
+    const dt = 0.05;
+    for (let i = 0; i < pos.count; i++) {
+      const ix = i * 3;
+      pos.array[ix + 1] += dt * (0.6 + Math.sin(tiempoSimulado * 0.5 + fase[i]) * 0.15);
+      // Sinuosidad horizontal pequeña
+      pos.array[ix]     += Math.sin(tiempoSimulado * 0.7 + fase[i]) * 0.02;
+      pos.array[ix + 2] += Math.cos(tiempoSimulado * 0.6 + fase[i] * 1.3) * 0.02;
+      // Reset al llegar arriba
+      if (pos.array[ix + 1] > 26) {
+        pos.array[ix + 1] = 0.3;
+        pos.array[ix]     = 18 + Math.random() * 50;
+        pos.array[ix + 2] = -50 + Math.random() * 100;
+      }
+    }
+    pos.needsUpdate = true;
+  }
+
+  // ----- Condensación: nubes crecen y oscurecen -----
+  function animarCondensacion(idx, prog) {
+    clouds.forEach((nube, i) => {
+      let escalaObjetivo;
+      let oscurecer;
+      if (idx === 0) {                    // evaporación: nubes pequeñas
+        escalaObjetivo = 0.05;
+        oscurecer = 0;
+      } else if (idx === 1) {             // condensación: crecen y oscurecen
+        escalaObjetivo = 0.3 + prog * 0.9;
+        oscurecer = prog * 0.45;
+      } else if (idx === 2) {             // precipitación: nubes grandes oscuras
+        escalaObjetivo = 1.2 - prog * 0.15;
+        oscurecer = 0.55 - prog * 0.15;
+      } else if (idx === 3) {             // escorrentía: aclaran y se reducen
+        escalaObjetivo = 0.95 - prog * 0.4;
+        oscurecer = 0.35 - prog * 0.25;
+      } else {                            // infiltración: cielo claro
+        escalaObjetivo = 0.45 - prog * 0.4;
+        oscurecer = 0.1 - prog * 0.1;
+      }
+
+      // Suavizado
+      const e = nube.scale.x;
+      const nuevo = e + (escalaObjetivo - e) * 0.05;
+      nube.scale.set(nuevo, nuevo, nuevo);
+
+      // Color
+      nube.children.forEach(p => {
+        const tono = 1 - oscurecer;
+        p.material.color.setRGB(tono, tono, Math.min(1, tono + 0.05));
+      });
+
+      // Deriva lenta
+      nube.position.x += nube.userData.driftX * 0.01;
+      nube.position.z += nube.userData.driftZ * 0.01;
+    });
+  }
+
+  // ----- Precipitación: lluvia visible cayendo -----
+  function animarPrecipitacion(idx, prog) {
+    const mat = rainPoints.material;
+    let opacidadObjetivo = 0;
+    if (idx === 2) {
+      // Sube rápido al inicio, mantiene, baja al final
+      if (prog < 0.15)      opacidadObjetivo = (prog / 0.15) * 0.95;
+      else if (prog < 0.85) opacidadObjetivo = 0.95;
+      else                  opacidadObjetivo = (1 - prog) / 0.15 * 0.95;
+    } else if (idx === 3 && prog < 0.2) {
+      // Cola breve al inicio de escorrentía
+      opacidadObjetivo = (1 - prog / 0.2) * 0.4;
+    }
+    mat.opacity += (opacidadObjetivo - mat.opacity) * 0.12;
+
+    // Caen incluso con opacidad baja para que estén listas
+    const pos = rainPoints.geometry.attributes.position;
+    const vel = rainPoints.geometry.userData.vel;
+    for (let i = 0; i < pos.count; i++) {
+      const ix = i * 3;
+      pos.array[ix + 1] -= vel[i];
+      // Reset cuando tocan suelo aproximado
+      if (pos.array[ix + 1] < 0) {
+        pos.array[ix]     = -50 + Math.random() * 65;
+        pos.array[ix + 1] = 22 + Math.random() * 14;
+        pos.array[ix + 2] = -35 + Math.random() * 70;
+      }
+    }
+    pos.needsUpdate = true;
+  }
+
+  // ----- Escorrentía: ríos visibles fluyendo -----
+  function animarEscorrentia(idx, prog) {
+    const mat = riverMesh.material;
+    let opacidadObjetivo = 0;
+    if (idx === 2 && prog > 0.5) {
+      opacidadObjetivo = (prog - 0.5) / 0.5 * 0.5; // empieza a aparecer al final de la lluvia
+    } else if (idx === 3) {
+      opacidadObjetivo = Math.min(0.95, 0.5 + prog * 0.5);
+    } else if (idx === 4) {
+      opacidadObjetivo = Math.max(0.2, 0.95 - prog * 0.6);
+    } else if (idx === 0 && prog < 0.3) {
+      opacidadObjetivo = Math.max(0, 0.35 - prog * 1.2);
+    }
+    mat.opacity += (opacidadObjetivo - mat.opacity) * 0.06;
+
+    // Animar el flujo de la textura (eje V — a lo largo del cauce)
+    riverMesh.userData.textura.offset.y -= 0.012;
+  }
+
+  // ----- Infiltración: partículas hundiéndose en el suelo -----
+  function animarInfiltracion(idx, prog) {
+    const mat = infilPoints.material;
+    let opacidadObjetivo = 0;
+    if (idx === 4) {
+      opacidadObjetivo = Math.min(prog * 2, 0.85);
+    } else if (idx === 3 && prog > 0.7) {
+      opacidadObjetivo = (prog - 0.7) / 0.3 * 0.5;
+    }
+    mat.opacity += (opacidadObjetivo - mat.opacity) * 0.08;
+
+    // Movimiento descendente
+    const pos = infilPoints.geometry.attributes.position;
+    const yIni = infilPoints.geometry.userData.yIni;
+    for (let i = 0; i < pos.count; i++) {
+      const ix = i * 3;
+      pos.array[ix + 1] -= 0.04;
+      // Reset al hundirse demasiado
+      if (pos.array[ix + 1] < -2) {
+        pos.array[ix + 1] = yIni[i];
+        pos.array[ix]     = -45 + Math.random() * 50;
+        pos.array[ix + 2] = -35 + Math.random() * 65;
+      }
+    }
+    pos.needsUpdate = true;
+  }
+
+  // ----- Sol: pulsación suave -----
+  function animarSol(t) {
+    const pulso = 1 + Math.sin(t * 1.5) * 0.04;
+    sun.scale.set(pulso, pulso, pulso);
+    if (sunGlow) sunGlow.material.opacity = 0.7 + Math.sin(t * 1.2) * 0.15;
+  }
+
+  // ----- Cámara: órbita lenta enfocando el centro -----
+  function animarCamara(t) {
+    const radio = 65;
+    const ang = t * 0.07;
+    camera.position.x = Math.cos(ang) * radio;
+    camera.position.z = Math.sin(ang) * radio;
+    // Altura suavemente variable
+    camera.position.y = 32 + Math.sin(t * 0.15) * 6;
+    camera.lookAt(-5, 4, 0);
+  }
+
+  // ----- Resize -----
+  function onResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+  </script>
+</body>
+</html>
