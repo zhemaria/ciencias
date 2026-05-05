@@ -1,1 +1,771 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador Ecosistémico Avanzado</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        body { margin: 0; overflow: hidden; background-color: #111; color: white; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        #webgl-canvas { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; }
+        #ui-container { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 10; pointer-events: none; display: flex; justify-content: space-between; padding: 1.5rem; box-sizing: border-box; }
+        .panel { background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.1); border-radius: 1rem; padding: 1.25rem; pointer-events: auto; max-height: 100%; overflow-y: auto; box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
+        .panel::-webkit-scrollbar { width: 6px; }
+        .panel::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+        
+        /* Custom ranges */
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; margin-bottom: 1rem; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #3b82f6; cursor: pointer; margin-top: -6px; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #475569; border-radius: 2px; }
+        
+        .btn { padding: 0.5rem 1rem; border-radius: 0.5rem; transition: all 0.2s; font-weight: 600; cursor: pointer; text-align: center; border: none; }
+        .btn:hover { transform: translateY(-2px); }
+        .btn:active { transform: translateY(0); }
+    </style>
+</head>
+<body>
 
+    <canvas id="webgl-canvas"></canvas>
+
+    <div id="ui-container">
+        <!-- Left Panel: Data & Graph -->
+        <div class="panel flex flex-col gap-4 w-80">
+            <h1 class="text-xl font-bold text-blue-400 tracking-wider">SIMULADOR ECOSISTÉMICO</h1>
+            
+            <div class="grid grid-cols-2 gap-3 text-sm">
+                <div class="bg-slate-800 p-2 rounded-lg border border-slate-700">
+                    <span class="text-slate-400 block text-xs uppercase">CO₂ Atmósfera</span>
+                    <span id="ui-co2" class="text-xl font-mono text-gray-200">1000</span>
+                </div>
+                <div class="bg-slate-800 p-2 rounded-lg border border-slate-700">
+                    <span class="text-slate-400 block text-xs uppercase">Temperatura</span>
+                    <span id="ui-temp" class="text-xl font-mono text-red-400">15.0°C</span>
+                </div>
+                <div class="bg-slate-800 p-2 rounded-lg border border-slate-700">
+                    <span class="text-slate-400 block text-xs uppercase">Biomasa (Plantas)</span>
+                    <span id="ui-plantas" class="text-xl font-mono text-green-400">600</span>
+                </div>
+                <div class="bg-slate-800 p-2 rounded-lg border border-slate-700">
+                    <span class="text-slate-400 block text-xs uppercase">Océano (Sup)</span>
+                    <span id="ui-oceano" class="text-xl font-mono text-blue-400">900</span>
+                </div>
+            </div>
+
+            <div class="mt-2">
+                <h2 class="text-xs text-slate-400 uppercase tracking-wider mb-2">Evolución en el tiempo</h2>
+                <canvas id="graph-canvas" width="280" height="150" class="w-full bg-slate-900 rounded border border-slate-700"></canvas>
+                <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+                    <span class="text-gray-300">● CO2</span>
+                    <span class="text-green-400">● Biomasa</span>
+                    <span class="text-red-400">● Temp (*10)</span>
+                </div>
+            </div>
+
+            <div id="alert-box" class="hidden mt-2 p-2 bg-red-900/50 border border-red-500 rounded text-red-200 text-xs text-center font-bold">
+                ¡ALERTA CLIMÁTICA: COLAPSO ECOLÓGICO INMINENTE!
+            </div>
+        </div>
+
+        <!-- Right Panel: Controls -->
+        <div class="panel flex flex-col gap-4 w-80">
+            <h2 class="text-sm font-bold text-slate-300 uppercase tracking-wider border-b border-slate-700 pb-2">Controles Interactivos</h2>
+            
+            <div>
+                <label class="flex justify-between text-xs text-slate-400 mb-1">
+                    <span>Emisiones Industriales</span>
+                    <span id="val-emisiones">0.5</span>
+                </label>
+                <input type="range" id="ctrl-emisiones" min="0" max="5" step="0.1" value="0.5">
+            </div>
+
+            <div>
+                <label class="flex justify-between text-xs text-slate-400 mb-1">
+                    <span>Deforestación</span>
+                    <span id="val-deforestacion">0.2</span>
+                </label>
+                <input type="range" id="ctrl-deforestacion" min="0" max="2" step="0.1" value="0.2">
+            </div>
+
+            <div>
+                <label class="flex justify-between text-xs text-slate-400 mb-1">
+                    <span>Reforestación / Conservación</span>
+                    <span id="val-reforestacion">0.8</span>
+                </label>
+                <input type="range" id="ctrl-reforestacion" min="0" max="2" step="0.1" value="0.8">
+            </div>
+
+            <div>
+                <label class="flex justify-between text-xs text-slate-400 mb-1">
+                    <span>Velocidad de Simulación</span>
+                    <span id="val-velocidad">1.0x</span>
+                </label>
+                <input type="range" id="ctrl-velocidad" min="0.1" max="5" step="0.1" value="1">
+            </div>
+
+            <h2 class="text-sm font-bold text-slate-300 uppercase tracking-wider border-b border-slate-700 pb-2 mt-2">Escenarios</h2>
+            <div class="grid grid-cols-2 gap-2">
+                <button class="btn bg-green-600 hover:bg-green-500 text-white text-xs" onclick="setEscenario('natural')">🌿 Natural</button>
+                <button class="btn bg-gray-600 hover:bg-gray-500 text-white text-xs" onclick="setEscenario('industrial')">🏭 Industrial</button>
+                <button class="btn bg-red-600 hover:bg-red-500 text-white text-xs" onclick="setEscenario('colapso')">🔥 Colapso</button>
+                <button class="btn bg-blue-600 hover:bg-blue-500 text-white text-xs" onclick="setEscenario('sostenible')">🌎 Restauración</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+// =============================
+// 1. ESTADO GLOBAL DEL SISTEMA
+// =============================
+const estado = {
+    tiempo: 0,
+    temperatura: 15,
+    escenario: "natural",
+    velocidadSimulacion: 1,
+    colapsoDetectado: false
+};
+
+// =============================
+// 2. RESERVORIOS DE CARBONO
+// =============================
+const reservorios = {
+    atmosfera: { carbono: 1000 },
+    plantas: { carbono: 600 },
+    animales: { carbono: 150 },
+    suelo: { carbono: 1200 },
+    oceanoSuperficie: { carbono: 900 },
+    oceanoProfundo: { carbono: 38000 },
+    fosiles: { carbono: 5000 }
+};
+
+// Guardar estado inicial para reseteos
+const reservoriosIniciales = JSON.parse(JSON.stringify(reservorios));
+
+// =============================
+// 3. PARÁMETROS DINÁMICOS
+// =============================
+const parametros = {
+    tasaFotosintesis: 0.8,
+    tasaRespiracion: 0.6,
+    tasaDescomposicion: 0.4,
+    tasaIntercambioOceano: 0.3,
+    tasaBombaBiologica: 0.1,
+    emisionesIndustriales: 0.5,
+    deforestacion: 0.2
+};
+
+// =============================
+// 4. MOTOR DE INTERCAMBIO
+// =============================
+function actualizarModelo(delta) {
+    if(delta > 0.1) delta = 0.1; // Prevenir saltos gigantes
+    
+    fotosintesis(delta);
+    respiracion(delta);
+    cadenaAlimenticia(delta);
+    descomposicion(delta);
+    intercambioOceano(delta);
+    combustion(delta);
+    deforestar(delta);
+    
+    // Feedback climático y eventos emergentes
+    actualizarTemperatura();
+    verificarColapso(delta);
+}
+
+function fotosintesis(delta) {
+    // Si la temperatura es muy alta, la fotosíntesis colapsa
+    let multiplicadorTemp = estado.temperatura > 25 ? 0.2 : (estado.temperatura > 20 ? 0.7 : 1);
+    
+    const absorcion = parametros.tasaFotosintesis * multiplicadorTemp * reservorios.plantas.carbono * (reservorios.atmosfera.carbono / 1000) * delta;
+    
+    const transferenciaReal = Math.min(absorcion, reservorios.atmosfera.carbono);
+    reservorios.atmosfera.carbono -= transferenciaReal;
+    reservorios.plantas.carbono += transferenciaReal;
+}
+
+function respiracion(delta) {
+    const plantasResp = Math.min(reservorios.plantas.carbono * parametros.tasaRespiracion * 0.01 * delta, reservorios.plantas.carbono);
+    const animalesResp = Math.min(reservorios.animales.carbono * 0.02 * delta, reservorios.animales.carbono);
+    
+    reservorios.plantas.carbono -= plantasResp;
+    reservorios.animales.carbono -= animalesResp;
+    reservorios.atmosfera.carbono += plantasResp + animalesResp;
+}
+
+function cadenaAlimenticia(delta) {
+    // Los animales mueren si no hay plantas
+    if (reservorios.plantas.carbono < 100) {
+        const muerte = reservorios.animales.carbono * 0.1 * delta;
+        reservorios.animales.carbono -= muerte;
+        reservorios.suelo.carbono += muerte;
+        return;
+    }
+    const consumo = Math.min(reservorios.plantas.carbono * 0.01 * delta, reservorios.plantas.carbono);
+    reservorios.plantas.carbono -= consumo;
+    reservorios.animales.carbono += consumo;
+}
+
+function descomposicion(delta) {
+    const transferencia = Math.min(reservorios.animales.carbono * parametros.tasaDescomposicion * 0.01 * delta, reservorios.animales.carbono);
+    reservorios.animales.carbono -= transferencia;
+    reservorios.suelo.carbono += transferencia * 0.7;
+    reservorios.atmosfera.carbono += transferencia * 0.3;
+}
+
+function intercambioOceano(delta) {
+    const gradiente = reservorios.atmosfera.carbono - reservorios.oceanoSuperficie.carbono;
+    const flujo = gradiente * parametros.tasaIntercambioOceano * 0.001 * delta;
+    
+    if (flujo > 0) { // Océano absorbe
+        const realFlujo = Math.min(flujo, reservorios.atmosfera.carbono);
+        reservorios.atmosfera.carbono -= realFlujo;
+        reservorios.oceanoSuperficie.carbono += realFlujo;
+    } else { // Océano emite
+        const realFlujo = Math.min(Math.abs(flujo), reservorios.oceanoSuperficie.carbono);
+        reservorios.oceanoSuperficie.carbono -= realFlujo;
+        reservorios.atmosfera.carbono += realFlujo;
+    }
+}
+
+function combustion(delta) {
+    const emisiones = Math.min(parametros.emisionesIndustriales * 5 * delta, reservorios.fosiles.carbono);
+    reservorios.fosiles.carbono -= emisiones;
+    reservorios.atmosfera.carbono += emisiones;
+}
+
+function deforestar(delta) {
+    const tala = Math.min(reservorios.plantas.carbono * parametros.deforestacion * 0.05 * delta, reservorios.plantas.carbono);
+    reservorios.plantas.carbono -= tala;
+    reservorios.atmosfera.carbono += tala * 0.5; // Quema o degradación rápida
+    reservorios.suelo.carbono += tala * 0.5;
+}
+
+function actualizarTemperatura() {
+    // Modelo simplificado de forzamiento radiativo
+    estado.temperatura = 14 + (reservorios.atmosfera.carbono - 1000) * 0.01;
+}
+
+function verificarColapso(delta) {
+    if (estado.temperatura > 26) {
+        estado.colapsoDetectado = true;
+        // Bosque muere aceleradamente, libera CO2
+        const muerteBosque = reservorios.plantas.carbono * 0.05 * delta;
+        reservorios.plantas.carbono -= muerteBosque;
+        reservorios.atmosfera.carbono += muerteBosque;
+    } else {
+        estado.colapsoDetectado = false;
+    }
+}
+
+// =============================
+// 5. GRÁFICO Y UI
+// =============================
+const graphCanvas = document.getElementById('graph-canvas');
+const ctx = graphCanvas.getContext('2d');
+const historial = { co2: [], biomasa: [], temp: [] };
+const maxHistoria = 100;
+
+function actualizarUI() {
+    document.getElementById('ui-co2').innerText = reservorios.atmosfera.carbono.toFixed(0);
+    document.getElementById('ui-temp').innerText = estado.temperatura.toFixed(1) + "°C";
+    document.getElementById('ui-plantas').innerText = reservorios.plantas.carbono.toFixed(0);
+    document.getElementById('ui-oceano').innerText = reservorios.oceanoSuperficie.carbono.toFixed(0);
+
+    const alerta = document.getElementById('alert-box');
+    if (estado.colapsoDetectado) {
+        alerta.classList.remove('hidden');
+    } else {
+        alerta.classList.add('hidden');
+    }
+
+    // Actualizar historial para gráfico
+    estado.tiempo++;
+    if (estado.tiempo % 10 === 0) {
+        historial.co2.push(reservorios.atmosfera.carbono);
+        historial.biomasa.push(reservorios.plantas.carbono);
+        historial.temp.push(estado.temperatura * 50); // Escalar temp para que se vea en el mismo gráfico
+        
+        if (historial.co2.length > maxHistoria) {
+            historial.co2.shift();
+            historial.biomasa.shift();
+            historial.temp.shift();
+        }
+        dibujarGrafico();
+    }
+}
+
+function dibujarGrafico() {
+    ctx.clearRect(0, 0, graphCanvas.width, graphCanvas.height);
+    if (historial.co2.length < 2) return;
+
+    const w = graphCanvas.width;
+    const h = graphCanvas.height;
+    const stepX = w / maxHistoria;
+    
+    // Auto-escalado
+    const maxVal = Math.max(...historial.co2, ...historial.biomasa, 2000); 
+
+    const drawLine = (data, color) => {
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        for (let i = 0; i < data.length; i++) {
+            const x = i * stepX;
+            const y = h - (data[i] / maxVal) * h;
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+    };
+
+    drawLine(historial.co2, '#e5e7eb');       // Gris claro
+    drawLine(historial.biomasa, '#4ade80');   // Verde
+    drawLine(historial.temp, '#f87171');      // Rojo
+}
+
+// Vinculación de Controles
+document.getElementById('ctrl-emisiones').addEventListener('input', (e) => {
+    parametros.emisionesIndustriales = parseFloat(e.target.value);
+    document.getElementById('val-emisiones').innerText = parametros.emisionesIndustriales.toFixed(1);
+});
+document.getElementById('ctrl-deforestacion').addEventListener('input', (e) => {
+    parametros.deforestacion = parseFloat(e.target.value);
+    document.getElementById('val-deforestacion').innerText = parametros.deforestacion.toFixed(1);
+});
+document.getElementById('ctrl-reforestacion').addEventListener('input', (e) => {
+    parametros.tasaFotosintesis = parseFloat(e.target.value);
+    document.getElementById('val-reforestacion').innerText = parametros.tasaFotosintesis.toFixed(1);
+});
+document.getElementById('ctrl-velocidad').addEventListener('input', (e) => {
+    estado.velocidadSimulacion = parseFloat(e.target.value);
+    document.getElementById('val-velocidad').innerText = estado.velocidadSimulacion.toFixed(1) + "x";
+});
+
+function setEscenario(esc) {
+    estado.escenario = esc;
+    
+    // Restaurar reservorios base si se cambia escenario drásticamente, o solo ajustar params
+    if (esc === "natural") {
+        parametros.emisionesIndustriales = 0;
+        parametros.deforestacion = 0;
+        parametros.tasaFotosintesis = 1.0;
+    } else if (esc === "industrial") {
+        parametros.emisionesIndustriales = 3.0;
+        parametros.deforestacion = 0.8;
+        parametros.tasaFotosintesis = 0.7;
+    } else if (esc === "colapso") {
+        parametros.emisionesIndustriales = 5.0;
+        parametros.deforestacion = 1.5;
+        reservorios.atmosfera.carbono += 1000; // Shock inmediato
+    } else if (esc === "sostenible") {
+        parametros.emisionesIndustriales = 0.1;
+        parametros.deforestacion = 0.0;
+        parametros.tasaFotosintesis = 1.5;
+    }
+
+    // Sincronizar UI sliders
+    document.getElementById('ctrl-emisiones').value = parametros.emisionesIndustriales;
+    document.getElementById('val-emisiones').innerText = parametros.emisionesIndustriales.toFixed(1);
+    
+    document.getElementById('ctrl-deforestacion').value = parametros.deforestacion;
+    document.getElementById('val-deforestacion').innerText = parametros.deforestacion.toFixed(1);
+    
+    document.getElementById('ctrl-reforestacion').value = parametros.tasaFotosintesis;
+    document.getElementById('val-reforestacion').innerText = parametros.tasaFotosintesis.toFixed(1);
+}
+
+// =============================
+// 6. SISTEMA VISUAL (Three.js)
+// =============================
+let scene, camera, renderer, clock;
+let bosqueGroup, faunaGroup, oceanoMesh, industriaGroup;
+let particulasSystem, particulasGeo, particulasData;
+
+function initEscena() {
+    const canvas = document.getElementById('webgl-canvas');
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    renderer.setPixelRatio(window.devicePixelRatio);
+
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x87CEEB); // Cielo por defecto
+    scene.fog = new THREE.FogExp2(0x87CEEB, 0.015);
+
+    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
+    camera.position.set(0, 30, 80);
+    camera.lookAt(0, 0, 0);
+
+    // Iluminación
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+    scene.add(ambientLight);
+
+    const sunLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    sunLight.position.set(50, 100, 50);
+    sunLight.castShadow = true;
+    sunLight.shadow.mapSize.width = 2048;
+    sunLight.shadow.mapSize.height = 2048;
+    sunLight.shadow.camera.near = 0.5;
+    sunLight.shadow.camera.far = 200;
+    sunLight.shadow.camera.left = -50;
+    sunLight.shadow.camera.right = 50;
+    sunLight.shadow.camera.top = 50;
+    sunLight.shadow.camera.bottom = -50;
+    scene.add(sunLight);
+
+    // Terreno Base
+    const terrainGeo = new THREE.PlaneGeometry(100, 100);
+    const terrainMat = new THREE.MeshStandardMaterial({ color: 0x3d5c3a, roughness: 0.9 });
+    const terrain = new THREE.Mesh(terrainGeo, terrainMat);
+    terrain.rotation.x = -Math.PI / 2;
+    terrain.position.x = -25; // Mitad izquierda
+    terrain.receiveShadow = true;
+    scene.add(terrain);
+
+    clock = new THREE.Clock();
+}
+
+function initBosque() {
+    bosqueGroup = new THREE.Group();
+    const treeGeo = new THREE.ConeGeometry(1.5, 4, 5);
+    const trunkGeo = new THREE.CylinderGeometry(0.3, 0.5, 2, 5);
+    const trunkMat = new THREE.MeshStandardMaterial({ color: 0x5c4033 });
+    const leafMat = new THREE.MeshStandardMaterial({ color: 0x228b22 });
+
+    // Generar 100 árboles
+    for (let i = 0; i < 100; i++) {
+        const tree = new THREE.Group();
+        const trunk = new THREE.Mesh(trunkGeo, trunkMat);
+        trunk.position.y = 1;
+        trunk.castShadow = true;
+        trunk.receiveShadow = true;
+        
+        const leaves = new THREE.Mesh(treeGeo, leafMat);
+        leaves.position.y = 3.5;
+        leaves.castShadow = true;
+        leaves.receiveShadow = true;
+        // Referencia para cambiar color después
+        leaves.name = "hojas"; 
+
+        tree.add(trunk);
+        tree.add(leaves);
+        
+        // Posicionar en la mitad terrestre
+        tree.position.set(-60 + Math.random() * 70, 0, -40 + Math.random() * 80);
+        
+        // Añadir escala aleatoria sutil
+        const s = 0.8 + Math.random() * 0.5;
+        tree.scale.set(s, s, s);
+
+        bosqueGroup.add(tree);
+    }
+    scene.add(bosqueGroup);
+}
+
+function initFauna() {
+    faunaGroup = new THREE.Group();
+    const animalGeo = new THREE.BoxGeometry(0.8, 0.8, 1.2);
+    const animalMat = new THREE.MeshStandardMaterial({ color: 0xddaa55 });
+
+    for(let i = 0; i < 20; i++) {
+        const animal = new THREE.Mesh(animalGeo, animalMat);
+        animal.position.set(-60 + Math.random() * 70, 0.4, -40 + Math.random() * 80);
+        animal.castShadow = true;
+        // Datos para movimiento
+        animal.userData = {
+            target: new THREE.Vector3(),
+            speed: 0.05 + Math.random() * 0.05,
+            getNewTarget: function() {
+                this.target.set(-60 + Math.random() * 70, 0.4, -40 + Math.random() * 80);
+            }
+        };
+        animal.userData.getNewTarget();
+        faunaGroup.add(animal);
+    }
+    scene.add(faunaGroup);
+}
+
+function initIndustria() {
+    industriaGroup = new THREE.Group();
+    const chimeneaGeo = new THREE.CylinderGeometry(1, 1.5, 8, 8);
+    const chimeneaMat = new THREE.MeshStandardMaterial({ color: 0x444444 });
+
+    for (let i = 0; i < 3; i++) {
+        const chimenea = new THREE.Mesh(chimeneaGeo, chimeneaMat);
+        chimenea.position.set(-15 + (i * 4), 4, -20 + (i * 2));
+        chimenea.castShadow = true;
+        industriaGroup.add(chimenea);
+    }
+    scene.add(industriaGroup);
+}
+
+function initOceano() {
+    const oceanoGeo = new THREE.PlaneGeometry(100, 100);
+    const oceanoMat = new THREE.MeshStandardMaterial({ 
+        color: 0x006994, 
+        transparent: true, 
+        opacity: 0.9,
+        roughness: 0.1,
+        metalness: 0.5
+    });
+    oceanoMesh = new THREE.Mesh(oceanoGeo, oceanoMat);
+    oceanoMesh.rotation.x = -Math.PI / 2;
+    oceanoMesh.position.x = 75; // Mitad derecha
+    oceanoMesh.position.y = -0.5; // Un poco por debajo de la tierra
+    scene.add(oceanoMesh);
+}
+
+function initParticulas() {
+    const numParticulas = 300;
+    particulasGeo = new THREE.BufferGeometry();
+    const posArray = new Float32Array(numParticulas * 3);
+    const colorArray = new Float32Array(numParticulas * 3);
+    
+    particulasData = [];
+    const colorAtm = new THREE.Color(0xcccccc); // Gris
+    
+    for(let i=0; i<numParticulas; i++) {
+        // Inicializar en atmósfera
+        posArray[i*3] = (Math.random() - 0.5) * 150;
+        posArray[i*3+1] = 10 + Math.random() * 40;
+        posArray[i*3+2] = (Math.random() - 0.5) * 100;
+
+        colorArray[i*3] = colorAtm.r;
+        colorArray[i*3+1] = colorAtm.g;
+        colorArray[i*3+2] = colorAtm.b;
+
+        particulasData.push({
+            estado: "atm",
+            velocidad: new THREE.Vector3((Math.random()-0.5)*0.2, (Math.random()-0.5)*0.2, (Math.random()-0.5)*0.2),
+            target: null,
+            edad: Math.random() * 100
+        });
+    }
+
+    particulasGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+    particulasGeo.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
+
+    // Usar material que soporte vertexColors
+    const particulasMat = new THREE.PointsMaterial({
+        size: 0.8,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.8
+    });
+
+    particulasSystem = new THREE.Points(particulasGeo, particulasMat);
+    scene.add(particulasSystem);
+}
+
+// Actualizaciones de subsistemas
+function actualizarBosque() {
+    // Escala basada en carbono
+    let escala = 0.2 + (reservorios.plantas.carbono / 1000);
+    escala = Math.max(0.1, Math.min(escala, 1.5));
+    
+    // Suavizar la escala
+    bosqueGroup.scale.lerp(new THREE.Vector3(escala, escala, escala), 0.05);
+
+    // Color basado en estrés térmico
+    let targetColor = new THREE.Color(0x228b22); // Verde sano
+    if (estado.temperatura > 22) {
+        targetColor = new THREE.Color(0x8b8b00); // Amarillento
+    }
+    if (estado.temperatura > 25) {
+        targetColor = new THREE.Color(0x5c4033); // Marrón / muerto
+    }
+
+    bosqueGroup.children.forEach(tree => {
+        tree.children.forEach(part => {
+            if (part.name === "hojas") {
+                part.material.color.lerp(targetColor, 0.02);
+            }
+        });
+    });
+}
+
+function actualizarFauna() {
+    const numVisibles = Math.min(20, Math.floor(reservorios.animales.carbono / 10));
+    
+    faunaGroup.children.forEach((animal, i) => {
+        if (i < numVisibles) {
+            animal.visible = true;
+            
+            // Movimiento
+            const dir = new THREE.Vector3().subVectors(animal.userData.target, animal.position);
+            if (dir.length() < 1) {
+                animal.userData.getNewTarget();
+            } else {
+                dir.normalize();
+                animal.position.add(dir.multiplyScalar(animal.userData.speed));
+                animal.lookAt(animal.userData.target);
+            }
+        } else {
+            animal.visible = false;
+        }
+    });
+}
+
+function actualizarIndustria() {
+    // Escalar la altura de las chimeneas ligeramente basado en emisiones (visual)
+    const scalaBase = 1 + (parametros.emisionesIndustriales * 0.2);
+    industriaGroup.scale.set(1, scalaBase, 1);
+}
+
+function actualizarOceano() {
+    // Acidificación del océano oscurece / cambia color
+    const carbonBase = 900;
+    const ratio = Math.max(0, Math.min(1, (reservorios.oceanoSuperficie.carbono - carbonBase) / 1000));
+    
+    const colorNormal = new THREE.Color(0x006994);
+    const colorAcido = new THREE.Color(0x003344); // Más oscuro, verde/turbio
+    
+    oceanoMesh.material.color.lerpColors(colorNormal, colorAcido, ratio);
+    
+    // Olas simples animando opacidad o posición y
+    oceanoMesh.position.y = -0.5 + Math.sin(estado.tiempo * 0.1) * 0.2;
+}
+
+function actualizarAtmosfera() {
+    // Cambios en cielo y niebla según CO2
+    const co2Exceso = Math.max(0, reservorios.atmosfera.carbono - 1000);
+    const factorPolucion = Math.min(1, co2Exceso / 2000);
+
+    const colorCieloLimpio = new THREE.Color(0x87CEEB);
+    const colorCieloSucio = new THREE.Color(0x8B4513); // Tono rojizo/marrón
+    
+    const currentColor = new THREE.Color().lerpColors(colorCieloLimpio, colorCieloSucio, factorPolucion);
+    scene.background = currentColor;
+    scene.fog.color = currentColor;
+    
+    // Niebla más densa con más CO2
+    scene.fog.density = 0.015 + (factorPolucion * 0.03);
+}
+
+function actualizarParticulasSistema() {
+    const positions = particulasGeo.attributes.position.array;
+    const colors = particulasGeo.attributes.color.array;
+
+    // Colores por estado
+    const colorMap = {
+        "atm": new THREE.Color(0xcccccc),
+        "planta": new THREE.Color(0x4ade80),
+        "animal": new THREE.Color(0xfacc15),
+        "suelo": new THREE.Color(0x78350f),
+        "oceano": new THREE.Color(0x3b82f6)
+    };
+
+    // Probabilidades de transición basadas en parámetros globales
+    // Esto es puramente visual, no afecta al motor de datos
+    const probFoto = parametros.tasaFotosintesis * 0.01;
+    const probResp = parametros.tasaRespiracion * 0.01;
+    const probEmi = parametros.emisionesIndustriales * 0.02;
+
+    for (let i = 0; i < particulasData.length; i++) {
+        let p = particulasData[i];
+        let i3 = i * 3;
+
+        // Lógica de transición de estado
+        if (p.estado === "atm") {
+            if (Math.random() < probFoto) { p.estado = "planta"; p.target = new THREE.Vector3(-25 + (Math.random()-0.5)*50, 2, -10 + (Math.random()-0.5)*50); }
+            else if (Math.random() < 0.005) { p.estado = "oceano"; p.target = new THREE.Vector3(75 + (Math.random()-0.5)*50, 0, (Math.random()-0.5)*100); }
+        } else if (p.estado === "planta") {
+            if (Math.random() < probResp) { p.estado = "atm"; p.target = null; }
+            else if (Math.random() < 0.01) { p.estado = "suelo"; p.target = new THREE.Vector3(positions[i3], -1, positions[i3+2]); }
+            else if (Math.random() < 0.005) { p.estado = "animal"; p.target = new THREE.Vector3(positions[i3], 1, positions[i3+2]); }
+        } else if (p.estado === "suelo" || p.estado === "animal" || p.estado === "oceano") {
+            if (Math.random() < 0.005) { p.estado = "atm"; p.target = null; }
+        }
+        
+        // Efecto industrial forzando partículas a la atmósfera
+        if (parametros.emisionesIndustriales > 1 && Math.random() < probEmi && p.estado !== "atm") {
+            p.estado = "atm";
+            // Spawnear desde chimenea
+            positions[i3] = -15; positions[i3+1] = 8; positions[i3+2] = -20;
+            p.target = null;
+        }
+
+        // Movimiento según estado
+        if (p.estado === "atm") {
+            // Movimiento caótico en el aire
+            positions[i3] += p.velocidad.x;
+            positions[i3+1] += p.velocidad.y;
+            positions[i3+2] += p.velocidad.z;
+
+            // Mantener dentro de límites
+            if (positions[i3+1] < 10) p.velocidad.y = Math.abs(p.velocidad.y);
+            if (positions[i3+1] > 60) p.velocidad.y = -Math.abs(p.velocidad.y);
+            if (Math.abs(positions[i3]) > 100) p.velocidad.x *= -1;
+            if (Math.abs(positions[i3+2]) > 100) p.velocidad.z *= -1;
+        } else if (p.target) {
+            // Ir hacia el objetivo (Lerp)
+            positions[i3] += (p.target.x - positions[i3]) * 0.05;
+            positions[i3+1] += (p.target.y - positions[i3+1]) * 0.05;
+            positions[i3+2] += (p.target.z - positions[i3+2]) * 0.05;
+        }
+
+        // Actualizar Color
+        const targetColor = colorMap[p.estado];
+        colors[i3] += (targetColor.r - colors[i3]) * 0.1;
+        colors[i3+1] += (targetColor.g - colors[i3+1]) * 0.1;
+        colors[i3+2] += (targetColor.b - colors[i3+2]) * 0.1;
+    }
+
+    particulasGeo.attributes.position.needsUpdate = true;
+    particulasGeo.attributes.color.needsUpdate = true;
+}
+
+// =============================
+// 7. BUCLE PRINCIPAL
+// =============================
+function animate() {
+    requestAnimationFrame(animate);
+    
+    // Limitar delta time para evitar inestabilidad si la pestaña pasa a segundo plano
+    let delta = clock.getDelta();
+    if (delta > 0.1) delta = 0.1; 
+    
+    const deltaSimulado = delta * estado.velocidadSimulacion * 50; // Factor *50 para que se vea rápido en tiempo real
+
+    // Actualizar Lógica Central
+    actualizarModelo(deltaSimulado);
+    
+    // Actualizar Subsistemas Visuales
+    actualizarBosque();
+    actualizarFauna();
+    actualizarIndustria();
+    actualizarOceano();
+    actualizarAtmosfera();
+    actualizarParticulasSistema();
+    
+    // Actualizar UI
+    actualizarUI();
+
+    renderer.render(scene, camera);
+}
+
+// Responsive
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+// Inicialización
+initEscena();
+initBosque();
+initFauna();
+initIndustria();
+initOceano();
+initParticulas();
+
+// Dibujar gráfico inicial
+ctx.fillStyle = '#0f172a';
+ctx.fillRect(0,0, graphCanvas.width, graphCanvas.height);
+
+animate();
+
+</script>
+</body>
+</html>
