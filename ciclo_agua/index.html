@@ -146,6 +146,90 @@
     .stage-3 #etapa-numero { color: #22d3ee !important; }
     .stage-4 { border-left-color: #84cc16 !important; }
     .stage-4 #etapa-numero { color: #84cc16 !important; }
+
+    /* ===== Indicadores clicables ===== */
+    #indicadores { pointer-events: auto !important; }
+    .punto { cursor: pointer; }
+    .punto:hover {
+      background: rgba(56, 189, 248, 0.18);
+      opacity: 0.95;
+    }
+
+    /* ===== Botón de modo educativo (arriba derecha, debajo de pausa) ===== */
+    #btn-educativo {
+      position: absolute;
+      top: 70px;
+      right: 22px;
+      padding: 10px 16px;
+      background: rgba(8, 18, 35, 0.75);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: white;
+      font-size: 13px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    #btn-educativo:hover {
+      background: rgba(132, 204, 22, 0.25);
+      border-color: rgba(132, 204, 22, 0.5);
+    }
+    #btn-educativo.activo {
+      background: rgba(132, 204, 22, 0.3);
+      border-color: rgba(132, 204, 22, 0.6);
+    }
+
+    /* ===== Panel educativo (overlay central) ===== */
+    #panel-educativo {
+      display: none;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      max-width: 580px;
+      width: calc(100% - 60px);
+      max-height: 80vh;
+      overflow-y: auto;
+      padding: 28px 32px;
+      background: rgba(8, 18, 35, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 18px;
+      border: 2px solid rgba(132, 204, 22, 0.4);
+      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6);
+      z-index: 100;
+      pointer-events: auto;
+    }
+    #panel-educativo.visible { display: block; }
+    #panel-educativo h2 {
+      margin: 0 0 14px 0;
+      font-size: 22px;
+      color: #84cc16;
+      border-bottom: 2px solid rgba(132, 204, 22, 0.3);
+      padding-bottom: 10px;
+    }
+    #panel-educativo p { margin: 10px 0; line-height: 1.6; font-size: 15px; }
+    #panel-educativo ul { margin: 10px 0; padding-left: 22px; line-height: 1.7; }
+    #panel-educativo li { margin: 4px 0; font-size: 14px; }
+    #panel-educativo b { color: #bef264; }
+    #btn-continuar {
+      display: block;
+      margin: 20px auto 0;
+      padding: 12px 26px;
+      background: linear-gradient(135deg, #65a30d, #84cc16);
+      color: white;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    #btn-continuar:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(132, 204, 22, 0.4);
+    }
   </style>
 </head>
 <body>
@@ -166,6 +250,13 @@
   </div>
 
   <button id="btn-pausa">⏸ Pausar</button>
+  <button id="btn-educativo">📚 Modo educativo: OFF</button>
+
+  <div id="panel-educativo">
+    <h2 id="edu-titulo">Título</h2>
+    <div id="edu-cuerpo"></div>
+    <button id="btn-continuar">Siguiente etapa →</button>
+  </div>
 
   <div id="ayuda">
     Cámara automática siguiendo el ciclo<br>
@@ -185,11 +276,16 @@
   let scene, camera, renderer, clock;
   let terrain, ocean, sun, sunGlow, sunLight;
   let clouds = [];
-  let rainPoints, evapPoints, infilPoints;
-  let riverMesh, riverFlow;
+  let rainPoints, evapPoints, infilPoints, chispas;
+  let mallasRio = [];                        // todas las mallas de río (principal + afluente + delta)
+  let curvasFlujo = [];                      // {curva, pesoChispas} para cada cauce
+  let etiquetas3D = [];                      // sprites con texto que aparecen por etapa
   let pausado = false;
   let tiempoSimulado = 0;
   let etapaActual = -1;
+  let modoEducativo = false;
+  let pausaEducativaActiva = false;
+  let ultimaEtapaPausada = -1;               // para no re-pausar en la misma etapa
 
   const DURACION_ETAPA = 5.0; // segundos
   const TOTAL_ETAPAS = 5;
@@ -199,15 +295,119 @@
     { num: "Etapa 1 de 5", titulo: "Evaporación",   desc: "El sol calienta el océano y convierte el agua líquida en vapor que asciende a la atmósfera.", clase: "stage-0", colorNiebla: 0x87ceeb },
     { num: "Etapa 2 de 5", titulo: "Condensación",  desc: "El vapor se enfría al subir y se agrupa en gotitas microscópicas, formando nubes densas.",      clase: "stage-1", colorNiebla: 0x5a6878 },
     { num: "Etapa 3 de 5", titulo: "Precipitación", desc: "Las gotas se hacen pesadas y caen en forma de lluvia hacia montañas, valles y océanos.",         clase: "stage-2", colorNiebla: 0x4a5568 },
-    { num: "Etapa 3 de 5", titulo: "Escorrentía",   desc: "El agua fluye por la superficie, formando arroyos y ríos que regresan al océano.",               clase: "stage-3", colorNiebla: 0x6b89a8 },
+    { num: "Etapa 4 de 5", titulo: "Escorrentía",   desc: "El agua fluye por la superficie, formando arroyos y ríos que regresan al océano.",               clase: "stage-3", colorNiebla: 0x6b89a8 },
     { num: "Etapa 5 de 5", titulo: "Infiltración",  desc: "Parte del agua penetra en el suelo y alimenta los acuíferos subterráneos.",                       clase: "stage-4", colorNiebla: 0x8eb4d8 }
   ];
-  // (Pequeño detalle: corrijo numeración en pantalla — los textos completos abajo)
-  ETAPAS[0].num = "Etapa 1 de 5";
-  ETAPAS[1].num = "Etapa 2 de 5";
-  ETAPAS[2].num = "Etapa 3 de 5";
-  ETAPAS[3].num = "Etapa 4 de 5";
-  ETAPAS[4].num = "Etapa 5 de 5";
+
+  // ---------- Etiquetas 3D por etapa ----------
+  // Cada etiqueta tiene texto, posición (mundo), color de borde y opcionalmente
+  // un offset oscilante (para flechas que "respiran")
+  const ETIQUETAS_POR_ETAPA = [
+    [ // 0 - Evaporación
+      { texto: '☀  Vapor sube ↑',      pos: [40, 14, 5],   color: '#fbbf24' },
+      { texto: 'El sol calienta',       pos: [55, 22, -20], color: '#fde047' }
+    ],
+    [ // 1 - Condensación
+      { texto: '☁  Se forman gotas',    pos: [-15, 40, 0],  color: '#94a3b8' }
+    ],
+    [ // 2 - Precipitación
+      { texto: '🌧  Lluvia ↓',          pos: [-22, 30, 5],  color: '#38bdf8' }
+    ],
+    [ // 3 - Escorrentía
+      { texto: '🏞  Río baja al mar →', pos: [-5, 12, 5],   color: '#22d3ee' }
+    ],
+    [ // 4 - Infiltración
+      { texto: '🌱  Se filtra en el suelo ↓', pos: [-20, 8, -10], color: '#84cc16' }
+    ]
+  ];
+
+  // ---------- Explicaciones extendidas (modo educativo) ----------
+  const EXPLICACIONES = [
+    {
+      titulo: '☀️ Más sobre la Evaporación',
+      cuerpo: `
+        <p><b>¿Qué pasa a nivel molecular?</b> Cuando el sol calienta el agua, las
+        moléculas adquieren tanta energía que se separan unas de otras y escapan
+        al aire como vapor invisible.</p>
+        <ul>
+          <li>Cada día, el sol evapora aproximadamente <b>1 200 km³</b> de agua de la superficie de la Tierra.</li>
+          <li>El <b>86 %</b> de la evaporación viene de los océanos.</li>
+          <li>Las plantas también "evaporan" agua por sus hojas — proceso llamado <b>transpiración</b>.</li>
+          <li>A más calor y más viento, mayor evaporación.</li>
+        </ul>
+        <p><b>Pregunta de repaso:</b> ¿Por qué un charco se seca más rápido en un día
+        caluroso y ventoso que en uno fresco y húmedo?</p>
+      `
+    },
+    {
+      titulo: '☁️ Más sobre la Condensación',
+      cuerpo: `
+        <p><b>¿Cómo se forman las nubes?</b> Al subir, el vapor de agua se enfría.
+        Cuando la temperatura cae lo suficiente, las moléculas vuelven a unirse
+        formando gotitas microscópicas alrededor de partículas de polvo, sal o
+        humo, llamadas <b>núcleos de condensación</b>.</p>
+        <ul>
+          <li>Una nube cumulus puede contener <b>millones de litros</b> de agua.</li>
+          <li>Tipos principales: <b>cúmulos</b> (algodón), <b>estratos</b> (capas), <b>cirros</b> (plumas altas).</li>
+          <li>La condensación libera <b>calor latente</b>, lo que alimenta tormentas y huracanes.</li>
+        </ul>
+        <p><b>Aplicación cotidiana:</b> Es lo mismo que pasa cuando ves gotitas
+        formarse afuera de un vaso frío en un día caluroso, o el vaho que aparece
+        en el espejo del baño después de la ducha.</p>
+      `
+    },
+    {
+      titulo: '🌧️ Más sobre la Precipitación',
+      cuerpo: `
+        <p><b>¿Cuándo llueve?</b> Las gotitas dentro de la nube se van uniendo
+        entre sí en un proceso llamado <b>coalescencia</b>. Cuando el peso supera
+        la fuerza ascendente del aire, caen como precipitación.</p>
+        <ul>
+          <li><b>Lluvia:</b> agua líquida (T &gt; 0 °C todo el camino).</li>
+          <li><b>Nieve:</b> cristales de hielo cuando hace mucho frío.</li>
+          <li><b>Granizo:</b> gotas que se congelan al subir y bajar varias veces dentro de tormentas eléctricas.</li>
+          <li><b>Aguanieve:</b> mezcla de lluvia y nieve.</li>
+        </ul>
+        <p><b>Dato curioso:</b> Una gota de lluvia tarda solo unos minutos en caer
+        desde la nube al suelo, pero esa molécula de agua puede haber pasado
+        <b>años</b> dando vueltas por la atmósfera antes de caer.</p>
+      `
+    },
+    {
+      titulo: '🏞️ Más sobre la Escorrentía',
+      cuerpo: `
+        <p><b>El viaje del agua de regreso al mar:</b> El agua que cae en zonas
+        elevadas fluye cuesta abajo por gravedad, juntándose en arroyos, después
+        en ríos, y finalmente formando <b>deltas</b> donde regresa al océano.</p>
+        <ul>
+          <li>Los ríos transportan <b>nutrientes y sedimentos</b> que fertilizan los suelos.</li>
+          <li>A lo largo de millones de años forman valles, cañones y deltas.</li>
+          <li>Son fuente vital de agua dulce para ciudades, agricultura y ecosistemas.</li>
+          <li>Los <b>afluentes</b> son ríos más pequeños que se unen al río principal.</li>
+        </ul>
+        <p><b>Conciencia ambiental:</b> Lo que cae al suelo o se vierte a los ríos
+        — fertilizantes, basura, químicos — termina tarde o temprano en el mar.</p>
+      `
+    },
+    {
+      titulo: '🌱 Más sobre la Infiltración',
+      cuerpo: `
+        <p><b>El agua subterránea:</b> Parte del agua de lluvia no fluye sobre la
+        superficie sino que se filtra entre los granos de tierra y las grietas de
+        las rocas, alimentando los <b>acuíferos</b>.</p>
+        <ul>
+          <li>El <b>30 %</b> del agua dulce líquida del planeta está bajo tierra.</li>
+          <li>Los acuíferos son la principal fuente de agua para muchas ciudades.</li>
+          <li>El agua subterránea puede tardar <b>cientos o miles de años</b> en regresar a la superficie.</li>
+          <li>Brota naturalmente en <b>manantiales</b> o se extrae mediante <b>pozos</b>.</li>
+        </ul>
+        <p><b>Y el ciclo se reinicia:</b> Esta agua subterránea brotará en
+        manantiales, será bombeada por humanos, o llegará lentamente al mar… y
+        volverá a evaporarse para empezar todo de nuevo. <b>El agua nunca se
+        crea ni se destruye, solo viaja.</b></p>
+      `
+    }
+  ];
 
   // ---------- Inicialización ----------
   init();
@@ -239,13 +439,52 @@
     crearLluvia();
     crearEvaporacion();
     crearRios();
+    crearIsletasDelta();
+    crearChispas();
     crearInfiltracion();
+    crearEtiquetas3D();
 
     window.addEventListener('resize', onResize, false);
+
+    // Botón pausa
     document.getElementById('btn-pausa').addEventListener('click', () => {
       pausado = !pausado;
       document.getElementById('btn-pausa').innerHTML = pausado ? '▶ Reanudar' : '⏸ Pausar';
     });
+
+    // Botón modo educativo
+    document.getElementById('btn-educativo').addEventListener('click', () => {
+      modoEducativo = !modoEducativo;
+      const btn = document.getElementById('btn-educativo');
+      btn.textContent = modoEducativo ? '📚 Modo educativo: ON' : '📚 Modo educativo: OFF';
+      btn.classList.toggle('activo', modoEducativo);
+      if (!modoEducativo) cerrarPanelEducativo(); // si lo apago durante una pausa, libero
+    });
+
+    // Botón continuar (modo educativo)
+    document.getElementById('btn-continuar').addEventListener('click', () => {
+      cerrarPanelEducativo();
+      // Avanzo al inicio de la siguiente etapa
+      const ciclos = Math.floor(tiempoSimulado / CICLO_TOTAL);
+      const etapaActualLocal = Math.floor((tiempoSimulado % CICLO_TOTAL) / DURACION_ETAPA);
+      const sigEtapa = (etapaActualLocal + 1) % TOTAL_ETAPAS;
+      const ciclosNuevos = sigEtapa === 0 ? ciclos + 1 : ciclos;
+      tiempoSimulado = ciclosNuevos * CICLO_TOTAL + sigEtapa * DURACION_ETAPA + 0.05;
+      etapaActual = -1; // forzar refresco
+    });
+
+    // Clic en pastillas para saltar de etapa
+    document.querySelectorAll('.punto').forEach((p, idx) => {
+      p.addEventListener('click', () => saltarAEtapa(idx));
+    });
+  }
+
+  function saltarAEtapa(idx) {
+    cerrarPanelEducativo();
+    const ciclos = Math.floor(tiempoSimulado / CICLO_TOTAL);
+    tiempoSimulado = ciclos * CICLO_TOTAL + idx * DURACION_ETAPA + 0.05;
+    etapaActual = -1;
+    ultimaEtapaPausada = -1; // permitir nueva pausa educativa
   }
 
   // ---------- Luces ----------
@@ -621,10 +860,11 @@
   }
 
   function crearRios() {
-    // Camino del río en coordenadas (x, z) del mundo. La montaña está
+    // Camino del río principal en coordenadas (x, z) del mundo. La montaña está
     // centrada en world (x=-35, z=10). Bajamos serpenteando hacia el océano (x>12).
-    const camino = [
-      [-33,  9],   // cerca de la cima
+    // El río principal termina en x=16 para que el delta tome el relevo.
+    const caminoPrincipal = [
+      [-33,  9],
       [-30,  8],
       [-26,  6],
       [-21,  4.5],
@@ -633,39 +873,144 @@
       [-3,   1.5],
       [ 4,   1],
       [ 11,  0.5],
-      [ 17,  0],
-      [ 22,  0]
+      [ 16,  0]
     ];
 
-    // Construir Vector3 con y=0 (la altura real la pondrá la cinta vértice por
-    // vértice). Solo nos interesa el camino XZ a través del cual fluye el río.
-    const puntos = camino.map(([x, z]) => new THREE.Vector3(x, 0, z));
+    // Afluente: nace cerca de la colina secundaria (plano (-5, 25) → world (-5, *, -25))
+    // y se une al río principal alrededor de (-9, 2).
+    const caminoAfluente = [
+      [-2,  -22],
+      [-4,  -17],
+      [-6,  -12],
+      [-8,   -7],
+      [-9,   -2],
+      [-9,    2]
+    ];
 
-    const curva = new THREE.CatmullRomCurve3(puntos, false, 'catmullrom', 0.4);
-    // 220 segmentos ⇒ muestreo denso del terreno; offset 0.35 sobre la superficie.
-    const geo = crearCintaRio(curva, 1.7, 220, 0.35);
+    // Delta: 3 brazos que se abren en abanico desde el final del río principal (16, 0)
+    const caminosDelta = [
+      [ [16, 0], [19, -2], [23, -5], [27, -8] ],   // brazo norte
+      [ [16, 0], [21,  0], [25,  0], [29,  0] ],   // brazo central
+      [ [16, 0], [19,  2], [23,  5], [27,  8] ]    // brazo sur
+    ];
 
+    // ----- Crear las mallas -----
     const texFlujo = generarTexturaFlujo();
     texFlujo.wrapS = texFlujo.wrapT = THREE.RepeatWrapping;
 
-    const mat = new THREE.MeshStandardMaterial({
-      color: 0x5dc8fa,
-      transparent: true,
-      opacity: 0,
-      roughness: 0.18,
-      metalness: 0.55,
-      map: texFlujo,
-      emissive: 0x1976d2,
-      emissiveIntensity: 0.18,
-      side: THREE.DoubleSide,
-      depthWrite: false
-    });
+    function nuevoMaterial() {
+      const mat = new THREE.MeshStandardMaterial({
+        color: 0x5dc8fa,
+        transparent: true,
+        opacity: 0,
+        roughness: 0.18,
+        metalness: 0.55,
+        map: texFlujo,
+        emissive: 0x1976d2,
+        emissiveIntensity: 0.18,
+        side: THREE.DoubleSide,
+        depthWrite: false
+      });
+      mat.userData = { textura: texFlujo };
+      return mat;
+    }
 
-    riverMesh = new THREE.Mesh(geo, mat);
-    riverMesh.userData.curva = curva;
-    riverMesh.userData.textura = texFlujo;
-    riverMesh.renderOrder = 1; // se dibuja después del terreno
-    scene.add(riverMesh);
+    function construir(camino, anchura, segmentos, peso) {
+      const puntos = camino.map(([x, z]) => new THREE.Vector3(x, 0, z));
+      const curva = new THREE.CatmullRomCurve3(puntos, false, 'catmullrom', 0.4);
+      const geo = crearCintaRio(curva, anchura, segmentos, 0.35);
+      const malla = new THREE.Mesh(geo, nuevoMaterial());
+      malla.renderOrder = 1;
+      scene.add(malla);
+      mallasRio.push(malla);
+      curvasFlujo.push({ curva, peso });
+      return { curva, malla };
+    }
+
+    construir(caminoPrincipal, 1.7, 220, 1.0);                          // río principal
+    construir(caminoAfluente,  1.0, 130, 0.55);                         // afluente
+    caminosDelta.forEach(c => construir(c, 0.9, 80, 0.45));             // delta
+  }
+
+  // ---------- Islotes del delta (sedimento depositado entre los brazos) ----------
+  // En un delta real (Misisipi, Nilo, Ganges), el río deposita sedimento al
+  // chocar con el agua tranquila del mar. Esos sedimentos forman pequeñas
+  // islas triangulares entre los brazos del abanico. Las simulamos con
+  // elipsoides aplastados con arena en los bordes y vegetación arriba.
+  function crearIsletasDelta() {
+    // Posiciones entre los brazos del delta (que van de (16,0) hacia el este).
+    // Brazo norte: (16,0) → (27,-8). Brazo sur: (16,0) → (27,8). Centro recto.
+    // Los islotes van en las "lengüetas" intermedias.
+    const islotes = [
+      // Grandes: pegados a la desembocadura, entre brazos
+      { x: 21, z: -2.6, sx: 3.0, sy: 0.65, sz: 1.0, semilla: 0.7 },
+      { x: 21, z:  2.6, sx: 3.0, sy: 0.65, sz: 1.0, semilla: 1.3 },
+      // Medianos: a media distancia
+      { x: 25, z: -4.5, sx: 1.9, sy: 0.45, sz: 0.75, semilla: 2.1 },
+      { x: 25, z:  4.5, sx: 1.9, sy: 0.45, sz: 0.75, semilla: 0.4 },
+      // Pequeños: cerca de las puntas exteriores del abanico
+      { x: 28, z: -1.8, sx: 1.2, sy: 0.32, sz: 0.6, semilla: 1.7 },
+      { x: 28, z:  1.8, sx: 1.2, sy: 0.32, sz: 0.6, semilla: 2.5 }
+    ];
+
+    islotes.forEach(({ x, z, sx, sy, sz, semilla }) => {
+      const geo = new THREE.SphereGeometry(1, 24, 14);
+      const pos = geo.attributes.position;
+      const colores = [];
+
+      for (let i = 0; i < pos.count; i++) {
+        const x0 = pos.getX(i);
+        const y0 = pos.getY(i);
+        const z0 = pos.getZ(i);
+
+        // Escalado direccional + ruido sinusoidal suave para que no parezca
+        // un huevo perfecto sino una isla con costa irregular
+        const ruidoX = Math.sin(z0 * 4 + semilla) * 0.10;
+        const ruidoZ = Math.cos(x0 * 3.5 + semilla * 1.7) * 0.10;
+        const ruidoY = Math.sin(x0 * 5 + z0 * 4 + semilla) * 0.05;
+
+        const xf = x0 * sx + ruidoX;
+        const yf = y0 * sy + ruidoY;
+        const zf = z0 * sz + ruidoZ;
+        pos.setXYZ(i, xf, yf, zf);
+
+        // Color por altura: arena en la costa (yf bajo), césped arriba
+        if (yf > sy * 0.45) {
+          // Verde césped, ligeramente variado
+          const v = 0.42 + Math.random() * 0.08;
+          colores.push(0.32, v, 0.22);
+        } else if (yf > sy * 0.10) {
+          // Transición arena-césped
+          const t = (yf - sy * 0.10) / (sy * 0.35);
+          colores.push(
+            0.85 - t * 0.53,
+            0.78 - t * 0.23,
+            0.55 - t * 0.33
+          );
+        } else {
+          // Arena de playa
+          colores.push(0.85, 0.78, 0.55);
+        }
+      }
+      geo.setAttribute('color', new THREE.Float32BufferAttribute(colores, 3));
+      geo.computeVertexNormals();
+
+      const mat = new THREE.MeshStandardMaterial({
+        vertexColors: true,
+        roughness: 0.95,
+        metalness: 0.0,
+        flatShading: false
+      });
+
+      const mesh = new THREE.Mesh(geo, mat);
+      // Centramos la elipsoide en y=0 (nivel del mar) — la mitad superior
+      // emerge como islote, la inferior queda sumergida y oculta por el
+      // océano semi-opaco.
+      mesh.position.set(x, 0, z);
+      mesh.castShadow = true;
+      mesh.receiveShadow = true;
+      scene.add(mesh);
+    });
   }
 
   function generarTexturaFlujo() {
@@ -722,6 +1067,193 @@
     scene.add(infilPoints);
   }
 
+  // ---------- Chispas de agua (partículas que fluyen por los cauces) ----------
+  function crearChispas() {
+    // Repartimos partículas entre todos los cauces según su peso relativo
+    const totalPeso = curvasFlujo.reduce((s, c) => s + c.peso, 0);
+    const TOTAL = 220;
+    const asignaciones = [];
+    curvasFlujo.forEach(({ curva, peso }) => {
+      const n = Math.round((peso / totalPeso) * TOTAL);
+      for (let i = 0; i < n; i++) {
+        asignaciones.push({
+          curva,
+          t: Math.random(),
+          velocidad: 0.04 + Math.random() * 0.05,
+          jitterX: (Math.random() - 0.5) * 0.4,
+          jitterZ: (Math.random() - 0.5) * 0.4
+        });
+      }
+    });
+
+    const num = asignaciones.length;
+    const geo = new THREE.BufferGeometry();
+    const pos = new Float32Array(num * 3);
+    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    geo.userData = { asignaciones };
+
+    // Textura redonda brillante
+    const canvas = document.createElement('canvas');
+    canvas.width = canvas.height = 32;
+    const ctx = canvas.getContext('2d');
+    const grad = ctx.createRadialGradient(16, 16, 0, 16, 16, 16);
+    grad.addColorStop(0,   'rgba(255, 255, 255, 1)');
+    grad.addColorStop(0.4, 'rgba(190, 230, 255, 0.7)');
+    grad.addColorStop(1,   'rgba(125, 211, 252, 0)');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, 32, 32);
+    const tex = new THREE.CanvasTexture(canvas);
+
+    const mat = new THREE.PointsMaterial({
+      size: 0.7,
+      map: tex,
+      color: 0xeaf6ff,
+      transparent: true,
+      opacity: 0,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+      sizeAttenuation: true
+    });
+
+    chispas = new THREE.Points(geo, mat);
+    scene.add(chispas);
+  }
+
+  function animarChispas(idx, prog, deltaT) {
+    const mat = chispas.material;
+    // Aparecen con la escorrentía y se mantienen durante la infiltración
+    let opObjetivo = 0;
+    if (idx === 2 && prog > 0.7)        opObjetivo = (prog - 0.7) / 0.3 * 0.6;
+    else if (idx === 3)                 opObjetivo = Math.min(1, prog * 3) * 0.95;
+    else if (idx === 4)                 opObjetivo = Math.max(0, 0.95 - prog * 1.4);
+    mat.opacity += (opObjetivo - mat.opacity) * 0.08;
+
+    // Si están casi invisibles, no gastamos ciclos animando
+    if (mat.opacity < 0.02) return;
+
+    const pos = chispas.geometry.attributes.position;
+    const asign = chispas.geometry.userData.asignaciones;
+    const dt = Math.min(deltaT, 0.05); // cap por si hubo un freeze
+
+    for (let i = 0; i < asign.length; i++) {
+      const a = asign[i];
+      a.t += a.velocidad * dt * 4;
+      if (a.t > 1) a.t -= 1;
+
+      const p = a.curva.getPoint(a.t);
+      const x = p.x + a.jitterX;
+      const z = p.z + a.jitterZ;
+      const y = Math.max(alturaTerreno(x, z), 0) + 0.55;
+      pos.array[i * 3]     = x;
+      pos.array[i * 3 + 1] = y;
+      pos.array[i * 3 + 2] = z;
+    }
+    pos.needsUpdate = true;
+  }
+
+  // ---------- Etiquetas 3D flotantes ----------
+  function crearTexturaEtiqueta(texto, color) {
+    const canvas = document.createElement('canvas');
+    canvas.width = 512;
+    canvas.height = 128;
+    const ctx = canvas.getContext('2d');
+
+    // Rectángulo redondeado (compatible)
+    function rectRedondeado(x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, y + h - r);
+      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+      ctx.lineTo(x + r, y + h);
+      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.closePath();
+    }
+
+    // Fondo oscuro semitransparente
+    ctx.fillStyle = 'rgba(8, 18, 35, 0.88)';
+    rectRedondeado(8, 8, 496, 112, 22);
+    ctx.fill();
+
+    // Borde de color del fenómeno
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 5;
+    ctx.stroke();
+
+    // Texto blanco grande
+    ctx.fillStyle = '#ffffff';
+    ctx.font = 'bold 56px "Segoe UI", Arial, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(texto, 256, 64);
+
+    return new THREE.CanvasTexture(canvas);
+  }
+
+  function crearEtiquetas3D() {
+    ETIQUETAS_POR_ETAPA.forEach((lista, idxEtapa) => {
+      lista.forEach(info => {
+        const tex = crearTexturaEtiqueta(info.texto, info.color);
+        tex.minFilter = THREE.LinearFilter;
+        const mat = new THREE.SpriteMaterial({
+          map: tex,
+          transparent: true,
+          depthTest: false,    // siempre visible (no se ocultan tras el terreno)
+          depthWrite: false,
+          opacity: 0
+        });
+        const sprite = new THREE.Sprite(mat);
+        sprite.position.set(info.pos[0], info.pos[1], info.pos[2]);
+        sprite.scale.set(13, 3.25, 1);
+        sprite.userData = { idxEtapa, yBase: info.pos[1] };
+        sprite.renderOrder = 999;
+        scene.add(sprite);
+        etiquetas3D.push(sprite);
+      });
+    });
+  }
+
+  function animarEtiquetas(idx, prog) {
+    etiquetas3D.forEach(eti => {
+      const propia = eti.userData.idxEtapa === idx;
+      let opObjetivo = 0;
+      if (propia) {
+        // Aparece rápido al inicio, mantiene, sale al final
+        if (prog < 0.15)      opObjetivo = (prog / 0.15);
+        else if (prog < 0.85) opObjetivo = 1;
+        else                  opObjetivo = (1 - prog) / 0.15;
+      }
+      eti.material.opacity += (opObjetivo - eti.material.opacity) * 0.12;
+
+      // Flotación vertical suave
+      if (eti.material.opacity > 0.05) {
+        eti.position.y = eti.userData.yBase + Math.sin(tiempoSimulado * 1.2 + eti.userData.idxEtapa) * 0.4;
+      }
+    });
+  }
+
+  // ---------- Panel educativo (modo pausado con explicaciones extendidas) ----------
+  function abrirPanelEducativo(idx) {
+    const exp = EXPLICACIONES[idx];
+    document.getElementById('edu-titulo').textContent = exp.titulo;
+    document.getElementById('edu-cuerpo').innerHTML = exp.cuerpo;
+    document.getElementById('panel-educativo').classList.add('visible');
+    pausado = true;
+    pausaEducativaActiva = true;
+  }
+
+  function cerrarPanelEducativo() {
+    document.getElementById('panel-educativo').classList.remove('visible');
+    if (pausaEducativaActiva) {
+      pausado = false;
+      pausaEducativaActiva = false;
+      document.getElementById('btn-pausa').innerHTML = '⏸ Pausar';
+    }
+  }
+
   // =========================================================
   // ANIMACIÓN
   // =========================================================
@@ -730,7 +1262,7 @@
     const delta = clock.getDelta();
     if (!pausado) tiempoSimulado += delta;
 
-    actualizarEtapa();
+    actualizarEtapa(delta);
     animarOleaje(tiempoSimulado);
     animarSol(tiempoSimulado);
     animarCamara(tiempoSimulado);
@@ -738,7 +1270,7 @@
     renderer.render(scene, camera);
   }
 
-  function actualizarEtapa() {
+  function actualizarEtapa(deltaT) {
     const t = tiempoSimulado % CICLO_TOTAL;
     const idx = Math.floor(t / DURACION_ETAPA);
     const progreso = (t % DURACION_ETAPA) / DURACION_ETAPA;
@@ -767,12 +1299,24 @@
     scene.background.copy(colorMezcla);
     scene.fog.color.copy(colorMezcla);
 
-    // Llamamos a cada animación de etapa con su progreso
+    // Animaciones de fenómenos
     animarEvaporacion(idx, progreso);
     animarCondensacion(idx, progreso);
     animarPrecipitacion(idx, progreso);
     animarEscorrentia(idx, progreso);
     animarInfiltracion(idx, progreso);
+    animarChispas(idx, progreso, deltaT);
+    animarEtiquetas(idx, progreso);
+
+    // ----- Modo educativo: pausa automática al final de cada etapa -----
+    if (modoEducativo && !pausaEducativaActiva && progreso > 0.92 && idx !== ultimaEtapaPausada) {
+      ultimaEtapaPausada = idx;
+      abrirPanelEducativo(idx);
+    }
+    // Reset del control cuando volvemos al inicio del ciclo
+    if (idx === 0 && progreso < 0.05 && ultimaEtapaPausada === 4) {
+      ultimaEtapaPausada = -1;
+    }
   }
 
   // ----- Evaporación: vapor sube desde el océano -----
@@ -873,9 +1417,8 @@
     pos.needsUpdate = true;
   }
 
-  // ----- Escorrentía: ríos visibles fluyendo -----
+  // ----- Escorrentía: ríos visibles fluyendo (principal + afluente + delta) -----
   function animarEscorrentia(idx, prog) {
-    const mat = riverMesh.material;
     let opacidadObjetivo = 0;
     if (idx === 2 && prog > 0.5) {
       opacidadObjetivo = (prog - 0.5) / 0.5 * 0.5; // empieza a aparecer al final de la lluvia
@@ -886,10 +1429,17 @@
     } else if (idx === 0 && prog < 0.3) {
       opacidadObjetivo = Math.max(0, 0.35 - prog * 1.2);
     }
-    mat.opacity += (opacidadObjetivo - mat.opacity) * 0.06;
 
-    // Animar el flujo de la textura (eje V — a lo largo del cauce)
-    riverMesh.userData.textura.offset.y -= 0.012;
+    mallasRio.forEach(m => {
+      const mat = m.material;
+      mat.opacity += (opacidadObjetivo - mat.opacity) * 0.06;
+    });
+
+    // La textura de flujo es COMPARTIDA entre todas las mallas, así que
+    // solo desplazamos su offset una vez por frame (no una por malla).
+    if (mallasRio.length > 0) {
+      mallasRio[0].material.userData.textura.offset.y -= 0.012;
+    }
   }
 
   // ----- Infiltración: partículas hundiéndose en el suelo -----
