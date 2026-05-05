@@ -1,1 +1,1240 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador ecosistémico avanzado</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #0a0e1a;
+            color: white;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
+        #webgl-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: 1;
+        }
+        #ui-container {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: 10;
+            pointer-events: none;
+            display: flex;
+            justify-content: space-between;
+            padding: 1rem;
+            gap: 1rem;
+        }
+
+        .panel {
+            background: rgba(15, 23, 42, 0.88);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 1rem;
+            padding: 1.1rem;
+            pointer-events: auto;
+            max-height: 100%;
+            overflow-y: auto;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            width: 18rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .panel::-webkit-scrollbar { width: 6px; }
+        .panel::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 3px; }
+
+        h1, h2, h3 { margin: 0; }
+        .titulo-app {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #60a5fa;
+            letter-spacing: 0.05em;
+        }
+        .titulo-seccion {
+            font-size: 0.75rem;
+            color: #cbd5e1;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-weight: 700;
+            border-bottom: 1px solid #334155;
+            padding-bottom: 0.5rem;
+        }
+        .label-mini {
+            font-size: 0.75rem;
+            color: #cbd5e1;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.25rem;
+            display: block;
+        }
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+        .kpi-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+        }
+        .kpi-label {
+            color: #94a3b8;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            display: block;
+        }
+        .kpi-valor {
+            font-size: 1.125rem;
+            font-family: 'Courier New', monospace;
+            display: block;
+        }
+        .color-gris { color: #e5e7eb; }
+        .color-rojo { color: #f87171; }
+        .color-verde { color: #4ade80; }
+        .color-azul { color: #60a5fa; }
+        .color-amarillo { color: #facc15; }
+        .color-naranja { color: #fb923c; }
+
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+            margin-bottom: 0.5rem;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            margin-top: -6px;
+            box-shadow: 0 0 8px rgba(59,130,246,0.6);
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #475569;
+            border-radius: 2px;
+        }
+        input[type=range]::-moz-range-thumb {
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            border: none;
+        }
+        input[type=range]::-moz-range-track {
+            height: 4px;
+            background: #475569;
+            border-radius: 2px;
+        }
+
+        .control-fila {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-bottom: 0.25rem;
+        }
+        .control-valor {
+            color: #e5e7eb;
+            font-family: 'Courier New', monospace;
+        }
+
+        .btn {
+            padding: 0.5rem 0.8rem;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            border: none;
+            color: white;
+            font-size: 0.75rem;
+            font-family: inherit;
+        }
+        .btn:hover { transform: translateY(-2px); }
+        .btn:active { transform: translateY(0); }
+        .btn-verde { background: #16a34a; }
+        .btn-verde:hover { background: #22c55e; }
+        .btn-gris { background: #4b5563; }
+        .btn-gris:hover { background: #6b7280; }
+        .btn-rojo { background: #dc2626; }
+        .btn-rojo:hover { background: #ef4444; }
+        .btn-azul { background: #2563eb; }
+        .btn-azul:hover { background: #3b82f6; }
+        .btn-slate { background: #334155; }
+        .btn-slate:hover { background: #2563eb; }
+        .btn-pequeno { padding: 0.25rem 0.5rem; }
+
+        .grid-botones {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+
+        .fila-titulo {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .grafico-leyenda {
+            display: flex;
+            justify-content: space-between;
+            font-size: 10px;
+            color: #94a3b8;
+            margin-top: 0.25rem;
+        }
+        #graph-canvas {
+            width: 100%;
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 0.25rem;
+            display: block;
+        }
+
+        .alerta {
+            padding: 0.5rem;
+            background: rgba(127, 29, 29, 0.6);
+            border: 1px solid #ef4444;
+            border-radius: 0.25rem;
+            color: #fecaca;
+            font-size: 0.75rem;
+            text-align: center;
+            font-weight: 700;
+        }
+        .oculto { display: none !important; }
+
+        .estado-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 0.5rem;
+            padding: 0.5rem;
+        }
+        .estado-valor {
+            font-size: 0.875rem;
+            font-weight: 700;
+        }
+
+        #modal-ayuda {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(8px);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            pointer-events: auto;
+        }
+        .modal-contenido {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            border: 2px solid #3b82f6;
+            border-radius: 1rem;
+            max-width: 800px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 2rem;
+            box-shadow: 0 0 40px rgba(59,130,246,0.3);
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        .modal-titulo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #60a5fa;
+        }
+        .modal-cerrar {
+            color: #94a3b8;
+            font-size: 1.5rem;
+            line-height: 1;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+        .modal-cerrar:hover { color: white; }
+        .modal-parrafo {
+            color: #cbd5e1;
+            margin-bottom: 1rem;
+        }
+        .modal-bloque {
+            background: #1e293b;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #334155;
+        }
+        .modal-bloque h2 {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+        .modal-bloque ol, .modal-bloque ul {
+            color: #e2e8f0;
+            font-size: 0.875rem;
+            padding-left: 1.25rem;
+            margin: 0;
+        }
+        .modal-bloque li { margin-bottom: 0.4rem; }
+        .modal-bloque .destacado {
+            color: #fde047;
+            font-weight: 600;
+        }
+        .grid-zonas {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        @media (max-width: 600px) {
+            .grid-zonas { grid-template-columns: 1fr; }
+        }
+        .zona {
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+        }
+        .zona h3 {
+            font-weight: 700;
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+        }
+        .zona p {
+            color: #cbd5e1;
+            font-size: 0.75rem;
+            margin: 0;
+        }
+        .zona-verde { background: rgba(20, 83, 45, 0.4); border: 1px solid #16a34a; }
+        .zona-verde h3 { color: #86efac; }
+        .zona-azul { background: rgba(30, 58, 138, 0.4); border: 1px solid #2563eb; }
+        .zona-azul h3 { color: #93c5fd; }
+        .zona-amarilla { background: rgba(113, 63, 18, 0.4); border: 1px solid #ca8a04; }
+        .zona-amarilla h3 { color: #fde047; }
+        .zona-roja { background: rgba(127, 29, 29, 0.4); border: 1px solid #dc2626; }
+        .zona-roja h3 { color: #fca5a5; }
+
+        .h2-purpura { color: #d8b4fe; }
+        .h2-azul { color: #93c5fd; }
+
+        .modal-pie {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: flex-end;
+        }
+
+        #mision-activa {
+            position: fixed;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.95);
+            border: 2px solid #facc15;
+            border-radius: 0.8rem;
+            padding: 0.8rem 1.5rem;
+            z-index: 50;
+            pointer-events: auto;
+            min-width: 320px;
+            max-width: 600px;
+            box-shadow: 0 0 20px rgba(250,204,21,0.4);
+        }
+        .mision-cabecera {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.25rem;
+        }
+        .mision-titulo {
+            color: #fef08a;
+            font-weight: 700;
+            font-size: 0.875rem;
+        }
+        .mision-desc {
+            color: #e2e8f0;
+            font-size: 0.75rem;
+            margin: 0 0 0.5rem 0;
+        }
+        .mision-pie {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+        }
+        .mision-progreso { color: #94a3b8; }
+        .mision-saltar {
+            color: #94a3b8;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-family: inherit;
+        }
+        .mision-saltar:hover { color: #60a5fa; }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: #eab308;
+            color: #0f172a;
+        }
+
+        .tooltip-help {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #475569;
+            color: white;
+            text-align: center;
+            font-size: 10px;
+            line-height: 14px;
+            cursor: help;
+            margin-left: 4px;
+        }
+        .tooltip-help:hover { background: #3b82f6; }
+
+        @keyframes pulso { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+        .pulso { animation: pulso 1.5s infinite; }
+
+        @keyframes celebracion {
+            0% { transform: translateX(-50%) scale(1); }
+            50% { transform: translateX(-50%) scale(1.1); }
+            100% { transform: translateX(-50%) scale(1); }
+        }
+        .celebrar {
+            animation: celebracion 0.6s ease-in-out;
+            border-color: #4ade80 !important;
+            box-shadow: 0 0 30px rgba(74,222,128,0.6) !important;
+        }
+
+        .completada { color: #4ade80; }
+    </style>
+</head>
+<body>
+
+    <canvas id="webgl-canvas"></canvas>
+
+    <div id="modal-ayuda">
+        <div class="modal-contenido">
+            <div class="modal-header">
+                <h1 class="modal-titulo">🌍 Simulador ecosistémico</h1>
+                <button onclick="cerrarAyuda()" class="modal-cerrar">×</button>
+            </div>
+
+            <p class="modal-parrafo">Bienvenido. Aquí vas a explorar cómo el carbono circula entre la atmósfera, las plantas, los animales, el suelo y el océano. Tus decisiones afectan el clima del planeta.</p>
+
+            <div class="modal-bloque">
+                <h2 class="h2-azul">🎯 ¿Qué tienes que hacer?</h2>
+                <ol>
+                    <li>Observa los <span class="destacado">cuatro indicadores</span> arriba a la izquierda: CO₂, temperatura, biomasa y océano.</li>
+                    <li>Usa los <span class="destacado">deslizadores</span> de la derecha para cambiar las condiciones del planeta.</li>
+                    <li>Mira el <span class="destacado">gráfico</span> para ver cómo cambian los valores con el tiempo.</li>
+                    <li>Completa las <span class="destacado">misiones</span> que aparecen abajo en la pantalla.</li>
+                </ol>
+            </div>
+
+            <div class="grid-zonas">
+                <div class="zona zona-verde">
+                    <h3>🌳 Lado izquierdo (tierra)</h3>
+                    <p>Bosque, animales y chimeneas industriales. El bosque crece con la fotosíntesis y muere con el calor.</p>
+                </div>
+                <div class="zona zona-azul">
+                    <h3>🌊 Lado derecho (océano)</h3>
+                    <p>El océano absorbe CO₂ pero se acidifica cuando hay demasiado. Cambia de color al deteriorarse.</p>
+                </div>
+                <div class="zona zona-amarilla">
+                    <h3>✨ Partículas de colores</h3>
+                    <p>Cada partícula es un átomo de carbono. Gris=atmósfera, verde=planta, naranja=animal, marrón=suelo, azul=océano.</p>
+                </div>
+                <div class="zona zona-roja">
+                    <h3>🔥 Cuidado con el colapso</h3>
+                    <p>Si la temperatura pasa de 26°C, el bosque muere y libera más CO₂. ¡Es un círculo vicioso!</p>
+                </div>
+            </div>
+
+            <div class="modal-bloque">
+                <h2 class="h2-purpura">🧪 Experimentos sugeridos</h2>
+                <ul>
+                    <li>Pon las emisiones al máximo y observa cuánto tarda el planeta en colapsar.</li>
+                    <li>Después del colapso, intenta recuperar el equilibrio bajando emisiones y subiendo reforestación.</li>
+                    <li>Compara el escenario "Natural" con el escenario "Industrial". ¿Qué diferencias notas?</li>
+                    <li>¿Qué pasa con el océano cuando hay mucho CO₂ en la atmósfera?</li>
+                </ul>
+            </div>
+
+            <div class="modal-pie">
+                <button onclick="cerrarAyuda()" class="btn btn-azul">Empezar a explorar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="mision-activa">
+        <div class="mision-cabecera">
+            <span class="badge">Misión <span id="mision-num">1</span> de 5</span>
+            <span id="mision-titulo" class="mision-titulo">Cargando...</span>
+        </div>
+        <p id="mision-desc" class="mision-desc">Cargando misión...</p>
+        <div class="mision-pie">
+            <span id="mision-progreso" class="mision-progreso">Progreso: ⏳</span>
+            <button onclick="saltarMision()" class="mision-saltar">Saltar →</button>
+        </div>
+    </div>
+
+    <div id="ui-container">
+        <div class="panel">
+            <div class="fila-titulo">
+                <h1 class="titulo-app">SIMULADOR</h1>
+                <button onclick="abrirAyuda()" class="btn btn-slate btn-pequeno">❓ Ayuda</button>
+            </div>
+            
+            <div class="kpi-grid">
+                <div class="kpi-card" title="Dióxido de carbono en la atmósfera">
+                    <span class="kpi-label">CO₂ Atmósfera</span>
+                    <span id="ui-co2" class="kpi-valor color-gris">1000</span>
+                </div>
+                <div class="kpi-card" title="Temperatura promedio del planeta">
+                    <span class="kpi-label">Temperatura</span>
+                    <span id="ui-temp" class="kpi-valor color-rojo">15.0°C</span>
+                </div>
+                <div class="kpi-card" title="Carbono almacenado en plantas">
+                    <span class="kpi-label">Biomasa</span>
+                    <span id="ui-plantas" class="kpi-valor color-verde">600</span>
+                </div>
+                <div class="kpi-card" title="Carbono en aguas superficiales">
+                    <span class="kpi-label">Océano</span>
+                    <span id="ui-oceano" class="kpi-valor color-azul">900</span>
+                </div>
+            </div>
+
+            <div>
+                <span class="label-mini">Evolución en el tiempo</span>
+                <canvas id="graph-canvas" width="280" height="130"></canvas>
+                <div class="grafico-leyenda">
+                    <span class="color-gris">● CO2</span>
+                    <span class="color-verde">● Biomasa</span>
+                    <span class="color-rojo">● Temp</span>
+                </div>
+            </div>
+
+            <div id="alert-box" class="alerta oculto pulso">⚠️ COLAPSO ECOLÓGICO</div>
+
+            <div class="estado-card">
+                <span class="kpi-label">Estado del planeta</span>
+                <div id="ui-estado" class="estado-valor color-verde">🟢 Saludable</div>
+            </div>
+        </div>
+
+        <div class="panel">
+            <h2 class="titulo-seccion">Controles</h2>
+            
+            <div>
+                <label class="control-fila">
+                    <span>🏭 Emisiones industriales <span class="tooltip-help" title="Cuánto CO₂ liberan las fábricas">?</span></span>
+                    <span id="val-emisiones" class="control-valor">0.5</span>
+                </label>
+                <input type="range" id="ctrl-emisiones" min="0" max="5" step="0.1" value="0.5">
+            </div>
+
+            <div>
+                <label class="control-fila">
+                    <span>🪓 Deforestación <span class="tooltip-help" title="Cuántos árboles se talan">?</span></span>
+                    <span id="val-deforestacion" class="control-valor">0.2</span>
+                </label>
+                <input type="range" id="ctrl-deforestacion" min="0" max="2" step="0.1" value="0.2">
+            </div>
+
+            <div>
+                <label class="control-fila">
+                    <span>🌱 Reforestación <span class="tooltip-help" title="Cuánto CO₂ absorben las plantas">?</span></span>
+                    <span id="val-reforestacion" class="control-valor">0.8</span>
+                </label>
+                <input type="range" id="ctrl-reforestacion" min="0" max="2" step="0.1" value="0.8">
+            </div>
+
+            <div>
+                <label class="control-fila">
+                    <span>⚡ Velocidad simulación</span>
+                    <span id="val-velocidad" class="control-valor">1.0x</span>
+                </label>
+                <input type="range" id="ctrl-velocidad" min="0.1" max="5" step="0.1" value="1">
+            </div>
+
+            <h2 class="titulo-seccion">Escenarios</h2>
+            <div class="grid-botones">
+                <button class="btn btn-verde" onclick="setEscenario('natural')">🌿 Natural</button>
+                <button class="btn btn-gris" onclick="setEscenario('industrial')">🏭 Industrial</button>
+                <button class="btn btn-rojo" onclick="setEscenario('colapso')">🔥 Colapso</button>
+                <button class="btn btn-azul" onclick="setEscenario('sostenible')">🌎 Restaurar</button>
+            </div>
+
+            <button onclick="reiniciarSimulacion()" class="btn btn-slate">🔄 Reiniciar todo</button>
+        </div>
+    </div>
+
+<script>
+const estado = {
+    tiempo: 0, temperatura: 15, escenario: "natural",
+    velocidadSimulacion: 1, colapsoDetectado: false,
+    misionActual: 0, misionCompletada: false
+};
+
+const reservorios = {
+    atmosfera: { carbono: 1000 },
+    plantas: { carbono: 600 },
+    animales: { carbono: 150 },
+    suelo: { carbono: 1200 },
+    oceanoSuperficie: { carbono: 900 },
+    oceanoProfundo: { carbono: 38000 },
+    fosiles: { carbono: 5000 }
+};
+
+const reservoriosIniciales = JSON.parse(JSON.stringify(reservorios));
+
+const parametros = {
+    tasaFotosintesis: 0.8, tasaRespiracion: 0.6,
+    tasaDescomposicion: 0.4, tasaIntercambioOceano: 0.3,
+    tasaBombaBiologica: 0.1, emisionesIndustriales: 0.5,
+    deforestacion: 0.2
+};
+
+const misiones = [
+    {
+        titulo: "Observa el planeta saludable",
+        desc: "Mira cómo se ven los indicadores. La temperatura debe estar cerca de 15°C y el bosque crece tranquilo. Espera 10 segundos para familiarizarte.",
+        check: () => estado.tiempo > 500,
+        progreso: () => `Tiempo: ${Math.min(100, Math.floor(estado.tiempo/5))}%`
+    },
+    {
+        titulo: "Sube las emisiones al máximo",
+        desc: "Mueve el deslizador de '🏭 Emisiones industriales' hasta 5.0 y observa qué pasa con el CO₂ y la temperatura.",
+        check: () => parametros.emisionesIndustriales >= 4.5,
+        progreso: () => `Emisiones: ${parametros.emisionesIndustriales.toFixed(1)} / 5.0`
+    },
+    {
+        titulo: "Provoca un colapso climático",
+        desc: "Sigue con emisiones altas hasta que la temperatura pase de 26°C. Verás cómo el bosque cambia de color y se libera CO₂.",
+        check: () => estado.temperatura > 26,
+        progreso: () => `Temperatura: ${estado.temperatura.toFixed(1)}°C / 26°C`
+    },
+    {
+        titulo: "Salva el planeta",
+        desc: "Ahora baja las emisiones a casi cero, sube la reforestación a 1.5 o más, y baja la deforestación a 0. Espera a que la temperatura baje a menos de 18°C.",
+        check: () => estado.temperatura < 18 && parametros.emisionesIndustriales < 0.5 && parametros.tasaFotosintesis >= 1.4,
+        progreso: () => `Temp: ${estado.temperatura.toFixed(1)}°C | Emisiones: ${parametros.emisionesIndustriales.toFixed(1)} | Reforest: ${parametros.tasaFotosintesis.toFixed(1)}`
+    },
+    {
+        titulo: "Encuentra el equilibrio sostenible",
+        desc: "Prueba el escenario 'Restaurar' y observa cómo se ve un planeta donde los humanos y la naturaleza conviven. ¡Tú decides!",
+        check: () => false,
+        progreso: () => `Modo libre — Explora todos los escenarios`
+    }
+];
+
+function actualizarMision() {
+    const m = misiones[estado.misionActual];
+    if (!m) return;
+    document.getElementById('mision-num').innerText = (estado.misionActual + 1);
+    document.getElementById('mision-titulo').innerText = m.titulo;
+    document.getElementById('mision-desc').innerText = m.desc;
+    document.getElementById('mision-progreso').innerText = "Progreso: " + m.progreso();
+
+    if (!estado.misionCompletada && m.check()) {
+        estado.misionCompletada = true;
+        const elem = document.getElementById('mision-activa');
+        elem.classList.add('celebrar');
+        document.getElementById('mision-progreso').innerHTML = "<span class='completada'>✅ ¡Misión completada!</span>";
+        setTimeout(() => {
+            elem.classList.remove('celebrar');
+            if (estado.misionActual < misiones.length - 1) {
+                estado.misionActual++;
+                estado.misionCompletada = false;
+            }
+        }, 2500);
+    }
+}
+
+function saltarMision() {
+    if (estado.misionActual < misiones.length - 1) {
+        estado.misionActual++;
+        estado.misionCompletada = false;
+    } else {
+        document.getElementById('mision-activa').classList.add('oculto');
+    }
+}
+
+function abrirAyuda() { document.getElementById('modal-ayuda').classList.remove('oculto'); }
+function cerrarAyuda() { document.getElementById('modal-ayuda').classList.add('oculto'); }
+
+function reiniciarSimulacion() {
+    Object.keys(reservoriosIniciales).forEach(k => {
+        reservorios[k].carbono = reservoriosIniciales[k].carbono;
+    });
+    estado.tiempo = 0;
+    estado.temperatura = 15;
+    estado.misionActual = 0;
+    estado.misionCompletada = false;
+    historial.co2 = []; historial.biomasa = []; historial.temp = [];
+    setEscenario('natural');
+    document.getElementById('mision-activa').classList.remove('oculto');
+}
+
+function actualizarModelo(delta) {
+    if (delta > 0.1) delta = 0.1;
+    fotosintesis(delta); respiracion(delta); cadenaAlimenticia(delta);
+    descomposicion(delta); intercambioOceano(delta);
+    combustion(delta); deforestar(delta);
+    actualizarTemperatura(); verificarColapso(delta);
+}
+
+function fotosintesis(delta) {
+    let multiplicadorTemp = estado.temperatura > 25 ? 0.2 : (estado.temperatura > 20 ? 0.7 : 1);
+    // El factor 0.01 estaba ausente y rompía el balance: la fotosíntesis vaciaba la atmósfera
+    // en segundos. Ahora está al mismo orden de magnitud que la respiración.
+    const absorcion = parametros.tasaFotosintesis * multiplicadorTemp * reservorios.plantas.carbono * (reservorios.atmosfera.carbono / 1000) * 0.01 * delta;
+    const t = Math.min(absorcion, reservorios.atmosfera.carbono);
+    reservorios.atmosfera.carbono -= t;
+    reservorios.plantas.carbono += t;
+}
+
+function respiracion(delta) {
+    const plantasResp = Math.min(reservorios.plantas.carbono * parametros.tasaRespiracion * 0.01 * delta, reservorios.plantas.carbono);
+    const animalesResp = Math.min(reservorios.animales.carbono * 0.02 * delta, reservorios.animales.carbono);
+    reservorios.plantas.carbono -= plantasResp;
+    reservorios.animales.carbono -= animalesResp;
+    reservorios.atmosfera.carbono += plantasResp + animalesResp;
+}
+
+function cadenaAlimenticia(delta) {
+    if (reservorios.plantas.carbono < 100) {
+        const muerte = reservorios.animales.carbono * 0.1 * delta;
+        reservorios.animales.carbono -= muerte;
+        reservorios.suelo.carbono += muerte;
+        return;
+    }
+    const consumo = Math.min(reservorios.plantas.carbono * 0.01 * delta, reservorios.plantas.carbono);
+    reservorios.plantas.carbono -= consumo;
+    reservorios.animales.carbono += consumo;
+}
+
+function descomposicion(delta) {
+    const t = Math.min(reservorios.animales.carbono * parametros.tasaDescomposicion * 0.01 * delta, reservorios.animales.carbono);
+    reservorios.animales.carbono -= t;
+    reservorios.suelo.carbono += t * 0.7;
+    reservorios.atmosfera.carbono += t * 0.3;
+}
+
+function intercambioOceano(delta) {
+    const gradiente = reservorios.atmosfera.carbono - reservorios.oceanoSuperficie.carbono;
+    const flujo = gradiente * parametros.tasaIntercambioOceano * 0.001 * delta;
+    if (flujo > 0) {
+        const real = Math.min(flujo, reservorios.atmosfera.carbono);
+        reservorios.atmosfera.carbono -= real;
+        reservorios.oceanoSuperficie.carbono += real;
+    } else {
+        const real = Math.min(Math.abs(flujo), reservorios.oceanoSuperficie.carbono);
+        reservorios.oceanoSuperficie.carbono -= real;
+        reservorios.atmosfera.carbono += real;
+    }
+}
+
+function combustion(delta) {
+    const e = Math.min(parametros.emisionesIndustriales * 5 * delta, reservorios.fosiles.carbono);
+    reservorios.fosiles.carbono -= e;
+    reservorios.atmosfera.carbono += e;
+}
+
+function deforestar(delta) {
+    const tala = Math.min(reservorios.plantas.carbono * parametros.deforestacion * 0.05 * delta, reservorios.plantas.carbono);
+    reservorios.plantas.carbono -= tala;
+    reservorios.atmosfera.carbono += tala * 0.5;
+    reservorios.suelo.carbono += tala * 0.5;
+}
+
+function actualizarTemperatura() {
+    estado.temperatura = 14 + (reservorios.atmosfera.carbono - 1000) * 0.01;
+}
+
+function verificarColapso(delta) {
+    if (estado.temperatura > 26) {
+        estado.colapsoDetectado = true;
+        const muerte = reservorios.plantas.carbono * 0.05 * delta;
+        reservorios.plantas.carbono -= muerte;
+        reservorios.atmosfera.carbono += muerte;
+    } else {
+        estado.colapsoDetectado = false;
+    }
+}
+
+const graphCanvas = document.getElementById('graph-canvas');
+const ctx = graphCanvas.getContext('2d');
+const historial = { co2: [], biomasa: [], temp: [] };
+const maxHistoria = 100;
+
+function clasificarEstadoPlaneta() {
+    if (estado.temperatura > 26) return { texto: "🔴 Colapso", clase: "color-rojo" };
+    if (estado.temperatura > 22) return { texto: "🟠 Crítico", clase: "color-naranja" };
+    if (estado.temperatura > 18) return { texto: "🟡 Estresado", clase: "color-amarillo" };
+    if (estado.temperatura < 12) return { texto: "🔵 Frío", clase: "color-azul" };
+    return { texto: "🟢 Saludable", clase: "color-verde" };
+}
+
+function actualizarUI() {
+    document.getElementById('ui-co2').innerText = reservorios.atmosfera.carbono.toFixed(0);
+    document.getElementById('ui-temp').innerText = estado.temperatura.toFixed(1) + "°C";
+    document.getElementById('ui-plantas').innerText = reservorios.plantas.carbono.toFixed(0);
+    document.getElementById('ui-oceano').innerText = reservorios.oceanoSuperficie.carbono.toFixed(0);
+
+    const eP = clasificarEstadoPlaneta();
+    const elem = document.getElementById('ui-estado');
+    elem.innerText = eP.texto;
+    elem.className = "estado-valor " + eP.clase;
+
+    const alerta = document.getElementById('alert-box');
+    if (estado.colapsoDetectado) alerta.classList.remove('oculto');
+    else alerta.classList.add('oculto');
+
+    estado.tiempo++;
+    if (estado.tiempo % 10 === 0) {
+        historial.co2.push(reservorios.atmosfera.carbono);
+        historial.biomasa.push(reservorios.plantas.carbono);
+        historial.temp.push(estado.temperatura * 50);
+        if (historial.co2.length > maxHistoria) {
+            historial.co2.shift();
+            historial.biomasa.shift();
+            historial.temp.shift();
+        }
+        dibujarGrafico();
+    }
+    actualizarMision();
+}
+
+function dibujarGrafico() {
+    ctx.clearRect(0, 0, graphCanvas.width, graphCanvas.height);
+    if (historial.co2.length < 2) return;
+    const w = graphCanvas.width, h = graphCanvas.height;
+    const stepX = w / maxHistoria;
+    const maxVal = Math.max(...historial.co2, ...historial.biomasa, 2000);
+
+    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3,3]);
+    ctx.beginPath();
+    const yRef = h - (1000/maxVal)*h;
+    ctx.moveTo(0, yRef); ctx.lineTo(w, yRef);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    const drawLine = (data, color) => {
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        for (let i = 0; i < data.length; i++) {
+            const x = i * stepX;
+            const y = h - (data[i] / maxVal) * h;
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+    };
+    drawLine(historial.co2, '#e5e7eb');
+    drawLine(historial.biomasa, '#4ade80');
+    drawLine(historial.temp, '#f87171');
+}
+
+document.getElementById('ctrl-emisiones').addEventListener('input', (e) => {
+    parametros.emisionesIndustriales = parseFloat(e.target.value);
+    document.getElementById('val-emisiones').innerText = parametros.emisionesIndustriales.toFixed(1);
+});
+document.getElementById('ctrl-deforestacion').addEventListener('input', (e) => {
+    parametros.deforestacion = parseFloat(e.target.value);
+    document.getElementById('val-deforestacion').innerText = parametros.deforestacion.toFixed(1);
+});
+document.getElementById('ctrl-reforestacion').addEventListener('input', (e) => {
+    parametros.tasaFotosintesis = parseFloat(e.target.value);
+    document.getElementById('val-reforestacion').innerText = parametros.tasaFotosintesis.toFixed(1);
+});
+document.getElementById('ctrl-velocidad').addEventListener('input', (e) => {
+    estado.velocidadSimulacion = parseFloat(e.target.value);
+    document.getElementById('val-velocidad').innerText = estado.velocidadSimulacion.toFixed(1) + "x";
+});
+
+function setEscenario(esc) {
+    estado.escenario = esc;
+    if (esc === "natural") {
+        parametros.emisionesIndustriales = 0;
+        parametros.deforestacion = 0;
+        parametros.tasaFotosintesis = 1.0;
+    } else if (esc === "industrial") {
+        parametros.emisionesIndustriales = 3.0;
+        parametros.deforestacion = 0.8;
+        parametros.tasaFotosintesis = 0.7;
+    } else if (esc === "colapso") {
+        parametros.emisionesIndustriales = 5.0;
+        parametros.deforestacion = 1.5;
+        reservorios.atmosfera.carbono += 1000;
+    } else if (esc === "sostenible") {
+        parametros.emisionesIndustriales = 0.1;
+        parametros.deforestacion = 0.0;
+        parametros.tasaFotosintesis = 1.5;
+    }
+    document.getElementById('ctrl-emisiones').value = parametros.emisionesIndustriales;
+    document.getElementById('val-emisiones').innerText = parametros.emisionesIndustriales.toFixed(1);
+    document.getElementById('ctrl-deforestacion').value = parametros.deforestacion;
+    document.getElementById('val-deforestacion').innerText = parametros.deforestacion.toFixed(1);
+    document.getElementById('ctrl-reforestacion').value = parametros.tasaFotosintesis;
+    document.getElementById('val-reforestacion').innerText = parametros.tasaFotosintesis.toFixed(1);
+}
+
+let scene, camera, renderer, clock;
+let bosqueGroup, faunaGroup, oceanoMesh, industriaGroup, sol;
+let particulasSystem, particulasGeo, particulasData;
+
+function initEscena() {
+    const canvas = document.getElementById('webgl-canvas');
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.setPixelRatio(window.devicePixelRatio);
+
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x87CEEB);
+    scene.fog = new THREE.FogExp2(0x87CEEB, 0.005);
+
+    camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 500);
+    camera.position.set(20, 35, 90);
+    camera.lookAt(10, 0, 0);
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+    scene.add(new THREE.HemisphereLight(0x87CEEB, 0x3d5c3a, 0.4));
+
+    const sunLight = new THREE.DirectionalLight(0xfff4d6, 1.0);
+    sunLight.position.set(40, 80, 30);
+    sunLight.castShadow = true;
+    sunLight.shadow.mapSize.width = 2048;
+    sunLight.shadow.mapSize.height = 2048;
+    sunLight.shadow.camera.near = 0.5;
+    sunLight.shadow.camera.far = 250;
+    sunLight.shadow.camera.left = -120;
+    sunLight.shadow.camera.right = 120;
+    sunLight.shadow.camera.top = 80;
+    sunLight.shadow.camera.bottom = -80;
+    scene.add(sunLight);
+
+    const solGeo = new THREE.SphereGeometry(5, 16, 16);
+    const solMat = new THREE.MeshBasicMaterial({ color: 0xffeb99 });
+    sol = new THREE.Mesh(solGeo, solMat);
+    sol.position.set(60, 75, -40);
+    scene.add(sol);
+
+    const terrainGeo = new THREE.PlaneGeometry(120, 100, 30, 25);
+    const verts = terrainGeo.attributes.position.array;
+    for (let i = 0; i < verts.length; i += 3) {
+        verts[i+2] = (Math.random() - 0.5) * 1.5;
+    }
+    terrainGeo.computeVertexNormals();
+    const terrain = new THREE.Mesh(terrainGeo, new THREE.MeshStandardMaterial({ color: 0x4a7c3a, roughness: 0.95 }));
+    terrain.rotation.x = -Math.PI / 2;
+    terrain.position.x = -45;
+    terrain.receiveShadow = true;
+    scene.add(terrain);
+
+    const playa = new THREE.Mesh(new THREE.PlaneGeometry(15, 100), new THREE.MeshStandardMaterial({ color: 0xc9b58d, roughness: 1 }));
+    playa.rotation.x = -Math.PI / 2;
+    playa.position.set(22, 0.05, 0);
+    playa.receiveShadow = true;
+    scene.add(playa);
+
+    clock = new THREE.Clock();
+}
+
+function initBosque() {
+    bosqueGroup = new THREE.Group();
+    const treeGeo = new THREE.ConeGeometry(1.5, 4, 8);
+    const trunkGeo = new THREE.CylinderGeometry(0.3, 0.5, 2, 6);
+    const trunkMat = new THREE.MeshStandardMaterial({ color: 0x5c4033 });
+    const leafMat = new THREE.MeshStandardMaterial({ color: 0x228b22 });
+
+    for (let i = 0; i < 100; i++) {
+        const tree = new THREE.Group();
+        const trunk = new THREE.Mesh(trunkGeo, trunkMat);
+        trunk.position.y = 1;
+        trunk.castShadow = true;
+        trunk.receiveShadow = true;
+        const leaves = new THREE.Mesh(treeGeo, leafMat.clone());
+        leaves.position.y = 3.5;
+        leaves.castShadow = true;
+        leaves.receiveShadow = true;
+        leaves.name = "hojas";
+        tree.add(trunk);
+        tree.add(leaves);
+        let px, pz;
+        do {
+            px = -95 + Math.random() * 110;
+            pz = -45 + Math.random() * 90;
+        } while (px > -25 && px < -5 && Math.abs(pz) < 15);
+        tree.position.set(px, 0, pz);
+        const s = 0.7 + Math.random() * 0.6;
+        tree.scale.set(s, s, s);
+        tree.rotation.y = Math.random() * Math.PI * 2;
+        bosqueGroup.add(tree);
+    }
+    scene.add(bosqueGroup);
+}
+
+function initFauna() {
+    faunaGroup = new THREE.Group();
+    const animalGeo = new THREE.BoxGeometry(0.8, 0.8, 1.4);
+    const animalMat = new THREE.MeshStandardMaterial({ color: 0xddaa55 });
+    for (let i = 0; i < 20; i++) {
+        const animal = new THREE.Mesh(animalGeo, animalMat);
+        animal.position.set(-90 + Math.random() * 100, 0.4, -40 + Math.random() * 80);
+        animal.castShadow = true;
+        animal.userData = {
+            target: new THREE.Vector3(),
+            speed: 0.05 + Math.random() * 0.05,
+            getNewTarget: function() {
+                this.target.set(-90 + Math.random() * 100, 0.4, -40 + Math.random() * 80);
+            }
+        };
+        animal.userData.getNewTarget();
+        faunaGroup.add(animal);
+    }
+    scene.add(faunaGroup);
+}
+
+function initIndustria() {
+    industriaGroup = new THREE.Group();
+    const base = new THREE.Mesh(new THREE.BoxGeometry(12, 4, 8), new THREE.MeshStandardMaterial({ color: 0x6b6b6b, roughness: 0.8 }));
+    base.position.set(-15, 2, 0);
+    base.castShadow = true;
+    base.receiveShadow = true;
+    industriaGroup.add(base);
+    const chimeneaGeo = new THREE.CylinderGeometry(0.8, 1.2, 7, 8);
+    const chimeneaMat = new THREE.MeshStandardMaterial({ color: 0x444444, roughness: 0.7 });
+    for (let i = 0; i < 3; i++) {
+        const chimenea = new THREE.Mesh(chimeneaGeo, chimeneaMat);
+        chimenea.position.set(-19 + (i * 4), 7.5, -2);
+        chimenea.castShadow = true;
+        industriaGroup.add(chimenea);
+    }
+    scene.add(industriaGroup);
+}
+
+function initOceano() {
+    oceanoMesh = new THREE.Mesh(
+        new THREE.PlaneGeometry(140, 100, 40, 30),
+        new THREE.MeshStandardMaterial({ color: 0x0077b6, transparent: true, opacity: 0.92, roughness: 0.15, metalness: 0.6 })
+    );
+    oceanoMesh.rotation.x = -Math.PI / 2;
+    oceanoMesh.position.set(102, -0.5, 0);
+    oceanoMesh.receiveShadow = true;
+    scene.add(oceanoMesh);
+}
+
+function initParticulas() {
+    const numParticulas = 400;
+    particulasGeo = new THREE.BufferGeometry();
+    const posArray = new Float32Array(numParticulas * 3);
+    const colorArray = new Float32Array(numParticulas * 3);
+    particulasData = [];
+    const colorAtm = new THREE.Color(0xcccccc);
+    for (let i = 0; i < numParticulas; i++) {
+        posArray[i*3] = (Math.random() - 0.5) * 200;
+        posArray[i*3+1] = 8 + Math.random() * 35;
+        posArray[i*3+2] = (Math.random() - 0.5) * 100;
+        colorArray[i*3] = colorAtm.r;
+        colorArray[i*3+1] = colorAtm.g;
+        colorArray[i*3+2] = colorAtm.b;
+        particulasData.push({
+            estado: "atm",
+            velocidad: new THREE.Vector3((Math.random()-0.5)*0.2, (Math.random()-0.5)*0.2, (Math.random()-0.5)*0.2),
+            target: null, edad: Math.random() * 100
+        });
+    }
+    particulasGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+    particulasGeo.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
+    particulasSystem = new THREE.Points(particulasGeo, new THREE.PointsMaterial({
+        size: 1.2, vertexColors: true, transparent: true, opacity: 0.85, sizeAttenuation: true
+    }));
+    scene.add(particulasSystem);
+}
+
+function actualizarBosque() {
+    let escala = 0.2 + (reservorios.plantas.carbono / 1000);
+    escala = Math.max(0.1, Math.min(escala, 1.5));
+    bosqueGroup.scale.lerp(new THREE.Vector3(escala, escala, escala), 0.05);
+    let targetColor = new THREE.Color(0x228b22);
+    if (estado.temperatura > 22) targetColor = new THREE.Color(0xa8a800);
+    if (estado.temperatura > 25) targetColor = new THREE.Color(0x6b4423);
+    bosqueGroup.children.forEach(tree => {
+        tree.children.forEach(part => {
+            if (part.name === "hojas") part.material.color.lerp(targetColor, 0.02);
+        });
+    });
+}
+
+function actualizarFauna() {
+    const numVisibles = Math.min(20, Math.floor(reservorios.animales.carbono / 10));
+    faunaGroup.children.forEach((animal, i) => {
+        if (i < numVisibles) {
+            animal.visible = true;
+            const dir = new THREE.Vector3().subVectors(animal.userData.target, animal.position);
+            if (dir.length() < 1) animal.userData.getNewTarget();
+            else {
+                dir.normalize();
+                animal.position.add(dir.multiplyScalar(animal.userData.speed));
+                animal.lookAt(animal.userData.target);
+            }
+        } else animal.visible = false;
+    });
+}
+
+function actualizarIndustria() {
+    const s = 1 + (parametros.emisionesIndustriales * 0.15);
+    industriaGroup.scale.set(1, s, 1);
+}
+
+function actualizarOceano() {
+    const ratio = Math.max(0, Math.min(1, (reservorios.oceanoSuperficie.carbono - 900) / 1000));
+    oceanoMesh.material.color.lerpColors(new THREE.Color(0x0077b6), new THREE.Color(0x2d5544), ratio);
+    const t = estado.tiempo * 0.05;
+    const verts = oceanoMesh.geometry.attributes.position.array;
+    for (let i = 0; i < verts.length; i += 3) {
+        const xLocal = verts[i];      // -70 (costa) a +70 (mar abierto)
+        const yLocal = verts[i+1];
+        // Atenuar olas cerca del borde costero: amplitud = 0 en la costa, 1 mar adentro
+        const distanciaCosta = (xLocal + 70) / 140;       // 0 en costa, 1 lejos
+        const amplitud = Math.min(1, distanciaCosta * 4); // suave en los primeros 25%
+        verts[i+2] = (Math.sin(xLocal*0.05 + t) * 0.4 + Math.cos(yLocal*0.05 + t*0.8) * 0.3) * amplitud;
+    }
+    oceanoMesh.geometry.attributes.position.needsUpdate = true;
+    oceanoMesh.geometry.computeVertexNormals();
+}
+
+function actualizarAtmosfera() {
+    const co2Exceso = Math.max(0, reservorios.atmosfera.carbono - 1000);
+    const factor = Math.min(1, co2Exceso / 2000);
+    const c = new THREE.Color().lerpColors(new THREE.Color(0x87CEEB), new THREE.Color(0xa0522d), factor);
+    scene.background = c;
+    scene.fog.color = c;
+    scene.fog.density = 0.005 + (factor * 0.025);
+    if (sol) sol.material.color.lerpColors(new THREE.Color(0xffeb99), new THREE.Color(0xff6644), factor);
+}
+
+function actualizarParticulasSistema() {
+    const positions = particulasGeo.attributes.position.array;
+    const colors = particulasGeo.attributes.color.array;
+    const colorMap = {
+        "atm": new THREE.Color(0xcccccc), "planta": new THREE.Color(0x4ade80),
+        "animal": new THREE.Color(0xfacc15), "suelo": new THREE.Color(0x78350f),
+        "oceano": new THREE.Color(0x3b82f6)
+    };
+    const probFoto = parametros.tasaFotosintesis * 0.01;
+    const probResp = parametros.tasaRespiracion * 0.01;
+    const probEmi = parametros.emisionesIndustriales * 0.02;
+
+    for (let i = 0; i < particulasData.length; i++) {
+        let p = particulasData[i];
+        let i3 = i * 3;
+        if (p.estado === "atm") {
+            if (Math.random() < probFoto) { p.estado = "planta"; p.target = new THREE.Vector3(-45 + (Math.random()-0.5)*80, 2, (Math.random()-0.5)*80); }
+            else if (Math.random() < 0.005) { p.estado = "oceano"; p.target = new THREE.Vector3(95 + (Math.random()-0.5)*60, 0, (Math.random()-0.5)*80); }
+        } else if (p.estado === "planta") {
+            if (Math.random() < probResp) { p.estado = "atm"; p.target = null; }
+            else if (Math.random() < 0.01) { p.estado = "suelo"; p.target = new THREE.Vector3(positions[i3], -1, positions[i3+2]); }
+            else if (Math.random() < 0.005) { p.estado = "animal"; p.target = new THREE.Vector3(positions[i3], 1, positions[i3+2]); }
+        } else if (p.estado === "suelo" || p.estado === "animal" || p.estado === "oceano") {
+            if (Math.random() < 0.005) { p.estado = "atm"; p.target = null; }
+        }
+        if (parametros.emisionesIndustriales > 1 && Math.random() < probEmi && p.estado !== "atm") {
+            p.estado = "atm";
+            positions[i3] = -15; positions[i3+1] = 11; positions[i3+2] = -2;
+            p.target = null;
+        }
+        if (p.estado === "atm") {
+            positions[i3] += p.velocidad.x;
+            positions[i3+1] += p.velocidad.y;
+            positions[i3+2] += p.velocidad.z;
+            if (positions[i3+1] < 8) p.velocidad.y = Math.abs(p.velocidad.y);
+            if (positions[i3+1] > 50) p.velocidad.y = -Math.abs(p.velocidad.y);
+            if (Math.abs(positions[i3]) > 130) p.velocidad.x *= -1;
+            if (Math.abs(positions[i3+2]) > 80) p.velocidad.z *= -1;
+        } else if (p.target) {
+            positions[i3] += (p.target.x - positions[i3]) * 0.05;
+            positions[i3+1] += (p.target.y - positions[i3+1]) * 0.05;
+            positions[i3+2] += (p.target.z - positions[i3+2]) * 0.05;
+        }
+        const targetColor = colorMap[p.estado];
+        colors[i3] += (targetColor.r - colors[i3]) * 0.1;
+        colors[i3+1] += (targetColor.g - colors[i3+1]) * 0.1;
+        colors[i3+2] += (targetColor.b - colors[i3+2]) * 0.1;
+    }
+    particulasGeo.attributes.position.needsUpdate = true;
+    particulasGeo.attributes.color.needsUpdate = true;
+}
+
+function animate() {
+    requestAnimationFrame(animate);
+    let delta = clock.getDelta();
+    if (delta > 0.1) delta = 0.1;
+    const deltaSimulado = delta * estado.velocidadSimulacion * 50;
+
+    actualizarModelo(deltaSimulado);
+    actualizarBosque();
+    actualizarFauna();
+    actualizarIndustria();
+    actualizarOceano();
+    actualizarAtmosfera();
+    actualizarParticulasSistema();
+
+    const t = estado.tiempo * 0.0005;
+    camera.position.x = 20 + Math.sin(t) * 8;
+    camera.lookAt(10, 5, 0);
+
+    actualizarUI();
+    renderer.render(scene, camera);
+}
+
+window.addEventListener('resize', () => {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+});
+
+initEscena();
+initBosque();
+initFauna();
+initIndustria();
+initOceano();
+initParticulas();
+
+ctx.fillStyle = '#0f172a';
+ctx.fillRect(0, 0, graphCanvas.width, graphCanvas.height);
+
+animate();
+</script>
+</body>
+</html>
