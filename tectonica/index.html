@@ -1,1172 +1,2183 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>🌍 Estructura y Dinámica de la Tierra</title>
-<style>
-  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700&display=swap');
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  :root {
-    --crust: #8B6914;
-    --upper-mantle: #D4762C;
-    --lower-mantle: #C44B1C;
-    --outer-core: #E82020;
-    --inner-core: #FFD700;
-    --magma: #FF3300;
-    --bg-dark: #0a0e1a;
-    --bg-card: #111827;
-    --accent: #3B82F6;
-    --text: #E2E8F0;
-    --text-dim: #94A3B8;
-  }
-  body { font-family: 'Inter', sans-serif; background: var(--bg-dark); color: var(--text); min-height: 100vh; overflow-x: hidden; }
-  header { text-align: center; padding: 30px 20px 10px; background: linear-gradient(180deg, #0f172a 0%, transparent 100%); }
-  header h1 { font-family: 'Orbitron', sans-serif; font-size: clamp(1.4rem, 3.5vw, 2.4rem); background: linear-gradient(135deg, #3B82F6, #8B5CF6, #EC4899); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; letter-spacing: 1px; }
-  header p { color: var(--text-dim); margin-top: 6px; font-size: 0.95rem; }
-  .tabs { display: flex; justify-content: center; gap: 8px; padding: 20px; flex-wrap: wrap; }
-  .tab-btn { padding: 10px 22px; border: 2px solid #1e293b; background: var(--bg-card); color: var(--text-dim); border-radius: 12px; cursor: pointer; font-size: 0.9rem; font-weight: 600; transition: all 0.3s; font-family: 'Inter', sans-serif; }
-  .tab-btn:hover { border-color: var(--accent); color: var(--text); }
-  .tab-btn.active { background: linear-gradient(135deg, #1e3a5f, #1e293b); border-color: var(--accent); color: #fff; box-shadow: 0 0 20px rgba(59,130,246,0.2); }
-  .section { display: none; padding: 10px 20px 40px; max-width: 1100px; margin: 0 auto; }
-  .section.active { display: block; animation: fadeIn 0.5s ease; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-
-  /* ====== SECTION A: EARTH ====== */
-  .earth-container { display: flex; flex-wrap: wrap; gap: 30px; align-items: flex-start; justify-content: center; }
-  .earth-view { position: relative; flex: 1 1 420px; max-width: 500px; min-width: 300px; }
-  .earth-half { width: 100%; aspect-ratio: 1; border-radius: 50%; position: relative; overflow: hidden; box-shadow: 0 0 60px rgba(59,130,246,0.15), inset 0 0 40px rgba(0,0,0,0.4); border: 2px solid #1e293b; }
-  .earth-canvas { width: 100%; height: 100%; display: block; }
-  .earth-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; cursor: crosshair; }
-
-  /* Magma channels */
-  .magma-channel { position: absolute; width: 8px; border-radius: 4px; background: linear-gradient(to top, #FF3300, #FF6600, transparent); opacity: 0; transition: opacity 0.5s; z-index: 6; filter: blur(1px); box-shadow: 0 0 10px rgba(255,51,0,0.5); }
-  .magma-channel.active { opacity: 1; animation: magma-rise 4s ease-in-out infinite; }
-  @keyframes magma-rise { 0% { transform: scaleY(0); transform-origin: bottom; opacity: 0.4; } 50% { transform: scaleY(1); transform-origin: bottom; opacity: 1; } 100% { transform: scaleY(1.2); transform-origin: bottom; opacity: 0.6; } }
-
-  /* Plate lines */
-  .plate-line { position: absolute; height: 4px; background: #4A90D9; opacity: 0; transition: opacity 0.5s; z-index: 7; border-radius: 2px; box-shadow: 0 0 8px rgba(74,144,217,0.6); }
-  .plate-line.active { opacity: 1; }
-
-  /* Seismic waves */
-  .seismic-waves { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 15; pointer-events: none; }
-  .seismic-ring { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border: 2px solid rgba(255,200,0,0.6); border-radius: 50%; opacity: 0; }
-  .seismic-ring.active { animation: expand-ring 2s ease-out forwards; }
-  @keyframes expand-ring { 0% { width: 20px; height: 20px; opacity: 0.8; } 100% { width: 500px; height: 500px; opacity: 0; } }
-
-  /* Layer highlight ring */
-  .layer-highlight { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); border-radius: 50%; border: 3px solid rgba(255,255,255,0.7); pointer-events: none; z-index: 8; opacity: 0; transition: opacity 0.3s, width 0.3s, height 0.3s; box-shadow: 0 0 15px rgba(255,255,255,0.3); }
-
-  /* Info panel */
-  .info-panel { flex: 1 1 280px; background: var(--bg-card); border-radius: 16px; padding: 24px; border: 1px solid #1e293b; min-height: 200px; transition: border-color 0.3s; }
-  .info-panel.active-layer { border-color: var(--accent); box-shadow: 0 0 20px rgba(59,130,246,0.15); }
-  .info-panel h3 { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; margin-bottom: 10px; color: var(--accent); }
-  .info-panel p { font-size: 0.88rem; line-height: 1.6; color: var(--text-dim); }
-  .info-panel .stat { display: inline-block; background: rgba(59,130,246,0.15); padding: 4px 10px; border-radius: 8px; margin: 4px 2px; font-size: 0.8rem; color: #93C5FD; }
-
-  .controls-a { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; justify-content: center; }
-  .ctrl-btn { padding: 10px 20px; border: none; border-radius: 10px; cursor: pointer; font-weight: 600; font-size: 0.85rem; font-family: 'Inter', sans-serif; transition: all 0.3s; color: #fff; }
-  .ctrl-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
-  .ctrl-btn:active { transform: scale(0.96); }
-  .btn-magma { background: linear-gradient(135deg, #EF4444, #DC2626); }
-  .btn-plates { background: linear-gradient(135deg, #3B82F6, #2563EB); }
-  .btn-earthquake { background: linear-gradient(135deg, #F59E0B, #D97706); }
-  .btn-reset { background: linear-gradient(135deg, #6B7280, #4B5563); }
-  .earth-shaking { animation: shake 0.5s ease-in-out 3; }
-  @keyframes shake { 0%, 100% { transform: translate(0,0); } 10% { transform: translate(3px, -2px) rotate(0.5deg); } 30% { transform: translate(-3px, 2px) rotate(-0.5deg); } 50% { transform: translate(2px, 3px) rotate(0.3deg); } 70% { transform: translate(-2px, -3px) rotate(-0.3deg); } 90% { transform: translate(1px, 1px) rotate(0.1deg); } }
-
-  /* ====== SECTION B: PLATES ====== */
-  .plates-container { display: flex; flex-wrap: wrap; gap: 20px; justify-content: center; }
-  .plate-demo { background: var(--bg-card); border-radius: 16px; padding: 20px; border: 1px solid #1e293b; width: 100%; max-width: 340px; }
-  .plate-demo h3 { font-family: 'Orbitron', sans-serif; font-size: 0.95rem; margin-bottom: 6px; }
-  .type-tag { font-size: 0.7rem; padding: 3px 10px; border-radius: 20px; display: inline-block; margin-bottom: 15px; }
-  .type-divergent { background: rgba(34,197,94,0.2); color: #4ADE80; border: 1px solid #22C55E; }
-  .type-convergent { background: rgba(239,68,68,0.2); color: #F87171; border: 1px solid #EF4444; }
-  .type-transform { background: rgba(168,85,247,0.2); color: #C084FC; border: 1px solid #A855F7; }
-  .plate-canvas-wrap { position: relative; width: 100%; height: 220px; border-radius: 12px; overflow: hidden; background: linear-gradient(180deg, #0c1929 0%, #162033 60%, #1a1a2e 100%); border: 1px solid #1e293b; }
-  .plate-canvas-wrap canvas { width: 100%; height: 100%; }
-  .plate-info { margin-top: 12px; font-size: 0.82rem; color: var(--text-dim); line-height: 1.5; }
-
-  /* ====== SECTION C: VOLCANO ====== */
-  .volcano-container { display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; align-items: flex-start; }
-  .volcano-view { flex: 1 1 400px; max-width: 550px; }
-  .volcano-canvas-wrap { position: relative; width: 100%; aspect-ratio: 16/10; border-radius: 16px; overflow: hidden; background: linear-gradient(180deg, #1a1a2e 0%, #16213e 40%, #0f3460 70%, #1a1a2e 100%); border: 1px solid #1e293b; }
-  .volcano-canvas-wrap canvas { width: 100%; height: 100%; }
-  .volcano-controls { flex: 1 1 260px; max-width: 350px; background: var(--bg-card); border-radius: 16px; padding: 24px; border: 1px solid #1e293b; }
-  .volcano-controls h3 { font-family: 'Orbitron', sans-serif; font-size: 1rem; color: var(--accent); margin-bottom: 16px; }
-  .pressure-section { margin-bottom: 20px; }
-  .pressure-label { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 8px; }
-  .pressure-bar-bg { width: 100%; height: 24px; background: #1e293b; border-radius: 12px; overflow: hidden; border: 1px solid #334155; }
-  .pressure-bar-fill { height: 100%; width: 0%; border-radius: 12px; transition: width 0.3s, background 0.3s; background: linear-gradient(90deg, #22C55E, #EAB308, #EF4444); }
-  .pressure-bar-fill.critical { animation: pulse-bar 0.5s ease-in-out infinite; }
-  @keyframes pulse-bar { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
-  .volcano-btn-group { display: flex; flex-direction: column; gap: 10px; }
-  .volcano-btn { padding: 12px; border: none; border-radius: 10px; cursor: pointer; font-weight: 700; font-size: 0.9rem; font-family: 'Inter', sans-serif; transition: all 0.3s; color: #fff; }
-  .volcano-btn:hover { transform: translateY(-2px); }
-  .volcano-btn:active { transform: scale(0.97); }
-  .btn-increase { background: linear-gradient(135deg, #EF4444, #B91C1C); }
-  .btn-decrease { background: linear-gradient(135deg, #3B82F6, #1D4ED8); }
-  .btn-erupt { background: linear-gradient(135deg, #F59E0B, #DC2626); }
-  .btn-reset-volcano { background: linear-gradient(135deg, #6B7280, #374151); }
-  .volcano-status { margin-top: 16px; padding: 12px; border-radius: 10px; font-size: 0.82rem; text-align: center; font-weight: 600; }
-  .status-calm { background: rgba(34,197,94,0.15); color: #4ADE80; border: 1px solid #22C55E33; }
-  .status-warning { background: rgba(234,179,8,0.15); color: #FBBF24; border: 1px solid #EAB30833; }
-  .status-critical { background: rgba(239,68,68,0.15); color: #F87171; border: 1px solid #EF444433; }
-  .status-erupting { background: rgba(255,100,0,0.2); color: #FF6600; border: 1px solid #FF660033; }
-  .volcano-log { margin-top: 16px; max-height: 120px; overflow-y: auto; font-size: 0.75rem; color: var(--text-dim); line-height: 1.8; }
-  .volcano-log::-webkit-scrollbar { width: 4px; }
-  .volcano-log::-webkit-scrollbar-track { background: transparent; }
-  .volcano-log::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
-  .log-entry { padding: 2px 0; border-bottom: 1px solid #1e293b22; }
-  .log-entry span { color: var(--accent); }
-
-  /* Student mode */
-  .student-mode { margin-top: 20px; background: linear-gradient(135deg, #1e3a5f, #1e293b); border-radius: 16px; padding: 24px; border: 1px solid #3B82F644; }
-  .student-mode h3 { font-family: 'Orbitron', sans-serif; color: #93C5FD; margin-bottom: 12px; font-size: 0.95rem; }
-  .quiz-question { margin-bottom: 16px; }
-  .quiz-question p { font-size: 0.88rem; margin-bottom: 8px; font-weight: 600; }
-  .quiz-options { display: flex; flex-wrap: wrap; gap: 6px; }
-  .quiz-opt { padding: 6px 14px; border: 1px solid #334155; background: var(--bg-card); color: var(--text-dim); border-radius: 8px; cursor: pointer; font-size: 0.8rem; font-family: 'Inter', sans-serif; transition: all 0.3s; }
-  .quiz-opt:hover { border-color: var(--accent); color: var(--text); }
-  .quiz-opt.correct { background: rgba(34,197,94,0.2); border-color: #22C55E; color: #4ADE80; }
-  .quiz-opt.wrong { background: rgba(239,68,68,0.2); border-color: #EF4444; color: #F87171; }
-  .speed-control { margin-top: 16px; display: flex; align-items: center; gap: 12px; font-size: 0.85rem; }
-  .speed-control input[type="range"] { flex: 1; accent-color: var(--accent); }
-
-  /* Tooltip */
-  .tooltip { position: fixed; background: #1e293b; color: #fff; padding: 8px 14px; border-radius: 8px; font-size: 0.78rem; pointer-events: none; z-index: 1000; border: 1px solid #334155; max-width: 220px; display: none; box-shadow: 0 8px 25px rgba(0,0,0,0.4); }
-  .star-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; background: radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,0.3), transparent), radial-gradient(1px 1px at 30% 60%, rgba(255,255,255,0.2), transparent), radial-gradient(1px 1px at 50% 10%, rgba(255,255,255,0.3), transparent), radial-gradient(1px 1px at 70% 80%, rgba(255,255,255,0.2), transparent), radial-gradient(1px 1px at 90% 40%, rgba(255,255,255,0.3), transparent); }
-
-  @media (max-width: 600px) {
-    .tabs { gap: 5px; padding: 15px 10px; }
-    .tab-btn { padding: 8px 14px; font-size: 0.8rem; }
-    .section { padding: 10px 12px 30px; }
-    .info-panel, .volcano-controls { padding: 16px; }
-  }
-</style>
-</head>
-<body>
-<div class="star-bg"></div>
-<div class="tooltip" id="tooltip"></div>
-
-<header>
-  <h1>🌍 Estructura y Dinámica de la Tierra</h1>
-  <p>Explora las capas internas, placas tectónicas y volcanes de forma interactiva</p>
-</header>
-
-<nav class="tabs">
-  <button class="tab-btn active" onclick="showSection('earth')">🔵 Capas de la Tierra</button>
-  <button class="tab-btn" onclick="showSection('plates')">🟡 Placas Tectónicas</button>
-  <button class="tab-btn" onclick="showSection('volcano')">🔴 Volcán Interactivo</button>
-</nav>
-
-<!-- ==================== SECTION A ==================== -->
-<section id="sec-earth" class="section active">
-  <div class="earth-container">
-    <div class="earth-view">
-      <div class="earth-half" id="earthHalf">
-        <canvas class="earth-canvas" id="earthCanvas"></canvas>
-        <div class="earth-overlay" id="earthOverlay"></div>
-        <div class="layer-highlight" id="layerHighlight"></div>
-
-        <!-- Magma channels -->
-        <div class="magma-channel" id="magma1" style="left:45%;top:12%;height:70%;width:6px;"></div>
-        <div class="magma-channel" id="magma2" style="left:55%;top:18%;height:55%;width:8px;animation-delay:1s;"></div>
-        <div class="magma-channel" id="magma3" style="left:35%;top:22%;height:40%;width:5px;animation-delay:2s;"></div>
-
-        <!-- Plate lines -->
-        <div class="plate-line" id="plateLine1" style="top:8%;left:10%;width:80%;"></div>
-
-        <!-- Seismic waves -->
-        <div class="seismic-waves" id="seismicWaves">
-          <div class="seismic-ring" id="ring1"></div>
-          <div class="seismic-ring" id="ring2"></div>
-          <div class="seismic-ring" id="ring3"></div>
-          <div class="seismic-ring" id="ring4"></div>
-          <div class="seismic-ring" id="ring5"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="info-panel" id="infoPanel">
-      <h3>🌍 Selecciona una capa</h3>
-      <p>Pasa el cursor o haz clic sobre cada capa del modelo de la Tierra para ver información detallada.</p>
-    </div>
-  </div>
-
-  <div class="controls-a">
-    <button class="ctrl-btn btn-magma" onclick="toggleMagma()">🔥 Activar Magma</button>
-    <button class="ctrl-btn btn-plates" onclick="togglePlates()">🗺️ Mostrar Placas</button>
-    <button class="ctrl-btn btn-earthquake" onclick="triggerEarthquake()">💥 Simular Terremoto</button>
-    <button class="ctrl-btn btn-reset" onclick="resetEarth()">🔄 Resetear</button>
-  </div>
-
-  <div class="speed-control">
-    <span>⚡ Velocidad animación:</span>
-    <input type="range" min="1" max="5" value="3" id="speedSlider" oninput="updateSpeed(this.value)">
-    <span id="speedLabel">Normal</span>
-  </div>
-
-  <div class="student-mode">
-    <h3>🎓 Modo Estudiante — Preguntas</h3>
-    <div class="quiz-question">
-      <p>1. ¿Cuál es la capa más caliente de la Tierra?</p>
-      <div class="quiz-options">
-        <button class="quiz-opt" onclick="checkAnswer(this, false)">Manto superior</button>
-        <button class="quiz-opt" onclick="checkAnswer(this, true)">Núcleo interno</button>
-        <button class="quiz-opt" onclick="checkAnswer(this, false)">Núcleo externo</button>
-        <button class="quiz-opt" onclick="checkAnswer(this, false)">Corteza</button>
-      </div>
-    </div>
-    <div class="quiz-question">
-      <p>2. ¿Qué capa genera el campo magnético terrestre?</p>
-      <div class="quiz-options">
-        <button class="quiz-opt" onclick="checkAnswer(this, false)">Corteza</button>
-        <button class="quiz-opt" onclick="checkAnswer(this, true)">Núcleo externo</button>
-        <button class="quiz-opt" onclick="checkAnswer(this, false)">Manto inferior</button>
-        <button class="quiz-opt" onclick="checkAnswer(this, false)">Núcleo interno</button>
-      </div>
-    </div>
-    <div class="quiz-question">
-      <p>3. ¿De qué están compuestas las placas tectónicas?</p>
-      <div class="quiz-options">
-        <button class="quiz-opt" onclick="checkAnswer(this, false)">Solo del manto</button>
-        <button class="quiz-opt" onclick="checkAnswer(this, false)">Solo de la corteza oceánica</button>
-        <button class="quiz-opt" onclick="checkAnswer(this, true)">Corteza + manto superior (litósfera)</button>
-        <button class="quiz-opt" onclick="checkAnswer(this, false)">Del núcleo externo</button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ==================== SECTION B ==================== -->
-<section id="sec-plates" class="section">
-  <h2 style="text-align:center;font-family:'Orbitron',sans-serif;font-size:1.2rem;margin-bottom:20px;color:#93C5FD;">
-    🗺️ Tipos de Movimiento de Placas Tectónicas
-  </h2>
-  <div class="plates-container">
-    <div class="plate-demo">
-      <h3 style="color:#4ADE80;">Límite Divergente</h3>
-      <span class="type-tag type-divergent">← Se separan →</span>
-      <div class="plate-canvas-wrap">
-        <canvas id="canvasDivergent"></canvas>
-      </div>
-      <p class="plate-info">Las placas se <strong>separan</strong>, permitiendo que el magma ascienda y forme nueva corteza oceánica. Ejemplo: <em>Dorsal Mesoatlántica</em>.</p>
-    </div>
-    <div class="plate-demo">
-      <h3 style="color:#F87171;">Límite Convergente</h3>
-      <span class="type-tag type-convergent">→ Colisionan ←</span>
-      <div class="plate-canvas-wrap">
-        <canvas id="canvasConvergent"></canvas>
-      </div>
-      <p class="plate-info">Las placas <strong>colisionan</strong>. Una puede subducir bajo la otra, formando montañas, volcanes y terremotos. Ejemplo: <em>Cordillera de los Andes</em>.</p>
-    </div>
-    <div class="plate-demo">
-      <h3 style="color:#C084FC;">Límite Transformante</h3>
-      <span class="type-tag type-transform">↑ Deslizan ↓</span>
-      <div class="plate-canvas-wrap">
-        <canvas id="canvasTransform"></canvas>
-      </div>
-      <p class="plate-info">Las placas se <strong>deslizan lateralmente</strong> una junto a la otra. Generan terremotos pero no volcanes. Ejemplo: <em>Falla de San Andrés</em>.</p>
-    </div>
-  </div>
-</section>
-
-<!-- ==================== SECTION C ==================== -->
-<section id="sec-volcano" class="section">
-  <div class="volcano-container">
-    <div class="volcano-view">
-      <div class="volcano-canvas-wrap">
-        <canvas id="volcanoCanvas"></canvas>
-      </div>
-    </div>
-    <div class="volcano-controls">
-      <h3>🌋 Control del Volcán</h3>
-      <div class="pressure-section">
-        <div class="pressure-label">
-          <span>Presión magmática</span>
-          <span id="pressureValue">0%</span>
-        </div>
-        <div class="pressure-bar-bg">
-          <div class="pressure-bar-fill" id="pressureBar"></div>
-        </div>
-      </div>
-      <div class="volcano-btn-group">
-        <button class="volcano-btn btn-increase" onclick="increasePressure()">⬆️ Aumentar Presión</button>
-        <button class="volcano-btn btn-decrease" onclick="decreasePressure()">⬇️ Disminuir Presión</button>
-        <button class="volcano-btn btn-erupt" onclick="forceErupt()">🌋 ¡Forzar Erupción!</button>
-        <button class="volcano-btn btn-reset-volcano" onclick="resetVolcano()">🔄 Resetear Volcán</button>
-      </div>
-      <div class="volcano-status status-calm" id="volcanoStatus">✅ Volcán en reposo</div>
-      <div class="volcano-log" id="volcanoLog">
-        <div class="log-entry"><span>[Sistema]</span> Volcán inicializado. Presión: 0%</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<script>
-// ============ NAVIGATION ============
-function showSection(name) {
-  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.getElementById('sec-' + name).classList.add('active');
-  event.target.classList.add('active');
-
-  if (name === 'plates') setTimeout(initPlateCanvases, 50);
-  if (name === 'volcano') setTimeout(initVolcano, 50);
-  if (name === 'earth') setTimeout(initEarthCanvas, 50);
-}
-
-// ============ TOOLTIP ============
-const tooltip = document.getElementById('tooltip');
-
-// ============ SECTION A: EARTH LAYERS (Canvas-based) ============
-const layerInfo = {
-  'inner-core': { title: '⚡ Núcleo Interno', desc: 'Esfera sólida de hierro y níquel a temperaturas similares a la superficie del Sol. La presión extrema mantiene los átomos en estado sólido.', stats: ['Radio: ~1220 km', 'Temp: ~5500°C', 'Presión: 330-360 GPa'], color: '#FFD700' },
-  'outer-core': { title: '💫 Núcleo Externo', desc: 'Capa líquida de hierro y níquel fundido. Su movimiento genera el campo magnético terrestre (efecto dínamo) que nos protege de la radiación solar.', stats: ['Profundidad: 2900-5150 km', 'Temp: 3000-5000°C', 'Estado: Líquido'], color: '#E82020' },
-  'lower-mantle': { title: '🌋 Manto Inferior', desc: 'Capa sólida pero que fluye extremadamente lento por convección. Compuesta de silicatos de magnesio y hierro bajo enorme presión.', stats: ['Profundidad: 670-2900 km', 'Temp: 900-3000°C', 'Presión: 24-135 GPa'], color: '#C44B1C' },
-  'upper-mantle': { title: '🔥 Manto Superior', desc: 'Incluye la astenósfera, una zona parcialmente fundida donde las rocas fluyen lentamente. Es donde se originan las corrientes de convección que mueven las placas tectónicas.', stats: ['Profundidad: 70-670 km', 'Temp: 500-900°C', 'Material: peridotita'], color: '#D4762C' },
-  'crust': { title: '🪨 Corteza Terrestre', desc: 'Capa más externa y delgada. Incluye la corteza continental (30-70 km) y oceánica (5-10 km). Está compuesta principalmente de rocas silicatadas.', stats: ['Espesor: 5-70 km', 'Temp: 0-400°C', 'Densidad: 2.7-3.0 g/cm³'], color: '#8B6914' }
-};
-
-// Layer radius ratios (relative to full radius)
-const LAYERS = [
-  { id: 'crust', outer: 1.0, inner: 0.82 },
-  { id: 'upper-mantle', outer: 0.82, inner: 0.62 },
-  { id: 'lower-mantle', outer: 0.62, inner: 0.40 },
-  { id: 'outer-core', outer: 0.40, inner: 0.18 },
-  { id: 'inner-core', outer: 0.18, inner: 0.0 }
-];
-
-let earthAnimId = null;
-let hoveredLayer = null;
-let selectedLayer = null;
-let magmaActive = false;
-let platesVisible = false;
-let animSpeed = 1;
-
-function initEarthCanvas() {
-  if (earthAnimId) return;
-  const canvas = document.getElementById('earthCanvas');
-  const container = document.getElementById('earthHalf');
-  canvas.width = container.clientWidth * 2;
-  canvas.height = container.clientHeight * 2;
-  canvas.style.width = '100%';
-  canvas.style.height = '100%';
-  drawEarth();
-}
-
-function drawEarth() {
-  const canvas = document.getElementById('earthCanvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height;
-  const cx = W / 2, cy = H / 2;
-  const maxR = Math.min(cx, cy) - 4;
-  const time = Date.now() * 0.001;
-
-  function frame() {
-    ctx.clearRect(0, 0, W, H);
-
-    // Draw layers from outer to inner
-    const layerColors = {
-      'crust': { base: [139, 105, 20], hover: [170, 135, 40] },
-      'upper-mantle': { base: [212, 118, 44], hover: [240, 140, 60] },
-      'lower-mantle': { base: [196, 75, 28], hover: [225, 100, 50] },
-      'outer-core': { base: [232, 32, 32], hover: [255, 60, 50] },
-      'inner-core': { base: [255, 215, 0], hover: [255, 240, 100] }
-    };
-
-    for (let i = 0; i < LAYERS.length; i++) {
-      const layer = LAYERS[i];
-      const colors = layerColors[layer.id];
-      const isHovered = hoveredLayer === layer.id;
-      const isSelected = selectedLayer === layer.id;
-      const c = isHovered ? colors.hover : colors.base;
-
-      // Gradient for each layer
-      const r1 = layer.outer * maxR;
-      const r2 = layer.inner * maxR;
-
-      const grad = ctx.createRadialGradient(cx - r1 * 0.2, cy - r1 * 0.2, r2, cx, cy, r1);
-      const bright = isHovered ? 30 : 0;
-      grad.addColorStop(0, `rgb(${Math.min(255, c[0] + bright)}, ${Math.min(255, c[1] + bright)}, ${Math.min(255, c[2] + bright)})`);
-      grad.addColorStop(1, `rgb(${Math.max(0, c[0] - 20)}, ${Math.max(0, c[1] - 20)}, ${Math.max(0, c[2] - 20)})`);
-
-      ctx.fillStyle = grad;
-      ctx.beginPath();
-      ctx.arc(cx, cy, r1, 0, Math.PI * 2);
-      if (layer.inner > 0) {
-        ctx.arc(cx, cy, r2, 0, Math.PI * 2, true);
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🌍 Estructura y dinámica de la Tierra</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;600;700&display=swap');
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      :root {
+        --crust: #8b6914;
+        --upper-mantle: #d4762c;
+        --lower-mantle: #c44b1c;
+        --outer-core: #e82020;
+        --inner-core: #ffd700;
+        --magma: #ff3300;
+        --bg-dark: #0a0e1a;
+        --bg-card: #111827;
+        --accent: #3b82f6;
+        --text: #e2e8f0;
+        --text-dim: #94a3b8;
       }
-      ctx.fill();
+      body {
+        font-family: 'Inter', sans-serif;
+        background: var(--bg-dark);
+        color: var(--text);
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+      header {
+        text-align: center;
+        padding: 30px 20px 10px;
+        background: linear-gradient(180deg, #0f172a 0%, transparent 100%);
+      }
+      header h1 {
+        font-family: 'Orbitron', sans-serif;
+        font-size: clamp(1.4rem, 3.5vw, 2.4rem);
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6, #ec4899);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: 1px;
+      }
+      header p { color: var(--text-dim); margin-top: 6px; font-size: 0.95rem; }
+      .tabs { display: flex; justify-content: center; gap: 8px; padding: 20px; flex-wrap: wrap; }
+      .tab-btn {
+        padding: 10px 22px;
+        border: 2px solid #1e293b;
+        background: var(--bg-card);
+        color: var(--text-dim);
+        border-radius: 12px;
+        cursor: pointer;
+        font-size: 0.9rem;
+        font-weight: 600;
+        transition: all 0.3s;
+        font-family: 'Inter', sans-serif;
+      }
+      .tab-btn:hover { border-color: var(--accent); color: var(--text); }
+      .tab-btn.active {
+        background: linear-gradient(135deg, #1e3a5f, #1e293b);
+        border-color: var(--accent);
+        color: #fff;
+        box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);
+      }
+      .section { display: none; padding: 10px 20px 40px; max-width: 1100px; margin: 0 auto; }
+      .section.active { display: block; animation: fadeIn 0.5s ease; }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(15px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
 
-      // Selection glow
-      if (isSelected) {
-        ctx.strokeStyle = 'rgba(59,130,246,0.8)';
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.arc(cx, cy, r1, 0, Math.PI * 2);
-        ctx.stroke();
-        if (layer.inner > 0) {
+      /* ====== SECTION A: EARTH ====== */
+      .earth-container { display: flex; flex-wrap: wrap; gap: 30px; align-items: flex-start; justify-content: center; }
+      .earth-view { position: relative; flex: 1 1 420px; max-width: 500px; min-width: 300px; }
+      .earth-half {
+        width: 100%;
+        aspect-ratio: 1;
+        border-radius: 50%;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 0 60px rgba(59, 130, 246, 0.15), inset 0 0 40px rgba(0, 0, 0, 0.4);
+        border: 2px solid #1e293b;
+      }
+      .earth-canvas { width: 100%; height: 100%; display: block; }
+      .earth-overlay {
+        position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+        z-index: 5; cursor: crosshair;
+      }
+      .seismic-waves {
+        position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        z-index: 15; pointer-events: none;
+      }
+      .seismic-ring {
+        position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        border: 2px solid rgba(255, 200, 0, 0.6); border-radius: 50%; opacity: 0;
+      }
+      .seismic-ring.active { animation: expand-ring 2s ease-out forwards; }
+      @keyframes expand-ring {
+        0% { width: 20px; height: 20px; opacity: 0.8; }
+        100% { width: 500px; height: 500px; opacity: 0; }
+      }
+      .layer-highlight {
+        position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+        border-radius: 50%; border: 3px solid rgba(255, 255, 255, 0.7);
+        pointer-events: none; z-index: 8; opacity: 0;
+        transition: opacity 0.3s, width 0.3s, height 0.3s;
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+      }
+      .info-panel {
+        flex: 1 1 280px;
+        background: var(--bg-card);
+        border-radius: 16px;
+        padding: 24px;
+        border: 1px solid #1e293b;
+        min-height: 200px;
+        transition: border-color 0.3s;
+      }
+      .info-panel.active-layer {
+        border-color: var(--accent);
+        box-shadow: 0 0 20px rgba(59, 130, 246, 0.15);
+      }
+      .info-panel h3 {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.1rem; margin-bottom: 10px; color: var(--accent);
+      }
+      .info-panel p { font-size: 0.88rem; line-height: 1.6; color: var(--text-dim); }
+      .info-panel .stat {
+        display: inline-block;
+        background: rgba(59, 130, 246, 0.15);
+        padding: 4px 10px; border-radius: 8px;
+        margin: 4px 2px; font-size: 0.8rem; color: #93c5fd;
+      }
+      .controls-a { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; justify-content: center; }
+      .ctrl-btn {
+        padding: 10px 20px; border: none; border-radius: 10px;
+        cursor: pointer; font-weight: 600; font-size: 0.85rem;
+        font-family: 'Inter', sans-serif; transition: all 0.3s; color: #fff;
+      }
+      .ctrl-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3); }
+      .ctrl-btn:active { transform: scale(0.96); }
+      .ctrl-btn.active-toggle { box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5); }
+      .btn-magma { background: linear-gradient(135deg, #ef4444, #dc2626); }
+      .btn-plates { background: linear-gradient(135deg, #3b82f6, #2563eb); }
+      .btn-earthquake { background: linear-gradient(135deg, #f59e0b, #d97706); }
+      .btn-reset { background: linear-gradient(135deg, #6b7280, #4b5563); }
+      .earth-shaking { animation: shake 0.5s ease-in-out 3; }
+      @keyframes shake {
+        0%, 100% { transform: translate(0, 0); }
+        10% { transform: translate(3px, -2px) rotate(0.5deg); }
+        30% { transform: translate(-3px, 2px) rotate(-0.5deg); }
+        50% { transform: translate(2px, 3px) rotate(0.3deg); }
+        70% { transform: translate(-2px, -3px) rotate(-0.3deg); }
+        90% { transform: translate(1px, 1px) rotate(0.1deg); }
+      }
+
+      /* ====== SECTION B: PLATES (NEW LAYOUT) ====== */
+      .plates-selector {
+        display: flex; flex-wrap: wrap; gap: 12px;
+        justify-content: center; margin-bottom: 24px;
+      }
+      .plate-select-btn {
+        padding: 14px 28px;
+        border: 2px solid #1e293b;
+        background: var(--bg-card);
+        color: var(--text-dim);
+        border-radius: 14px;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 0.95rem;
+        font-family: 'Inter', sans-serif;
+        transition: all 0.3s;
+        display: flex; align-items: center; gap: 10px;
+      }
+      .plate-select-btn:hover { transform: translateY(-2px); }
+      .plate-select-btn.active-divergent {
+        background: linear-gradient(135deg, #166534, #14532d);
+        border-color: #22c55e; color: #4ade80;
+        box-shadow: 0 0 24px rgba(34, 197, 94, 0.25);
+      }
+      .plate-select-btn.active-convergent {
+        background: linear-gradient(135deg, #7f1d1d, #450a0a);
+        border-color: #ef4444; color: #fca5a5;
+        box-shadow: 0 0 24px rgba(239, 68, 68, 0.25);
+      }
+      .plate-select-btn.active-transform {
+        background: linear-gradient(135deg, #581c87, #3b0764);
+        border-color: #a855f7; color: #c084fc;
+        box-shadow: 0 0 24px rgba(168, 85, 247, 0.25);
+      }
+      .plate-icon { font-size: 1.4rem; }
+      .plate-stage {
+        background: var(--bg-card);
+        border-radius: 20px;
+        padding: 24px;
+        border: 1px solid #1e293b;
+        display: flex; flex-wrap: wrap; gap: 24px;
+        align-items: stretch;
+      }
+      .plate-stage-canvas-wrap {
+        flex: 1 1 480px;
+        min-height: 360px;
+        position: relative;
+        border-radius: 14px;
+        overflow: hidden;
+        background: linear-gradient(180deg, #0c1929 0%, #162033 60%, #1a1a2e 100%);
+        border: 1px solid #1e293b;
+      }
+      .plate-stage-canvas-wrap canvas { width: 100%; height: 100%; display: block; }
+      .plate-stage-info {
+        flex: 1 1 280px;
+        max-width: 380px;
+        display: flex; flex-direction: column; gap: 14px;
+      }
+      .plate-stage-info h3 {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1.3rem;
+      }
+      .plate-stage-tag {
+        font-size: 0.78rem; padding: 4px 12px;
+        border-radius: 20px; display: inline-block;
+        align-self: flex-start;
+      }
+      .plate-stage-info p {
+        font-size: 0.92rem; line-height: 1.65; color: var(--text-dim);
+      }
+      .plate-stage-features {
+        display: flex; flex-direction: column; gap: 8px; margin-top: 6px;
+      }
+      .feature-item {
+        display: flex; align-items: center; gap: 10px;
+        font-size: 0.85rem; color: var(--text);
+        padding: 8px 12px;
+        background: rgba(59, 130, 246, 0.08);
+        border-radius: 10px;
+        border-left: 3px solid var(--accent);
+      }
+      .feature-item.green { border-left-color: #22c55e; background: rgba(34, 197, 94, 0.08); }
+      .feature-item.red { border-left-color: #ef4444; background: rgba(239, 68, 68, 0.08); }
+      .feature-item.purple { border-left-color: #a855f7; background: rgba(168, 85, 247, 0.08); }
+      .example-box {
+        margin-top: 8px;
+        padding: 12px 14px;
+        background: rgba(15, 23, 42, 0.7);
+        border-radius: 10px;
+        border: 1px dashed #334155;
+        font-size: 0.85rem;
+      }
+      .example-box strong { color: #fbbf24; display: block; margin-bottom: 4px; font-size: 0.8rem; letter-spacing: 0.5px; }
+
+      /* ====== SECTION C: VOLCANO ====== */
+      .volcano-container { display: flex; flex-wrap: wrap; gap: 30px; justify-content: center; align-items: flex-start; }
+      .volcano-view { flex: 1 1 400px; max-width: 600px; }
+      .volcano-canvas-wrap {
+        position: relative;
+        width: 100%;
+        aspect-ratio: 16/10;
+        border-radius: 16px;
+        overflow: hidden;
+        border: 1px solid #1e293b;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+      }
+      .volcano-canvas-wrap canvas { width: 100%; height: 100%; }
+      .volcano-controls {
+        flex: 1 1 260px;
+        max-width: 350px;
+        background: var(--bg-card);
+        border-radius: 16px;
+        padding: 24px;
+        border: 1px solid #1e293b;
+      }
+      .volcano-controls h3 {
+        font-family: 'Orbitron', sans-serif;
+        font-size: 1rem; color: var(--accent); margin-bottom: 16px;
+      }
+      .pressure-section { margin-bottom: 20px; }
+      .pressure-label { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 8px; }
+      .pressure-bar-bg {
+        width: 100%; height: 24px;
+        background: #1e293b; border-radius: 12px;
+        overflow: hidden; border: 1px solid #334155;
+      }
+      .pressure-bar-fill {
+        height: 100%; width: 0%; border-radius: 12px;
+        transition: width 0.3s, background 0.3s;
+        background: linear-gradient(90deg, #22c55e, #eab308, #ef4444);
+      }
+      .pressure-bar-fill.critical { animation: pulse-bar 0.5s ease-in-out infinite; }
+      @keyframes pulse-bar { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+      .volcano-btn-group { display: flex; flex-direction: column; gap: 10px; }
+      .volcano-btn {
+        padding: 12px; border: none; border-radius: 10px;
+        cursor: pointer; font-weight: 700; font-size: 0.9rem;
+        font-family: 'Inter', sans-serif; transition: all 0.3s; color: #fff;
+      }
+      .volcano-btn:hover { transform: translateY(-2px); }
+      .volcano-btn:active { transform: scale(0.97); }
+      .btn-increase { background: linear-gradient(135deg, #ef4444, #b91c1c); }
+      .btn-decrease { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+      .btn-erupt { background: linear-gradient(135deg, #f59e0b, #dc2626); }
+      .btn-reset-volcano { background: linear-gradient(135deg, #6b7280, #374151); }
+      .volcano-status {
+        margin-top: 16px; padding: 12px;
+        border-radius: 10px; font-size: 0.82rem;
+        text-align: center; font-weight: 600;
+      }
+      .status-calm { background: rgba(34, 197, 94, 0.15); color: #4ade80; border: 1px solid #22c55e33; }
+      .status-warning { background: rgba(234, 179, 8, 0.15); color: #fbbf24; border: 1px solid #eab30833; }
+      .status-critical { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid #ef444433; }
+      .status-erupting { background: rgba(255, 100, 0, 0.2); color: #ff6600; border: 1px solid #ff660033; }
+      .volcano-log {
+        margin-top: 16px; max-height: 120px; overflow-y: auto;
+        font-size: 0.75rem; color: var(--text-dim); line-height: 1.8;
+      }
+      .volcano-log::-webkit-scrollbar { width: 4px; }
+      .volcano-log::-webkit-scrollbar-track { background: transparent; }
+      .volcano-log::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
+      .log-entry { padding: 2px 0; border-bottom: 1px solid #1e293b22; }
+      .log-entry span { color: var(--accent); }
+
+      /* ====== STUDENT QUIZ MODE (improved feedback) ====== */
+      .student-mode {
+        margin-top: 20px;
+        background: linear-gradient(135deg, #1e3a5f, #1e293b);
+        border-radius: 16px;
+        padding: 24px;
+        border: 1px solid #3b82f644;
+      }
+      .student-mode h3 {
+        font-family: 'Orbitron', sans-serif;
+        color: #93c5fd; margin-bottom: 16px; font-size: 0.95rem;
+      }
+      .quiz-question {
+        margin-bottom: 20px;
+        padding-bottom: 18px;
+        border-bottom: 1px dashed #1e3a5f55;
+      }
+      .quiz-question:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+      .quiz-question p.q-text {
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+        font-weight: 600;
+        color: #e2e8f0;
+      }
+      .quiz-options { display: flex; flex-wrap: wrap; gap: 8px; }
+      .quiz-opt {
+        padding: 8px 14px;
+        border: 1px solid #334155;
+        background: var(--bg-card);
+        color: var(--text-dim);
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 0.82rem;
+        font-family: 'Inter', sans-serif;
+        transition: all 0.3s;
+        text-align: left;
+      }
+      .quiz-opt:hover:not(:disabled) { border-color: var(--accent); color: var(--text); transform: translateX(2px); }
+      .quiz-opt:disabled { cursor: default; }
+      .quiz-opt.correct {
+        background: rgba(34, 197, 94, 0.18);
+        border-color: #22c55e;
+        color: #4ade80;
+        font-weight: 600;
+      }
+      .quiz-opt.correct::before { content: '✓ '; font-weight: 700; }
+      .quiz-opt.wrong {
+        background: rgba(239, 68, 68, 0.18);
+        border-color: #ef4444;
+        color: #f87171;
+        text-decoration: line-through;
+      }
+      .quiz-opt.wrong::before { content: '✗ '; font-weight: 700; text-decoration: none; display: inline-block; }
+      .quiz-feedback {
+        margin-top: 12px;
+        padding: 12px 14px;
+        border-radius: 10px;
+        font-size: 0.85rem;
+        line-height: 1.55;
+        display: none;
+        animation: slideDown 0.3s ease;
+      }
+      @keyframes slideDown {
+        from { opacity: 0; transform: translateY(-6px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .quiz-feedback.show { display: block; }
+      .quiz-feedback.success {
+        background: rgba(34, 197, 94, 0.12);
+        border-left: 4px solid #22c55e;
+        color: #bbf7d0;
+      }
+      .quiz-feedback.error {
+        background: rgba(239, 68, 68, 0.12);
+        border-left: 4px solid #ef4444;
+        color: #fecaca;
+      }
+      .quiz-feedback strong { color: #fff; }
+
+      .speed-control {
+        margin-top: 16px;
+        display: flex; align-items: center; gap: 12px; font-size: 0.85rem;
+      }
+      .speed-control input[type='range'] { flex: 1; accent-color: var(--accent); }
+
+      .tooltip {
+        position: fixed;
+        background: #1e293b; color: #fff;
+        padding: 8px 14px; border-radius: 8px;
+        font-size: 0.78rem; pointer-events: none;
+        z-index: 1000;
+        border: 1px solid #334155;
+        max-width: 220px; display: none;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+      }
+      .star-bg {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        pointer-events: none; z-index: -1;
+        background:
+          radial-gradient(1px 1px at 10% 20%, rgba(255, 255, 255, 0.3), transparent),
+          radial-gradient(1px 1px at 30% 60%, rgba(255, 255, 255, 0.2), transparent),
+          radial-gradient(1px 1px at 50% 10%, rgba(255, 255, 255, 0.3), transparent),
+          radial-gradient(1px 1px at 70% 80%, rgba(255, 255, 255, 0.2), transparent),
+          radial-gradient(1px 1px at 90% 40%, rgba(255, 255, 255, 0.3), transparent);
+      }
+      @media (max-width: 600px) {
+        .tabs { gap: 5px; padding: 15px 10px; }
+        .tab-btn { padding: 8px 14px; font-size: 0.8rem; }
+        .section { padding: 10px 12px 30px; }
+        .info-panel, .volcano-controls, .plate-stage { padding: 16px; }
+        .plate-stage-canvas-wrap { min-height: 280px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="star-bg"></div>
+    <div class="tooltip" id="tooltip"></div>
+
+    <header>
+      <h1>🌍 Estructura y dinámica de la Tierra</h1>
+      <p>Explora las capas internas, placas tectónicas y volcanes de forma interactiva</p>
+    </header>
+
+    <nav class="tabs">
+      <button class="tab-btn active" onclick="showSection('earth', this)">🔵 Capas de la Tierra</button>
+      <button class="tab-btn" onclick="showSection('plates', this)">🟡 Placas tectónicas</button>
+      <button class="tab-btn" onclick="showSection('volcano', this)">🔴 Volcán interactivo</button>
+    </nav>
+
+    <!-- ==================== SECTION A ==================== -->
+    <section id="sec-earth" class="section active">
+      <div class="earth-container">
+        <div class="earth-view">
+          <div class="earth-half" id="earthHalf">
+            <canvas class="earth-canvas" id="earthCanvas"></canvas>
+            <div class="earth-overlay" id="earthOverlay"></div>
+            <div class="layer-highlight" id="layerHighlight"></div>
+            <div class="seismic-waves" id="seismicWaves">
+              <div class="seismic-ring" id="ring1"></div>
+              <div class="seismic-ring" id="ring2"></div>
+              <div class="seismic-ring" id="ring3"></div>
+              <div class="seismic-ring" id="ring4"></div>
+              <div class="seismic-ring" id="ring5"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-panel" id="infoPanel">
+          <h3>🌍 Selecciona una capa</h3>
+          <p>Pasa el cursor o haz clic sobre cada capa del modelo de la Tierra para ver información detallada.</p>
+        </div>
+      </div>
+
+      <div class="controls-a">
+        <button class="ctrl-btn btn-magma" id="btnMagma" onclick="toggleMagma()">🔥 Activar magma</button>
+        <button class="ctrl-btn btn-plates" id="btnPlates" onclick="togglePlates()">🗺️ Mostrar placas</button>
+        <button class="ctrl-btn btn-earthquake" onclick="triggerEarthquake()">💥 Simular terremoto</button>
+        <button class="ctrl-btn btn-reset" onclick="resetEarth()">🔄 Resetear</button>
+      </div>
+
+      <div class="speed-control">
+        <span>⚡ Velocidad animación:</span>
+        <input type="range" min="1" max="5" value="3" id="speedSlider" oninput="updateSpeed(this.value)" />
+        <span id="speedLabel">Normal</span>
+      </div>
+
+      <div class="student-mode">
+        <h3>🎓 Modo estudiante — preguntas</h3>
+
+        <div class="quiz-question" data-q="1">
+          <p class="q-text">1. ¿Cuál es la capa más caliente de la Tierra?</p>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false">Manto superior</button>
+            <button class="quiz-opt" data-correct="true">Núcleo interno</button>
+            <button class="quiz-opt" data-correct="false">Núcleo externo</button>
+            <button class="quiz-opt" data-correct="false">Corteza</button>
+          </div>
+          <div class="quiz-feedback" data-fb-correct="¡Exacto! El <strong>núcleo interno</strong> alcanza unos 5500 °C, una temperatura similar a la superficie del Sol. Aunque está sólido por la enorme presión, es la capa más caliente del planeta." data-fb-wrong="No es esa. La respuesta correcta es <strong>núcleo interno</strong> (~5500 °C). Aunque está sólido por la presión extrema, su temperatura es similar a la superficie del Sol."></div>
+        </div>
+
+        <div class="quiz-question" data-q="2">
+          <p class="q-text">2. ¿Qué capa genera el campo magnético terrestre?</p>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false">Corteza</button>
+            <button class="quiz-opt" data-correct="true">Núcleo externo</button>
+            <button class="quiz-opt" data-correct="false">Manto inferior</button>
+            <button class="quiz-opt" data-correct="false">Núcleo interno</button>
+          </div>
+          <div class="quiz-feedback" data-fb-correct="¡Correcto! El <strong>núcleo externo</strong> es la única capa importante en estado líquido. Su movimiento de hierro fundido genera el efecto dínamo que crea el campo magnético que nos protege de la radiación solar." data-fb-wrong="No, la respuesta es el <strong>núcleo externo</strong>. Es la única capa líquida importante; el movimiento del hierro fundido genera el efecto dínamo que produce el campo magnético terrestre."></div>
+        </div>
+
+        <div class="quiz-question" data-q="3">
+          <p class="q-text">3. ¿De qué están compuestas las placas tectónicas?</p>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false">Solo del manto</button>
+            <button class="quiz-opt" data-correct="false">Solo de la corteza oceánica</button>
+            <button class="quiz-opt" data-correct="true">Corteza + manto superior (litósfera)</button>
+            <button class="quiz-opt" data-correct="false">Del núcleo externo</button>
+          </div>
+          <div class="quiz-feedback" data-fb-correct="¡Muy bien! Las placas tectónicas forman la <strong>litósfera</strong>: corteza terrestre más la parte superior y rígida del manto. Por eso son más gruesas que la corteza sola, y flotan sobre la astenósfera." data-fb-wrong="La respuesta correcta es <strong>corteza + manto superior</strong> (litósfera). Las placas no son solo la corteza: incluyen también la parte rígida superior del manto, formando una capa que flota sobre la astenósfera."></div>
+        </div>
+
+        <div class="quiz-question" data-q="4">
+          <p class="q-text">4. ¿Por qué el núcleo interno está sólido si es la capa más caliente?</p>
+          <div class="quiz-options">
+            <button class="quiz-opt" data-correct="false">Porque está hecho de roca</button>
+            <button class="quiz-opt" data-correct="true">Por la presión extrema</button>
+            <button class="quiz-opt" data-correct="false">Porque se enfrió primero</button>
+            <button class="quiz-opt" data-correct="false">Porque no contiene hierro</button>
+          </div>
+          <div class="quiz-feedback" data-fb-correct="¡Excelente! La <strong>presión extrema</strong> (más de 330 GPa) comprime los átomos de hierro y níquel y los obliga a permanecer en estado sólido, aunque la temperatura los fundiría en cualquier otro lugar." data-fb-wrong="La respuesta es la <strong>presión extrema</strong>. A más de 330 GPa, los átomos quedan tan comprimidos que se mantienen sólidos a pesar de los 5500 °C."></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SECTION B (NEW) ==================== -->
+    <section id="sec-plates" class="section">
+      <h2 style="text-align: center; font-family: 'Orbitron', sans-serif; font-size: 1.2rem; margin-bottom: 20px; color: #93c5fd">
+        🗺️ Tipos de movimiento de placas tectónicas
+      </h2>
+
+      <div class="plates-selector">
+        <button class="plate-select-btn active-divergent" data-type="divergent" onclick="selectPlateType('divergent', this)">
+          <span class="plate-icon">←→</span>
+          <span>Divergente</span>
+        </button>
+        <button class="plate-select-btn" data-type="convergent" onclick="selectPlateType('convergent', this)">
+          <span class="plate-icon">→←</span>
+          <span>Convergente</span>
+        </button>
+        <button class="plate-select-btn" data-type="transform" onclick="selectPlateType('transform', this)">
+          <span class="plate-icon">⇅</span>
+          <span>Transformante</span>
+        </button>
+      </div>
+
+      <div class="plate-stage">
+        <div class="plate-stage-canvas-wrap">
+          <canvas id="canvasStage"></canvas>
+        </div>
+        <div class="plate-stage-info" id="plateStageInfo">
+          <!-- contenido dinámico -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== SECTION C ==================== -->
+    <section id="sec-volcano" class="section">
+      <div class="volcano-container">
+        <div class="volcano-view">
+          <div class="volcano-canvas-wrap">
+            <canvas id="volcanoCanvas"></canvas>
+          </div>
+        </div>
+        <div class="volcano-controls">
+          <h3>🌋 Control del volcán</h3>
+          <div class="pressure-section">
+            <div class="pressure-label">
+              <span>Presión magmática</span>
+              <span id="pressureValue">0%</span>
+            </div>
+            <div class="pressure-bar-bg">
+              <div class="pressure-bar-fill" id="pressureBar"></div>
+            </div>
+          </div>
+          <div class="volcano-btn-group">
+            <button class="volcano-btn btn-increase" onclick="increasePressure()">⬆️ Aumentar presión</button>
+            <button class="volcano-btn btn-decrease" onclick="decreasePressure()">⬇️ Disminuir presión</button>
+            <button class="volcano-btn btn-erupt" onclick="forceErupt()">🌋 ¡Forzar erupción!</button>
+            <button class="volcano-btn btn-reset-volcano" onclick="resetVolcano()">🔄 Resetear volcán</button>
+          </div>
+          <div class="volcano-status status-calm" id="volcanoStatus">✅ Volcán en reposo</div>
+          <div class="volcano-log" id="volcanoLog">
+            <div class="log-entry"><span>[Sistema]</span> Volcán inicializado. Presión: 0%</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      // ============ NAVIGATION ============
+      function showSection(name, btn) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById('sec-' + name).classList.add('active');
+        if (btn) btn.classList.add('active');
+        if (name === 'plates') setTimeout(initStageCanvas, 50);
+        if (name === 'volcano') setTimeout(initVolcano, 50);
+        if (name === 'earth') setTimeout(initEarthCanvas, 50);
+      }
+
+      const tooltip = document.getElementById('tooltip');
+
+      // ============ SECTION A: EARTH LAYERS ============
+      const layerInfo = {
+        'inner-core': {
+          title: '⚡ Núcleo interno',
+          desc: 'Esfera sólida de hierro y níquel a temperaturas similares a la superficie del Sol. La presión extrema mantiene los átomos en estado sólido.',
+          stats: ['Radio: ~1220 km', 'Temp: ~5500 °C', 'Presión: 330–360 GPa']
+        },
+        'outer-core': {
+          title: '💫 Núcleo externo',
+          desc: 'Capa líquida de hierro y níquel fundido. Su movimiento genera el campo magnético terrestre (efecto dínamo) que nos protege de la radiación solar.',
+          stats: ['Profundidad: 2900–5150 km', 'Temp: 3000–5000 °C', 'Estado: Líquido']
+        },
+        'lower-mantle': {
+          title: '🌋 Manto inferior',
+          desc: 'Capa sólida pero que fluye extremadamente lento por convección. Compuesta de silicatos de magnesio y hierro bajo enorme presión.',
+          stats: ['Profundidad: 670–2900 km', 'Temp: 900–3000 °C', 'Presión: 24–135 GPa']
+        },
+        'upper-mantle': {
+          title: '🔥 Manto superior',
+          desc: 'Incluye la astenósfera, una zona parcialmente fundida donde las rocas fluyen lentamente. Es donde se originan las corrientes de convección que mueven las placas tectónicas.',
+          stats: ['Profundidad: 70–670 km', 'Temp: 500–900 °C', 'Material: peridotita']
+        },
+        crust: {
+          title: '🪨 Corteza terrestre',
+          desc: 'Capa más externa y delgada. Incluye la corteza continental (30–70 km) y oceánica (5–10 km). Está compuesta principalmente de rocas silicatadas.',
+          stats: ['Espesor: 5–70 km', 'Temp: 0–400 °C', 'Densidad: 2.7–3.0 g/cm³']
+        }
+      };
+
+      const LAYERS = [
+        {id: 'crust', outer: 1.0, inner: 0.82},
+        {id: 'upper-mantle', outer: 0.82, inner: 0.62},
+        {id: 'lower-mantle', outer: 0.62, inner: 0.4},
+        {id: 'outer-core', outer: 0.4, inner: 0.18},
+        {id: 'inner-core', outer: 0.18, inner: 0.0}
+      ];
+
+      // PLUMAS DE MAGMA: rutas de convección. cada una sale del límite manto/núcleo
+      // y sube curvada hacia la corteza. Definidas en coordenadas polares relativas.
+      const MAGMA_PLUMES = [
+        {startAngle: -110, endAngle: -95, startR: 0.42, endR: 0.95, curve: 0.15},
+        {startAngle: -60, endAngle: -45, startR: 0.42, endR: 0.95, curve: -0.12},
+        {startAngle: -10, endAngle: 5, startR: 0.42, endR: 0.95, curve: 0.18},
+        {startAngle: 50, endAngle: 70, startR: 0.42, endR: 0.95, curve: -0.15},
+        {startAngle: 110, endAngle: 130, startR: 0.42, endR: 0.95, curve: 0.10},
+        {startAngle: 170, endAngle: 190, startR: 0.42, endR: 0.95, curve: -0.10}
+      ];
+
+      // PLACAS TECTÓNICAS: arcos en la corteza. Cada límite tiene un tipo.
+      // type: 'divergent' (líneas dobles), 'convergent' (triangulitos), 'transform' (flechas opuestas)
+      const PLATE_BOUNDARIES = [
+        {angle: -135, type: 'convergent', label: 'Pacífico'},
+        {angle: -75, type: 'divergent', label: 'Atlántica'},
+        {angle: -25, type: 'transform', label: 'San Andrés'},
+        {angle: 35, type: 'convergent', label: 'Andes'},
+        {angle: 95, type: 'divergent', label: 'Índica'},
+        {angle: 155, type: 'transform', label: 'Anatolia'},
+        {angle: -175, type: 'convergent', label: 'Filipinas'}
+      ];
+
+      let earthAnimId = null;
+      let hoveredLayer = null;
+      let selectedLayer = null;
+      let magmaActive = false;
+      let platesVisible = false;
+      let animSpeed = 3;
+
+      function initEarthCanvas() {
+        const canvas = document.getElementById('earthCanvas');
+        const container = document.getElementById('earthHalf');
+        if (!canvas || !container) return;
+        const w = container.clientWidth * 2;
+        const h = container.clientHeight * 2;
+        if (w < 8 || h < 8) {
+          // Layout aún no listo: reintentar pronto
+          setTimeout(initEarthCanvas, 80);
+          return;
+        }
+        canvas.width = w;
+        canvas.height = h;
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        if (!earthAnimId) drawEarth();
+      }
+
+      function drawEarth() {
+        const canvas = document.getElementById('earthCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+
+        function frame() {
+          const W = canvas.width, H = canvas.height;
+          const cx = W / 2, cy = H / 2;
+          const maxR = Math.min(cx, cy) - 4;
+          // Guardia: si el canvas aún no tiene tamaño válido, esperar al próximo frame
+          if (maxR <= 1 || W < 8 || H < 8) {
+            earthAnimId = requestAnimationFrame(frame);
+            return;
+          }
+          const time = Date.now() * 0.001;
+
+          ctx.clearRect(0, 0, W, H);
+
+          const layerColors = {
+            'crust': {base: [139, 105, 20], hover: [170, 135, 40]},
+            'upper-mantle': {base: [212, 118, 44], hover: [240, 140, 60]},
+            'lower-mantle': {base: [196, 75, 28], hover: [225, 100, 50]},
+            'outer-core': {base: [232, 32, 32], hover: [255, 60, 50]},
+            'inner-core': {base: [255, 215, 0], hover: [255, 240, 100]}
+          };
+
+          // Dibujar capas (de afuera hacia adentro)
+          for (const layer of LAYERS) {
+            const colors = layerColors[layer.id];
+            const isHovered = hoveredLayer === layer.id;
+            const isSelected = selectedLayer === layer.id;
+            const c = isHovered ? colors.hover : colors.base;
+            const r1 = layer.outer * maxR;
+            const r2 = layer.inner * maxR;
+            const grad = ctx.createRadialGradient(cx - r1 * 0.2, cy - r1 * 0.2, r2, cx, cy, r1);
+            const bright = isHovered ? 30 : 0;
+            grad.addColorStop(0, `rgb(${Math.min(255, c[0] + bright)}, ${Math.min(255, c[1] + bright)}, ${Math.min(255, c[2] + bright)})`);
+            grad.addColorStop(1, `rgb(${Math.max(0, c[0] - 20)}, ${Math.max(0, c[1] - 20)}, ${Math.max(0, c[2] - 20)})`);
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(cx, cy, r1, 0, Math.PI * 2);
+            if (layer.inner > 0) ctx.arc(cx, cy, r2, 0, Math.PI * 2, true);
+            ctx.fill();
+            if (isSelected) {
+              ctx.strokeStyle = 'rgba(59,130,246,0.85)';
+              ctx.lineWidth = 3;
+              ctx.beginPath();
+              ctx.arc(cx, cy, r1, 0, Math.PI * 2);
+              ctx.stroke();
+              if (layer.inner > 0) {
+                ctx.beginPath();
+                ctx.arc(cx, cy, r2, 0, Math.PI * 2);
+                ctx.stroke();
+              }
+            }
+            if (layer.id === 'inner-core') {
+              const glow = 0.3 + Math.sin(time * 2) * 0.15;
+              ctx.shadowColor = '#FFD700';
+              ctx.shadowBlur = 30 + Math.sin(time * 2) * 15;
+              ctx.fillStyle = `rgba(255, 215, 0, ${glow})`;
+              ctx.beginPath();
+              ctx.arc(cx, cy, r1 * 0.8, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.shadowBlur = 0;
+            }
+          }
+
+          // ===== MAGMA REALISTA: plumas de convección con burbujas =====
+          if (magmaActive) {
+            drawMagmaPlumes(ctx, cx, cy, maxR, time);
+          }
+
+          // ===== PLACAS TECTÓNICAS: múltiples segmentos con marcadores =====
+          if (platesVisible) {
+            drawTectonicPlates(ctx, cx, cy, maxR, time);
+          }
+
+          earthAnimId = requestAnimationFrame(frame);
+        }
+        frame();
+      }
+
+      function drawMagmaPlumes(ctx, cx, cy, maxR, time) {
+        ctx.save();
+        for (let i = 0; i < MAGMA_PLUMES.length; i++) {
+          const plume = MAGMA_PLUMES[i];
+          const phase = time * (0.5 + animSpeed * 0.15) + i * 0.7;
+          const intensity = 0.5 + Math.sin(phase) * 0.5;
+
+          // Convertir a coordenadas cartesianas
+          const a1 = (plume.startAngle * Math.PI) / 180;
+          const a2 = (plume.endAngle * Math.PI) / 180;
+          const r1 = plume.startR * maxR;
+          const r2 = plume.endR * maxR;
+
+          const x1 = cx + Math.cos(a1) * r1;
+          const y1 = cy + Math.sin(a1) * r1;
+          const x2 = cx + Math.cos(a2) * r2;
+          const y2 = cy + Math.sin(a2) * r2;
+
+          // Punto de control para la curva (perpendicular al medio del trayecto)
+          const midAngle = (a1 + a2) / 2;
+          const midR = (r1 + r2) / 2;
+          const perpAngle = midAngle + Math.PI / 2;
+          const cpx = cx + Math.cos(midAngle) * midR + Math.cos(perpAngle) * maxR * plume.curve;
+          const cpy = cy + Math.sin(midAngle) * midR + Math.sin(perpAngle) * maxR * plume.curve;
+
+          // Dibujar pluma (gradiente naranja-rojo)
+          const grad = ctx.createLinearGradient(x1, y1, x2, y2);
+          grad.addColorStop(0, `rgba(255, 50, 0, ${0.7 * intensity})`);
+          grad.addColorStop(0.5, `rgba(255, 120, 0, ${0.85 * intensity})`);
+          grad.addColorStop(1, `rgba(255, 200, 50, ${0.6 * intensity})`);
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = 6 + intensity * 4;
+          ctx.lineCap = 'round';
+          ctx.shadowColor = '#FF6600';
+          ctx.shadowBlur = 12;
           ctx.beginPath();
-          ctx.arc(cx, cy, r2, 0, Math.PI * 2);
+          ctx.moveTo(x1, y1);
+          ctx.quadraticCurveTo(cpx, cpy, x2, y2);
           ctx.stroke();
+          ctx.shadowBlur = 0;
+
+          // Burbujas viajando por la pluma
+          const numBubbles = 4;
+          for (let b = 0; b < numBubbles; b++) {
+            const t = ((time * (0.3 + animSpeed * 0.1) + b / numBubbles + i * 0.13) % 1);
+            // Posición sobre la curva de Bezier cuadrática
+            const u = 1 - t;
+            const bx = u * u * x1 + 2 * u * t * cpx + t * t * x2;
+            const by = u * u * y1 + 2 * u * t * cpy + t * t * y2;
+            const br = 3 + (1 - t) * 4;
+            const bAlpha = (1 - t) * 0.9 + 0.1;
+            ctx.fillStyle = `rgba(255, ${180 + (1 - t) * 60}, 50, ${bAlpha})`;
+            ctx.shadowColor = '#FFAA00';
+            ctx.shadowBlur = 8;
+            ctx.beginPath();
+            ctx.arc(bx, by, br, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.shadowBlur = 0;
+
+          // Hot spot (punto caliente brillante donde la pluma toca la corteza)
+          const hotSpotPulse = 0.7 + Math.sin(time * 3 + i) * 0.3;
+          const hsGrad = ctx.createRadialGradient(x2, y2, 0, x2, y2, 18 * hotSpotPulse);
+          hsGrad.addColorStop(0, `rgba(255, 255, 200, ${0.9 * intensity})`);
+          hsGrad.addColorStop(0.4, `rgba(255, 150, 0, ${0.6 * intensity})`);
+          hsGrad.addColorStop(1, 'rgba(255, 50, 0, 0)');
+          ctx.fillStyle = hsGrad;
+          ctx.beginPath();
+          ctx.arc(x2, y2, 18 * hotSpotPulse, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        // Flechas de convección sutiles en el manto
+        ctx.globalAlpha = 0.35;
+        const numConv = 4;
+        for (let c = 0; c < numConv; c++) {
+          const baseAng = (c / numConv) * Math.PI * 2 + time * 0.05;
+          const cellR = maxR * 0.55;
+          ctx.strokeStyle = '#FFB770';
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.arc(cx + Math.cos(baseAng) * cellR, cy + Math.sin(baseAng) * cellR, maxR * 0.13, 0, Math.PI * 1.7);
+          ctx.stroke();
+        }
+        ctx.globalAlpha = 1;
+
+        ctx.restore();
+      }
+
+      function drawTectonicPlates(ctx, cx, cy, maxR, time) {
+        ctx.save();
+        const crustR = maxR * 0.92;
+
+        // Dibujar arcos divisorios entre placas
+        for (let i = 0; i < PLATE_BOUNDARIES.length; i++) {
+          const b = PLATE_BOUNDARIES[i];
+          const angRad = (b.angle * Math.PI) / 180;
+          const px = cx + Math.cos(angRad) * crustR;
+          const py = cy + Math.sin(angRad) * crustR;
+
+          // Línea radial corta marcando el límite (de manto sup. a corteza)
+          const innerR = maxR * 0.78;
+          const outerR = maxR * 1.0;
+          const ix = cx + Math.cos(angRad) * innerR;
+          const iy = cy + Math.sin(angRad) * innerR;
+          const ox = cx + Math.cos(angRad) * outerR;
+          const oy = cy + Math.sin(angRad) * outerR;
+
+          // Color y estilo según tipo
+          let color, secondaryColor;
+          if (b.type === 'divergent') { color = '#4ade80'; secondaryColor = '#22c55e'; }
+          else if (b.type === 'convergent') { color = '#f87171'; secondaryColor = '#ef4444'; }
+          else { color = '#c084fc'; secondaryColor = '#a855f7'; }
+
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 3;
+          ctx.shadowColor = color;
+          ctx.shadowBlur = 8;
+          ctx.beginPath();
+          ctx.moveTo(ix, iy);
+          ctx.lineTo(ox, oy);
+          ctx.stroke();
+          ctx.shadowBlur = 0;
+
+          // Marcador específico según tipo de límite
+          const markerR = maxR * 0.88;
+          const mx = cx + Math.cos(angRad) * markerR;
+          const my = cy + Math.sin(angRad) * markerR;
+
+          if (b.type === 'divergent') {
+            // Doble línea perpendicular
+            const perp = angRad + Math.PI / 2;
+            const sep = 6;
+            for (const off of [-sep, sep]) {
+              ctx.strokeStyle = secondaryColor;
+              ctx.lineWidth = 2;
+              ctx.beginPath();
+              ctx.moveTo(mx + Math.cos(perp) * 8 + Math.cos(angRad) * off * 0.3,
+                         my + Math.sin(perp) * 8 + Math.sin(angRad) * off * 0.3);
+              ctx.lineTo(mx - Math.cos(perp) * 8 + Math.cos(angRad) * off * 0.3,
+                         my - Math.sin(perp) * 8 + Math.sin(angRad) * off * 0.3);
+              ctx.stroke();
+            }
+            // Pequeño "vuk" pulsante (magma emergiendo)
+            const pulse = 0.6 + Math.sin(time * 2 + i) * 0.4;
+            ctx.fillStyle = `rgba(255, 100, 0, ${pulse})`;
+            ctx.beginPath();
+            ctx.arc(mx, my, 3, 0, Math.PI * 2);
+            ctx.fill();
+          } else if (b.type === 'convergent') {
+            // Triangulitos apuntando hacia adentro (subducción)
+            const perp = angRad + Math.PI / 2;
+            ctx.fillStyle = color;
+            for (let t = -1; t <= 1; t++) {
+              const ttx = mx + Math.cos(perp) * t * 7;
+              const tty = my + Math.sin(perp) * t * 7;
+              ctx.beginPath();
+              ctx.moveTo(ttx + Math.cos(angRad) * 6, tty + Math.sin(angRad) * 6);
+              ctx.lineTo(ttx - Math.cos(angRad) * 4 + Math.cos(perp) * 3,
+                         tty - Math.sin(angRad) * 4 + Math.sin(perp) * 3);
+              ctx.lineTo(ttx - Math.cos(angRad) * 4 - Math.cos(perp) * 3,
+                         tty - Math.sin(angRad) * 4 - Math.sin(perp) * 3);
+              ctx.closePath();
+              ctx.fill();
+            }
+          } else {
+            // Transformante: flechas opuestas
+            const perp = angRad + Math.PI / 2;
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 2;
+            ctx.fillStyle = color;
+            // Flecha hacia un lado
+            const arr1x = mx + Math.cos(perp) * 4;
+            const arr1y = my + Math.sin(perp) * 4;
+            ctx.beginPath();
+            ctx.moveTo(arr1x - Math.cos(angRad) * 6, arr1y - Math.sin(angRad) * 6);
+            ctx.lineTo(arr1x + Math.cos(angRad) * 6, arr1y + Math.sin(angRad) * 6);
+            ctx.stroke();
+            // Flecha hacia el otro lado
+            const arr2x = mx - Math.cos(perp) * 4;
+            const arr2y = my - Math.sin(perp) * 4;
+            ctx.beginPath();
+            ctx.moveTo(arr2x + Math.cos(angRad) * 6, arr2y + Math.sin(angRad) * 6);
+            ctx.lineTo(arr2x - Math.cos(angRad) * 6, arr2y - Math.sin(angRad) * 6);
+            ctx.stroke();
+          }
+        }
+
+        // Arcos exteriores tenues conectando placas (visualizan los segmentos)
+        ctx.strokeStyle = 'rgba(74, 144, 217, 0.35)';
+        ctx.lineWidth = 2;
+        ctx.setLineDash([4, 6]);
+        for (let i = 0; i < PLATE_BOUNDARIES.length; i++) {
+          const a1 = (PLATE_BOUNDARIES[i].angle * Math.PI) / 180;
+          const a2 = (PLATE_BOUNDARIES[(i + 1) % PLATE_BOUNDARIES.length].angle * Math.PI) / 180;
+          let arcStart = a1, arcEnd = a2;
+          if (arcEnd < arcStart) arcEnd += Math.PI * 2;
+          ctx.beginPath();
+          ctx.arc(cx, cy, maxR * 0.96, arcStart + 0.05, arcEnd - 0.05);
+          ctx.stroke();
+        }
+        ctx.setLineDash([]);
+        ctx.restore();
+      }
+
+      // Mouse interaction
+      const overlay = document.getElementById('earthOverlay');
+      overlay.addEventListener('mousemove', e => {
+        const canvas = document.getElementById('earthCanvas');
+        const rect = canvas.getBoundingClientRect();
+        const scaleX = canvas.width / rect.width;
+        const scaleY = canvas.height / rect.height;
+        const mx = (e.clientX - rect.left) * scaleX;
+        const my = (e.clientY - rect.top) * scaleY;
+        const cx = canvas.width / 2, cy = canvas.height / 2;
+        const maxR = Math.min(cx, cy) - 4;
+        const dist = Math.sqrt((mx - cx) ** 2 + (my - cy) ** 2);
+        const ratio = dist / maxR;
+        let prevHovered = hoveredLayer;
+        hoveredLayer = null;
+        for (const layer of LAYERS) {
+          if (ratio <= layer.outer && ratio >= layer.inner) { hoveredLayer = layer.id; break; }
+        }
+        const highlight = document.getElementById('layerHighlight');
+        if (hoveredLayer) {
+          const layer = LAYERS.find(l => l.id === hoveredLayer);
+          highlight.style.width = layer.outer * 100 + '%';
+          highlight.style.height = layer.outer * 100 + '%';
+          highlight.style.opacity = '1';
+        } else {
+          highlight.style.opacity = '0';
+        }
+        if (hoveredLayer && hoveredLayer !== prevHovered) {
+          const info = layerInfo[hoveredLayer];
+          if (info) {
+            const panel = document.getElementById('infoPanel');
+            panel.innerHTML = `<h3>${info.title}</h3><p>${info.desc}</p><div style="margin-top:12px;">${info.stats.map(s => `<span class="stat">${s}</span>`).join('')}</div>`;
+            panel.classList.add('active-layer');
+          }
+        }
+        if (hoveredLayer) {
+          tooltip.textContent = layerInfo[hoveredLayer].title;
+          tooltip.style.display = 'block';
+          tooltip.style.left = e.clientX + 12 + 'px';
+          tooltip.style.top = e.clientY - 10 + 'px';
+        } else {
+          tooltip.style.display = 'none';
+        }
+      });
+      overlay.addEventListener('mouseleave', () => {
+        hoveredLayer = null;
+        tooltip.style.display = 'none';
+        document.getElementById('layerHighlight').style.opacity = '0';
+      });
+      overlay.addEventListener('click', () => {
+        if (hoveredLayer) {
+          selectedLayer = hoveredLayer;
+          const info = layerInfo[hoveredLayer];
+          if (info) {
+            const panel = document.getElementById('infoPanel');
+            panel.innerHTML = `<h3>${info.title}</h3><p>${info.desc}</p><div style="margin-top:12px;">${info.stats.map(s => `<span class="stat">${s}</span>`).join('')}</div>`;
+            panel.classList.add('active-layer');
+          }
+        }
+      });
+
+      function toggleMagma() {
+        magmaActive = !magmaActive;
+        document.getElementById('btnMagma').classList.toggle('active-toggle', magmaActive);
+        addLog(magmaActive ? '🔥 Magma activado — corrientes de convección y plumas visibles' : '❄️ Magma desactivado');
+      }
+      function togglePlates() {
+        platesVisible = !platesVisible;
+        document.getElementById('btnPlates').classList.toggle('active-toggle', platesVisible);
+        addLog(platesVisible ? '🗺️ Placas tectónicas y límites visibles' : '🗺️ Placas ocultas');
+      }
+      function triggerEarthquake() {
+        const earth = document.getElementById('earthHalf');
+        earth.classList.add('earth-shaking');
+        setTimeout(() => earth.classList.remove('earth-shaking'), 1500);
+        const rings = document.querySelectorAll('.seismic-ring');
+        rings.forEach((r, i) => {
+          setTimeout(() => {
+            r.classList.remove('active');
+            void r.offsetWidth;
+            r.classList.add('active');
+          }, i * 300);
+        });
+        addLog('💥 ¡Terremoto simulado! Ondas sísmicas propagándose...');
+      }
+      function resetEarth() {
+        magmaActive = false;
+        platesVisible = false;
+        selectedLayer = null;
+        document.getElementById('btnMagma').classList.remove('active-toggle');
+        document.getElementById('btnPlates').classList.remove('active-toggle');
+        document.querySelectorAll('.seismic-ring').forEach(r => r.classList.remove('active'));
+        document.getElementById('earthHalf').classList.remove('earth-shaking');
+        document.getElementById('layerHighlight').style.opacity = '0';
+        document.getElementById('infoPanel').innerHTML = `<h3>🌍 Selecciona una capa</h3><p>Pasa el cursor o haz clic sobre cada capa del modelo de la Tierra para ver información detallada.</p>`;
+        document.getElementById('infoPanel').classList.remove('active-layer');
+        addLog('🔄 Sistema reiniciado');
+      }
+      function updateSpeed(val) {
+        const labels = ['Muy lento', 'Lento', 'Normal', 'Rápido', 'Muy rápido'];
+        document.getElementById('speedLabel').textContent = labels[val - 1];
+        animSpeed = parseInt(val);
+      }
+
+      // ============ QUIZ (improved feedback) ============
+      document.querySelectorAll('.quiz-question').forEach(q => {
+        q.querySelectorAll('.quiz-opt').forEach(btn => {
+          btn.addEventListener('click', () => handleQuizClick(q, btn));
+        });
+      });
+      function handleQuizClick(questionEl, btn) {
+        if (questionEl.dataset.answered === 'true') return;
+        questionEl.dataset.answered = 'true';
+        const isCorrect = btn.dataset.correct === 'true';
+        const allOpts = questionEl.querySelectorAll('.quiz-opt');
+        allOpts.forEach(o => {
+          o.disabled = true;
+          if (o.dataset.correct === 'true') o.classList.add('correct');
+          else if (o === btn) o.classList.add('wrong');
+        });
+        const fb = questionEl.querySelector('.quiz-feedback');
+        if (fb) {
+          if (isCorrect) {
+            fb.className = 'quiz-feedback show success';
+            fb.innerHTML = '✅ ' + fb.dataset.fbCorrect;
+          } else {
+            fb.className = 'quiz-feedback show error';
+            fb.innerHTML = '❌ ' + fb.dataset.fbWrong;
+          }
+        }
+        addLog(isCorrect ? `✅ Pregunta ${questionEl.dataset.q}: ¡correcta!` : `❌ Pregunta ${questionEl.dataset.q}: incorrecta`);
+      }
+
+      // ============ SECTION B: PLATE STAGE (selector + big canvas) ============
+      const PLATE_TYPES = {
+        divergent: {
+          title: 'Límite divergente',
+          tagClass: 'green',
+          tagText: '← Las placas se separan →',
+          desc: 'Dos placas se alejan entre sí. El espacio que se abre permite que el magma del manto ascienda y se enfríe, formando nueva corteza oceánica. Es el principio del piso oceánico que sigue creciendo cada año.',
+          features: [
+            {icon: '🌊', text: 'Forma dorsales oceánicas y nueva corteza'},
+            {icon: '🌋', text: 'Volcanes submarinos a lo largo de la dorsal'},
+            {icon: '📏', text: 'Velocidad típica: 2 a 10 cm/año'}
+          ],
+          example: 'Dorsal Mesoatlántica · Rift de África Oriental'
+        },
+        convergent: {
+          title: 'Límite convergente',
+          tagClass: 'red',
+          tagText: '→ Las placas chocan ←',
+          desc: 'Dos placas colisionan. Si una es oceánica y otra continental, la oceánica (más densa) se hunde bajo la continental: ese proceso se llama subducción. La placa hundida se funde y alimenta volcanes en la superficie.',
+          features: [
+            {icon: '⛰️', text: 'Forma cordilleras montañosas (Andes, Himalaya)'},
+            {icon: '🌋', text: 'Volcanes explosivos sobre la placa superior'},
+            {icon: '💥', text: 'Terremotos profundos y muy fuertes'}
+          ],
+          example: 'Cordillera de los Andes · Cinturón de Fuego del Pacífico'
+        },
+        transform: {
+          title: 'Límite transformante',
+          tagClass: 'purple',
+          tagText: '⇅ Las placas se deslizan ⇅',
+          desc: 'Dos placas se deslizan lateralmente, una al lado de la otra, sin crear ni destruir corteza. El roce acumula tensión hasta que se libera de golpe en forma de terremoto. No producen volcanes.',
+          features: [
+            {icon: '⚡', text: 'Fricción acumulada produce terremotos'},
+            {icon: '🚫', text: 'No hay volcanes ni montañas'},
+            {icon: '↔️', text: 'Ni crea ni destruye corteza'}
+          ],
+          example: 'Falla de San Andrés (California) · Falla de Anatolia (Turquía)'
+        }
+      };
+
+      let currentPlateType = 'divergent';
+      let stageAnimId = null;
+
+      function selectPlateType(type, btn) {
+        currentPlateType = type;
+        document.querySelectorAll('.plate-select-btn').forEach(b => {
+          b.classList.remove('active-divergent', 'active-convergent', 'active-transform');
+        });
+        btn.classList.add('active-' + type);
+        renderPlateInfo(type);
+      }
+
+      function renderPlateInfo(type) {
+        const data = PLATE_TYPES[type];
+        const infoBox = document.getElementById('plateStageInfo');
+        infoBox.innerHTML = `
+          <h3 class="plate-stage-title-${data.tagClass}">${data.title}</h3>
+          <span class="plate-stage-tag" style="background: rgba(${data.tagClass==='green'?'34,197,94':data.tagClass==='red'?'239,68,68':'168,85,247'}, 0.2); color: ${data.tagClass==='green'?'#4ade80':data.tagClass==='red'?'#f87171':'#c084fc'}; border: 1px solid ${data.tagClass==='green'?'#22c55e':data.tagClass==='red'?'#ef4444':'#a855f7'};">${data.tagText}</span>
+          <p>${data.desc}</p>
+          <div class="plate-stage-features">
+            ${data.features.map(f => `<div class="feature-item ${data.tagClass}"><span style="font-size: 1.2rem;">${f.icon}</span><span>${f.text}</span></div>`).join('')}
+          </div>
+          <div class="example-box">
+            <strong>EJEMPLOS REALES</strong>
+            ${data.example}
+          </div>
+        `;
+        const titleEl = infoBox.querySelector('h3');
+        if (titleEl) titleEl.style.color = data.tagClass==='green'?'#4ade80':data.tagClass==='red'?'#f87171':'#c084fc';
+      }
+
+      function initStageCanvas() {
+        const canvas = document.getElementById('canvasStage');
+        if (!canvas) return;
+        const wrap = canvas.parentElement;
+        if (!wrap) return;
+        const w = wrap.clientWidth * 2;
+        const h = wrap.clientHeight * 2;
+        if (w < 10 || h < 10) {
+          setTimeout(initStageCanvas, 80);
+          return;
+        }
+        canvas.width = w;
+        canvas.height = h;
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        if (!stageAnimId) animateStage();
+        renderPlateInfo(currentPlateType);
+      }
+
+      function animateStage() {
+        const canvas = document.getElementById('canvasStage');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        let t = 0;
+        function frame() {
+          t += 0.015;
+          const W = canvas.width, H = canvas.height;
+          if (W < 10 || H < 10) {
+            stageAnimId = requestAnimationFrame(frame);
+            return;
+          }
+          ctx.clearRect(0, 0, W, H);
+          if (currentPlateType === 'divergent') drawDivergentBig(ctx, W, H, t);
+          else if (currentPlateType === 'convergent') drawConvergentBig(ctx, W, H, t);
+          else drawTransformBig(ctx, W, H, t);
+          stageAnimId = requestAnimationFrame(frame);
+        }
+        frame();
+      }
+
+      function drawArrow(ctx, x1, y1, x2, y2, color, width) {
+        const headLen = 16;
+        const angle = Math.atan2(y2 - y1, x2 - x1);
+        ctx.strokeStyle = color;
+        ctx.fillStyle = color;
+        ctx.lineWidth = width || 4;
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x2, y2);
+        ctx.lineTo(x2 - headLen * Math.cos(angle - 0.4), y2 - headLen * Math.sin(angle - 0.4));
+        ctx.lineTo(x2 - headLen * Math.cos(angle + 0.4), y2 - headLen * Math.sin(angle + 0.4));
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      function drawDivergentBig(ctx, W, H, t) {
+        // fondo cielo + magma profundo
+        const bg = ctx.createLinearGradient(0, 0, 0, H);
+        bg.addColorStop(0, '#0c1929');
+        bg.addColorStop(0.45, '#1a1326');
+        bg.addColorStop(0.7, '#3d1508');
+        bg.addColorStop(1, '#5a1a08');
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, W, H);
+
+        // Agua sobre las placas
+        ctx.fillStyle = 'rgba(40, 90, 150, 0.35)';
+        ctx.fillRect(0, 0, W, H * 0.45);
+        // Olas
+        ctx.strokeStyle = 'rgba(150, 200, 240, 0.3)';
+        ctx.lineWidth = 2;
+        for (let yo = 0; yo < 3; yo++) {
+          ctx.beginPath();
+          for (let x = 0; x < W; x += 10) {
+            const yy = H * 0.42 - yo * 18 + Math.sin(x * 0.01 + t * 2 + yo) * 4;
+            if (x === 0) ctx.moveTo(x, yy); else ctx.lineTo(x, yy);
+          }
+          ctx.stroke();
+        }
+
+        const centerY = H * 0.55;
+        const plateH = H * 0.18;
+        const gap = 30 + Math.sin(t * 1.2) * 22;
+
+        // magma rising column (más detallado)
+        const magmaUp = 0.6 + Math.sin(t * 1.2) * 0.4;
+        const colW = gap * 1.5;
+        const mg = ctx.createLinearGradient(0, centerY - plateH, 0, H);
+        mg.addColorStop(0, `rgba(255, 200, 50, ${magmaUp * 0.9})`);
+        mg.addColorStop(0.3, `rgba(255, 100, 0, ${magmaUp * 0.85})`);
+        mg.addColorStop(1, `rgba(180, 30, 0, ${magmaUp * 0.7})`);
+        ctx.fillStyle = mg;
+        ctx.beginPath();
+        ctx.moveTo(W / 2 - gap / 2, centerY);
+        ctx.lineTo(W / 2 + gap / 2, centerY);
+        ctx.lineTo(W / 2 + colW, H);
+        ctx.lineTo(W / 2 - colW, H);
+        ctx.closePath();
+        ctx.fill();
+
+        // Burbujas de magma ascendentes
+        for (let i = 0; i < 12; i++) {
+          const phase = (t * 0.8 + i * 0.27) % 1.5;
+          if (phase > 1.3) continue;
+          const by = H - phase * (H - centerY) * 1.05;
+          const bx = W / 2 + Math.sin(phase * 5 + i) * gap * 0.8;
+          const br = 4 + (1 - phase) * 6;
+          ctx.fillStyle = `rgba(255, ${150 + (1 - phase) * 80}, 50, ${0.7 + (1 - phase) * 0.3})`;
+          ctx.shadowColor = '#FFAA00';
+          ctx.shadowBlur = 10;
+          ctx.beginPath();
+          ctx.arc(bx, by, br, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.shadowBlur = 0;
+
+        // Placa izquierda
+        ctx.fillStyle = '#5e4810';
+        ctx.fillRect(0, centerY - plateH, W / 2 - gap / 2, plateH);
+        const lg = ctx.createLinearGradient(0, centerY - plateH, 0, centerY);
+        lg.addColorStop(0, '#9b7820');
+        lg.addColorStop(1, '#5e4810');
+        ctx.fillStyle = lg;
+        ctx.fillRect(0, centerY - plateH, W / 2 - gap / 2, plateH);
+        // Capa superior (corteza)
+        ctx.fillStyle = '#a88830';
+        ctx.fillRect(0, centerY - plateH, W / 2 - gap / 2, 8);
+        // Texturas
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+        ctx.lineWidth = 1;
+        for (let i = 0; i < 6; i++) {
+          const lx = (i + 1) * (W / 12);
+          ctx.beginPath();
+          ctx.moveTo(lx, centerY - plateH + 8);
+          ctx.lineTo(lx, centerY);
+          ctx.stroke();
+        }
+
+        // Placa derecha
+        const rg = ctx.createLinearGradient(0, centerY - plateH, 0, centerY);
+        rg.addColorStop(0, '#9b7820');
+        rg.addColorStop(1, '#5e4810');
+        ctx.fillStyle = rg;
+        ctx.fillRect(W / 2 + gap / 2, centerY - plateH, W / 2, plateH);
+        ctx.fillStyle = '#a88830';
+        ctx.fillRect(W / 2 + gap / 2, centerY - plateH, W / 2, 8);
+        for (let i = 0; i < 6; i++) {
+          const lx = W / 2 + gap / 2 + (i + 1) * (W / 14);
+          if (lx >= W) break;
+          ctx.strokeStyle = 'rgba(0, 0, 0, 0.2)';
+          ctx.beginPath();
+          ctx.moveTo(lx, centerY - plateH + 8);
+          ctx.lineTo(lx, centerY);
+          ctx.stroke();
+        }
+
+        // Nueva corteza emergiendo (zona joven cerca del rift)
+        const newCrustW = 18;
+        ctx.fillStyle = '#1e1e1e';
+        ctx.fillRect(W / 2 - gap / 2 - newCrustW, centerY - plateH, newCrustW, 8);
+        ctx.fillRect(W / 2 + gap / 2, centerY - plateH, newCrustW, 8);
+
+        // Flechas de movimiento
+        drawArrow(ctx, W * 0.35, centerY + plateH * 1.5, W * 0.20, centerY + plateH * 1.5, '#4ADE80', 5);
+        drawArrow(ctx, W * 0.65, centerY + plateH * 1.5, W * 0.80, centerY + plateH * 1.5, '#4ADE80', 5);
+
+        // Labels
+        ctx.fillStyle = '#cbd5e1';
+        ctx.font = `bold ${W * 0.026}px Inter`;
+        ctx.textAlign = 'center';
+        ctx.fillText('PLACA A', W * 0.25, centerY - plateH - 18);
+        ctx.fillText('PLACA B', W * 0.75, centerY - plateH - 18);
+        ctx.fillStyle = '#4ade80';
+        ctx.fillText('← Se separan →', W / 2, H * 0.95);
+        ctx.fillStyle = '#fbbf24';
+        ctx.font = `${W * 0.022}px Inter`;
+        ctx.fillText('🌊 Océano', W * 0.5, H * 0.15);
+        ctx.fillStyle = '#ff8c40';
+        ctx.fillText('↑ Magma asciende y forma nueva corteza', W * 0.5, H * 0.83);
+      }
+
+      function drawConvergentBig(ctx, W, H, t) {
+        // Fondo
+        const bg = ctx.createLinearGradient(0, 0, 0, H);
+        bg.addColorStop(0, '#0c1929');
+        bg.addColorStop(0.45, '#1a1326');
+        bg.addColorStop(0.7, '#3d1508');
+        bg.addColorStop(1, '#5a1a08');
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, W, H);
+
+        // Mar a la izquierda
+        ctx.fillStyle = 'rgba(40, 90, 150, 0.4)';
+        const seaLevel = H * 0.42;
+        ctx.fillRect(0, 0, W * 0.5, seaLevel);
+        ctx.strokeStyle = 'rgba(150, 200, 240, 0.3)';
+        ctx.lineWidth = 2;
+        for (let yo = 0; yo < 2; yo++) {
+          ctx.beginPath();
+          for (let x = 0; x < W * 0.5; x += 8) {
+            const yy = seaLevel - yo * 14 + Math.sin(x * 0.015 + t * 2 + yo) * 3;
+            if (x === 0) ctx.moveTo(x, yy); else ctx.lineTo(x, yy);
+          }
+          ctx.stroke();
+        }
+
+        const centerY = H * 0.5;
+        const plateH = H * 0.14;
+        const push = 12 + Math.sin(t * 1.2) * 10;
+
+        // Placa oceánica (izq, hundiéndose) - subducción
+        ctx.save();
+        const oceanGrad = ctx.createLinearGradient(0, centerY - plateH, 0, centerY + plateH * 3);
+        oceanGrad.addColorStop(0, '#4a78a8');
+        oceanGrad.addColorStop(0.5, '#385878');
+        oceanGrad.addColorStop(1, '#2a3a50');
+        ctx.fillStyle = oceanGrad;
+        ctx.beginPath();
+        ctx.moveTo(0, centerY - plateH);
+        ctx.lineTo(W / 2 - push, centerY - plateH);
+        ctx.lineTo(W / 2 + 5, centerY + plateH * 0.3);
+        ctx.lineTo(W / 2 + 15, centerY + plateH * 2.5);
+        ctx.lineTo(W / 2 - 25, centerY + plateH * 3);
+        ctx.lineTo(0, centerY + plateH * 0.5);
+        ctx.closePath();
+        ctx.fill();
+        // Borde superior
+        ctx.fillStyle = '#5d8bb8';
+        ctx.fillRect(0, centerY - plateH, W / 2 - push, 6);
+        ctx.restore();
+
+        // Magma generado por subducción
+        const subMagma = 0.5 + Math.sin(t * 2) * 0.4;
+        const chamberX = W * 0.62;
+        const chamberY = centerY + plateH * 1.5;
+        const chamberR = 30 + subMagma * 8;
+        const chamberGrad = ctx.createRadialGradient(chamberX, chamberY, 0, chamberX, chamberY, chamberR);
+        chamberGrad.addColorStop(0, `rgba(255, 200, 50, ${0.85 * subMagma})`);
+        chamberGrad.addColorStop(0.5, `rgba(255, 80, 0, ${0.7 * subMagma})`);
+        chamberGrad.addColorStop(1, 'rgba(180, 30, 0, 0)');
+        ctx.fillStyle = chamberGrad;
+        ctx.beginPath();
+        ctx.arc(chamberX, chamberY, chamberR, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Placa continental (der.) más gruesa
+        const contTopY = centerY - plateH * 2;
+        ctx.fillStyle = '#5e4810';
+        const contGrad = ctx.createLinearGradient(0, contTopY, 0, centerY + plateH);
+        contGrad.addColorStop(0, '#a88830');
+        contGrad.addColorStop(0.5, '#7a5e15');
+        contGrad.addColorStop(1, '#3d2810');
+        ctx.fillStyle = contGrad;
+        ctx.fillRect(W / 2 + push, contTopY, W / 2, plateH * 3);
+        ctx.fillStyle = '#9b7820';
+        ctx.fillRect(W / 2 + push, contTopY, W / 2, 8);
+
+        // Cordillera elevándose por la colisión
+        const mtH = 30 + push * 1.5;
+        const mtX = W / 2 + push - 5;
+        ctx.fillStyle = '#5e4810';
+        ctx.beginPath();
+        ctx.moveTo(mtX, contTopY);
+        ctx.lineTo(mtX + 50, contTopY - mtH * 0.8);
+        ctx.lineTo(mtX + 90, contTopY - mtH);
+        ctx.lineTo(mtX + 130, contTopY - mtH * 0.7);
+        ctx.lineTo(mtX + 170, contTopY);
+        ctx.closePath();
+        ctx.fill();
+        // Iluminación lateral
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+        ctx.beginPath();
+        ctx.moveTo(mtX + 90, contTopY - mtH);
+        ctx.lineTo(mtX + 50, contTopY - mtH * 0.8);
+        ctx.lineTo(mtX, contTopY);
+        ctx.lineTo(mtX + 90, contTopY);
+        ctx.closePath();
+        ctx.fill();
+        // Nieve
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.6)';
+        ctx.beginPath();
+        ctx.moveTo(mtX + 75, contTopY - mtH * 0.85);
+        ctx.lineTo(mtX + 90, contTopY - mtH);
+        ctx.lineTo(mtX + 105, contTopY - mtH * 0.85);
+        ctx.lineTo(mtX + 95, contTopY - mtH * 0.7);
+        ctx.lineTo(mtX + 85, contTopY - mtH * 0.7);
+        ctx.closePath();
+        ctx.fill();
+
+        // Volcán explosivo
+        const volX = mtX + 110;
+        const volTopY = contTopY - mtH * 0.5;
+        ctx.fillStyle = '#3d2810';
+        ctx.beginPath();
+        ctx.moveTo(volX - 18, contTopY);
+        ctx.lineTo(volX - 6, volTopY);
+        ctx.lineTo(volX + 6, volTopY);
+        ctx.lineTo(volX + 18, contTopY);
+        ctx.closePath();
+        ctx.fill();
+        // Cráter brillando
+        const erVol = 0.6 + Math.sin(t * 3) * 0.4;
+        ctx.fillStyle = `rgba(255, 100, 0, ${erVol})`;
+        ctx.beginPath();
+        ctx.ellipse(volX, volTopY, 6, 2, 0, 0, Math.PI * 2);
+        ctx.fill();
+        // Humo del volcán
+        for (let i = 0; i < 4; i++) {
+          const sp = (t * 0.7 + i * 0.3) % 2;
+          const sy = volTopY - sp * 60;
+          const sx = volX + Math.sin(sp * 3 + i) * 12;
+          const sr = 4 + sp * 8;
+          ctx.fillStyle = `rgba(80, 80, 80, ${Math.max(0, 0.4 - sp * 0.2)})`;
+          ctx.beginPath();
+          ctx.arc(sx, sy, sr, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        // Pequeñas brasas saliendo
+        if (Math.sin(t * 4) > 0.7) {
+          for (let p = 0; p < 5; p++) {
+            const ang = -Math.PI / 2 + (Math.random() - 0.5) * 0.8;
+            const dist = 15 + Math.random() * 25;
+            const px = volX + Math.cos(ang) * dist;
+            const py = volTopY + Math.sin(ang) * dist;
+            ctx.fillStyle = `rgba(255, ${150 + Math.random() * 80}, 0, 0.8)`;
+            ctx.beginPath();
+            ctx.arc(px, py, 2 + Math.random() * 2, 0, Math.PI * 2);
+            ctx.fill();
+          }
+        }
+
+        // Conducto magmático del volcán a la cámara
+        ctx.strokeStyle = `rgba(255, 100, 0, ${0.3 + subMagma * 0.4})`;
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.moveTo(volX, volTopY + 4);
+        ctx.quadraticCurveTo(volX + 30, centerY, chamberX, chamberY - chamberR + 5);
+        ctx.stroke();
+
+        // Trinchera oceánica
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        ctx.beginPath();
+        ctx.moveTo(W / 2 - push - 25, centerY - plateH + 6);
+        ctx.lineTo(W / 2 + push, centerY - plateH);
+        ctx.lineTo(W / 2 - push, centerY - plateH * 0.5);
+        ctx.closePath();
+        ctx.fill();
+
+        // Flechas de movimiento
+        drawArrow(ctx, W * 0.18, centerY + plateH * 3.5, W * 0.32, centerY + plateH * 3.5, '#F87171', 5);
+        drawArrow(ctx, W * 0.82, centerY + plateH * 3.5, W * 0.68, centerY + plateH * 3.5, '#F87171', 5);
+
+        // Labels
+        ctx.fillStyle = '#cbd5e1';
+        ctx.font = `bold ${W * 0.024}px Inter`;
+        ctx.textAlign = 'center';
+        ctx.fillText('PLACA OCEÁNICA →', W * 0.25, H * 0.25);
+        ctx.fillText('← PLACA CONTINENTAL', W * 0.78, contTopY - mtH - 18);
+        ctx.fillStyle = '#f87171';
+        ctx.font = `${W * 0.022}px Inter`;
+        ctx.fillText('🌋 Volcán por subducción', volX, volTopY - 50);
+        ctx.fillText('Trinchera ↓', W * 0.5 - 20, centerY - plateH - 6);
+      }
+
+      function drawTransformBig(ctx, W, H, t) {
+        const bg = ctx.createLinearGradient(0, 0, 0, H);
+        bg.addColorStop(0, '#0c1929');
+        bg.addColorStop(0.5, '#1a1326');
+        bg.addColorStop(1, '#2d1a2e');
+        ctx.fillStyle = bg;
+        ctx.fillRect(0, 0, W, H);
+
+        const centerY = H * 0.5;
+        const plateH = H * 0.22;
+        const shift = Math.sin(t * 1.2) * 30;
+
+        // Placa A (arriba, mueve a la derecha)
+        const aGrad = ctx.createLinearGradient(0, centerY - plateH, 0, centerY);
+        aGrad.addColorStop(0, '#9b7820');
+        aGrad.addColorStop(1, '#5e4810');
+        ctx.fillStyle = aGrad;
+        ctx.fillRect(0, centerY - plateH, W, plateH);
+        ctx.fillStyle = '#a88830';
+        ctx.fillRect(0, centerY - plateH, W, 8);
+        // Detalles topográficos sobre placa A (con offset por movimiento)
+        ctx.fillStyle = 'rgba(120, 90, 30, 0.4)';
+        for (let i = 0; i < 8; i++) {
+          const fx = ((i * (W / 8)) + shift + W) % W;
+          const fy = centerY - plateH + 10 + (i % 3) * 8;
+          const fw = 25 + (i % 2) * 10;
+          const fh = plateH * 0.3 - (i % 2) * 6;
+          ctx.fillRect(fx, fy, fw, fh);
+        }
+        // pequeñas estructuras (casas/árboles)
+        ctx.fillStyle = '#3d2810';
+        for (let i = 0; i < 12; i++) {
+          const fx = ((i * (W / 12)) + shift + W) % W;
+          const fy = centerY - plateH * 0.4 + (i % 2) * 6;
+          ctx.beginPath();
+          ctx.moveTo(fx - 4, fy + 8);
+          ctx.lineTo(fx, fy);
+          ctx.lineTo(fx + 4, fy + 8);
+          ctx.closePath();
+          ctx.fill();
+        }
+
+        // Placa B (abajo, mueve a la izquierda)
+        const bGrad = ctx.createLinearGradient(0, centerY, 0, centerY + plateH);
+        bGrad.addColorStop(0, '#8a6818');
+        bGrad.addColorStop(1, '#4a3810');
+        ctx.fillStyle = bGrad;
+        ctx.fillRect(0, centerY, W, plateH);
+        ctx.fillStyle = 'rgba(120, 90, 30, 0.4)';
+        for (let i = 0; i < 8; i++) {
+          const fx = ((i * (W / 8)) - shift + W * 2) % W;
+          const fy = centerY + 10 + (i % 3) * 8;
+          const fw = 25 + (i % 2) * 10;
+          const fh = plateH * 0.3 - (i % 2) * 6;
+          ctx.fillRect(fx, fy, fw, fh);
+        }
+        ctx.fillStyle = '#3d2810';
+        for (let i = 0; i < 12; i++) {
+          const fx = ((i * (W / 12)) - shift + W * 2) % W;
+          const fy = centerY + plateH * 0.6 + (i % 2) * 6;
+          ctx.beginPath();
+          ctx.moveTo(fx - 4, fy + 8);
+          ctx.lineTo(fx, fy);
+          ctx.lineTo(fx + 4, fy + 8);
+          ctx.closePath();
+          ctx.fill();
+        }
+
+        // Falla (línea zigzag tipo San Andrés)
+        ctx.strokeStyle = '#c084fc';
+        ctx.lineWidth = 4;
+        ctx.shadowColor = '#a855f7';
+        ctx.shadowBlur = 12;
+        ctx.beginPath();
+        ctx.moveTo(0, centerY);
+        for (let x = 0; x < W; x += 30) {
+          const offset = Math.sin(x * 0.03) * 6;
+          ctx.lineTo(x, centerY + offset);
+        }
+        ctx.lineTo(W, centerY);
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+
+        // Estrés y chispas en la falla cuando hay máximo movimiento
+        const stress = Math.abs(Math.sin(t * 1.2));
+        if (stress > 0.65) {
+          for (let i = 0; i < 6; i++) {
+            const sx = (W * (i + 0.5)) / 6 + Math.sin(t * 6 + i) * 15;
+            const sy = centerY + (Math.random() - 0.5) * 8;
+            const sparkR = 2 + Math.random() * 4;
+            const sparkAlpha = (stress - 0.65) * 3;
+            ctx.fillStyle = `rgba(255, 255, 100, ${sparkAlpha})`;
+            ctx.shadowColor = '#FFFF00';
+            ctx.shadowBlur = 12;
+            ctx.beginPath();
+            ctx.arc(sx, sy, sparkR, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.shadowBlur = 0;
+        }
+
+        // Flechas de movimiento contrario
+        drawArrow(ctx, W * 0.2, centerY - plateH * 0.5, W * 0.45, centerY - plateH * 0.5, '#C084FC', 5);
+        drawArrow(ctx, W * 0.8, centerY + plateH * 0.5, W * 0.55, centerY + plateH * 0.5, '#C084FC', 5);
+
+        // Labels
+        ctx.fillStyle = '#cbd5e1';
+        ctx.font = `bold ${W * 0.026}px Inter`;
+        ctx.textAlign = 'center';
+        ctx.fillText('PLACA A → (se mueve al este)', W * 0.5, H * 0.1);
+        ctx.fillText('← PLACA B (se mueve al oeste)', W * 0.5, H * 0.94);
+        ctx.fillStyle = '#c084fc';
+        ctx.font = `${W * 0.022}px Inter`;
+        ctx.fillText('⚡ Falla transformante', W * 0.5, centerY + plateH * 0.05 - 14);
+      }
+
+      // ============ SECTION C: VOLCANO (escena bonita) ============
+      let volcanoPressure = 0;
+      let volcanoErupting = false;
+      let volcanoAnimId = null;
+      let volcanoParticles = [];
+      let volcanoLava = [];
+
+      function initVolcano() {
+        const canvas = document.getElementById('volcanoCanvas');
+        if (!canvas) return;
+        const wrap = canvas.parentElement;
+        if (!wrap) return;
+        const w = wrap.clientWidth * 2;
+        const h = wrap.clientHeight * 2;
+        if (w < 10 || h < 10) {
+          setTimeout(initVolcano, 80);
+          return;
+        }
+        canvas.width = w;
+        canvas.height = h;
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+        if (!volcanoAnimId) animateVolcano();
+      }
+
+      function animateVolcano() {
+        const canvas = document.getElementById('volcanoCanvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        function frame() {
+          const W = canvas.width, H = canvas.height;
+          if (W < 10 || H < 10) {
+            volcanoAnimId = requestAnimationFrame(frame);
+            return;
+          }
+          const t = Date.now() * 0.001;
+          ctx.clearRect(0, 0, W, H);
+
+          // ========= CIELO con gradiente que cambia según presión =========
+          const sky = ctx.createLinearGradient(0, 0, 0, H * 0.7);
+          if (volcanoErupting) {
+            sky.addColorStop(0, '#4a0a0a');
+            sky.addColorStop(0.4, '#7a1a08');
+            sky.addColorStop(0.8, '#a83008');
+            sky.addColorStop(1, '#c04a08');
+          } else if (volcanoPressure > 75) {
+            sky.addColorStop(0, '#1a0a14');
+            sky.addColorStop(0.4, '#3a1014');
+            sky.addColorStop(0.8, '#5a2014');
+            sky.addColorStop(1, '#7a3018');
+          } else if (volcanoPressure > 40) {
+            sky.addColorStop(0, '#2a1f3a');
+            sky.addColorStop(0.4, '#4a2540');
+            sky.addColorStop(0.8, '#7a3848');
+            sky.addColorStop(1, '#a05030');
+          } else {
+            // ATARDECER PRECIOSO en reposo
+            sky.addColorStop(0, '#1a1a4a');
+            sky.addColorStop(0.3, '#5a2870');
+            sky.addColorStop(0.55, '#c84a60');
+            sky.addColorStop(0.78, '#f08838');
+            sky.addColorStop(1, '#fac060');
+          }
+          ctx.fillStyle = sky;
+          ctx.fillRect(0, 0, W, H * 0.72);
+
+          // ===== Luna/Sol =====
+          const sunX = W * 0.18;
+          const sunY = H * 0.22;
+          const sunR = W * 0.04;
+          if (!volcanoErupting && volcanoPressure < 75) {
+            // Resplandor del sol
+            const sunGlow = ctx.createRadialGradient(sunX, sunY, 0, sunX, sunY, sunR * 4);
+            const sunOpacity = volcanoPressure < 40 ? 1 : Math.max(0.2, 1 - (volcanoPressure - 40) / 35);
+            sunGlow.addColorStop(0, `rgba(255, 240, 180, ${0.5 * sunOpacity})`);
+            sunGlow.addColorStop(0.5, `rgba(255, 200, 100, ${0.2 * sunOpacity})`);
+            sunGlow.addColorStop(1, 'rgba(255, 150, 50, 0)');
+            ctx.fillStyle = sunGlow;
+            ctx.beginPath();
+            ctx.arc(sunX, sunY, sunR * 4, 0, Math.PI * 2);
+            ctx.fill();
+            // El sol mismo
+            const sunCol = volcanoPressure < 40 ? '#FFE5A0' : '#FFB060';
+            ctx.fillStyle = sunCol;
+            ctx.beginPath();
+            ctx.arc(sunX, sunY, sunR, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
+          // ===== Estrellas (solo en reposo, parpadean) =====
+          if (volcanoPressure <= 40) {
+            const starOpac = 1 - volcanoPressure / 50;
+            for (let i = 0; i < 40; i++) {
+              const sx = (i * 137.5) % W;
+              const sy = ((i * 73.3) % (H * 0.35));
+              const flicker = 0.4 + Math.sin(t * 3 + i) * 0.3;
+              ctx.fillStyle = `rgba(255, 255, 255, ${flicker * starOpac * 0.8})`;
+              ctx.beginPath();
+              ctx.arc(sx, sy, 1 + (i % 3) * 0.4, 0, Math.PI * 2);
+              ctx.fill();
+            }
+          }
+
+          // ===== Nubes (en reposo se ven rosaditas, en presión grises) =====
+          for (let i = 0; i < 4; i++) {
+            const cx = ((i * W * 0.3) + (t * 8) % W) % (W * 1.2) - W * 0.1;
+            const cy = H * (0.12 + i * 0.05);
+            const cw = W * 0.18;
+            const ch = H * 0.04;
+            let cloudCol;
+            if (volcanoErupting || volcanoPressure > 75) cloudCol = `rgba(60, 30, 30, 0.7)`;
+            else if (volcanoPressure > 40) cloudCol = `rgba(120, 80, 90, 0.5)`;
+            else cloudCol = `rgba(255, 200, 220, 0.45)`;
+            ctx.fillStyle = cloudCol;
+            ctx.beginPath();
+            ctx.ellipse(cx, cy, cw, ch, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.ellipse(cx + cw * 0.5, cy + ch * 0.3, cw * 0.7, ch * 0.8, 0, 0, Math.PI * 2);
+            ctx.fill();
+          }
+
+          // ===== MONTAÑAS lejanas (siluetas) =====
+          ctx.fillStyle = volcanoPressure > 40 ? 'rgba(40, 25, 35, 0.9)' : 'rgba(60, 40, 80, 0.6)';
+          ctx.beginPath();
+          ctx.moveTo(0, H * 0.65);
+          ctx.lineTo(W * 0.15, H * 0.5);
+          ctx.lineTo(W * 0.28, H * 0.55);
+          ctx.lineTo(W * 0.4, H * 0.48);
+          ctx.lineTo(W * 0.55, H * 0.58);
+          ctx.lineTo(W * 0.7, H * 0.5);
+          ctx.lineTo(W * 0.85, H * 0.56);
+          ctx.lineTo(W, H * 0.52);
+          ctx.lineTo(W, H * 0.7);
+          ctx.lineTo(0, H * 0.7);
+          ctx.closePath();
+          ctx.fill();
+
+          // ===== TIERRA / SUELO =====
+          const groundY = H * 0.72;
+          const groundGrad = ctx.createLinearGradient(0, groundY, 0, H);
+          if (volcanoErupting || volcanoPressure > 75) {
+            groundGrad.addColorStop(0, '#3a1810');
+            groundGrad.addColorStop(1, '#1a0808');
+          } else if (volcanoPressure > 40) {
+            groundGrad.addColorStop(0, '#4a3018');
+            groundGrad.addColorStop(1, '#2a1810');
+          } else {
+            groundGrad.addColorStop(0, '#6a4a28');
+            groundGrad.addColorStop(0.5, '#4a3018');
+            groundGrad.addColorStop(1, '#2a1810');
+          }
+          ctx.fillStyle = groundGrad;
+          ctx.fillRect(0, groundY, W, H - groundY);
+
+          // ===== VEGETACIÓN: hierba en primer plano (solo cuando no hay erupción) =====
+          if (!volcanoErupting) {
+            const grassOpacity = volcanoPressure < 40 ? 1 : Math.max(0.3, 1 - (volcanoPressure - 40) / 50);
+            // Pasto suelo
+            ctx.fillStyle = `rgba(30, 80, 20, ${0.5 * grassOpacity})`;
+            ctx.fillRect(0, groundY, W, H * 0.04);
+            // Briznas individuales
+            ctx.strokeStyle = `rgba(50, 120, 30, ${0.7 * grassOpacity})`;
+            ctx.lineWidth = 1.5;
+            for (let i = 0; i < 80; i++) {
+              const gx = (i * 23) % W;
+              const gh = 4 + (i % 5) * 2;
+              const sway = Math.sin(t * 1.5 + i * 0.3) * 1.5;
+              ctx.beginPath();
+              ctx.moveTo(gx, groundY + 4);
+              ctx.lineTo(gx + sway, groundY + 4 - gh);
+              ctx.stroke();
+            }
+            // Algunos arbolitos (siluetas)
+            for (let i = 0; i < 5; i++) {
+              const tx = W * (0.05 + i * 0.18 + (i % 2) * 0.05);
+              if (Math.abs(tx - W * 0.5) < W * 0.18) continue; // no superponer al volcán
+              const th = H * (0.06 + (i % 3) * 0.015);
+              ctx.fillStyle = `rgba(20, 40, 15, ${0.85 * grassOpacity})`;
+              // tronco
+              ctx.fillRect(tx - 2, groundY - th * 0.3, 4, th * 0.3);
+              // copa
+              ctx.beginPath();
+              ctx.moveTo(tx - 12, groundY - th * 0.3);
+              ctx.lineTo(tx, groundY - th);
+              ctx.lineTo(tx + 12, groundY - th * 0.3);
+              ctx.closePath();
+              ctx.fill();
+            }
+          }
+
+          // ===== VOLCÁN (con sombras laterales para volumen) =====
+          const peakX = W * 0.5;
+          const peakY = H * 0.32;
+          // Cuerpo del volcán
+          const volGrad = ctx.createLinearGradient(peakX - 140, 0, peakX + 140, 0);
+          if (volcanoErupting || volcanoPressure > 75) {
+            volGrad.addColorStop(0, '#3a1808');
+            volGrad.addColorStop(0.4, '#5a2810');
+            volGrad.addColorStop(1, '#2a1008');
+          } else if (volcanoPressure > 40) {
+            volGrad.addColorStop(0, '#4a2818');
+            volGrad.addColorStop(0.4, '#6a4028');
+            volGrad.addColorStop(1, '#382010');
+          } else {
+            volGrad.addColorStop(0, '#5a3828');
+            volGrad.addColorStop(0.4, '#7a5040');
+            volGrad.addColorStop(1, '#3a2010');
+          }
+          ctx.fillStyle = volGrad;
+          ctx.beginPath();
+          ctx.moveTo(peakX - 140, groundY);
+          ctx.lineTo(peakX - 28, peakY);
+          ctx.lineTo(peakX + 28, peakY);
+          ctx.lineTo(peakX + 140, groundY);
+          ctx.closePath();
+          ctx.fill();
+
+          // Detalles de roca / textura del volcán
+          ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+          ctx.lineWidth = 1.5;
+          for (let i = 0; i < 6; i++) {
+            const ratio = 0.2 + i * 0.13;
+            ctx.beginPath();
+            ctx.moveTo(peakX - 140 + ratio * 30, groundY - i * 8);
+            ctx.lineTo(peakX - 28 + ratio * 8, peakY + (groundY - peakY) * (1 - ratio) * 0.3);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(peakX + 140 - ratio * 30, groundY - i * 8);
+            ctx.lineTo(peakX + 28 - ratio * 8, peakY + (groundY - peakY) * (1 - ratio) * 0.3);
+            ctx.stroke();
+          }
+
+          // Sombra lateral (lado oscuro)
+          ctx.fillStyle = 'rgba(0,0,0,0.25)';
+          ctx.beginPath();
+          ctx.moveTo(peakX, peakY);
+          ctx.lineTo(peakX + 28, peakY);
+          ctx.lineTo(peakX + 140, groundY);
+          ctx.lineTo(peakX, groundY);
+          ctx.closePath();
+          ctx.fill();
+
+          // Nieve en la cima (en reposo)
+          if (volcanoPressure < 30 && !volcanoErupting) {
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.beginPath();
+            ctx.moveTo(peakX - 28, peakY);
+            ctx.lineTo(peakX - 22, peakY - 6);
+            ctx.lineTo(peakX - 12, peakY);
+            ctx.lineTo(peakX - 6, peakY - 4);
+            ctx.lineTo(peakX, peakY);
+            ctx.lineTo(peakX + 6, peakY - 5);
+            ctx.lineTo(peakX + 14, peakY);
+            ctx.lineTo(peakX + 22, peakY - 6);
+            ctx.lineTo(peakX + 28, peakY);
+            ctx.closePath();
+            ctx.fill();
+          }
+
+          // Cráter
+          ctx.fillStyle = '#1a0808';
+          ctx.beginPath();
+          ctx.ellipse(peakX, peakY, 28, 9, 0, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Resplandor de magma en el cráter
+          if (volcanoPressure > 8) {
+            const gi = volcanoPressure / 100;
+            ctx.fillStyle = `rgba(255, ${Math.floor(150 - volcanoPressure * 1.2)}, 0, ${gi * 0.85})`;
+            ctx.beginPath();
+            ctx.ellipse(peakX, peakY, 22, 7, 0, 0, Math.PI * 2);
+            ctx.fill();
+            if (volcanoPressure > 50) {
+              ctx.shadowColor = '#FF4400';
+              ctx.shadowBlur = 25 * gi;
+              ctx.fillStyle = `rgba(255, 80, 0, ${gi * 0.6})`;
+              ctx.beginPath();
+              ctx.ellipse(peakX, peakY, 24, 8, 0, 0, Math.PI * 2);
+              ctx.fill();
+              ctx.shadowBlur = 0;
+            }
+          }
+
+          // ===== Cámara magmática y conducto subterráneos =====
+          const chamberY = groundY + (H - groundY) * 0.55;
+          const chamberR = 35 + volcanoPressure * 0.25;
+          const cPulse = Math.sin(t * 3) * 4;
+          const chamberGrad = ctx.createRadialGradient(peakX, chamberY, 0, peakX, chamberY, chamberR + cPulse);
+          chamberGrad.addColorStop(0, `rgba(255, 200, 50, ${0.5 + volcanoPressure * 0.005})`);
+          chamberGrad.addColorStop(0.5, `rgba(255, 80, 0, ${0.4 + volcanoPressure * 0.005})`);
+          chamberGrad.addColorStop(1, `rgba(180, 30, 0, 0)`);
+          ctx.fillStyle = chamberGrad;
+          ctx.beginPath();
+          ctx.arc(peakX, chamberY, chamberR + cPulse, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Conducto magma del cráter a la cámara
+          ctx.strokeStyle = `rgba(255, 80, 0, ${0.25 + volcanoPressure * 0.006})`;
+          ctx.lineWidth = 6 + volcanoPressure * 0.06;
+          ctx.beginPath();
+          ctx.moveTo(peakX, peakY + 6);
+          ctx.lineTo(peakX, chamberY - chamberR);
+          ctx.stroke();
+
+          // ===== Humo (cuando hay presión) =====
+          if (volcanoPressure > 25) {
+            const smokeCount = Math.floor(volcanoPressure / 12);
+            for (let i = 0; i < smokeCount; i++) {
+              const st = (t + i * 0.7) % 3;
+              const sx = peakX + Math.sin(st * 2 + i) * 24;
+              const sy = peakY - st * 50;
+              const sr = 6 + st * 12;
+              const alpha = Math.max(0, 0.5 - st * 0.16);
+              const colVal = volcanoErupting ? 50 : 100;
+              ctx.fillStyle = `rgba(${colVal}, ${colVal}, ${colVal}, ${alpha})`;
+              ctx.beginPath();
+              ctx.arc(sx, sy, sr, 0, Math.PI * 2);
+              ctx.fill();
+            }
+          }
+
+          // ===== Erupción =====
+          if (volcanoErupting) {
+            drawEruption(ctx, peakX, peakY, W, H, t);
+          }
+
+          // Partículas
+          for (let i = volcanoParticles.length - 1; i >= 0; i--) {
+            const p = volcanoParticles[i];
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.18;
+            p.life -= 0.012;
+            if (p.life <= 0 || p.y > H) {
+              volcanoParticles.splice(i, 1);
+              continue;
+            }
+            ctx.fillStyle = `rgba(255, ${Math.floor(80 + p.life * 150)}, 0, ${p.life})`;
+            ctx.shadowColor = '#FF6600';
+            ctx.shadowBlur = 6;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 3 + p.life * 3, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.shadowBlur = 0;
+
+          // Lava fluyendo por la ladera
+          for (let i = volcanoLava.length - 1; i >= 0; i--) {
+            const l = volcanoLava[i];
+            l.y += l.speed;
+            l.x += l.dir * 0.7 + Math.sin(l.y * 0.02) * 0.3;
+            if (l.y > groundY + 30) {
+              volcanoLava.splice(i, 1);
+              continue;
+            }
+            ctx.fillStyle = `rgba(255, ${50 + Math.floor(l.life * 100)}, 0, ${l.life})`;
+            ctx.shadowColor = '#FF4400';
+            ctx.shadowBlur = 8;
+            ctx.beginPath();
+            ctx.arc(l.x, l.y, 4 + l.life * 2, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.shadowBlur = 0;
+
+          volcanoAnimId = requestAnimationFrame(frame);
+        }
+        frame();
+      }
+
+      function drawEruption(ctx, px, py, W, H, t) {
+        // Resplandor masivo
+        const glowR = 100 + Math.sin(t * 4) * 25;
+        const glowGrad = ctx.createRadialGradient(px, py, 0, px, py, glowR);
+        glowGrad.addColorStop(0, 'rgba(255, 220, 100, 0.7)');
+        glowGrad.addColorStop(0.4, 'rgba(255, 120, 0, 0.5)');
+        glowGrad.addColorStop(1, 'rgba(255, 50, 0, 0)');
+        ctx.fillStyle = glowGrad;
+        ctx.beginPath();
+        ctx.arc(px, py, glowR, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Generar partículas constantemente
+        for (let i = 0; i < 10; i++) {
+          const angle = -Math.PI / 2 + (Math.random() - 0.5) * 1.4;
+          const speed = 4 + Math.random() * 5;
+          volcanoParticles.push({
+            x: px + (Math.random() - 0.5) * 14,
+            y: py,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            life: 0.6 + Math.random() * 0.4
+          });
+        }
+        // Lava fluyendo por la ladera
+        if (Math.random() < 0.4) {
+          const dir = Math.random() < 0.5 ? -1 : 1;
+          volcanoLava.push({
+            x: px + dir * 18,
+            y: py + 14,
+            speed: 1 + Math.random() * 2,
+            dir: dir,
+            life: 0.85 + Math.random() * 0.15
+          });
         }
       }
 
-      // Inner core glow animation
-      if (layer.id === 'inner-core') {
-        const glow = 0.3 + Math.sin(time * 2) * 0.15;
-        ctx.shadowColor = '#FFD700';
-        ctx.shadowBlur = 30 + Math.sin(time * 2) * 15;
-        ctx.fillStyle = `rgba(255, 215, 0, ${glow})`;
-        ctx.beginPath();
-        ctx.arc(cx, cy, r1 * 0.8, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.shadowBlur = 0;
+      function updateVolcanoUI() {
+        const bar = document.getElementById('pressureBar');
+        const val = document.getElementById('pressureValue');
+        const status = document.getElementById('volcanoStatus');
+        bar.style.width = volcanoPressure + '%';
+        val.textContent = Math.floor(volcanoPressure) + '%';
+        if (volcanoErupting) {
+          status.className = 'volcano-status status-erupting';
+          status.textContent = '🌋 ¡¡ERUPCIÓN EN CURSO!!';
+          bar.classList.add('critical');
+        } else if (volcanoPressure > 75) {
+          status.className = 'volcano-status status-critical';
+          status.textContent = '🔴 ¡Presión crítica! Erupción inminente';
+          bar.classList.add('critical');
+        } else if (volcanoPressure > 40) {
+          status.className = 'volcano-status status-warning';
+          status.textContent = '⚠️ Presión elevada — actividad sísmica';
+          bar.classList.remove('critical');
+        } else {
+          status.className = 'volcano-status status-calm';
+          status.textContent = '✅ Volcán en reposo';
+          bar.classList.remove('critical');
+        }
       }
-    }
-
-    // Surface texture for crust
-    if (!hoveredLayer || hoveredLayer === 'crust') {
-      ctx.strokeStyle = 'rgba(100, 80, 20, 0.15)';
-      ctx.lineWidth = 1;
-      for (let i = 0; i < 8; i++) {
-        const angle = (i / 8) * Math.PI * 2 + time * 0.1;
-        ctx.beginPath();
-        ctx.arc(cx + Math.cos(angle) * maxR * 0.9, cy + Math.sin(angle) * maxR * 0.9, maxR * 0.15, 0, Math.PI * 2);
-        ctx.stroke();
+      function increasePressure() {
+        if (volcanoErupting) return;
+        volcanoPressure = Math.min(100, volcanoPressure + 10);
+        updateVolcanoUI();
+        addLog(`⬆️ Presión: ${Math.floor(volcanoPressure)}%`);
+        if (volcanoPressure >= 100) triggerEruption();
       }
-    }
-
-    earthAnimId = requestAnimationFrame(frame);
-  }
-  frame();
-}
-
-// Mouse interaction for earth canvas
-const overlay = document.getElementById('earthOverlay');
-overlay.addEventListener('mousemove', (e) => {
-  const canvas = document.getElementById('earthCanvas');
-  const rect = canvas.getBoundingClientRect();
-  const scaleX = canvas.width / rect.width;
-  const scaleY = canvas.height / rect.height;
-  const mx = (e.clientX - rect.left) * scaleX;
-  const my = (e.clientY - rect.top) * scaleY;
-  const cx = canvas.width / 2, cy = canvas.height / 2;
-  const maxR = Math.min(cx, cy) - 4;
-  const dist = Math.sqrt((mx - cx) ** 2 + (my - cy) ** 2);
-  const ratio = dist / maxR;
-
-  let prevHovered = hoveredLayer;
-  hoveredLayer = null;
-
-  for (const layer of LAYERS) {
-    if (ratio <= layer.outer && ratio >= layer.inner) {
-      hoveredLayer = layer.id;
-      break;
-    }
-  }
-
-  // Update highlight ring
-  const highlight = document.getElementById('layerHighlight');
-  if (hoveredLayer) {
-    const layer = LAYERS.find(l => l.id === hoveredLayer);
-    highlight.style.width = (layer.outer * 100) + '%';
-    highlight.style.height = (layer.outer * 100) + '%';
-    highlight.style.opacity = '1';
-  } else {
-    highlight.style.opacity = '0';
-  }
-
-  // Update info panel on hover
-  if (hoveredLayer && hoveredLayer !== prevHovered) {
-    const info = layerInfo[hoveredLayer];
-    if (info) {
-      const panel = document.getElementById('infoPanel');
-      panel.innerHTML = `
-        <h3>${info.title}</h3>
-        <p>${info.desc}</p>
-        <div style="margin-top:12px;">
-          ${info.stats.map(s => `<span class="stat">${s}</span>`).join('')}
-        </div>
-      `;
-      panel.classList.add('active-layer');
-    }
-  }
-
-  // Tooltip
-  if (hoveredLayer) {
-    tooltip.textContent = layerInfo[hoveredLayer].title;
-    tooltip.style.display = 'block';
-    tooltip.style.left = e.clientX + 12 + 'px';
-    tooltip.style.top = e.clientY - 10 + 'px';
-  } else {
-    tooltip.style.display = 'none';
-  }
-});
-
-overlay.addEventListener('mouseleave', () => {
-  hoveredLayer = null;
-  tooltip.style.display = 'none';
-  document.getElementById('layerHighlight').style.opacity = '0';
-});
-
-overlay.addEventListener('click', () => {
-  if (hoveredLayer) {
-    selectedLayer = hoveredLayer;
-    const info = layerInfo[hoveredLayer];
-    if (info) {
-      const panel = document.getElementById('infoPanel');
-      panel.innerHTML = `
-        <h3>${info.title}</h3>
-        <p>${info.desc}</p>
-        <div style="margin-top:12px;">
-          ${info.stats.map(s => `<span class="stat">${s}</span>`).join('')}
-        </div>
-      `;
-      panel.classList.add('active-layer');
-    }
-  }
-});
-
-function toggleMagma() {
-  magmaActive = !magmaActive;
-  document.querySelectorAll('.magma-channel').forEach(c => c.classList.toggle('active', magmaActive));
-  addLog(magmaActive ? '🔥 Magma activado — corrientes ascendentes visibles' : '❄️ Magma desactivado');
-}
-
-function togglePlates() {
-  platesVisible = !platesVisible;
-  document.querySelectorAll('.plate-line').forEach(p => p.classList.toggle('active', platesVisible));
-  addLog(platesVisible ? '🗺️ Líneas de placas tectónicas visibles' : '🗺️ Placas ocultas');
-}
-
-function triggerEarthquake() {
-  const earth = document.getElementById('earthHalf');
-  earth.classList.add('earth-shaking');
-  setTimeout(() => earth.classList.remove('earth-shaking'), 1500);
-  const rings = document.querySelectorAll('.seismic-ring');
-  rings.forEach((r, i) => {
-    setTimeout(() => { r.classList.remove('active'); void r.offsetWidth; r.classList.add('active'); }, i * 300);
-  });
-  addLog('💥 ¡Terremoto simulado! Ondas sísmicas propagándose...');
-}
-
-function resetEarth() {
-  magmaActive = false; platesVisible = false; selectedLayer = null;
-  document.querySelectorAll('.magma-channel').forEach(c => c.classList.remove('active'));
-  document.querySelectorAll('.plate-line').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.seismic-ring').forEach(r => r.classList.remove('active'));
-  document.getElementById('earthHalf').classList.remove('earth-shaking');
-  document.getElementById('layerHighlight').style.opacity = '0';
-  document.getElementById('infoPanel').innerHTML = `<h3>🌍 Selecciona una capa</h3><p>Pasa el cursor o haz clic sobre cada capa del modelo de la Tierra para ver información detallada.</p>`;
-  document.getElementById('infoPanel').classList.remove('active-layer');
-  addLog('🔄 Sistema reiniciado');
-}
-
-function updateSpeed(val) {
-  const labels = ['Muy lento', 'Lento', 'Normal', 'Rápido', 'Muy rápido'];
-  document.getElementById('speedLabel').textContent = labels[val - 1];
-  animSpeed = val;
-  document.querySelectorAll('.magma-channel').forEach(c => c.style.animationDuration = (6 - val) + 's');
-}
-
-// ============ QUIZ ============
-function checkAnswer(btn, correct) {
-  const parent = btn.parentElement;
-  if (parent.dataset.answered) return;
-  parent.dataset.answered = 'true';
-  if (correct) {
-    btn.classList.add('correct');
-    addLog('✅ ¡Respuesta correcta!');
-  } else {
-    btn.classList.add('wrong');
-    addLog('❌ Respuesta incorrecta. La respuesta correcta está marcada en verde.');
-    // Show correct answer
-    parent.querySelectorAll('.quiz-opt').forEach(o => {
-      if (o !== btn && o.onclick) {
-        // We'd need to store the correct answer, but for simplicity just mark all
+      function decreasePressure() {
+        if (volcanoErupting) return;
+        volcanoPressure = Math.max(0, volcanoPressure - 10);
+        updateVolcanoUI();
+        addLog(`⬇️ Presión: ${Math.floor(volcanoPressure)}%`);
       }
-    });
-  }
-}
-
-// ============ SECTION B: PLATE CANVASES ============
-let plateAnims = {};
-
-function setupCanvas(id) {
-  const canvas = document.getElementById(id);
-  const wrap = canvas.parentElement;
-  if (!canvas || !wrap) return null;
-  canvas.width = wrap.clientWidth * 2;
-  canvas.height = wrap.clientHeight * 2;
-  canvas.style.width = '100%';
-  canvas.style.height = '100%';
-  return canvas;
-}
-
-function drawArrow(ctx, x1, y1, x2, y2) {
-  const headLen = 12;
-  const angle = Math.atan2(y2 - y1, x2 - x1);
-  ctx.strokeStyle = ctx.strokeStyle || '#fff';
-  ctx.lineWidth = 3;
-  ctx.beginPath();
-  ctx.moveTo(x1, y1);
-  ctx.lineTo(x2, y2);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(x2, y2);
-  ctx.lineTo(x2 - headLen * Math.cos(angle - 0.4), y2 - headLen * Math.sin(angle - 0.4));
-  ctx.lineTo(x2 - headLen * Math.cos(angle + 0.4), y2 - headLen * Math.sin(angle + 0.4));
-  ctx.closePath();
-  ctx.fillStyle = ctx.strokeStyle;
-  ctx.fill();
-}
-
-function initPlateCanvases() {
-  if (plateAnims.initialized) return;
-  plateAnims.initialized = true;
-
-  // Cancel any previous animations
-  if (plateAnims.divId) cancelAnimationFrame(plateAnims.divId);
-  if (plateAnims.convId) cancelAnimationFrame(plateAnims.convId);
-  if (plateAnims.transId) cancelAnimationFrame(plateAnims.transId);
-
-  setTimeout(() => {
-    drawDivergent();
-    drawConvergent();
-    drawTransform();
-  }, 100);
-}
-
-// --- DIVERGENT ---
-function drawDivergent() {
-  const canvas = setupCanvas('canvasDivergent');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height;
-  let t = 0;
-
-  function frame() {
-    t += 0.02;
-    ctx.clearRect(0, 0, W, H);
-
-    // Background
-    const bgGrad = ctx.createLinearGradient(0, H * 0.3, 0, H);
-    bgGrad.addColorStop(0, '#0c1929');
-    bgGrad.addColorStop(0.5, '#1a1008');
-    bgGrad.addColorStop(1, '#3d1508');
-    ctx.fillStyle = bgGrad;
-    ctx.fillRect(0, 0, W, H);
-
-    const centerY = H * 0.55;
-    const plateH = H * 0.15;
-    const gap = 15 + Math.sin(t * 1.5) * 10; // Animated gap opening/closing
-    const magmaUp = Math.max(0, Math.sin(t * 1.5)); // Magma visibility tied to gap
-
-    // Rising magma column
-    if (magmaUp > 0.2) {
-      const mg = ctx.createRadialGradient(W/2, centerY, 0, W/2, centerY, gap * 4);
-      mg.addColorStop(0, `rgba(255,80,0,${magmaUp * 0.8})`);
-      mg.addColorStop(0.5, `rgba(255,50,0,${magmaUp * 0.3})`);
-      mg.addColorStop(1, 'rgba(255,50,0,0)');
-      ctx.fillStyle = mg;
-      ctx.fillRect(W/2 - gap * 4, centerY - gap * 5, gap * 8, gap * 10);
-
-      // Magma bubbles
-      for (let i = 0; i < 5; i++) {
-        const bubbleY = centerY + Math.sin(t * 3 + i) * 10 - i * 15;
-        const bubbleX = W/2 + Math.sin(t * 2 + i * 0.5) * 8;
-        const bubbleR = 3 + Math.sin(t + i) * 2;
-        ctx.fillStyle = `rgba(255,150,0,${0.6 - i * 0.1})`;
-        ctx.beginPath();
-        ctx.arc(bubbleX, bubbleY, bubbleR, 0, Math.PI * 2);
-        ctx.fill();
+      function forceErupt() {
+        if (volcanoErupting) return;
+        addLog('🌋 ¡Erupción forzada!');
+        triggerEruption();
       }
-    }
-
-    // Left plate
-    ctx.fillStyle = '#6B5010';
-    ctx.fillRect(0, centerY - plateH, W/2 - gap/2, plateH);
-    ctx.fillStyle = '#8B6914';
-    ctx.fillRect(0, centerY - plateH, W/2 - gap/2, 6);
-    // Texture lines
-    ctx.strokeStyle = 'rgba(255,255,255,0.1)';
-    ctx.lineWidth = 1;
-    for (let i = 0; i < 4; i++) {
-      const lx = W * 0.1 + i * W * 0.1;
-      ctx.beginPath();
-      ctx.moveTo(lx, centerY - plateH);
-      ctx.lineTo(lx, centerY);
-      ctx.stroke();
-    }
-
-    // Right plate
-    ctx.fillStyle = '#6B5010';
-    ctx.fillRect(W/2 + gap/2, centerY - plateH, W/2, plateH);
-    ctx.fillStyle = '#8B6914';
-    ctx.fillRect(W/2 + gap/2, centerY - plateH, W/2, 6);
-    for (let i = 0; i < 4; i++) {
-      const lx = W * 0.6 + i * W * 0.1;
-      ctx.strokeStyle = 'rgba(255,255,255,0.1)';
-      ctx.beginPath();
-      ctx.moveTo(lx, centerY - plateH);
-      ctx.lineTo(lx, centerY);
-      ctx.stroke();
-    }
-
-    // Arrows showing movement
-    ctx.strokeStyle = '#4ADE80';
-    drawArrow(ctx, W/4 - 15, centerY + plateH * 0.8, W/4 - 60, centerY + plateH * 0.8);
-    drawArrow(ctx, W*0.75 + 15, centerY + plateH * 0.8, W*0.75 + 60, centerY + plateH * 0.8);
-
-    // Labels
-    ctx.fillStyle = '#94A3B8';
-    ctx.font = `bold ${W * 0.04}px Inter`;
-    ctx.textAlign = 'center';
-    ctx.fillText('← Placa', W/4, centerY - plateH - 15);
-    ctx.fillText('Placa →', W*0.75, centerY - plateH - 15);
-    ctx.fillStyle = '#F97316';
-    ctx.font = `${W * 0.035}px Inter`;
-    ctx.fillText('↑ Magma ↑', W/2, centerY + plateH * 2);
-
-    // Ocean water above
-    ctx.fillStyle = 'rgba(59,130,246,0.15)';
-    ctx.fillRect(0, 0, W, centerY - plateH);
-
-    plateAnims.divId = requestAnimationFrame(frame);
-  }
-  frame();
-}
-
-// --- CONVERGENT ---
-function drawConvergent() {
-  const canvas = setupCanvas('canvasConvergent');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height;
-  let t = 0;
-
-  function frame() {
-    t += 0.02;
-    ctx.clearRect(0, 0, W, H);
-
-    const bgGrad = ctx.createLinearGradient(0, H * 0.3, 0, H);
-    bgGrad.addColorStop(0, '#0c1929');
-    bgGrad.addColorStop(0.5, '#1a1008');
-    bgGrad.addColorStop(1, '#3d1508');
-    ctx.fillStyle = bgGrad;
-    ctx.fillRect(0, 0, W, H);
-
-    const centerY = H * 0.55;
-    const plateH = H * 0.12;
-    const push = 10 + Math.sin(t * 1.5) * 8; // Oscillating push
-
-    // Magma background
-    ctx.fillStyle = 'rgba(255,80,0,0.1)';
-    ctx.beginPath();
-    ctx.arc(W/2, centerY + plateH * 2, 60, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Left plate (oceanic - thinner, blue tint) - moves right
-    const leftX = W/2 - push;
-    ctx.fillStyle = '#3A6FA0';
-    ctx.beginPath();
-    ctx.moveTo(0, centerY - plateH);
-    ctx.lineTo(leftX + push, centerY - plateH);
-    ctx.lineTo(W/2 + 5, centerY);
-    ctx.lineTo(W/2 + 5, centerY + plateH * 2);
-    ctx.lineTo(W/2 - 15, centerY + plateH * 2.5);
-    ctx.lineTo(0, centerY + plateH * 2.5);
-    ctx.closePath();
-    ctx.fill();
-    // Ocean surface
-    ctx.fillStyle = '#4A80B5';
-    ctx.fillRect(0, centerY - plateH - 8, leftX + push, 8);
-
-    // Right plate (continental - thicker, brown) - moves left
-    const rightX = W/2 + push;
-    ctx.fillStyle = '#8B6914';
-    ctx.fillRect(rightX, centerY - plateH * 2, W/2, plateH * 2);
-    ctx.fillStyle = '#6B5010';
-    ctx.fillRect(rightX, centerY - plateH * 2, W/2, 6);
-
-    // Mountain building at collision point
-    const mtH = 15 + push * 1.2;
-    ctx.fillStyle = '#5A4010';
-    ctx.beginPath();
-    ctx.moveTo(rightX - 5, centerY - plateH * 2);
-    ctx.lineTo(rightX + 25, centerY - plateH * 2 - mtH);
-    ctx.lineTo(rightX + 55, centerY - plateH * 2);
-    ctx.closePath();
-    ctx.fill();
-    // Snow cap
-    ctx.fillStyle = 'rgba(255,255,255,0.3)';
-    ctx.beginPath();
-    ctx.moveTo(rightX + 15, centerY - plateH * 2 - mtH + 5);
-    ctx.lineTo(rightX + 25, centerY - plateH * 2 - mtH);
-    ctx.lineTo(rightX + 35, centerY - plateH * 2 - mtH + 5);
-    ctx.closePath();
-    ctx.fill();
-
-    // Volcano on mountain
-    const volcanoTopY = centerY - plateH * 2 - mtH;
-    ctx.fillStyle = '#555';
-    ctx.beginPath();
-    ctx.moveTo(rightX + 30, volcanoTopY);
-    ctx.lineTo(rightX + 45, volcanoTopY - 18);
-    ctx.lineTo(rightX + 60, volcanoTopY);
-    ctx.closePath();
-    ctx.fill();
-    // Volcano glow
-    const volGlow = 0.3 + Math.sin(t * 3) * 0.2;
-    ctx.fillStyle = `rgba(255,80,0,${volGlow})`;
-    ctx.beginPath();
-    ctx.arc(rightX + 45, volcanoTopY - 18, 6, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Magma chamber
-    const chamberPulse = 8 + Math.sin(t * 2) * 4;
-    ctx.fillStyle = `rgba(255,60,0,${0.4 + Math.sin(t * 2) * 0.2})`;
-    ctx.beginPath();
-    ctx.arc(rightX + 30, centerY + plateH * 0.5, chamberPulse, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Arrows
-    ctx.strokeStyle = '#F87171';
-    drawArrow(ctx, W/4 + 40, centerY + plateH * 3, W/4 + 75, centerY + plateH * 3);
-    drawArrow(ctx, W*0.75 - 40, centerY + plateH * 3, W*0.75 - 75, centerY + plateH * 3);
-
-    // Labels
-    ctx.fillStyle = '#94A3B8';
-    ctx.font = `bold ${W * 0.035}px Inter`;
-    ctx.textAlign = 'center';
-    ctx.fillText('Oceánica →', W/4, centerY + plateH * 3.5);
-    ctx.fillText('← Continental', W*0.75, centerY + plateH * 3.5);
-    ctx.fillStyle = '#F97316';
-    ctx.font = `${W * 0.03}px Inter`;
-    ctx.fillText('🌋 Volcán + Montañas', rightX + 30, volcanoTopY - 28);
-
-    plateAnims.convId = requestAnimationFrame(frame);
-  }
-  frame();
-}
-
-// --- TRANSFORM ---
-function drawTransform() {
-  const canvas = setupCanvas('canvasTransform');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height;
-  let t = 0;
-
-  function frame() {
-    t += 0.02;
-    ctx.clearRect(0, 0, W, H);
-
-    const bgGrad = ctx.createLinearGradient(0, H * 0.3, 0, H);
-    bgGrad.addColorStop(0, '#0c1929');
-    bgGrad.addColorStop(0.5, '#1a1008');
-    bgGrad.addColorStop(1, '#3d1508');
-    ctx.fillStyle = bgGrad;
-    ctx.fillRect(0, 0, W, H);
-
-    const centerY = H * 0.55;
-    const plateH = H * 0.15;
-    const shift = Math.sin(t * 1.5) * 20; // Lateral sliding
-
-    // Top plate (moves right)
-    ctx.fillStyle = '#8B6914';
-    ctx.fillRect(0, centerY - plateH, W, plateH);
-    ctx.fillStyle = '#6B5010';
-    ctx.fillRect(0, centerY - plateH, W, 6);
-    // Surface features on top plate
-    ctx.fillStyle = 'rgba(255,255,255,0.05)';
-    for (let i = 0; i < 6; i++) {
-      const fx = ((i * W / 6) + shift) % W;
-      ctx.fillRect(fx, centerY - plateH + 10, 15, plateH - 15);
-    }
-
-    // Bottom plate (moves left)
-    ctx.fillStyle = '#7B5A12';
-    ctx.fillRect(0, centerY, W, plateH);
-    // Surface features on bottom plate
-    ctx.fillStyle = 'rgba(255,255,255,0.05)';
-    for (let i = 0; i < 6; i++) {
-      const fx = ((i * W / 6) - shift + W) % W;
-      ctx.fillRect(fx, centerY + 10, 15, plateH - 15);
-    }
-
-    // Fault line
-    ctx.strokeStyle = '#C084FC';
-    ctx.lineWidth = 3;
-    ctx.setLineDash([10, 5]);
-    ctx.beginPath();
-    ctx.moveTo(0, centerY);
-    ctx.lineTo(W, centerY);
-    ctx.stroke();
-    ctx.setLineDash([]);
-
-    // Stress sparks at fault
-    const stress = Math.abs(Math.sin(t * 1.5));
-    if (stress > 0.7) {
-      for (let i = 0; i < 3; i++) {
-        const sx = W * 0.15 + i * W * 0.3 + Math.sin(t * 5 + i) * 10;
-        const sparkR = 2 + Math.random() * 3;
-        ctx.fillStyle = `rgba(255,255,100,${(stress - 0.7) * 2})`;
-        ctx.beginPath();
-        ctx.arc(sx, centerY + (Math.random() - 0.5) * 6, sparkR, 0, Math.PI * 2);
-        ctx.fill();
+      function triggerEruption() {
+        volcanoErupting = true;
+        volcanoPressure = 100;
+        updateVolcanoUI();
+        addLog('💥💥💥 ¡¡¡ERUPCIÓN!!!');
+        const canvas = document.getElementById('volcanoCanvas');
+        const px = canvas.width * 0.5, py = canvas.height * 0.32;
+        for (let i = 0; i < 60; i++) {
+          const a = -Math.PI / 2 + (Math.random() - 0.5) * 2;
+          const s = 3 + Math.random() * 9;
+          volcanoParticles.push({x: px + (Math.random() - 0.5) * 20, y: py, vx: Math.cos(a) * s, vy: Math.sin(a) * s, life: 0.6 + Math.random() * 0.4});
+        }
+        for (let i = 0; i < 35; i++) {
+          const dir = Math.random() < 0.5 ? -1 : 1;
+          volcanoLava.push({x: px + dir * (15 + Math.random() * 10), y: py + 14, speed: 1 + Math.random() * 3, dir: dir, life: 0.8 + Math.random() * 0.2});
+        }
+        setTimeout(() => {
+          volcanoErupting = false;
+          volcanoPressure = 30;
+          updateVolcanoUI();
+          addLog('🔄 Erupción finalizada. Presión residual: 30%');
+        }, 5500);
       }
-    }
-
-    // Arrows
-    ctx.strokeStyle = '#C084FC';
-    drawArrow(ctx, W/4, centerY - plateH * 0.5, W/4 + 50, centerY - plateH * 0.5);
-    drawArrow(ctx, W*0.75, centerY + plateH * 0.5, W*0.75 - 50, centerY + plateH * 0.5);
-
-    // Labels
-    ctx.fillStyle = '#94A3B8';
-    ctx.font = `bold ${W * 0.035}px Inter`;
-    ctx.textAlign = 'center';
-    ctx.fillText('→ Placa A', W/4, centerY - plateH - 15);
-    ctx.fillText('Placa B ←', W*0.75, centerY + plateH * 2 + 20);
-    ctx.fillStyle = '#C084FC';
-    ctx.font = `${W * 0.03}px Inter`;
-    ctx.fillText('⚡ Falla transformante', W/2, centerY + plateH * 3);
-
-    plateAnims.transId = requestAnimationFrame(frame);
-  }
-  frame();
-}
-
-// ============ SECTION C: VOLCANO ============
-let volcanoPressure = 0;
-let volcanoErupting = false;
-let volcanoAnimId = null;
-let volcanoParticles = [];
-let volcanoLava = [];
-
-function initVolcano() {
-  if (volcanoAnimId) return;
-  const canvas = document.getElementById('volcanoCanvas');
-  const wrap = canvas.parentElement;
-  if (!canvas || !wrap) return;
-  canvas.width = wrap.clientWidth * 2;
-  canvas.height = wrap.clientHeight * 2;
-  canvas.style.width = '100%';
-  canvas.style.height = '100%';
-  animateVolcano();
-}
-
-function animateVolcano() {
-  const canvas = document.getElementById('volcanoCanvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  const W = canvas.width, H = canvas.height;
-
-  function frame() {
-    ctx.clearRect(0, 0, W, H);
-
-    // Sky
-    const skyGrad = ctx.createLinearGradient(0, 0, 0, H * 0.6);
-    if (volcanoPressure > 80 || volcanoErupting) {
-      skyGrad.addColorStop(0, '#1a0a0a');
-      skyGrad.addColorStop(1, '#2d1510');
-    } else {
-      skyGrad.addColorStop(0, '#0f172a');
-      skyGrad.addColorStop(1, '#1e293b');
-    }
-    ctx.fillStyle = skyGrad;
-    ctx.fillRect(0, 0, W, H);
-
-    // Stars
-    if (volcanoPressure <= 80 && !volcanoErupting) {
-      ctx.fillStyle = 'rgba(255,255,255,0.5)';
-      for (let i = 0; i < 30; i++) {
-        const sx = (i * 137.5) % W;
-        const sy = (i * 73.3) % (H * 0.4);
-        ctx.beginPath();
-        ctx.arc(sx, sy, 1, 0, Math.PI * 2);
-        ctx.fill();
+      function resetVolcano() {
+        volcanoPressure = 0;
+        volcanoErupting = false;
+        volcanoParticles = [];
+        volcanoLava = [];
+        updateVolcanoUI();
+        addLog('🔄 Volcán reiniciado');
       }
-    }
 
-    const groundY = H * 0.7;
-    const peakX = W * 0.5;
-    const peakY = H * 0.35;
-
-    // Ground
-    ctx.fillStyle = '#2d1810';
-    ctx.fillRect(0, groundY, W, H - groundY);
-
-    // Volcano body
-    ctx.fillStyle = '#3d2818';
-    ctx.beginPath();
-    ctx.moveTo(peakX - 120, groundY);
-    ctx.lineTo(peakX - 20, peakY);
-    ctx.lineTo(peakX + 20, peakY);
-    ctx.lineTo(peakX + 120, groundY);
-    ctx.closePath();
-    ctx.fill();
-
-    // Crater
-    ctx.fillStyle = '#2a1a0a';
-    ctx.beginPath();
-    ctx.ellipse(peakX, peakY, 25, 8, 0, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Magma glow in crater
-    if (volcanoPressure > 10) {
-      const gi = volcanoPressure / 100;
-      ctx.fillStyle = `rgba(255,${Math.floor(100 - volcanoPressure)},0,${gi * 0.7})`;
-      ctx.beginPath();
-      ctx.ellipse(peakX, peakY, 20, 6, 0, 0, Math.PI * 2);
-      ctx.fill();
-      if (volcanoPressure > 50) {
-        ctx.shadowColor = '#FF4400';
-        ctx.shadowBlur = 20 * gi;
-        ctx.fillStyle = `rgba(255,80,0,${gi * 0.5})`;
-        ctx.beginPath();
-        ctx.ellipse(peakX, peakY, 22, 7, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.shadowBlur = 0;
+      function addLog(msg) {
+        const log = document.getElementById('volcanoLog');
+        if (!log) return;
+        const time = new Date().toLocaleTimeString();
+        log.innerHTML += `<div class="log-entry"><span>[${time}]</span> ${msg}</div>`;
+        log.scrollTop = log.scrollHeight;
       }
-    }
 
-    // Magma chamber
-    const chamberY = groundY + 40;
-    const chamberR = 30 + volcanoPressure * 0.2;
-    const cPulse = Math.sin(Date.now() * 0.003) * 3;
-    ctx.fillStyle = `rgba(255,60,0,${0.3 + volcanoPressure * 0.004})`;
-    ctx.beginPath();
-    ctx.arc(peakX, chamberY, chamberR + cPulse, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Magma conduit
-    ctx.strokeStyle = `rgba(255,80,0,${0.2 + volcanoPressure * 0.005})`;
-    ctx.lineWidth = 6 + volcanoPressure * 0.05;
-    ctx.beginPath();
-    ctx.moveTo(peakX, peakY + 5);
-    ctx.lineTo(peakX, chamberY - chamberR);
-    ctx.stroke();
-
-    // Smoke
-    if (volcanoPressure > 30) {
-      const smokeCount = Math.floor(volcanoPressure / 15);
-      for (let i = 0; i < smokeCount; i++) {
-        const st = (Date.now() * 0.001 + i * 0.7) % 3;
-        const sx = peakX + Math.sin(st * 2 + i) * 20;
-        const sy = peakY - st * 40;
-        const sr = 5 + st * 10;
-        const alpha = Math.max(0, 0.4 - st * 0.15);
-        ctx.fillStyle = `rgba(100,100,100,${alpha})`;
-        ctx.beginPath();
-        ctx.arc(sx, sy, sr, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-
-    // Eruption
-    if (volcanoErupting) {
-      drawEruption(ctx, peakX, peakY, W, H);
-    }
-
-    // Particles
-    volcanoParticles.forEach((p, i) => {
-      p.x += p.vx; p.y += p.vy; p.vy += 0.15; p.life -= 0.01;
-      if (p.life <= 0) { volcanoParticles.splice(i, 1); return; }
-      ctx.fillStyle = `rgba(255,${Math.floor(100 + p.life * 100)},0,${p.life})`;
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, 3 + p.life * 3, 0, Math.PI * 2);
-      ctx.fill();
-    });
-
-    // Lava flow
-    volcanoLava.forEach((l, i) => {
-      l.y += l.speed; l.x += Math.sin(l.y * 0.02) * 0.5;
-      if (l.y > groundY + 20) { volcanoLava.splice(i, 1); return; }
-      ctx.fillStyle = `rgba(255,${60 + Math.floor(l.life * 80)},0,${l.life})`;
-      ctx.beginPath();
-      ctx.arc(l.x, l.y, 4 + l.life * 2, 0, Math.PI * 2);
-      ctx.fill();
-    });
-
-    volcanoAnimId = requestAnimationFrame(frame);
-  }
-  frame();
-}
-
-function drawEruption(ctx, px, py, W, H) {
-  const glowR = 60 + Math.sin(Date.now() * 0.002) * 20;
-  ctx.fillStyle = `rgba(255,150,0,${0.3 + Math.sin(Date.now() * 0.002) * 0.1})`;
-  ctx.beginPath();
-  ctx.arc(px, py, glowR, 0, Math.PI * 2);
-  ctx.fill();
-
-  for (let i = 0; i < 8; i++) {
-    const angle = -Math.PI/2 + (Math.random() - 0.5) * 1.2;
-    const speed = 3 + Math.random() * 4;
-    volcanoParticles.push({ x: px + (Math.random()-0.5)*10, y: py, vx: Math.cos(angle)*speed, vy: Math.sin(angle)*speed, life: 0.5 + Math.random()*0.5 });
-  }
-  if (Math.random() < 0.3) {
-    volcanoLava.push({ x: px + (Math.random()-0.5)*15, y: py + 10, speed: 1 + Math.random()*2, life: 0.8 + Math.random()*0.2 });
-  }
-}
-
-function updateVolcanoUI() {
-  const bar = document.getElementById('pressureBar');
-  const val = document.getElementById('pressureValue');
-  const status = document.getElementById('volcanoStatus');
-  bar.style.width = volcanoPressure + '%';
-  val.textContent = Math.floor(volcanoPressure) + '%';
-  if (volcanoErupting) { status.className = 'volcano-status status-erupting'; status.textContent = '🌋 ¡¡ERUPCIÓN EN CURSO!!'; bar.classList.add('critical'); }
-  else if (volcanoPressure > 75) { status.className = 'volcano-status status-critical'; status.textContent = '🔴 ¡PRESIÓN CRÍTICA! Erupción inminente'; bar.classList.add('critical'); }
-  else if (volcanoPressure > 40) { status.className = 'volcano-status status-warning'; status.textContent = '⚠️ Presión elevada — actividad sísmica'; bar.classList.remove('critical'); }
-  else { status.className = 'volcano-status status-calm'; status.textContent = '✅ Volcán en reposo'; bar.classList.remove('critical'); }
-}
-
-function increasePressure() { if (volcanoErupting) return; volcanoPressure = Math.min(100, volcanoPressure + 10); updateVolcanoUI(); addLog(`⬆️ Presión: ${Math.floor(volcanoPressure)}%`); if (volcanoPressure >= 100) triggerEruption(); }
-function decreasePressure() { if (volcanoErupting) return; volcanoPressure = Math.max(0, volcanoPressure - 10); updateVolcanoUI(); addLog(`⬇️ Presión: ${Math.floor(volcanoPressure)}%`); }
-function forceErupt() { if (volcanoErupting) return; addLog('🌋 ¡Erupción forzada!'); triggerEruption(); }
-
-function triggerEruption() {
-  volcanoErupting = true; volcanoPressure = 100; updateVolcanoUI(); addLog('💥💥💥 ¡¡¡ERUPCIÓN!!!');
-  const canvas = document.getElementById('volcanoCanvas');
-  const px = canvas.width * 0.5, py = canvas.height * 0.35;
-  for (let i = 0; i < 50; i++) { const a = -Math.PI/2 + (Math.random()-0.5)*2; const s = 2 + Math.random()*8; volcanoParticles.push({ x: px+(Math.random()-0.5)*20, y: py, vx: Math.cos(a)*s, vy: Math.sin(a)*s, life: 0.6+Math.random()*0.4 }); }
-  for (let i = 0; i < 30; i++) { volcanoLava.push({ x: px+(Math.random()-0.5)*15, y: py+10, speed: 1+Math.random()*3, life: 0.7+Math.random()*0.3 }); }
-  setTimeout(() => { volcanoErupting = false; volcanoPressure = 30; updateVolcanoUI(); addLog('🔄 Erupción finalizada. Presión residual: 30%'); }, 5000);
-}
-
-function resetVolcano() { volcanoPressure = 0; volcanoErupting = false; volcanoParticles = []; volcanoLava = []; updateVolcanoUI(); addLog('🔄 Volcán reiniciado'); }
-
-function addLog(msg) { const log = document.getElementById('volcanoLog'); if (!log) return; const time = new Date().toLocaleTimeString(); log.innerHTML += `<div class="log-entry"><span>[${time}]</span> ${msg}</div>`; log.scrollTop = log.scrollHeight; }
-
-// ============ INIT ============
-window.addEventListener('load', () => {
-  setTimeout(() => {
-    initEarthCanvas();
-    const vCanvas = document.getElementById('volcanoCanvas');
-    const vWrap = vCanvas.parentElement;
-    vCanvas.width = vWrap.clientWidth * 2;
-    vCanvas.height = vWrap.clientHeight * 2;
-    vCanvas.style.width = '100%';
-    vCanvas.style.height = '100%';
-    updateVolcanoUI();
-  }, 100);
-});
-
-window.addEventListener('resize', () => {
-  setTimeout(() => {
-    if (document.getElementById('sec-earth').classList.contains('active')) { initEarthCanvas(); }
-    if (plateAnims.initialized) { plateAnims.initialized = false; initPlateCanvases(); }
-    if (document.getElementById('sec-volcano').classList.contains('active')) { if (volcanoAnimId) { cancelAnimationFrame(volcanoAnimId); volcanoAnimId = null; } initVolcano(); }
-  }, 100);
-});
-</script>
-</body>
+      // ============ INIT ============
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          initEarthCanvas();
+          updateVolcanoUI();
+        }, 100);
+      });
+      window.addEventListener('resize', () => {
+        setTimeout(() => {
+          if (document.getElementById('sec-earth').classList.contains('active')) initEarthCanvas();
+          if (document.getElementById('sec-plates').classList.contains('active')) {
+            if (stageAnimId) { cancelAnimationFrame(stageAnimId); stageAnimId = null; }
+            initStageCanvas();
+          }
+          if (document.getElementById('sec-volcano').classList.contains('active')) {
+            if (volcanoAnimId) { cancelAnimationFrame(volcanoAnimId); volcanoAnimId = null; }
+            initVolcano();
+          }
+        }, 100);
+      });
+    </script>
+  </body>
 </html>
