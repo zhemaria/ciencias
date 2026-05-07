@@ -1,1 +1,1822 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mitosis interactiva · La danza de la división celular</title>
+<meta name="author" content="Prof. José M. Fernández">
+<meta name="description" content="Interactivo educativo sobre la mitosis para estudiantes GED en español — GEDparaHispanos.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght,SOFT@0,9..144,300..900,0..100;1,9..144,300..900,0..100&family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ================================================================
+   MITOSIS INTERACTIVA
+   GEDparaHispanos · Prof. José M. Fernández
+   ================================================================ */
 
+:root {
+  --bg-deep:        #050f0c;
+  --bg-base:        #0a1f1a;
+  --bg-surface:     #0f2922;
+  --bg-elevated:    #143830;
+  --border-subtle:  rgba(52, 211, 153, 0.18);
+  --border-strong:  rgba(52, 211, 153, 0.35);
+
+  --text-primary:   #e5f4ee;
+  --text-secondary: #a8c8bc;
+  --text-muted:     #6b8a80;
+
+  --accent-life:    #34d399;
+  --accent-glow:    #6ee7b7;
+  --accent-deep:    #047857;
+  --accent-chrom:   #f472b6;
+  --accent-chrom-d: #be185d;
+  --accent-tube:    #60a5fa;
+  --accent-tube-l:  #93c5fd;
+  --accent-centro:  #fbbf24;
+  --accent-warn:    #fb923c;
+
+  --shadow-soft:    0 12px 40px rgba(0,0,0,0.4);
+  --shadow-deep:    0 24px 80px rgba(0,0,0,0.6), 0 4px 12px rgba(52,211,153,0.06);
+  --shadow-glow:    0 0 60px rgba(52,211,153,0.12);
+
+  --font-display:   'Fraunces', Georgia, serif;
+  --font-body:      'Manrope', system-ui, sans-serif;
+  --font-mono:      'JetBrains Mono', monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(52,211,153,0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 30%, rgba(244,114,182,0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 0%, #0d2a23 0%, var(--bg-deep) 60%);
+  color: var(--text-primary);
+  min-height: 100vh;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* Grano sutil global */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence baseFrequency='0.9' numOctaves='2'/><feColorMatrix values='0 0 0 0 0.2 0 0 0 0 0.5 0 0 0 0 0.4 0 0 0 0.04 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  opacity: 0.4;
+  z-index: 1;
+  mix-blend-mode: overlay;
+}
+
+/* =========== HEADER =========== */
+header {
+  position: relative;
+  padding: 4rem 2rem 1.5rem;
+  text-align: center;
+  z-index: 2;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.4em;
+  color: var(--accent-glow);
+  text-transform: uppercase;
+  margin-bottom: 1.2rem;
+  opacity: 0.85;
+}
+
+.eyebrow::before, .eyebrow::after {
+  content: '◆';
+  margin: 0 0.8em;
+  color: var(--accent-life);
+  opacity: 0.6;
+}
+
+h1 {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-variation-settings: "opsz" 144, "SOFT" 30;
+  font-size: clamp(2.4rem, 6vw, 4.5rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.8rem;
+  background: linear-gradient(180deg, #f0fdf4 0%, var(--accent-glow) 80%, var(--accent-life) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+h1 em {
+  font-style: italic;
+  font-variation-settings: "opsz" 144, "SOFT" 100;
+  color: var(--accent-chrom);
+  -webkit-text-fill-color: var(--accent-chrom);
+  font-weight: 300;
+}
+
+.tagline {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(1rem, 1.6vw, 1.25rem);
+  color: var(--text-secondary);
+  font-weight: 300;
+  max-width: 38rem;
+  margin: 0 auto;
+}
+
+/* =========== LAYOUT =========== */
+.main-grid {
+  position: relative;
+  max-width: 1400px;
+  margin: 2rem auto 0;
+  padding: 0 2rem;
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 2rem;
+  z-index: 2;
+}
+
+@media (max-width: 1100px) {
+  .main-grid { grid-template-columns: 1fr; }
+}
+
+/* =========== ESCENARIO =========== */
+.stage {
+  position: relative;
+  background:
+    radial-gradient(ellipse at 50% 50%, #0c2620 0%, #051410 100%);
+  border: 1px solid var(--border-subtle);
+  border-radius: 24px;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-deep);
+  overflow: hidden;
+}
+
+.stage::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 30% 20%, rgba(96,165,250,0.04) 0%, transparent 40%),
+    radial-gradient(circle at 70% 80%, rgba(244,114,182,0.04) 0%, transparent 40%);
+  pointer-events: none;
+}
+
+.stage-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.2em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  position: relative;
+  z-index: 2;
+}
+
+.stage-label .live-dot {
+  display: inline-block;
+  width: 8px; height: 8px;
+  background: var(--accent-life);
+  border-radius: 50%;
+  margin-right: 0.5em;
+  box-shadow: 0 0 12px var(--accent-life);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.svg-container {
+  width: 100%;
+  aspect-ratio: 16 / 11;
+  position: relative;
+  z-index: 2;
+}
+
+#mitosis-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+/* =========== CONTROLES =========== */
+.controls {
+  margin-top: 1.5rem;
+  position: relative;
+  z-index: 2;
+}
+
+.phase-tabs {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 4px;
+  margin-bottom: 1.2rem;
+}
+
+.phase-tab {
+  font-family: var(--font-body);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: 8px;
+  padding: 0.7rem 0.4rem;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  text-align: center;
+}
+
+.phase-tab:hover {
+  color: var(--text-primary);
+  border-color: var(--border-strong);
+  background: rgba(52,211,153,0.06);
+}
+
+.phase-tab.active {
+  color: var(--bg-deep);
+  background: var(--accent-life);
+  border-color: var(--accent-life);
+  box-shadow: 0 0 24px rgba(52,211,153,0.4);
+}
+
+.phase-tab .phase-num {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  opacity: 0.6;
+  margin-bottom: 2px;
+}
+
+.timeline-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--bg-base);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 0.8rem 1rem;
+}
+
+.play-btn {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: var(--accent-life);
+  color: var(--bg-deep);
+  cursor: pointer;
+  display: grid; place-items: center;
+  flex-shrink: 0;
+  transition: all 0.2s ease;
+  box-shadow: 0 0 24px rgba(52,211,153,0.3);
+}
+
+.play-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 32px rgba(52,211,153,0.5);
+}
+
+.play-btn svg { width: 18px; height: 18px; }
+
+.timeline-track {
+  flex: 1;
+  position: relative;
+  height: 6px;
+  background: var(--bg-elevated);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.timeline-fill {
+  position: absolute;
+  top: 0; left: 0; bottom: 0;
+  background: linear-gradient(90deg, var(--accent-deep), var(--accent-life), var(--accent-chrom));
+  border-radius: 3px;
+  width: 0%;
+  pointer-events: none;
+}
+
+.timeline-thumb {
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  transform: translate(-50%, -50%);
+  width: 18px; height: 18px;
+  background: white;
+  border: 2px solid var(--accent-life);
+  border-radius: 50%;
+  pointer-events: none;
+  box-shadow: 0 0 12px rgba(52,211,153,0.6);
+  transition: transform 0.1s ease;
+}
+
+.timeline-track:hover .timeline-thumb {
+  transform: translate(-50%, -50%) scale(1.15);
+}
+
+.timeline-marker {
+  position: absolute;
+  top: -4px; bottom: -4px;
+  width: 1px;
+  background: var(--text-muted);
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.timeline-time {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  min-width: 3.5em;
+  text-align: right;
+}
+
+.speed-control {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.speed-btn {
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  padding: 0.3rem 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.speed-btn:hover, .speed-btn.active {
+  background: var(--accent-life);
+  color: var(--bg-deep);
+  border-color: var(--accent-life);
+}
+
+/* =========== PANEL LATERAL =========== */
+.info-panel {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 24px;
+  padding: 2rem;
+  box-shadow: var(--shadow-soft);
+  position: sticky;
+  top: 1rem;
+  align-self: start;
+  max-height: calc(100vh - 2rem);
+  overflow-y: auto;
+}
+
+.info-panel::-webkit-scrollbar { width: 6px; }
+.info-panel::-webkit-scrollbar-track { background: transparent; }
+.info-panel::-webkit-scrollbar-thumb { background: var(--border-subtle); border-radius: 3px; }
+
+.phase-header {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6rem;
+  margin-bottom: 0.3rem;
+}
+
+.phase-number {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--accent-life);
+  letter-spacing: 0.1em;
+}
+
+.phase-name {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-variation-settings: "opsz" 48;
+  font-size: 2rem;
+  line-height: 1;
+  letter-spacing: -0.01em;
+  color: var(--text-primary);
+}
+
+.phase-greek {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 0.85rem;
+  color: var(--accent-glow);
+  margin-bottom: 1.2rem;
+  opacity: 0.85;
+}
+
+.phase-description {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+  line-height: 1.65;
+}
+
+.phase-events {
+  list-style: none;
+  margin-bottom: 1.5rem;
+}
+
+.phase-events li {
+  position: relative;
+  padding-left: 1.5rem;
+  margin-bottom: 0.6rem;
+  font-size: 0.88rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.phase-events li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 6px; height: 6px;
+  background: var(--accent-life);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--accent-life);
+}
+
+.section-divider {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.3em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin: 1.8rem 0 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.section-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border-subtle);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+}
+
+.legend-swatch {
+  width: 14px; height: 14px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  box-shadow: 0 0 8px currentColor;
+}
+
+/* =========== VOCABULARIO =========== */
+.vocab-section {
+  max-width: 1400px;
+  margin: 4rem auto 2rem;
+  padding: 0 2rem;
+  position: relative;
+  z-index: 2;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-variation-settings: "opsz" 144, "SOFT" 50;
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+  margin-bottom: 0.4rem;
+  letter-spacing: -0.02em;
+}
+
+.section-title em {
+  font-style: italic;
+  color: var(--accent-glow);
+  font-variation-settings: "opsz" 144, "SOFT" 100;
+  font-weight: 300;
+}
+
+.section-sub {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-bottom: 2rem;
+  max-width: 40rem;
+}
+
+.vocab-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.vocab-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  padding: 1.2rem 1.3rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.vocab-card:hover {
+  border-color: var(--border-strong);
+  background: var(--bg-elevated);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-soft);
+}
+
+.vocab-term {
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: 1.15rem;
+  color: var(--accent-glow);
+  margin-bottom: 0.3rem;
+  letter-spacing: -0.01em;
+}
+
+.vocab-def {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.55;
+}
+
+/* =========== QUIZ =========== */
+.quiz-section {
+  max-width: 900px;
+  margin: 4rem auto 2rem;
+  padding: 0 2rem;
+  position: relative;
+  z-index: 2;
+}
+
+.quiz-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: 24px;
+  padding: 2.5rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.quiz-progress {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 1.5rem;
+}
+
+.quiz-progress span {
+  flex: 1;
+  height: 3px;
+  background: var(--bg-elevated);
+  border-radius: 2px;
+  transition: background 0.3s;
+}
+
+.quiz-progress span.done {
+  background: var(--accent-life);
+}
+
+.quiz-progress span.current {
+  background: var(--accent-chrom);
+  box-shadow: 0 0 8px var(--accent-chrom);
+}
+
+.quiz-question {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 1.4rem;
+  line-height: 1.4;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+}
+
+.quiz-options {
+  display: grid;
+  gap: 0.6rem;
+  margin-bottom: 1.5rem;
+}
+
+.quiz-option {
+  background: var(--bg-base);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 1rem 1.2rem;
+  text-align: left;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.quiz-option:hover:not(:disabled) {
+  border-color: var(--border-strong);
+  color: var(--text-primary);
+  background: var(--bg-elevated);
+}
+
+.quiz-option .opt-letter {
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: var(--bg-elevated);
+  display: grid; place-items: center;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--accent-life);
+  flex-shrink: 0;
+  transition: all 0.2s;
+}
+
+.quiz-option:hover:not(:disabled) .opt-letter {
+  background: var(--accent-life);
+  color: var(--bg-deep);
+}
+
+.quiz-option.correct {
+  background: rgba(52,211,153,0.12);
+  border-color: var(--accent-life);
+  color: var(--accent-glow);
+}
+
+.quiz-option.correct .opt-letter {
+  background: var(--accent-life);
+  color: var(--bg-deep);
+}
+
+.quiz-option.wrong {
+  background: rgba(251,146,60,0.1);
+  border-color: var(--accent-warn);
+  color: var(--accent-warn);
+}
+
+.quiz-option:disabled {
+  cursor: default;
+}
+
+.quiz-feedback {
+  background: var(--bg-base);
+  border-left: 3px solid var(--accent-life);
+  padding: 1rem 1.2rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  display: none;
+}
+
+.quiz-feedback.visible { display: block; }
+
+.quiz-feedback strong { color: var(--accent-glow); }
+
+.quiz-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.quiz-btn {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 0.7rem 1.4rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-subtle);
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.quiz-btn:hover:not(:disabled) {
+  border-color: var(--accent-life);
+  color: var(--accent-life);
+}
+
+.quiz-btn.primary {
+  background: var(--accent-life);
+  color: var(--bg-deep);
+  border-color: var(--accent-life);
+}
+
+.quiz-btn.primary:hover:not(:disabled) {
+  background: var(--accent-glow);
+  border-color: var(--accent-glow);
+  color: var(--bg-deep);
+}
+
+.quiz-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.quiz-counter {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.quiz-result {
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.quiz-result h3 {
+  font-family: var(--font-display);
+  font-size: 2.5rem;
+  font-weight: 400;
+  color: var(--accent-life);
+  margin-bottom: 0.5rem;
+}
+
+.quiz-result .score {
+  font-family: var(--font-mono);
+  font-size: 1.5rem;
+  color: var(--accent-glow);
+  margin-bottom: 1.5rem;
+}
+
+.quiz-result p {
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+}
+
+/* =========== FOOTER =========== */
+footer {
+  text-align: center;
+  padding: 3rem 2rem 2rem;
+  border-top: 1px solid var(--border-subtle);
+  margin-top: 4rem;
+  position: relative;
+  z-index: 2;
+}
+
+footer p {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-bottom: 0.4rem;
+}
+
+footer .author {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--accent-glow);
+  font-size: 1rem;
+}
+
+/* =========== RESPONSIVE =========== */
+@media (max-width: 700px) {
+  header { padding: 2.5rem 1.2rem 1rem; }
+  .main-grid { padding: 0 1rem; gap: 1rem; }
+  .stage { padding: 1rem; border-radius: 16px; }
+  .info-panel { padding: 1.5rem; border-radius: 16px; position: static; }
+  .phase-tabs { grid-template-columns: repeat(3, 1fr); gap: 4px; }
+  .phase-tab { font-size: 0.65rem; padding: 0.5rem 0.3rem; }
+  .vocab-section, .quiz-section { padding: 0 1rem; }
+  .quiz-card { padding: 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="eyebrow">GEDparaHispanos · Ciencias · Biología</div>
+  <h1>La danza de la <em>división celular</em></h1>
+  <p class="tagline">Un viaje microscópico por la mitosis: cuando una célula se transforma en dos copias idénticas de sí misma.</p>
+</header>
+
+<main class="main-grid">
+
+  <!-- ESCENARIO -->
+  <section class="stage" aria-label="Visualización interactiva">
+    <div class="stage-label">
+      <span><span class="live-dot"></span>VISUALIZACIÓN EN VIVO</span>
+      <span id="stage-coordinates">FASE: INTERFASE · t = 0%</span>
+    </div>
+
+    <div class="svg-container">
+      <svg id="mitosis-svg" viewBox="0 0 800 550" xmlns="http://www.w3.org/2000/svg" aria-label="Animación de la mitosis">
+        <defs>
+          <!-- Gradiente membrana celular -->
+          <radialGradient id="membrane-grad" cx="50%" cy="50%">
+            <stop offset="0%" stop-color="#0a2820" stop-opacity="0.2"/>
+            <stop offset="70%" stop-color="#0c3328" stop-opacity="0.4"/>
+            <stop offset="92%" stop-color="#34d399" stop-opacity="0.5"/>
+            <stop offset="100%" stop-color="#34d399" stop-opacity="0.9"/>
+          </radialGradient>
+          <!-- Gradiente núcleo -->
+          <radialGradient id="nucleus-grad" cx="50%" cy="50%">
+            <stop offset="0%" stop-color="#1a4d3f" stop-opacity="0.7"/>
+            <stop offset="80%" stop-color="#143830" stop-opacity="0.6"/>
+            <stop offset="100%" stop-color="#34d399" stop-opacity="0.4"/>
+          </radialGradient>
+          <!-- Gradiente cromosoma -->
+          <linearGradient id="chrom-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#fda4d6"/>
+            <stop offset="50%" stop-color="#f472b6"/>
+            <stop offset="100%" stop-color="#be185d"/>
+          </linearGradient>
+          <!-- Gradiente centrosoma -->
+          <radialGradient id="centro-grad" cx="50%" cy="50%">
+            <stop offset="0%" stop-color="#fef3c7"/>
+            <stop offset="50%" stop-color="#fbbf24"/>
+            <stop offset="100%" stop-color="#b45309"/>
+          </radialGradient>
+          <!-- Glow filter -->
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="3" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <filter id="soft-glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feGaussianBlur stdDeviation="6" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+          <!-- Patrón cromatina -->
+          <pattern id="chromatin-pattern" patternUnits="userSpaceOnUse" width="20" height="20">
+            <path d="M 0 10 Q 5 5, 10 10 T 20 10" stroke="#f472b6" stroke-width="1" fill="none" opacity="0.6"/>
+            <path d="M 0 6 Q 7 12, 14 6 T 28 6" stroke="#be185d" stroke-width="0.8" fill="none" opacity="0.4"/>
+          </pattern>
+        </defs>
+
+        <!-- Fondo decorativo: partículas flotantes -->
+        <g id="particles" opacity="0.3"></g>
+
+        <!-- Célula(s) - se renderiza dinámicamente -->
+        <g id="cells"></g>
+
+        <!-- Etiquetas dinámicas -->
+        <g id="labels"></g>
+      </svg>
+    </div>
+
+    <div class="controls">
+      <div class="phase-tabs" id="phase-tabs">
+        <!-- Se generan dinámicamente -->
+      </div>
+
+      <div class="timeline-row">
+        <button class="play-btn" id="play-btn" aria-label="Reproducir o pausar">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        </button>
+        <div class="timeline-track" id="timeline-track">
+          <div class="timeline-fill" id="timeline-fill"></div>
+          <div class="timeline-thumb" id="timeline-thumb"></div>
+          <!-- markers se inyectan -->
+        </div>
+        <span class="timeline-time" id="timeline-time">0%</span>
+        <div class="speed-control">
+          <button class="speed-btn" data-speed="0.5">0.5×</button>
+          <button class="speed-btn active" data-speed="1">1×</button>
+          <button class="speed-btn" data-speed="2">2×</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PANEL DE INFORMACIÓN -->
+  <aside class="info-panel">
+    <div class="phase-header">
+      <span class="phase-number" id="info-num">FASE 0</span>
+    </div>
+    <h2 class="phase-name" id="info-name">Interfase</h2>
+    <p class="phase-greek" id="info-greek">— "entre fases"</p>
+    <p class="phase-description" id="info-desc"></p>
+
+    <div class="section-divider">Eventos clave</div>
+    <ul class="phase-events" id="info-events"></ul>
+
+    <div class="section-divider">Leyenda visual</div>
+    <div class="legend-item">
+      <span class="legend-swatch" style="background:#34d399;color:#34d399;"></span>
+      <span>Membrana celular</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-swatch" style="background:#f472b6;color:#f472b6;"></span>
+      <span>Cromosomas / cromatina</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-swatch" style="background:#60a5fa;color:#60a5fa;"></span>
+      <span>Microtúbulos (huso mitótico)</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-swatch" style="background:#fbbf24;color:#fbbf24;"></span>
+      <span>Centrosomas</span>
+    </div>
+  </aside>
+</main>
+
+<!-- VOCABULARIO -->
+<section class="vocab-section">
+  <h2 class="section-title">Vocabulario <em>esencial</em></h2>
+  <p class="section-sub">Los términos que aparecerán en tu examen GED de ciencias.</p>
+  <div class="vocab-grid" id="vocab-grid"></div>
+</section>
+
+<!-- QUIZ -->
+<section class="quiz-section">
+  <h2 class="section-title">Pon a prueba tu <em>comprensión</em></h2>
+  <p class="section-sub">6 preguntas estilo GED. Lee con calma y elige la mejor respuesta.</p>
+
+  <div class="quiz-card" id="quiz-card">
+    <div class="quiz-progress" id="quiz-progress"></div>
+    <h3 class="quiz-question" id="quiz-question"></h3>
+    <div class="quiz-options" id="quiz-options"></div>
+    <div class="quiz-feedback" id="quiz-feedback"></div>
+    <div class="quiz-nav">
+      <span class="quiz-counter" id="quiz-counter">1 / 6</span>
+      <button class="quiz-btn primary" id="quiz-next" disabled>Siguiente →</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p class="author">Prof. José M. Fernández</p>
+  <p>GEDparaHispanos.com · Ruta C: Ciencias · Biología celular</p>
+  <p style="margin-top:0.8rem;opacity:0.5;font-family:var(--font-mono);font-size:0.75rem;">© Material educativo gratuito para la comunidad hispanohablante</p>
+</footer>
+
+<script>
+/* ================================================================
+   MITOSIS INTERACTIVA — Motor de animación
+   ================================================================ */
+
+// ---------- DATOS DE FASES ----------
+const PHASES = [
+  {
+    id: 'interfase',
+    short: 'Interfase',
+    full: 'Interfase',
+    greek: '— "entre fases" · etapa de preparación',
+    range: [0, 12],
+    description: 'La célula vive la mayor parte de su tiempo en interfase. Crece, fabrica proteínas y duplica su ADN. Aunque no parece estar haciendo nada espectacular bajo el microscopio, internamente está copiando todos sus cromosomas para tener material genético suficiente para dos células hijas.',
+    events: [
+      'El ADN se duplica (replicación) durante la fase S.',
+      'La cromatina permanece desorganizada, como una maraña de hilos.',
+      'Los centrosomas también se duplican y permanecen juntos cerca del núcleo.',
+      'El nucléolo es visible y la envoltura nuclear está intacta.'
+    ]
+  },
+  {
+    id: 'profase',
+    short: 'Profase',
+    full: 'Profase',
+    greek: '— "antes de la fase" · pro = antes',
+    range: [12, 30],
+    description: 'Comienza la coreografía. La cromatina se condensa hasta formar cromosomas visibles en forma de "X", donde cada brazo es una cromátida hermana. El nucléolo desaparece y los dos centrosomas inician su migración hacia polos opuestos, irradiando microtúbulos como rayos de una estrella.',
+    events: [
+      'La cromatina se condensa en cromosomas con dos cromátidas hermanas.',
+      'Las cromátidas hermanas están unidas por el centrómero (proteína cohesina).',
+      'El nucléolo desaparece y la envoltura nuclear empieza a romperse.',
+      'Los centrosomas se separan hacia polos opuestos.',
+      'Comienza a formarse el huso mitótico (microtúbulos).'
+    ]
+  },
+  {
+    id: 'prometafase',
+    short: 'Prometafase',
+    full: 'Prometafase',
+    greek: '— "antes de la metafase" · etapa de captura',
+    range: [30, 47],
+    description: 'La envoltura nuclear se desintegra completamente y los cromosomas quedan libres en el citoplasma. Los microtúbulos crecen agresivamente desde los polos y "atrapan" a los cromosomas anclándose en una estructura proteica llamada cinetocoro. Es un tira y afloja caótico antes del orden.',
+    events: [
+      'La envoltura nuclear desaparece por completo.',
+      'Los microtúbulos se anclan al cinetocoro de cada cromosoma.',
+      'Cada cromátida hermana queda conectada a un polo distinto.',
+      'Los cromosomas son empujados y jalados hacia el centro.'
+    ]
+  },
+  {
+    id: 'metafase',
+    short: 'Metafase',
+    full: 'Metafase',
+    greek: '— "fase del medio" · meta = en medio',
+    range: [47, 62],
+    description: 'El momento más fotogénico de la mitosis. Todos los cromosomas se alinean perfectamente en el ecuador de la célula, formando la placa metafásica. Cada cromosoma está en tensión equilibrada: sus dos cromátidas son tiradas con la misma fuerza hacia polos opuestos. Una pausa antes de la separación.',
+    events: [
+      'Los cromosomas se alinean en la placa metafásica (ecuador).',
+      'El huso mitótico está completamente formado.',
+      'Existe tensión equilibrada en cada centrómero.',
+      'Punto de control: la célula verifica que todo esté listo para separar.'
+    ]
+  },
+  {
+    id: 'anafase',
+    short: 'Anafase',
+    full: 'Anafase',
+    greek: '— "fase hacia arriba" · ana = arriba, lejos',
+    range: [62, 78],
+    description: 'La fase más rápida. La cohesina que mantenía unidas a las cromátidas hermanas se rompe de golpe. Cada cromátida (ahora considerada un cromosoma independiente) es jalada velozmente hacia su polo correspondiente, adoptando una característica forma de "V". Simultáneamente, la célula entera se alarga.',
+    events: [
+      'La cohesina se rompe y las cromátidas hermanas se separan.',
+      'Cada cromátida migra hacia un polo opuesto en forma de "V".',
+      'Los microtúbulos del cinetocoro se acortan.',
+      'La célula se alarga al separarse físicamente los polos.',
+      'Cada polo recibe una copia idéntica del genoma.'
+    ]
+  },
+  {
+    id: 'telofase',
+    short: 'Telofase',
+    full: 'Telofase y citocinesis',
+    greek: '— "fase final" · telos = fin',
+    range: [78, 100],
+    description: 'El final del baile y el nacimiento de dos células. Los cromosomas llegan a los polos y comienzan a descondensarse, volviendo a su estado de cromatina relajada. Se forman dos nuevas envolturas nucleares y reaparecen los nucléolos. Mientras tanto, un anillo de proteínas estrangula el ecuador (citocinesis) hasta dividir físicamente a la célula madre en dos hijas idénticas.',
+    events: [
+      'Los cromosomas se descondensan en los polos.',
+      'Se forman dos nuevas envolturas nucleares.',
+      'Reaparecen los nucléolos.',
+      'El huso mitótico se desensambla.',
+      'Citocinesis: el anillo contráctil divide el citoplasma.',
+      'Resultado: dos células hijas genéticamente idénticas.'
+    ]
+  }
+];
+
+// ---------- VOCABULARIO ----------
+const VOCAB = [
+  { term: 'Cromatina', def: 'ADN en su estado relajado y desorganizado, como una maraña de hilos finos. Visible durante la interfase.' },
+  { term: 'Cromosoma', def: 'ADN compactado en forma de "X" durante la mitosis, fácilmente visible bajo el microscopio.' },
+  { term: 'Cromátida hermana', def: 'Cada una de las dos copias idénticas que forman un cromosoma duplicado, unidas por el centrómero.' },
+  { term: 'Centrómero', def: 'Región estrecha del cromosoma donde se unen las dos cromátidas hermanas. Punto de anclaje del cinetocoro.' },
+  { term: 'Cinetocoro', def: 'Estructura proteica del centrómero a la que se anclan los microtúbulos del huso mitótico.' },
+  { term: 'Cohesina', def: 'Proteína en forma de anillo que mantiene unidas a las cromátidas hermanas hasta la anafase.' },
+  { term: 'Centrosoma', def: 'Centro organizador de microtúbulos. Hay dos por célula durante la mitosis, uno en cada polo.' },
+  { term: 'Huso mitótico', def: 'Estructura formada por microtúbulos que mueve los cromosomas durante la mitosis.' },
+  { term: 'Microtúbulo', def: 'Filamento proteico que crece y se acorta para empujar y jalar los cromosomas.' },
+  { term: 'Placa metafásica', def: 'Línea imaginaria en el ecuador de la célula donde se alinean los cromosomas en metafase.' },
+  { term: 'Nucléolo', def: 'Estructura densa dentro del núcleo donde se fabrican los ribosomas. Desaparece en profase.' },
+  { term: 'Citocinesis', def: 'División física del citoplasma. Forma dos células hijas tras la mitosis del núcleo.' }
+];
+
+// ---------- QUIZ ----------
+const QUIZ = [
+  {
+    q: 'Durante la interfase, una célula duplica su ADN. ¿Por qué es necesario este paso antes de la mitosis?',
+    options: [
+      'Para que la célula crezca más rápido.',
+      'Para que cada célula hija reciba una copia completa del genoma.',
+      'Para producir más proteínas en el citoplasma.',
+      'Para fabricar nuevos centrosomas.'
+    ],
+    correct: 1,
+    explain: 'La mitosis produce dos células genéticamente idénticas. Para lograrlo, primero debe haber DOS copias completas del ADN. Por eso la duplicación ocurre ANTES, en la fase S de la interfase.'
+  },
+  {
+    q: 'En la profase, ¿qué le pasa a la cromatina?',
+    options: [
+      'Se duplica formando dos copias.',
+      'Se rompe en pequeños fragmentos.',
+      'Se condensa formando cromosomas visibles.',
+      'Se mueve al ecuador de la célula.'
+    ],
+    correct: 2,
+    explain: 'La cromatina (hilos finos) se enrolla y compacta hasta formar cromosomas en forma de "X" visibles al microscopio. La duplicación ya ocurrió antes, en la interfase.'
+  },
+  {
+    q: 'Si observas una célula con todos sus cromosomas perfectamente alineados en el centro, ¿en qué fase está?',
+    options: [
+      'Profase',
+      'Prometafase',
+      'Metafase',
+      'Anafase'
+    ],
+    correct: 2,
+    explain: 'La alineación perfecta en el ecuador celular es el sello distintivo de la metafase. La placa metafásica es ese punto medio donde se acomodan los cromosomas antes de separarse.'
+  },
+  {
+    q: '¿Cuál es la principal función de los microtúbulos en la mitosis?',
+    options: [
+      'Producir energía para la división.',
+      'Mover y posicionar los cromosomas.',
+      'Almacenar información genética.',
+      'Formar la membrana de las células hijas.'
+    ],
+    correct: 1,
+    explain: 'Los microtúbulos forman el huso mitótico. Funcionan como cuerdas o vías que crecen y se acortan para mover los cromosomas a sus posiciones correctas durante toda la mitosis.'
+  },
+  {
+    q: 'Durante la anafase, las cromátidas hermanas se separan y migran a polos opuestos. ¿Qué proteína tuvo que romperse para que esto ocurriera?',
+    options: [
+      'Actina',
+      'Cohesina',
+      'Tubulina',
+      'Histona'
+    ],
+    correct: 1,
+    explain: 'La cohesina es la proteína en forma de anillo que mantenía unidas a las cromátidas hermanas. Cuando se rompe (al inicio de la anafase), las cromátidas pueden separarse y ser jaladas a polos opuestos.'
+  },
+  {
+    q: 'Una célula madre con 46 cromosomas entra en mitosis. ¿Cuántos cromosomas tendrá cada célula hija al final del proceso?',
+    options: [
+      '23 cromosomas',
+      '46 cromosomas',
+      '92 cromosomas',
+      'Depende del tipo de célula'
+    ],
+    correct: 1,
+    explain: 'La mitosis produce dos células hijas IDÉNTICAS a la madre. Si la madre tenía 46 cromosomas, cada hija también tendrá 46. (La división que reduce el número a la mitad se llama meiosis, y solo ocurre en la formación de gametos.)'
+  }
+];
+
+// ---------- ESTADO ----------
+const state = {
+  t: 0,           // 0-100
+  playing: false,
+  speed: 1,
+  lastTime: 0
+};
+
+// ---------- UTILIDADES ----------
+const lerp = (a, b, t) => a + (b - a) * t;
+const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
+const easeInOut = t => t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t + 2, 2)/2;
+const easeOut = t => 1 - Math.pow(1 - t, 3);
+const easeIn = t => t * t;
+
+// Convierte t global (0-100) a fase y t local (0-1)
+function getPhaseInfo(t) {
+  for (let i = 0; i < PHASES.length; i++) {
+    const [start, end] = PHASES[i].range;
+    if (t >= start && t <= end) {
+      const local = (t - start) / (end - start);
+      return { index: i, phase: PHASES[i], local: local };
+    }
+  }
+  return { index: PHASES.length - 1, phase: PHASES[PHASES.length - 1], local: 1 };
+}
+
+// ---------- RENDERIZADO SVG ----------
+const SVG_NS = 'http://www.w3.org/2000/svg';
+const cellsLayer = document.getElementById('cells');
+const labelsLayer = document.getElementById('labels');
+const particlesLayer = document.getElementById('particles');
+
+// Inicializar partículas decorativas
+function initParticles() {
+  for (let i = 0; i < 25; i++) {
+    const p = document.createElementNS(SVG_NS, 'circle');
+    p.setAttribute('cx', Math.random() * 800);
+    p.setAttribute('cy', Math.random() * 550);
+    p.setAttribute('r', Math.random() * 1.5 + 0.3);
+    p.setAttribute('fill', '#34d399');
+    p.setAttribute('opacity', Math.random() * 0.4 + 0.1);
+    particlesLayer.appendChild(p);
+  }
+}
+
+// Posiciones de los 4 cromosomas en cada fase
+// Se devuelve array de objetos { x, y, angle, separated, splitDist }
+function computeChromosomes(phaseIdx, local, t) {
+  const result = [];
+  const cx = 400, cy = 275;
+  const phase = PHASES[phaseIdx].id;
+
+  // Posiciones base (4 cromosomas distribuidos)
+  const baseAngles = [
+    { ang: -1.8, r: 50 },
+    { ang: -0.4, r: 45 },
+    { ang: 1.2, r: 55 },
+    { ang: 2.6, r: 48 }
+  ];
+
+  if (phase === 'interfase') {
+    // Cromatina dispersa dentro del núcleo
+    return baseAngles.map((b, i) => ({
+      x: cx + Math.cos(b.ang) * b.r,
+      y: cy + Math.sin(b.ang) * b.r,
+      angle: b.ang * 30,
+      condensation: 0,
+      separated: false,
+      splitDist: 0,
+      type: 'chromatin'
+    }));
+  }
+
+  if (phase === 'profase') {
+    // Condensación progresiva
+    return baseAngles.map((b, i) => ({
+      x: cx + Math.cos(b.ang) * b.r,
+      y: cy + Math.sin(b.ang) * b.r,
+      angle: b.ang * 60,
+      condensation: easeOut(local),
+      separated: false,
+      splitDist: 0,
+      type: 'chromosome'
+    }));
+  }
+
+  if (phase === 'prometafase') {
+    // Movimiento errático hacia el centro
+    const targets = [
+      { x: cx - 80, y: cy - 40 },
+      { x: cx + 60, y: cy + 30 },
+      { x: cx - 40, y: cy + 60 },
+      { x: cx + 80, y: cy - 30 }
+    ];
+    return baseAngles.map((b, i) => {
+      const startX = cx + Math.cos(b.ang) * b.r;
+      const startY = cy + Math.sin(b.ang) * b.r;
+      // Pequeña oscilación
+      const wiggle = Math.sin(t * 0.15 + i) * 8 * (1 - local);
+      return {
+        x: lerp(startX, targets[i].x, easeInOut(local)) + wiggle,
+        y: lerp(startY, targets[i].y, easeInOut(local)),
+        angle: lerp(b.ang * 60, 90, local),
+        condensation: 1,
+        separated: false,
+        splitDist: 0,
+        type: 'chromosome'
+      };
+    });
+  }
+
+  if (phase === 'metafase') {
+    // Alineación perfecta en el ecuador
+    const yPositions = [-90, -30, 30, 90];
+    const startTargets = [
+      { x: cx - 80, y: cy - 40 },
+      { x: cx + 60, y: cy + 30 },
+      { x: cx - 40, y: cy + 60 },
+      { x: cx + 80, y: cy - 30 }
+    ];
+    return baseAngles.map((b, i) => ({
+      x: lerp(startTargets[i].x, cx, easeInOut(local)),
+      y: lerp(startTargets[i].y, cy + yPositions[i], easeInOut(local)),
+      angle: 90,
+      condensation: 1,
+      separated: false,
+      splitDist: 0,
+      type: 'chromosome'
+    }));
+  }
+
+  if (phase === 'anafase') {
+    // Las cromátidas se separan y van a los polos
+    const yPositions = [-90, -30, 30, 90];
+    const polarYPos = [-70, -25, 25, 70];
+    const polarPullX = lerp(0, 220, easeInOut(local));
+    return baseAngles.map((b, i) => ({
+      x: cx,
+      y: cy + yPositions[i],
+      angle: 90,
+      condensation: 1,
+      separated: true,
+      splitDist: polarPullX,
+      polarY: polarYPos[i],
+      type: 'chromosome'
+    }));
+  }
+
+  if (phase === 'telofase') {
+    // En los polos, descondensándose
+    const polarYPos = [-70, -25, 25, 70];
+    const decondense = easeOut(local);
+    return baseAngles.map((b, i) => ({
+      x: cx,
+      y: cy + polarYPos[i],
+      angle: 90,
+      condensation: 1 - decondense * 0.85,
+      separated: true,
+      splitDist: 220,
+      polarY: polarYPos[i],
+      type: 'chromosome',
+      decondensing: decondense
+    }));
+  }
+
+  return result;
+}
+
+// Posición de centrosomas
+function computeCentrosomes(phaseIdx, local) {
+  const cx = 400, cy = 275;
+  const phase = PHASES[phaseIdx].id;
+
+  if (phase === 'interfase') {
+    return [
+      { x: cx - 8, y: cy - 80, opacity: 0.8 },
+      { x: cx + 8, y: cy - 80, opacity: 0.8 }
+    ];
+  }
+  if (phase === 'profase') {
+    // Migran a polos
+    const dx = lerp(8, 220, easeInOut(local));
+    const dy = lerp(80, 0, easeInOut(local));
+    return [
+      { x: cx - dx, y: cy - dy, opacity: 1 },
+      { x: cx + dx, y: cy - dy, opacity: 1 }
+    ];
+  }
+  // En el resto de fases están en los polos
+  return [
+    { x: cx - 220, y: cy, opacity: 1 },
+    { x: cx + 220, y: cy, opacity: 1 }
+  ];
+}
+
+// Dibujar membrana celular
+function drawMembrane(phaseIdx, local) {
+  const cx = 400, cy = 275;
+  const phase = PHASES[phaseIdx].id;
+
+  if (phase === 'anafase') {
+    // Se alarga
+    const stretch = lerp(0, 50, easeInOut(local));
+    return `<ellipse cx="${cx}" cy="${cy}" rx="${230 + stretch}" ry="180" fill="url(#membrane-grad)" stroke="#34d399" stroke-width="2" opacity="0.85"/>`;
+  }
+  if (phase === 'telofase') {
+    // Anillo contráctil + posible separación al final
+    const pinch = easeInOut(local);
+    const indent = pinch * 60;
+    if (local < 0.85) {
+      // Una sola célula con surco
+      const path = `M ${cx - 280} ${cy - 180}
+                    C ${cx - 280} ${cy - 60}, ${cx - 30 - indent} ${cy - 30}, ${cx - 30 - indent} ${cy}
+                    C ${cx - 30 - indent} ${cy + 30}, ${cx - 280} ${cy + 60}, ${cx - 280} ${cy + 180}
+                    C ${cx - 100} ${cy + 200}, ${cx + 100} ${cy + 200}, ${cx + 280} ${cy + 180}
+                    C ${cx + 280} ${cy + 60}, ${cx + 30 + indent} ${cy + 30}, ${cx + 30 + indent} ${cy}
+                    C ${cx + 30 + indent} ${cy - 30}, ${cx + 280} ${cy - 60}, ${cx + 280} ${cy - 180}
+                    C ${cx + 100} ${cy - 200}, ${cx - 100} ${cy - 200}, ${cx - 280} ${cy - 180} Z`;
+      const ringOpacity = local < 0.3 ? local / 0.3 : 1;
+      return `
+        <path d="${path}" fill="url(#membrane-grad)" stroke="#34d399" stroke-width="2" opacity="0.85"/>
+        <circle cx="${cx}" cy="${cy}" r="${10 + indent * 0.3}" fill="none" stroke="#fbbf24" stroke-width="3" opacity="${ringOpacity * 0.8}" stroke-dasharray="6,3"/>
+      `;
+    } else {
+      // Dos células separadas
+      const sep = (local - 0.85) / 0.15 * 30;
+      return `
+        <ellipse cx="${cx - 150 - sep}" cy="${cy}" rx="125" ry="170" fill="url(#membrane-grad)" stroke="#34d399" stroke-width="2" opacity="0.85"/>
+        <ellipse cx="${cx + 150 + sep}" cy="${cy}" rx="125" ry="170" fill="url(#membrane-grad)" stroke="#34d399" stroke-width="2" opacity="0.85"/>
+      `;
+    }
+  }
+  // Fases normales
+  return `<ellipse cx="${cx}" cy="${cy}" rx="230" ry="180" fill="url(#membrane-grad)" stroke="#34d399" stroke-width="2" opacity="0.85"/>`;
+}
+
+// Dibujar núcleo
+function drawNucleus(phaseIdx, local) {
+  const cx = 400, cy = 275;
+  const phase = PHASES[phaseIdx].id;
+
+  if (phase === 'interfase') {
+    return `
+      <ellipse cx="${cx}" cy="${cy}" rx="120" ry="100" fill="url(#nucleus-grad)" stroke="#34d399" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.7"/>
+      <circle cx="${cx + 25}" cy="${cy - 15}" r="22" fill="#1a4d3f" stroke="#34d399" stroke-width="1" opacity="0.9"/>
+    `;
+  }
+  if (phase === 'profase') {
+    // Envoltura comienza a romperse, nucléolo desaparece
+    const breakup = easeIn(local);
+    const dashLen = 4 + breakup * 20;
+    const opacity = 0.7 - breakup * 0.6;
+    const nucOpacity = Math.max(0, 0.9 - breakup * 1.5);
+    return `
+      <ellipse cx="${cx}" cy="${cy}" rx="120" ry="100" fill="url(#nucleus-grad)" stroke="#34d399" stroke-width="1.5" stroke-dasharray="${dashLen},${4 + breakup * 8}" opacity="${opacity}"/>
+      <circle cx="${cx + 25}" cy="${cy - 15}" r="${22 * (1 - breakup)}" fill="#1a4d3f" stroke="#34d399" stroke-width="1" opacity="${nucOpacity}"/>
+    `;
+  }
+  if (phase === 'telofase' && local > 0.4) {
+    // Reaparecen dos núcleos
+    const opacity = (local - 0.4) / 0.6 * 0.7;
+    if (local < 0.85) {
+      return `
+        <ellipse cx="${cx - 180}" cy="${cy}" rx="80" ry="90" fill="url(#nucleus-grad)" stroke="#34d399" stroke-width="1.5" opacity="${opacity}"/>
+        <ellipse cx="${cx + 180}" cy="${cy}" rx="80" ry="90" fill="url(#nucleus-grad)" stroke="#34d399" stroke-width="1.5" opacity="${opacity}"/>
+      `;
+    } else {
+      const sep = (local - 0.85) / 0.15 * 30;
+      return `
+        <ellipse cx="${cx - 150 - sep}" cy="${cy}" rx="75" ry="90" fill="url(#nucleus-grad)" stroke="#34d399" stroke-width="1.5" opacity="${opacity}"/>
+        <ellipse cx="${cx + 150 + sep}" cy="${cy}" rx="75" ry="90" fill="url(#nucleus-grad)" stroke="#34d399" stroke-width="1.5" opacity="${opacity}"/>
+      `;
+    }
+  }
+  return '';
+}
+
+// Dibujar microtúbulos (huso mitótico)
+function drawSpindle(phaseIdx, local, centrosomes, chromosomes) {
+  const phase = PHASES[phaseIdx].id;
+  let html = '';
+
+  if (phase === 'interfase') return '';
+
+  // Asters: rayos que salen de los centrosomas
+  centrosomes.forEach(c => {
+    const numRays = phase === 'profase' ? Math.floor(8 + local * 6) : 14;
+    const rayLen = phase === 'profase' ? lerp(15, 60, local) : 70;
+    for (let i = 0; i < numRays; i++) {
+      const ang = (i / numRays) * Math.PI * 2;
+      const x2 = c.x + Math.cos(ang) * rayLen;
+      const y2 = c.y + Math.sin(ang) * rayLen;
+      html += `<line x1="${c.x}" y1="${c.y}" x2="${x2}" y2="${y2}" stroke="#60a5fa" stroke-width="0.8" opacity="0.4"/>`;
+    }
+  });
+
+  // Microtúbulos del cinetocoro: conectan centrosomas con cromosomas
+  if (phase === 'prometafase' || phase === 'metafase') {
+    chromosomes.forEach((chrom, i) => {
+      const oscWiggle = phase === 'prometafase' ? Math.sin(state.t * 0.2 + i) * 3 * (1 - local) : 0;
+      // Línea desde centrosoma izquierdo
+      html += `<line x1="${centrosomes[0].x}" y1="${centrosomes[0].y}" x2="${chrom.x - 6}" y2="${chrom.y + oscWiggle}" stroke="#93c5fd" stroke-width="1.5" opacity="0.7"/>`;
+      // Línea desde centrosoma derecho
+      html += `<line x1="${centrosomes[1].x}" y1="${centrosomes[1].y}" x2="${chrom.x + 6}" y2="${chrom.y - oscWiggle}" stroke="#93c5fd" stroke-width="1.5" opacity="0.7"/>`;
+    });
+    // Microtúbulos polares (entre los polos, no anclados a cromosomas)
+    for (let i = 0; i < 6; i++) {
+      const yOff = (i - 2.5) * 35;
+      html += `<line x1="${centrosomes[0].x + 20}" y1="${centrosomes[0].y + yOff * 0.3}" x2="${centrosomes[1].x - 20}" y2="${centrosomes[1].y + yOff * 0.3}" stroke="#60a5fa" stroke-width="0.8" opacity="0.35"/>`;
+    }
+  }
+
+  if (phase === 'anafase') {
+    // Microtúbulos contraídos jalando las cromátidas
+    chromosomes.forEach((chrom, i) => {
+      const polarY = chrom.polarY !== undefined ? chrom.polarY : 0;
+      // Cromátida izquierda
+      html += `<line x1="${centrosomes[0].x}" y1="${centrosomes[0].y}" x2="${400 - chrom.splitDist}" y2="${275 + polarY}" stroke="#93c5fd" stroke-width="1.5" opacity="${0.8 - local * 0.3}"/>`;
+      // Cromátida derecha
+      html += `<line x1="${centrosomes[1].x}" y1="${centrosomes[1].y}" x2="${400 + chrom.splitDist}" y2="${275 + polarY}" stroke="#93c5fd" stroke-width="1.5" opacity="${0.8 - local * 0.3}"/>`;
+    });
+    // Microtúbulos polares (alargándose)
+    for (let i = 0; i < 4; i++) {
+      const yOff = (i - 1.5) * 40;
+      html += `<line x1="${centrosomes[0].x + 20}" y1="${275 + yOff * 0.3}" x2="${centrosomes[1].x - 20}" y2="${275 + yOff * 0.3}" stroke="#60a5fa" stroke-width="0.8" opacity="0.4"/>`;
+    }
+  }
+
+  if (phase === 'telofase' && local < 0.5) {
+    // Huso desensamblándose
+    const fade = 1 - local * 2;
+    chromosomes.forEach((chrom, i) => {
+      const polarY = chrom.polarY !== undefined ? chrom.polarY : 0;
+      html += `<line x1="${centrosomes[0].x}" y1="${centrosomes[0].y}" x2="${400 - 220}" y2="${275 + polarY}" stroke="#93c5fd" stroke-width="1.5" opacity="${0.5 * fade}"/>`;
+      html += `<line x1="${centrosomes[1].x}" y1="${centrosomes[1].y}" x2="${400 + 220}" y2="${275 + polarY}" stroke="#93c5fd" stroke-width="1.5" opacity="${0.5 * fade}"/>`;
+    });
+  }
+
+  return html;
+}
+
+// Dibujar centrosomas
+function drawCentrosomes(centrosomes, phaseIdx) {
+  const phase = PHASES[phaseIdx].id;
+  if (phase === 'telofase') return ''; // Desaparecen
+  return centrosomes.map(c => `
+    <g opacity="${c.opacity}">
+      <circle cx="${c.x}" cy="${c.y}" r="10" fill="url(#centro-grad)" filter="url(#glow)"/>
+      <circle cx="${c.x - 3}" cy="${c.y}" r="3" fill="#fbbf24" opacity="0.9"/>
+      <circle cx="${c.x + 3}" cy="${c.y}" r="3" fill="#fbbf24" opacity="0.9"/>
+    </g>
+  `).join('');
+}
+
+// Dibujar cromosomas
+function drawChromosomes(chromosomes, phaseIdx) {
+  const phase = PHASES[phaseIdx].id;
+  return chromosomes.map((c, i) => {
+    if (c.type === 'chromatin') {
+      // Cromatina dispersa
+      return `
+        <g transform="translate(${c.x}, ${c.y})" opacity="0.65">
+          <path d="M -15 -5 Q -8 -12, 0 -8 T 15 -5 Q 12 3, 5 6 T -10 8 Z"
+                fill="url(#chrom-grad)" opacity="0.4"/>
+          <path d="M -12 0 Q -6 -8, 2 -3 T 14 2"
+                stroke="#f472b6" stroke-width="1.2" fill="none" opacity="0.6"/>
+          <path d="M -10 5 Q -2 0, 6 5 T 14 8"
+                stroke="#be185d" stroke-width="1" fill="none" opacity="0.5"/>
+        </g>
+      `;
+    }
+
+    const cond = c.condensation;
+    const angleRad = c.angle * Math.PI / 180;
+    const len = lerp(20, 28, cond);
+    const sep = lerp(2, 5, cond);  // separación entre cromátidas
+    const opacityBoost = lerp(0.5, 1, cond);
+
+    if (c.separated) {
+      // Anafase/Telofase: cromátidas individuales
+      const polarY = c.polarY !== undefined ? c.polarY : 0;
+      const baseY = 275 + polarY;
+      const decondense = c.decondensing || 0;
+      const length = len * (1 - decondense * 0.6);
+      const opacity = lerp(1, 0.5, decondense);
+
+      return `
+        <g>
+          <!-- Cromátida izquierda formando V -->
+          <g transform="translate(${400 - c.splitDist}, ${baseY})" opacity="${opacity}">
+            <path d="M -${length * 0.7} -${length * 0.4} L 0 0 L -${length * 0.7} ${length * 0.4}"
+                  stroke="url(#chrom-grad)" stroke-width="${5 + cond * 2}" fill="none" stroke-linecap="round" filter="url(#glow)"/>
+          </g>
+          <!-- Cromátida derecha formando V -->
+          <g transform="translate(${400 + c.splitDist}, ${baseY})" opacity="${opacity}">
+            <path d="M ${length * 0.7} -${length * 0.4} L 0 0 L ${length * 0.7} ${length * 0.4}"
+                  stroke="url(#chrom-grad)" stroke-width="${5 + cond * 2}" fill="none" stroke-linecap="round" filter="url(#glow)"/>
+          </g>
+        </g>
+      `;
+    }
+
+    // Cromosoma con dos cromátidas hermanas (forma de X)
+    const strokeW = 4 + cond * 2;
+    return `
+      <g transform="translate(${c.x}, ${c.y}) rotate(${c.angle})" opacity="${opacityBoost}" filter="url(#glow)">
+        <!-- Cromátida 1 -->
+        <line x1="-${len}" y1="-${sep}" x2="${len}" y2="-${sep}"
+              stroke="url(#chrom-grad)" stroke-width="${strokeW}" stroke-linecap="round"/>
+        <!-- Cromátida 2 -->
+        <line x1="-${len}" y1="${sep}" x2="${len}" y2="${sep}"
+              stroke="url(#chrom-grad)" stroke-width="${strokeW}" stroke-linecap="round"/>
+        <!-- Centrómero (cohesina) -->
+        ${cond > 0.5 ? `<circle cx="0" cy="0" r="${3 + cond}" fill="#fef3c7" opacity="${(cond - 0.5) * 1.5}"/>` : ''}
+      </g>
+    `;
+  }).join('');
+}
+
+// ---------- RENDERIZADO PRINCIPAL ----------
+function render() {
+  const { index, phase, local } = getPhaseInfo(state.t);
+
+  const centrosomes = computeCentrosomes(index, local);
+  const chromosomes = computeChromosomes(index, local, state.t);
+
+  // Construir SVG
+  const svgContent = `
+    ${drawMembrane(index, local)}
+    ${drawSpindle(index, local, centrosomes, chromosomes)}
+    ${drawNucleus(index, local)}
+    ${drawCentrosomes(centrosomes, index)}
+    ${drawChromosomes(chromosomes, index)}
+  `;
+
+  cellsLayer.innerHTML = svgContent;
+
+  // Actualizar UI
+  document.getElementById('stage-coordinates').textContent =
+    `FASE: ${phase.short.toUpperCase()} · t = ${state.t.toFixed(0)}%`;
+
+  // Panel info
+  document.getElementById('info-num').textContent = `FASE ${index + 1} DE 6`;
+  document.getElementById('info-name').textContent = phase.full;
+  document.getElementById('info-greek').textContent = phase.greek;
+  document.getElementById('info-desc').textContent = phase.description;
+
+  const eventsHtml = phase.events.map(e => `<li>${e}</li>`).join('');
+  document.getElementById('info-events').innerHTML = eventsHtml;
+
+  // Tabs
+  document.querySelectorAll('.phase-tab').forEach((tab, i) => {
+    tab.classList.toggle('active', i === index);
+  });
+
+  // Timeline
+  document.getElementById('timeline-fill').style.width = state.t + '%';
+  document.getElementById('timeline-thumb').style.left = state.t + '%';
+  document.getElementById('timeline-time').textContent = Math.round(state.t) + '%';
+}
+
+// ---------- TABS DE FASES ----------
+function buildPhaseTabs() {
+  const container = document.getElementById('phase-tabs');
+  container.innerHTML = PHASES.map((p, i) => `
+    <button class="phase-tab" data-phase="${i}">
+      <span class="phase-num">FASE ${i + 1}</span>
+      ${p.short}
+    </button>
+  `).join('');
+
+  container.addEventListener('click', e => {
+    const btn = e.target.closest('.phase-tab');
+    if (!btn) return;
+    const idx = parseInt(btn.dataset.phase);
+    state.t = (PHASES[idx].range[0] + PHASES[idx].range[1]) / 2;
+    render();
+  });
+}
+
+// ---------- MARCADORES TIMELINE ----------
+function buildTimelineMarkers() {
+  const track = document.getElementById('timeline-track');
+  PHASES.forEach((p, i) => {
+    if (i === 0) return;
+    const marker = document.createElement('div');
+    marker.className = 'timeline-marker';
+    marker.style.left = p.range[0] + '%';
+    track.appendChild(marker);
+  });
+}
+
+// ---------- CONTROLES PLAY ----------
+function setupPlayControls() {
+  const playBtn = document.getElementById('play-btn');
+  const playIcon = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+  const pauseIcon = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h4v16H6zm8 0h4v16h-4z"/></svg>`;
+
+  playBtn.addEventListener('click', () => {
+    state.playing = !state.playing;
+    playBtn.innerHTML = state.playing ? pauseIcon : playIcon;
+    if (state.playing) {
+      state.lastTime = performance.now();
+      requestAnimationFrame(animate);
+    }
+  });
+
+  // Speed buttons
+  document.querySelectorAll('.speed-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      state.speed = parseFloat(btn.dataset.speed);
+    });
+  });
+}
+
+function animate(currentTime) {
+  if (!state.playing) return;
+  const dt = (currentTime - state.lastTime) / 1000;
+  state.lastTime = currentTime;
+
+  // Avanza ~6 unidades por segundo a velocidad 1× (toda la animación = ~16 segundos)
+  state.t += dt * 6 * state.speed;
+  if (state.t >= 100) {
+    state.t = 100;
+    state.playing = false;
+    document.getElementById('play-btn').innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+  }
+  render();
+  if (state.playing) requestAnimationFrame(animate);
+}
+
+// ---------- TIMELINE INTERACTIVA ----------
+function setupTimeline() {
+  const track = document.getElementById('timeline-track');
+  let dragging = false;
+
+  const updateFromEvent = (e) => {
+    const rect = track.getBoundingClientRect();
+    const x = (e.clientX || e.touches[0].clientX) - rect.left;
+    const pct = clamp(x / rect.width * 100, 0, 100);
+    state.t = pct;
+    if (state.t >= 100) {
+      state.playing = false;
+      document.getElementById('play-btn').innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+    }
+    render();
+  };
+
+  track.addEventListener('mousedown', e => {
+    dragging = true;
+    state.playing = false;
+    document.getElementById('play-btn').innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
+    updateFromEvent(e);
+  });
+  document.addEventListener('mousemove', e => { if (dragging) updateFromEvent(e); });
+  document.addEventListener('mouseup', () => { dragging = false; });
+
+  track.addEventListener('touchstart', e => { dragging = true; updateFromEvent(e); });
+  document.addEventListener('touchmove', e => { if (dragging) { updateFromEvent(e); e.preventDefault(); } }, { passive: false });
+  document.addEventListener('touchend', () => { dragging = false; });
+}
+
+// ---------- VOCABULARIO ----------
+function buildVocab() {
+  const grid = document.getElementById('vocab-grid');
+  grid.innerHTML = VOCAB.map(v => `
+    <div class="vocab-card">
+      <div class="vocab-term">${v.term}</div>
+      <div class="vocab-def">${v.def}</div>
+    </div>
+  `).join('');
+}
+
+// ---------- QUIZ ----------
+const quizState = { current: 0, score: 0, answered: false };
+
+function renderQuiz() {
+  const card = document.getElementById('quiz-card');
+
+  if (quizState.current >= QUIZ.length) {
+    // Resultado final
+    const pct = Math.round((quizState.score / QUIZ.length) * 100);
+    let msg = '';
+    if (pct === 100) msg = '¡Perfecto, asere! Dominas la mitosis como un genetista.';
+    else if (pct >= 80) msg = '¡Excelente trabajo! Tienes un dominio sólido del tema.';
+    else if (pct >= 60) msg = 'Buen trabajo. Repasa las fases que te costaron y vuelve a intentarlo.';
+    else msg = 'Sigue practicando. Vuelve a la animación, observa con calma cada fase y vuelve al quiz.';
+
+    card.innerHTML = `
+      <div class="quiz-result">
+        <h3>${pct >= 80 ? '¡Bestial!' : pct >= 60 ? '¡Bien hecho!' : 'A seguir'}</h3>
+        <div class="score">${quizState.score} / ${QUIZ.length} correctas · ${pct}%</div>
+        <p>${msg}</p>
+        <button class="quiz-btn primary" onclick="resetQuiz()">↻ Intentar de nuevo</button>
+      </div>
+    `;
+    return;
+  }
+
+  const q = QUIZ[quizState.current];
+  const letters = ['A', 'B', 'C', 'D'];
+
+  // Progreso
+  const progressHtml = QUIZ.map((_, i) => {
+    if (i < quizState.current) return '<span class="done"></span>';
+    if (i === quizState.current) return '<span class="current"></span>';
+    return '<span></span>';
+  }).join('');
+
+  card.innerHTML = `
+    <div class="quiz-progress">${progressHtml}</div>
+    <h3 class="quiz-question">${q.q}</h3>
+    <div class="quiz-options">
+      ${q.options.map((opt, i) => `
+        <button class="quiz-option" data-idx="${i}">
+          <span class="opt-letter">${letters[i]}</span>
+          <span>${opt}</span>
+        </button>
+      `).join('')}
+    </div>
+    <div class="quiz-feedback" id="quiz-feedback"></div>
+    <div class="quiz-nav">
+      <span class="quiz-counter">${quizState.current + 1} / ${QUIZ.length}</span>
+      <button class="quiz-btn primary" id="quiz-next" disabled>${quizState.current === QUIZ.length - 1 ? 'Ver resultado' : 'Siguiente →'}</button>
+    </div>
+  `;
+
+  // Listeners
+  card.querySelectorAll('.quiz-option').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (quizState.answered) return;
+      quizState.answered = true;
+      const chosen = parseInt(btn.dataset.idx);
+      const correct = q.correct;
+      const buttons = card.querySelectorAll('.quiz-option');
+      buttons.forEach((b, i) => {
+        b.disabled = true;
+        if (i === correct) b.classList.add('correct');
+        else if (i === chosen) b.classList.add('wrong');
+      });
+      if (chosen === correct) quizState.score++;
+      const fb = document.getElementById('quiz-feedback');
+      fb.innerHTML = `<strong>${chosen === correct ? '✓ Correcto.' : '✗ Respuesta correcta: ' + letters[correct] + '.'}</strong> ${q.explain}`;
+      fb.classList.add('visible');
+      document.getElementById('quiz-next').disabled = false;
+    });
+  });
+
+  document.getElementById('quiz-next').addEventListener('click', () => {
+    quizState.current++;
+    quizState.answered = false;
+    renderQuiz();
+  });
+}
+
+function resetQuiz() {
+  quizState.current = 0;
+  quizState.score = 0;
+  quizState.answered = false;
+  renderQuiz();
+}
+window.resetQuiz = resetQuiz;
+
+// ---------- INIT ----------
+function init() {
+  initParticles();
+  buildPhaseTabs();
+  buildTimelineMarkers();
+  setupPlayControls();
+  setupTimeline();
+  buildVocab();
+  renderQuiz();
+  render();
+}
+
+init();
+</script>
+
+</body>
+</html>
