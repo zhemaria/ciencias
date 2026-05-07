@@ -826,9 +826,10 @@ footer .author {
           </radialGradient>
           <!-- Gradiente núcleo -->
           <radialGradient id="nucleus-grad" cx="50%" cy="50%">
-            <stop offset="0%" stop-color="#1a4d3f" stop-opacity="0.7"/>
-            <stop offset="80%" stop-color="#143830" stop-opacity="0.6"/>
-            <stop offset="100%" stop-color="#34d399" stop-opacity="0.4"/>
+            <stop offset="0%" stop-color="#0d2236" stop-opacity="0.95"/>
+            <stop offset="55%" stop-color="#0a2030" stop-opacity="0.92"/>
+            <stop offset="92%" stop-color="#0a2030" stop-opacity="0.85"/>
+            <stop offset="100%" stop-color="#5eead4" stop-opacity="0.6"/>
           </radialGradient>
           <!-- Gradiente cromosoma -->
           <linearGradient id="chrom-grad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -1288,14 +1289,14 @@ function computeChromosomes(phaseIdx, local, t) {
   }
 
   if (phase === 'telofase') {
-    // En los polos, descondensándose
+    // En los polos, descondensándose progresivamente. Al final, casi invisibles.
     const polarYPos = [-70, -25, 25, 70];
     const decondense = easeOut(local);
     return baseAngles.map((b, i) => ({
       x: cx,
       y: cy + polarYPos[i],
       angle: 90,
-      condensation: 1 - decondense * 0.85,
+      condensation: Math.max(0, 1 - decondense * 1.4),  // llega a 0 antes del final
       separated: true,
       splitDist: 220,
       polarY: polarYPos[i],
@@ -1375,45 +1376,118 @@ function drawMembrane(phaseIdx, local) {
   return `<ellipse cx="${cx}" cy="${cy}" rx="230" ry="180" fill="url(#membrane-grad)" stroke="#34d399" stroke-width="2" opacity="0.85"/>`;
 }
 
-// Dibujar núcleo
+// Dibujar núcleo. Usa DOS elipses superpuestas (fill sólido + gradient turquesa)
+// para crear un compartimento opaco claramente diferenciado del citoplasma.
 function drawNucleus(phaseIdx, local) {
   const cx = 400, cy = 275;
   const phase = PHASES[phaseIdx].id;
 
+  // Helper interno para construir un núcleo con dos elipses
+  const nucleus = (cx2, cy2, rx, ry, opacity = 0.92, dashed = false) => {
+    const dashAttr = dashed ? `stroke-dasharray="${typeof dashed === 'number' ? dashed : 4},${typeof dashed === 'number' ? Math.max(2, dashed/2) : 2}"` : '';
+    return `
+      <ellipse cx="${cx2}" cy="${cy2}" rx="${rx}" ry="${ry}" fill="#0a1828" opacity="${opacity}"/>
+      <ellipse cx="${cx2}" cy="${cy2}" rx="${rx}" ry="${ry}" fill="url(#nucleus-grad)" stroke="#5eead4" stroke-width="2.5" ${dashAttr} opacity="${opacity}"/>
+    `;
+  };
+
   if (phase === 'interfase') {
     return `
-      <ellipse cx="${cx}" cy="${cy}" rx="120" ry="100" fill="url(#nucleus-grad)" stroke="#34d399" stroke-width="1.5" stroke-dasharray="4,2" opacity="0.7"/>
-      <circle cx="${cx + 25}" cy="${cy - 15}" r="22" fill="#1a4d3f" stroke="#34d399" stroke-width="1" opacity="0.9"/>
+      ${nucleus(cx, cy, 120, 100, 0.92, false)}
+      <ellipse cx="${cx + 30}" cy="${cy - 18}" rx="24" ry="18" fill="#0d3a2e" stroke="#34d399" stroke-width="1" opacity="0.9"/>
+      <ellipse cx="${cx + 25}" cy="${cy - 22}" rx="8" ry="6" fill="#34d399" opacity="0.25"/>
     `;
   }
   if (phase === 'profase') {
     // Envoltura comienza a romperse, nucléolo desaparece
-    const breakup = easeIn(local);
-    const dashLen = 4 + breakup * 20;
-    const opacity = 0.7 - breakup * 0.6;
-    const nucOpacity = Math.max(0, 0.9 - breakup * 1.5);
-    return `
-      <ellipse cx="${cx}" cy="${cy}" rx="120" ry="100" fill="url(#nucleus-grad)" stroke="#34d399" stroke-width="1.5" stroke-dasharray="${dashLen},${4 + breakup * 8}" opacity="${opacity}"/>
-      <circle cx="${cx + 25}" cy="${cy - 15}" r="${22 * (1 - breakup)}" fill="#1a4d3f" stroke="#34d399" stroke-width="1" opacity="${nucOpacity}"/>
-    `;
+    if (local < 0.7) {
+      // Envoltura intacta
+      return `
+        ${nucleus(cx, cy, 120, 100, 0.92, false)}
+        ${local < 0.4 ? `<ellipse cx="${cx + 30}" cy="${cy - 18}" rx="${24 * (1 - local * 1.5)}" ry="${18 * (1 - local * 1.5)}" fill="#0d3a2e" stroke="#34d399" stroke-width="1" opacity="${Math.max(0, 0.9 - local * 2)}"/>` : ''}
+      `;
+    } else {
+      // Rompiéndose
+      const breakup = (local - 0.7) / 0.3;
+      const dash = 4 + breakup * 18;
+      const opacity = 0.92 - breakup * 0.82;
+      return nucleus(cx, cy, 120, 100, opacity, dash);
+    }
   }
   if (phase === 'telofase' && local > 0.4) {
     // Reaparecen dos núcleos
-    const opacity = (local - 0.4) / 0.6 * 0.7;
     if (local < 0.85) {
+      // Núcleos formándose dentro de la célula con surco — dashed (en construcción)
+      const fadeIn = (local - 0.4) / 0.45;
+      const opacity = fadeIn * 0.85;
+      const dashed = local < 0.75 ? 6 : false;
       return `
-        <ellipse cx="${cx - 180}" cy="${cy}" rx="80" ry="90" fill="url(#nucleus-grad)" stroke="#34d399" stroke-width="1.5" opacity="${opacity}"/>
-        <ellipse cx="${cx + 180}" cy="${cy}" rx="80" ry="90" fill="url(#nucleus-grad)" stroke="#34d399" stroke-width="1.5" opacity="${opacity}"/>
+        ${nucleus(cx - 180, cy, 80, 90, opacity, dashed)}
+        ${nucleus(cx + 180, cy, 80, 90, opacity, dashed)}
       `;
     } else {
+      // Dos células separadas con núcleos definitivos sólidos
       const sep = (local - 0.85) / 0.15 * 30;
       return `
-        <ellipse cx="${cx - 150 - sep}" cy="${cy}" rx="75" ry="90" fill="url(#nucleus-grad)" stroke="#34d399" stroke-width="1.5" opacity="${opacity}"/>
-        <ellipse cx="${cx + 150 + sep}" cy="${cy}" rx="75" ry="90" fill="url(#nucleus-grad)" stroke="#34d399" stroke-width="1.5" opacity="${opacity}"/>
+        ${nucleus(cx - 150 - sep, cy, 80, 95, 0.88, false)}
+        ${nucleus(cx + 150 + sep, cy, 80, 95, 0.88, false)}
       `;
     }
   }
   return '';
+}
+
+// Dibuja una célula completa en estado de interfase: membrana + núcleo + nucléolo + cromatina + centrosomas
+// Reutilizable para mostrar las dos células hijas al final de telofase, idénticas a la madre original.
+function drawInterphaseCell(centerX, centerY, scale = 1, opacity = 1) {
+  const cx = centerX, cy = centerY;
+  const s = scale;
+
+  // Membrana celular
+  let html = `<ellipse cx="${cx}" cy="${cy}" rx="${230 * s}" ry="${180 * s}" fill="url(#membrane-grad)" stroke="#34d399" stroke-width="2" opacity="${0.85 * opacity}"/>`;
+
+  // Núcleo: dos elipses (fill sólido + gradient turquesa)
+  html += `<ellipse cx="${cx}" cy="${cy}" rx="${120 * s}" ry="${100 * s}" fill="#0a1828" opacity="${0.92 * opacity}"/>`;
+  html += `<ellipse cx="${cx}" cy="${cy}" rx="${120 * s}" ry="${100 * s}" fill="url(#nucleus-grad)" stroke="#5eead4" stroke-width="2.5" opacity="${0.92 * opacity}"/>`;
+
+  // Nucléolo
+  html += `<ellipse cx="${cx + 30 * s}" cy="${cy - 18 * s}" rx="${24 * s}" ry="${18 * s}" fill="#0d3a2e" stroke="#34d399" stroke-width="1" opacity="${0.9 * opacity}"/>`;
+  html += `<ellipse cx="${cx + 25 * s}" cy="${cy - 22 * s}" rx="${8 * s}" ry="${6 * s}" fill="#34d399" opacity="${0.25 * opacity}"/>`;
+
+  // Cromatina (4 ovillos dispersos dentro del núcleo)
+  const positions = [
+    { x: cx - 55 * s, y: cy - 25 * s, a: -15 },
+    { x: cx - 20 * s, y: cy - 50 * s, a: 25 },
+    { x: cx - 40 * s, y: cy + 30 * s, a: 40 },
+    { x: cx + 50 * s, y: cy + 35 * s, a: -20 }
+  ];
+  for (const p of positions) {
+    html += `<g transform="translate(${p.x}, ${p.y}) rotate(${p.a}) scale(${s})" opacity="${0.7 * opacity}">
+      <path d="M -16 -2 Q -10 -7, -2 -5 Q 6 -8, 14 -3 Q 12 4, 4 6 Q -4 9, -14 6 Z" fill="#f472b6" opacity="0.45"/>
+      <path d="M -14 -1 Q -8 -5, -2 -3 Q 5 -6, 13 -2" stroke="#f472b6" stroke-width="1.4" fill="none" opacity="0.85"/>
+      <path d="M -12 3 Q -4 0, 4 4 Q 10 6, 13 4" stroke="#be185d" stroke-width="1" fill="none" opacity="0.7"/>
+    </g>`;
+  }
+
+  // Centrosomas: par de centríolos JUNTOS y pegados al borde superior del núcleo
+  // (no flotando libremente en el citoplasma). Escalados con el resto.
+  // El núcleo tiene ry = 100*s, así que el borde superior está a y = cy - 100*s.
+  // Colocamos los centrosomas justo encima de ese borde.
+  const centroY = cy - 100 * s - 8 * s;
+  const centroR = 7 * s;
+  const innerR = 2 * s;
+  html += `<g opacity="${0.85 * opacity}">
+    <circle cx="${cx - 6 * s}" cy="${centroY}" r="${centroR}" fill="url(#centro-grad)" filter="url(#glow)"/>
+    <circle cx="${cx - 8 * s}" cy="${centroY}" r="${innerR}" fill="#fbbf24" opacity="0.9"/>
+    <circle cx="${cx - 4 * s}" cy="${centroY}" r="${innerR}" fill="#fbbf24" opacity="0.9"/>
+  </g>`;
+  html += `<g opacity="${0.85 * opacity}">
+    <circle cx="${cx + 6 * s}" cy="${centroY}" r="${centroR}" fill="url(#centro-grad)" filter="url(#glow)"/>
+    <circle cx="${cx + 4 * s}" cy="${centroY}" r="${innerR}" fill="#fbbf24" opacity="0.9"/>
+    <circle cx="${cx + 8 * s}" cy="${centroY}" r="${innerR}" fill="#fbbf24" opacity="0.9"/>
+  </g>`;
+
+  return html;
 }
 
 // Dibujar microtúbulos (huso mitótico)
@@ -1423,17 +1497,21 @@ function drawSpindle(phaseIdx, local, centrosomes, chromosomes) {
 
   if (phase === 'interfase') return '';
 
-  // Asters: rayos que salen de los centrosomas
-  centrosomes.forEach(c => {
-    const numRays = phase === 'profase' ? Math.floor(8 + local * 6) : 14;
-    const rayLen = phase === 'profase' ? lerp(15, 60, local) : 70;
-    for (let i = 0; i < numRays; i++) {
-      const ang = (i / numRays) * Math.PI * 2;
-      const x2 = c.x + Math.cos(ang) * rayLen;
-      const y2 = c.y + Math.sin(ang) * rayLen;
-      html += `<line x1="${c.x}" y1="${c.y}" x2="${x2}" y2="${y2}" stroke="#60a5fa" stroke-width="0.8" opacity="0.4"/>`;
-    }
-  });
+  // Asters: rayos que salen de los centrosomas (no en telofase tardía donde el huso ya desapareció)
+  const showAsters = !(phase === 'telofase' && local > 0.4);
+  if (showAsters) {
+    const asterFade = phase === 'telofase' ? Math.max(0, 1 - local / 0.4) : 1;
+    centrosomes.forEach(c => {
+      const numRays = phase === 'profase' ? Math.floor(8 + local * 6) : 14;
+      const rayLen = phase === 'profase' ? lerp(15, 60, local) : 70;
+      for (let i = 0; i < numRays; i++) {
+        const ang = (i / numRays) * Math.PI * 2;
+        const x2 = c.x + Math.cos(ang) * rayLen;
+        const y2 = c.y + Math.sin(ang) * rayLen;
+        html += `<line x1="${c.x}" y1="${c.y}" x2="${x2}" y2="${y2}" stroke="#60a5fa" stroke-width="0.8" opacity="${0.4 * asterFade}"/>`;
+      }
+    });
+  }
 
   // Microtúbulos del cinetocoro: conectan centrosomas con cromosomas
   if (phase === 'prometafase' || phase === 'metafase') {
@@ -1522,8 +1600,12 @@ function drawChromosomes(chromosomes, phaseIdx) {
       const polarY = c.polarY !== undefined ? c.polarY : 0;
       const baseY = 275 + polarY;
       const decondense = c.decondensing || 0;
-      const length = len * (1 - decondense * 0.6);
-      const opacity = lerp(1, 0.5, decondense);
+      const length = len * (1 - decondense * 0.7);
+      // En telofase, las cromátidas se descondensan a cromatina y se vuelven prácticamente invisibles
+      const opacity = Math.max(0, 1 - decondense * 1.3);
+
+      // Si ya están totalmente descondensadas, no dibujar nada
+      if (opacity < 0.05) return '';
 
       return `
         <g>
@@ -1566,13 +1648,30 @@ function render() {
   const chromosomes = computeChromosomes(index, local, state.t);
 
   // Construir SVG
-  const svgContent = `
-    ${drawMembrane(index, local)}
-    ${drawSpindle(index, local, centrosomes, chromosomes)}
-    ${drawNucleus(index, local)}
-    ${drawCentrosomes(centrosomes, index)}
-    ${drawChromosomes(chromosomes, index)}
-  `;
+  let svgContent;
+  if (phase.id === 'telofase' && local > 0.85) {
+    // Final de telofase: dos células IDÉNTICAS a la madre original (estilo interfase).
+    // Esto refuerza visualmente que la mitosis genera copias exactas.
+    const t = (local - 0.85) / 0.15;       // 0 → 1 durante el último 15% de la fase
+    const sep = lerp(0, 30, t);             // separación entre las células hijas
+    const fadeIn = easeOut(t);              // entrada suave
+    const cx = 400, cy = 275;
+    // Escala: las células hijas son un poco más pequeñas que la madre (cada una hereda la mitad del citoplasma)
+    const scale = 0.55;
+
+    svgContent = `
+      ${drawInterphaseCell(cx - 150 - sep, cy, scale, fadeIn)}
+      ${drawInterphaseCell(cx + 150 + sep, cy, scale, fadeIn)}
+    `;
+  } else {
+    svgContent = `
+      ${drawMembrane(index, local)}
+      ${drawSpindle(index, local, centrosomes, chromosomes)}
+      ${drawNucleus(index, local)}
+      ${drawCentrosomes(centrosomes, index)}
+      ${drawChromosomes(chromosomes, index)}
+    `;
+  }
 
   cellsLayer.innerHTML = svgContent;
 
