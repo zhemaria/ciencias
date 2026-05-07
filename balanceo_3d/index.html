@@ -27,9 +27,13 @@
     --error: #f87171;
     --border-soft: rgba(234, 88, 12, 0.25);
     --border-strong: rgba(234, 88, 12, 0.5);
+    color-scheme: dark;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* CRÍTICO: el atributo hidden debe ganar a cualquier regla CSS de display */
+  [hidden] { display: none !important; }
 
   html, body {
     background: var(--bg-deep);
@@ -201,23 +205,144 @@
     flex-shrink: 0;
   }
 
-  select#equationSelect {
+  /* ========= CUSTOM DROPDOWN (reemplaza al select nativo para evitar el flash blanco) ========= */
+  /* Esta tarjeta debe quedar por encima de las demás para que su menú emergente nunca quede tapado */
+  .selector-card {
+    position: relative;
+    z-index: 50;
+  }
+
+  .custom-select {
+    position: relative;
     flex: 1;
     min-width: 240px;
+  }
+
+  .custom-select-trigger {
+    width: 100%;
     background: var(--bg-mid);
     color: var(--text-main);
     border: 1px solid var(--border-strong);
     border-radius: 9px;
-    padding: 0.5rem 0.85rem;
+    padding: 0.55rem 0.85rem;
     font-family: inherit;
     font-size: 0.9rem;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.6rem;
     transition: border-color 0.2s;
+    text-align: left;
   }
 
-  select#equationSelect:hover, select#equationSelect:focus {
-    border-color: var(--orange-light);
-    outline: none;
+  .custom-select-trigger:hover { border-color: var(--orange-light); }
+  .custom-select-trigger:focus { outline: none; border-color: var(--orange-light); }
+
+  .custom-select.disabled .custom-select-trigger {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  .custom-select.disabled .custom-select-trigger:hover { border-color: var(--border-strong); }
+
+  .selected-label {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .chevron {
+    width: 14px;
+    height: 14px;
+    color: var(--orange-bright);
+    flex-shrink: 0;
+    transition: transform 0.2s;
+  }
+
+  .custom-select.open .chevron { transform: rotate(180deg); }
+
+  .custom-select-panel {
+    position: absolute;
+    top: calc(100% + 0.45rem);
+    left: 0;
+    right: 0;
+    background: var(--bg-mid);
+    border: 1px solid var(--border-strong);
+    border-radius: 11px;
+    z-index: 100;
+    max-height: 380px;
+    overflow-y: auto;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(234, 88, 12, 0.1);
+    padding: 0.4rem;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    animation: dropdown-in 0.15s ease-out;
+  }
+
+  @keyframes dropdown-in {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .custom-select-panel::-webkit-scrollbar { width: 8px; }
+  .custom-select-panel::-webkit-scrollbar-track { background: transparent; }
+  .custom-select-panel::-webkit-scrollbar-thumb {
+    background: var(--border-strong);
+    border-radius: 4px;
+  }
+
+  .custom-optgroup-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--orange-bright);
+    font-weight: 700;
+    padding: 0.7rem 0.7rem 0.4rem;
+    border-bottom: 1px dashed var(--border-soft);
+    margin-bottom: 0.25rem;
+  }
+
+  .custom-optgroup:not(:first-child) .custom-optgroup-label {
+    margin-top: 0.4rem;
+  }
+
+  .custom-option {
+    display: block;
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: var(--text-main);
+    text-align: left;
+    padding: 0.55rem 0.75rem;
+    border-radius: 7px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 0.88rem;
+    line-height: 1.35;
+    transition: background 0.15s, color 0.15s;
+  }
+
+  .custom-option:hover {
+    background: rgba(234, 88, 12, 0.18);
+    color: var(--orange-bright);
+  }
+
+  .custom-option.selected {
+    background: rgba(234, 88, 12, 0.28);
+    color: var(--orange-bright);
+    font-weight: 600;
+  }
+
+  .custom-option.selected::before {
+    content: '✓ ';
+    color: var(--gold);
+    font-weight: 700;
+  }
+
+  /* ========= LEGACY (oculto, solo si quedaran selectores nativos) ========= */
+  select#equationSelect {
+    display: none;
   }
 
   .equation-meta {
@@ -246,42 +371,85 @@
     width: 100%;
     height: 380px;
     background:
+      linear-gradient(90deg,
+        rgba(99, 102, 241, 0.10) 0%,
+        rgba(99, 102, 241, 0.06) 38%,
+        transparent 50%,
+        rgba(251, 191, 36, 0.06) 62%,
+        rgba(251, 191, 36, 0.10) 100%
+      ),
       radial-gradient(ellipse at 30% 30%, rgba(251, 146, 60, 0.08), transparent 60%),
       radial-gradient(ellipse at 70% 70%, rgba(245, 158, 11, 0.06), transparent 60%),
       linear-gradient(180deg, #1a0e07 0%, #0d0805 100%);
+  }
+
+  /* Subtle vertical divider at the arrow position */
+  .scene-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 12%;
+    bottom: 12%;
+    left: 50%;
+    width: 1px;
+    background: linear-gradient(180deg,
+      transparent 0%,
+      rgba(253, 186, 116, 0.18) 35%,
+      rgba(253, 186, 116, 0.18) 65%,
+      transparent 100%
+    );
+    pointer-events: none;
   }
 
   #scene {
     width: 100%;
     height: 100%;
     display: block;
+    position: relative;
+    z-index: 1;
   }
 
   .scene-side-label {
     position: absolute;
-    top: 1rem;
+    top: 0.85rem;
+    z-index: 2;
     font-family: 'Fraunces', serif;
-    font-style: italic;
-    font-size: 0.85rem;
-    color: var(--orange-bright);
-    letter-spacing: 0.15em;
+    font-weight: 700;
+    font-size: 0.78rem;
+    letter-spacing: 0.25em;
     text-transform: uppercase;
-    opacity: 0.7;
+    padding: 0.35rem 0.95rem;
+    border-radius: 100px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
   }
 
-  .scene-side-label.left { left: 1rem; }
-  .scene-side-label.right { right: 1rem; }
+  .scene-side-label.left {
+    left: 1rem;
+    color: #c7d2fe;
+    background: rgba(99, 102, 241, 0.18);
+    border: 1px solid rgba(99, 102, 241, 0.45);
+    box-shadow: 0 2px 14px rgba(99, 102, 241, 0.2);
+  }
+
+  .scene-side-label.right {
+    right: 1rem;
+    color: var(--gold);
+    background: rgba(251, 191, 36, 0.18);
+    border: 1px solid rgba(251, 191, 36, 0.45);
+    box-shadow: 0 2px 14px rgba(251, 191, 36, 0.25);
+  }
 
   .scene-hint {
     position: absolute;
     bottom: 1rem;
     left: 50%;
     transform: translateX(-50%);
-    font-size: 0.75rem;
+    z-index: 2;
+    font-size: 0.72rem;
     color: var(--text-muted);
     letter-spacing: 0.1em;
     text-transform: uppercase;
-    opacity: 0.6;
+    opacity: 0.55;
   }
 
   /* ========= EQUATION DISPLAY ========= */
@@ -635,6 +803,203 @@
     box-shadow: 0 0 60px rgba(74, 222, 128, 0.3);
   }
 
+  /* ========= MODE TABS ========= */
+  .mode-tabs {
+    display: flex;
+    gap: 0.3rem;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 0.3rem;
+    border-radius: 11px;
+    border: 1px solid var(--border-soft);
+    margin-bottom: 0.8rem;
+  }
+
+  .mode-tab {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    padding: 0.55rem 0.85rem;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+  }
+
+  .mode-tab.active {
+    background: linear-gradient(135deg, var(--orange-primary), var(--orange-deep));
+    color: white;
+    box-shadow: 0 2px 8px rgba(234, 88, 12, 0.4);
+  }
+
+  .mode-tab:not(.active):hover {
+    color: var(--text-soft);
+    background: rgba(234, 88, 12, 0.08);
+  }
+
+  /* ========= GED STATUS BAR ========= */
+  .ged-status {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.7rem 1.15rem;
+  }
+
+  .ged-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    flex-shrink: 0;
+  }
+
+  .ged-stat.right { text-align: right; }
+
+  .ged-stat-label {
+    font-size: 0.62rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
+  .ged-stat-value {
+    font-family: 'Fraunces', serif;
+    font-size: 1.2rem;
+    color: var(--gold);
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .ged-progress {
+    flex: 1;
+    height: 6px;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .ged-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--orange-primary), var(--orange-bright));
+    transition: width 0.5s ease;
+    box-shadow: 0 0 10px rgba(251, 146, 60, 0.5);
+  }
+
+  /* ========= GED OPTIONS PANEL ========= */
+  .ged-panel { text-align: center; }
+
+  .ged-prompt {
+    color: var(--text-soft);
+    font-size: 0.95rem;
+    margin-bottom: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .ged-prompt strong { color: var(--orange-bright); font-weight: 600; }
+
+  .formula-inline {
+    font-family: 'Fraunces', serif;
+    font-size: 1.15rem;
+    color: var(--text-main);
+    font-weight: 600;
+    background: rgba(234, 88, 12, 0.12);
+    padding: 0.1rem 0.5rem;
+    border-radius: 5px;
+    border: 1px solid var(--border-soft);
+  }
+
+  .ged-options {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.6rem;
+    max-width: 460px;
+    margin: 0 auto 0.9rem;
+  }
+
+  @media (max-width: 480px) {
+    .ged-options { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .ged-option {
+    background: rgba(234, 88, 12, 0.1);
+    border: 2px solid var(--border-strong);
+    border-radius: 11px;
+    padding: 0.85rem 0.5rem;
+    font-family: 'Fraunces', serif;
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: var(--gold);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .ged-option:hover:not(:disabled) {
+    background: rgba(234, 88, 12, 0.22);
+    border-color: var(--orange-light);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(234, 88, 12, 0.3);
+  }
+
+  .ged-option:disabled { cursor: not-allowed; }
+
+  .ged-option.correct {
+    background: rgba(74, 222, 128, 0.22);
+    border-color: var(--success);
+    color: var(--success);
+  }
+
+  .ged-option.wrong {
+    background: rgba(248, 113, 113, 0.22);
+    border-color: var(--error);
+    color: var(--error);
+  }
+
+  /* ========= MISSING / STATIC / FEEDBACK COEFFICIENTS (GED MODE) ========= */
+  .term.term-static {
+    background: rgba(0, 0, 0, 0.18);
+    padding: 0.3rem 0.5rem;
+  }
+
+  .term.term-correct {
+    background: rgba(74, 222, 128, 0.18);
+    border-color: var(--success);
+  }
+
+  .term.term-correct .coef-value { color: var(--success); }
+
+  .term.term-wrong {
+    background: rgba(248, 113, 113, 0.18);
+    border-color: var(--error);
+  }
+
+  .term.term-wrong .coef-value { color: var(--error); }
+
+  .coef-missing {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 1.4rem;
+    min-width: 1.4rem;
+    text-align: center;
+    color: var(--orange-bright);
+    background: rgba(234, 88, 12, 0.25);
+    border-radius: 6px;
+    padding: 0.05rem 0.55rem;
+    border: 1.5px dashed var(--orange-light);
+    animation: pulse-missing 1.4s ease-in-out infinite;
+  }
+
+  @keyframes pulse-missing {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.06); }
+  }
+
   /* ========= FOOTER ========= */
   footer {
     text-align: center;
@@ -660,18 +1025,56 @@
     <h1>Laboratorio 3D de <em>balanceo</em> de ecuaciones químicas</h1>
   </header>
 
-  <section class="card">
+  <div class="mode-tabs">
+    <button class="mode-tab active" data-mode="practice">📝  Modo libre</button>
+    <button class="mode-tab" data-mode="ged">🎯  Modo prueba GED</button>
+  </div>
+
+  <section class="card selector-card">
     <div class="selector-row">
       <span class="selector-label">Reacción</span>
-      <select id="equationSelect">
-        <option value="water">Formación de agua  ·  H₂ + O₂ → H₂O</option>
-        <option value="ammonia">Síntesis de amoniaco  ·  N₂ + H₂ → NH₃</option>
-        <option value="salt">Formación de sal de mesa  ·  Na + Cl₂ → NaCl</option>
-        <option value="iron">Oxidación del hierro (herrumbre)  ·  Fe + O₂ → Fe₂O₃</option>
-        <option value="combustion">Combustión del propano  ·  C₃H₈ + O₂ → CO₂ + H₂O</option>
-      </select>
+      <div class="custom-select" id="equationSelect" data-value="water">
+        <button type="button" class="custom-select-trigger" id="selectTrigger" aria-haspopup="listbox" aria-expanded="false">
+          <span class="selected-label" id="selectedLabel">Formación de agua  ·  H₂ + O₂ → H₂O</span>
+          <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </button>
+        <div class="custom-select-panel" id="selectPanel" role="listbox" hidden>
+          <div class="custom-optgroup">
+            <div class="custom-optgroup-label">Síntesis (combinación)</div>
+            <button type="button" class="custom-option selected" role="option" data-value="water">Formación de agua  ·  H₂ + O₂ → H₂O</button>
+            <button type="button" class="custom-option" role="option" data-value="salt">Formación de sal de mesa  ·  Na + Cl₂ → NaCl</button>
+            <button type="button" class="custom-option" role="option" data-value="ammonia">Síntesis de amoniaco  ·  N₂ + H₂ → NH₃</button>
+            <button type="button" class="custom-option" role="option" data-value="iron">Oxidación del hierro (herrumbre)  ·  Fe + O₂ → Fe₂O₃</button>
+          </div>
+          <div class="custom-optgroup">
+            <div class="custom-optgroup-label">Descomposición</div>
+            <button type="button" class="custom-option" role="option" data-value="peroxide">Agua oxigenada del botiquín  ·  H₂O₂ → H₂O + O₂</button>
+          </div>
+          <div class="custom-optgroup">
+            <div class="custom-optgroup-label">Combustión</div>
+            <button type="button" class="custom-option" role="option" data-value="methane">Combustión del metano (gas natural)  ·  CH₄ + O₂ → CO₂ + H₂O</button>
+            <button type="button" class="custom-option" role="option" data-value="combustion">Combustión del propano  ·  C₃H₈ + O₂ → CO₂ + H₂O</button>
+          </div>
+        </div>
+      </div>
     </div>
     <div class="equation-meta" id="equationMeta"></div>
+  </section>
+
+  <section class="card ged-status" id="gedStatus" hidden>
+    <div class="ged-stat">
+      <span class="ged-stat-label">Pregunta</span>
+      <span class="ged-stat-value"><span id="gedCurrent">1</span> / <span id="gedTotal">7</span></span>
+    </div>
+    <div class="ged-progress">
+      <div class="ged-progress-fill" id="gedProgress" style="width:0%"></div>
+    </div>
+    <div class="ged-stat right">
+      <span class="ged-stat-label">Aciertos</span>
+      <span class="ged-stat-value" id="gedScore">0</span>
+    </div>
   </section>
 
   <div class="main-grid">
@@ -695,11 +1098,17 @@
     </section>
   </div>
 
-  <div class="actions">
+  <div class="actions" id="practiceActions">
     <button class="btn btn-primary" id="checkBtn">✓  Verificar balanceo</button>
     <button class="btn btn-secondary" id="hintBtn">💡  Pista</button>
     <button class="btn btn-secondary" id="resetBtn">↺  Reiniciar</button>
   </div>
+
+  <section class="card ged-panel" id="gedPanel" hidden>
+    <div class="ged-prompt" id="gedPrompt"></div>
+    <div class="ged-options" id="gedOptions"></div>
+    <button class="btn btn-primary" id="gedNextBtn" hidden style="margin: 0 auto;">Próxima pregunta →</button>
+  </section>
 
   <div class="feedback" id="feedback"></div>
 
@@ -825,6 +1234,36 @@ const MOLECULES = {
       {e:'O', p:[1, 0, 0]}
     ],
     bonds: [{a:0, b:1, order:2}, {a:1, b:2, order:2}]
+  },
+  CH4: {
+    // Metano — geometría tetraédrica, C central con 4 H
+    atoms: [
+      {e:'C', p:[0, 0, 0]},
+      {e:'H', p:[0.58, 0.58, 0.58]},
+      {e:'H', p:[0.58, -0.58, -0.58]},
+      {e:'H', p:[-0.58, 0.58, -0.58]},
+      {e:'H', p:[-0.58, -0.58, 0.58]}
+    ],
+    bonds: [
+      {a:0, b:1, order:1},
+      {a:0, b:2, order:1},
+      {a:0, b:3, order:1},
+      {a:0, b:4, order:1}
+    ]
+  },
+  H2O2: {
+    // Agua oxigenada — H-O-O-H con torsión característica
+    atoms: [
+      {e:'O', p:[-0.55, 0, 0]},
+      {e:'O', p:[0.55, 0, 0]},
+      {e:'H', p:[-1.0, 0.55, 0.4]},
+      {e:'H', p:[1.0, 0.55, -0.4]}
+    ],
+    bonds: [
+      {a:0, b:1, order:1},
+      {a:0, b:2, order:1},
+      {a:1, b:3, order:1}
+    ]
   }
 };
 
@@ -883,6 +1322,33 @@ const EQUATIONS = {
       { mol: 'Fe2O3', label: ['Fe', '2', 'O', '3'], formulaUnit: {Fe:2, O:3} }
     ],
     edu: 'El hierro (Fe) es un metal — lo contamos como átomos sueltos. Pero el oxígeno del aire viene como <code>O₂</code> diatómico. Para producir un compuesto con número impar de oxígenos como Fe₂O₃ (3 oxígenos), tienes que <strong>multiplicar todo por 2</strong>. Por eso el coeficiente final del Fe₂O₃ es 2 y el del O₂ es 3.'
+  },
+  peroxide: {
+    title: 'Descomposición del agua oxigenada',
+    description: 'El agua oxigenada (H₂O₂) que tienes en el botiquín se descompone lentamente en agua y oxígeno gas — por eso burbujea cuando la pones en una herida (la enzima catalasa de tus células acelera la reacción).',
+    targets: { reactants: [2], products: [2, 1] },
+    reactants: [
+      { mol: 'H2O2', label: ['H', '2', 'O', '2'], formulaUnit: {H:2, O:2} }
+    ],
+    products: [
+      { mol: 'H2O', label: ['H', '2', 'O'], formulaUnit: {H:2, O:1} },
+      { mol: 'O2', label: ['O', '2'], formulaUnit: {O:2} }
+    ],
+    edu: 'Esta es una reacción de <strong>descomposición</strong>: una sola sustancia se rompe en dos productos diferentes. Es lo opuesto a una síntesis. Truco GED: balancea primero el elemento que aparece en MÁS sitios — aquí es el oxígeno, que está en agua y en O₂. Si pones 2 moléculas de H₂O₂ a la izquierda, tienes 4 H y 4 O para repartir entre los productos. Fíjate en el doble enlace O=O del oxígeno producido.'
+  },
+  methane: {
+    title: 'Combustión del metano',
+    description: 'El metano (CH₄) es el gas natural que llega a las estufas y calentadores de agua. Cuando arde con oxígeno, produce dióxido de carbono y vapor de agua. Esta es la ecuación más típica del GED.',
+    targets: { reactants: [1, 2], products: [1, 2] },
+    reactants: [
+      { mol: 'CH4', label: ['C', 'H', '4'], formulaUnit: {C:1, H:4} },
+      { mol: 'O2', label: ['O', '2'], formulaUnit: {O:2} }
+    ],
+    products: [
+      { mol: 'CO2', label: ['C', 'O', '2'], formulaUnit: {C:1, O:2} },
+      { mol: 'H2O', label: ['H', '2', 'O'], formulaUnit: {H:2, O:1} }
+    ],
+    edu: 'El metano (CH₄) tiene <strong>geometría tetraédrica</strong>: el carbono en el centro y los cuatro hidrógenos en las puntas de un tetraedro. Truco GED para combustiones: balancea primero el <strong>carbono</strong> (1 = 1), después el <strong>hidrógeno</strong> (4 = 4), y el <strong>oxígeno al final</strong> (2 + 2 = 4 oxígenos a la derecha → necesitas 2 O₂ a la izquierda). Esta ecuación es la versión más sencilla de combustión que aparece en el GED.'
   },
   combustion: {
     title: 'Combustión del propano',
@@ -949,6 +1415,13 @@ function resizeRenderer() {
   const h = canvas.clientHeight;
   renderer.setSize(w, h, false);
   camera.aspect = w / h;
+
+  // Aspect-aware camera: ensure scene horizontal extent of 18 always fits
+  const TARGET_HORIZONTAL = 18;
+  const fovRad = camera.fov * Math.PI / 180;
+  const requiredZ = TARGET_HORIZONTAL / (2 * camera.aspect * Math.tan(fovRad / 2));
+  camera.position.z = Math.max(requiredZ, 14);
+
   camera.updateProjectionMatrix();
 }
 
@@ -1034,7 +1507,7 @@ function rebuildScene(equationKey, coefficients) {
 
   const eq = EQUATIONS[equationKey];
 
-  const TOTAL_WIDTH = 14;
+  const TOTAL_WIDTH = 17;
   const ARROW_WIDTH = 1.6;
   const HALF = (TOTAL_WIDTH - ARROW_WIDTH) / 2;
 
@@ -1049,16 +1522,55 @@ function rebuildScene(equationKey, coefficients) {
 }
 
 function placeSide(items, coefs, xStart, xEnd) {
-  const total = xEnd - xStart;
-  const cellWidth = total / items.length;
+  const numItems = items.length;
+  const numPluses = numItems - 1;
+  const sideTotal = xEnd - xStart;
 
+  // Reserve explicit horizontal slot per "+" so it never crowds the molecules
+  const PLUS_SLOT = 1.8;
+  const totalCellWidth = sideTotal - numPluses * PLUS_SLOT;
+  const cellWidth = totalCellWidth / numItems;
+
+  let cursorX = xStart;
   items.forEach((item, idx) => {
-    const cellCenter = xStart + cellWidth * idx + cellWidth/2;
-    const count = coefs[idx];
-    const cluster = renderMoleculeCluster(item.mol, count);
+    const cellCenter = cursorX + cellWidth / 2;
+    const cluster = renderMoleculeCluster(item.mol, coefs[idx]);
     cluster.position.x = cellCenter;
     sceneRoot.add(cluster);
+    cursorX += cellWidth;
+
+    if (idx < numItems - 1) {
+      const plus = createPlusSign();
+      plus.position.set(cursorX + PLUS_SLOT / 2, 0, 0.6);
+      sceneRoot.add(plus);
+      cursorX += PLUS_SLOT;
+    }
   });
+}
+
+function createPlusSign() {
+  const group = new THREE.Group();
+  const mat = new THREE.MeshPhongMaterial({
+    color: 0xfdba74,
+    emissive: 0xea580c,
+    emissiveIntensity: 0.55,
+    shininess: 70
+  });
+
+  const horiz = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.1, 0.1, 0.9, 16),
+    mat
+  );
+  horiz.rotation.z = Math.PI / 2;
+  group.add(horiz);
+
+  const vert = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.1, 0.1, 0.9, 16),
+    mat
+  );
+  group.add(vert);
+
+  return group;
 }
 
 function renderMoleculeCluster(moleculeKey, count) {
@@ -1076,11 +1588,11 @@ function renderMoleculeCluster(moleculeKey, count) {
 
   // Scale based on count
   let scale;
-  if (count === 1)      scale = 1.2;
-  else if (count <= 2)  scale = 1.0;
-  else if (count <= 4)  scale = 0.78;
-  else if (count <= 6)  scale = 0.62;
-  else                  scale = 0.52;
+  if (count === 1)      scale = 1.0;
+  else if (count <= 2)  scale = 0.88;
+  else if (count <= 4)  scale = 0.72;
+  else if (count <= 6)  scale = 0.58;
+  else                  scale = 0.50;
 
   const spacingX = 2.6 * scale + 0.4;
   const spacingY = 2.0 * scale + 0.4;
@@ -1097,8 +1609,8 @@ function renderMoleculeCluster(moleculeKey, count) {
     mol.rotation.y = Math.random() * Math.PI * 2;
     mol.rotation.x = (Math.random() - 0.5) * 0.6;
     mol.userData.rotSpeed = {
-      y: 0.003 + Math.random() * 0.005,
-      x: (Math.random() - 0.5) * 0.002
+      y: 0.010 + Math.random() * 0.012,
+      x: (Math.random() - 0.5) * 0.005
     };
 
     cluster.add(mol);
@@ -1157,6 +1669,238 @@ function animate() {
 // ============================================
 let currentEquation = 'water';
 let coefficients = { reactants: [], products: [] };
+let mode = 'practice';      // 'practice' or 'ged'
+let gedSession = null;
+
+// ============================================
+//  GED MODE LOGIC
+// ============================================
+function initGedSession() {
+  const order = ['water', 'salt', 'ammonia', 'methane', 'peroxide', 'iron', 'combustion'];
+  return {
+    questions: order.map(key => generateQuestion(key)),
+    current: 0,
+    score: 0,
+    answered: false,
+    summary: false
+  };
+}
+
+function generateQuestion(equationKey) {
+  const eq = EQUATIONS[equationKey];
+  const all = [
+    ...eq.targets.reactants.map((c, i) => ({ side: 'reactants', idx: i, value: c })),
+    ...eq.targets.products.map((c, i) => ({ side: 'products', idx: i, value: c }))
+  ];
+  // Prefer hiding a coefficient > 1 (more pedagogical value)
+  const interesting = all.filter(c => c.value > 1);
+  const pool = interesting.length ? interesting : all;
+  const hidden = pool[Math.floor(Math.random() * pool.length)];
+  return {
+    equationKey,
+    hiddenSide: hidden.side,
+    hiddenIdx: hidden.idx,
+    correct: hidden.value,
+    options: generateOptions(hidden.value)
+  };
+}
+
+function generateOptions(correct) {
+  const set = new Set([correct]);
+  // Plausible distractors first, then fillers
+  const candidates = [
+    correct - 1, correct + 1, correct + 2, correct - 2,
+    1, 2, 3, 4, 5, 6
+  ];
+  for (const v of candidates) {
+    if (v >= 1 && v <= 9 && !set.has(v)) {
+      set.add(v);
+      if (set.size >= 4) break;
+    }
+  }
+  return [...set].sort((a, b) => a - b);
+}
+
+function setMode(newMode) {
+  mode = newMode;
+  document.querySelectorAll('.mode-tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.mode === mode);
+  });
+
+  const isGed = mode === 'ged';
+  customSelect.setDisabled(isGed);
+  document.getElementById('gedStatus').hidden = !isGed;
+  document.getElementById('gedPanel').hidden = !isGed;
+  document.getElementById('practiceActions').hidden = isGed;
+  document.getElementById('sceneCard').classList.remove('celebrating');
+  hideFeedback();
+
+  if (isGed) {
+    gedSession = initGedSession();
+    loadGedQuestion();
+  } else {
+    gedSession = null;
+    initEquation(currentEquation);
+  }
+}
+
+function loadGedQuestion() {
+  const q = gedSession.questions[gedSession.current];
+  currentEquation = q.equationKey;
+  const eq = EQUATIONS[q.equationKey];
+
+  // Set all coefficients to correct values, except the hidden one (zero = no molecules shown)
+  coefficients = {
+    reactants: [...eq.targets.reactants],
+    products: [...eq.targets.products]
+  };
+  coefficients[q.hiddenSide][q.hiddenIdx] = 0;
+
+  gedSession.answered = false;
+
+  document.getElementById('equationMeta').innerHTML =
+    `<strong>${eq.title}.</strong> ${eq.description}`;
+  document.getElementById('eduText').innerHTML = eq.edu;
+  customSelect.setValue(q.equationKey);
+  updateLegend();
+
+  hideFeedback();
+  document.getElementById('sceneCard').classList.remove('celebrating');
+  refresh();
+  renderGedPanel();
+  updateGedStatus();
+}
+
+function updateGedStatus() {
+  const total = gedSession.questions.length;
+  document.getElementById('gedCurrent').textContent = gedSession.current + 1;
+  document.getElementById('gedTotal').textContent = total;
+  document.getElementById('gedScore').textContent = gedSession.score;
+  const answeredCount = gedSession.current + (gedSession.answered ? 1 : 0);
+  document.getElementById('gedProgress').style.width = (answeredCount / total * 100) + '%';
+}
+
+function renderGedPanel() {
+  const q = gedSession.questions[gedSession.current];
+  const eq = EQUATIONS[q.equationKey];
+
+  const targetItem = q.hiddenSide === 'reactants'
+    ? eq.reactants[q.hiddenIdx]
+    : eq.products[q.hiddenIdx];
+  const formulaHTML = formatFormula(targetItem.label);
+
+  document.getElementById('gedPrompt').innerHTML =
+    `Para que la ecuación esté balanceada, <strong>¿qué coeficiente</strong> debe llevar <span class="formula-inline">${formulaHTML}</span>?`;
+
+  const optionsContainer = document.getElementById('gedOptions');
+  optionsContainer.innerHTML = '';
+  q.options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'ged-option';
+    btn.textContent = opt;
+    btn.dataset.value = opt;
+    btn.addEventListener('click', () => pickGedAnswer(opt));
+    optionsContainer.appendChild(btn);
+  });
+
+  document.getElementById('gedNextBtn').hidden = true;
+}
+
+function pickGedAnswer(answer) {
+  if (gedSession.answered) return;
+
+  const q = gedSession.questions[gedSession.current];
+  gedSession.answered = true;
+
+  coefficients[q.hiddenSide][q.hiddenIdx] = answer;
+  const correct = (answer === q.correct);
+  if (correct) gedSession.score++;
+
+  // Highlight options
+  document.querySelectorAll('.ged-option').forEach(btn => {
+    const v = parseInt(btn.dataset.value);
+    btn.disabled = true;
+    if (v === q.correct) btn.classList.add('correct');
+    else if (v === answer && !correct) btn.classList.add('wrong');
+  });
+
+  // Feedback message
+  const fb = document.getElementById('feedback');
+  if (correct) {
+    document.getElementById('sceneCard').classList.add('celebrating');
+    fb.className = 'feedback show success';
+    fb.innerHTML = `
+      <div class="feedback-title">¡Correcto! 🎉</div>
+      <div class="feedback-detail">Las dos partes de la ecuación tienen el mismo número de átomos.</div>
+    `;
+  } else {
+    fb.className = 'feedback show error';
+    fb.innerHTML = `
+      <div class="feedback-title">No es correcto. La respuesta era ${q.correct}.</div>
+      <div class="feedback-detail">Mira las barras de conteo: con ${answer}, los átomos quedan desequilibrados.</div>
+    `;
+  }
+
+  // Show next button
+  const nextBtn = document.getElementById('gedNextBtn');
+  nextBtn.textContent = (gedSession.current >= gedSession.questions.length - 1)
+    ? 'Ver resumen →'
+    : 'Próxima pregunta →';
+  nextBtn.hidden = false;
+
+  refresh();
+  updateGedStatus();
+}
+
+function advanceGed() {
+  if (!gedSession) return;
+
+  if (gedSession.summary) {
+    // Restart the session
+    gedSession = initGedSession();
+    loadGedQuestion();
+    return;
+  }
+
+  gedSession.current++;
+  if (gedSession.current >= gedSession.questions.length) {
+    showGedSummary();
+  } else {
+    loadGedQuestion();
+  }
+}
+
+function showGedSummary() {
+  gedSession.summary = true;
+  const total = gedSession.questions.length;
+  const score = gedSession.score;
+  const pct = Math.round((score / total) * 100);
+
+  let msg, emoji;
+  if (pct === 100)      { msg = '¡Perfecto! Dominas el balanceo de ecuaciones.';      emoji = '🏆'; }
+  else if (pct >= 80)   { msg = '¡Excelente! Estás listo para el GED.';                emoji = '⭐'; }
+  else if (pct >= 60)   { msg = 'Buen trabajo. Sigue practicando para afinar.';        emoji = '👍'; }
+  else                  { msg = 'Repasa los conceptos y vuelve a intentarlo.';         emoji = '📚'; }
+
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback show success';
+  fb.innerHTML = `
+    <div class="feedback-title">${emoji}  Sesión completada — ${score} / ${total} (${pct}%)</div>
+    <div class="feedback-detail">${msg}</div>
+  `;
+
+  document.getElementById('gedOptions').innerHTML = '';
+  document.getElementById('gedPrompt').innerHTML =
+    '<strong>Sesión terminada.</strong> ¿Quieres practicar otra ronda?';
+
+  const nextBtn = document.getElementById('gedNextBtn');
+  nextBtn.textContent = '↺  Empezar nueva ronda';
+  nextBtn.hidden = false;
+
+  document.getElementById('sceneCard').classList.add('celebrating');
+  // Mark progress as 100%
+  document.getElementById('gedProgress').style.width = '100%';
+}
 
 function initEquation(key) {
   currentEquation = key;
@@ -1258,15 +2002,39 @@ function renderEquationDisplay() {
 function termNode(side, idx, labelParts, coef) {
   const term = document.createElement('span');
   term.className = 'term';
-  term.innerHTML = `
-    <button class="coef-btn" data-action="dec" ${coef <= 1 ? 'disabled' : ''}>−</button>
-    <span class="coef-value">${coef}</span>
-    <button class="coef-btn" data-action="inc" ${coef >= 9 ? 'disabled' : ''}>+</button>
-    <span class="formula">${formatFormula(labelParts)}</span>
-  `;
-  const [decBtn, , incBtn] = term.querySelectorAll('button, .coef-value');
-  term.querySelector('[data-action="dec"]').addEventListener('click', () => changeCoef(side, idx, -1));
-  term.querySelector('[data-action="inc"]').addEventListener('click', () => changeCoef(side, idx, +1));
+
+  const isGed = mode === 'ged' && gedSession;
+  const q = isGed ? gedSession.questions[gedSession.current] : null;
+  const isThisHidden = isGed && q && q.hiddenSide === side && q.hiddenIdx === idx;
+
+  if (isThisHidden && !gedSession.answered) {
+    // Show ? placeholder
+    term.classList.add('term-static');
+    term.innerHTML = `
+      <span class="coef-missing">?</span>
+      <span class="formula">${formatFormula(labelParts)}</span>
+    `;
+  } else if (isGed) {
+    // Static coefficient (no buttons)
+    term.classList.add('term-static');
+    if (isThisHidden && gedSession.answered) {
+      term.classList.add(coef === q.correct ? 'term-correct' : 'term-wrong');
+    }
+    term.innerHTML = `
+      <span class="coef-value">${coef}</span>
+      <span class="formula">${formatFormula(labelParts)}</span>
+    `;
+  } else {
+    // Practice mode — full +/- controls
+    term.innerHTML = `
+      <button class="coef-btn" data-action="dec" ${coef <= 1 ? 'disabled' : ''}>−</button>
+      <span class="coef-value">${coef}</span>
+      <button class="coef-btn" data-action="inc" ${coef >= 9 ? 'disabled' : ''}>+</button>
+      <span class="formula">${formatFormula(labelParts)}</span>
+    `;
+    term.querySelector('[data-action="dec"]').addEventListener('click', () => changeCoef(side, idx, -1));
+    term.querySelector('[data-action="inc"]').addEventListener('click', () => changeCoef(side, idx, +1));
+  }
   return term;
 }
 
@@ -1424,20 +2192,64 @@ function formatFormulaText(parts) {
 
 function showHint() {
   const eq = EQUATIONS[currentEquation];
-  coefficients.reactants = [...eq.targets.reactants];
-  coefficients.products = [...eq.targets.products];
-  refresh();
+  const left = countAtoms('reactants');
+  const right = countAtoms('products');
+
+  // Compute imbalances per element
+  const allElements = new Set([...Object.keys(left), ...Object.keys(right)]);
+  const imbalances = [];
+  for (const el of allElements) {
+    const l = left[el] || 0;
+    const r = right[el] || 0;
+    if (l !== r) {
+      imbalances.push({ el, l, r, diff: Math.abs(l - r) });
+    }
+  }
 
   const fb = document.getElementById('feedback');
+
+  // Already balanced — let the student verify
+  if (imbalances.length === 0) {
+    fb.className = 'feedback show success';
+    fb.innerHTML = `
+      <div class="feedback-title">💡 Ya parece estar balanceada</div>
+      <div class="feedback-detail">Los átomos de cada elemento coinciden en ambos lados. Pulsa <strong>Verificar balanceo</strong> para confirmar.</div>
+    `;
+    return;
+  }
+
+  // Pedagogical strategies — NEVER reveal the exact coefficients
+  const STRATEGIES = {
+    water:      'Cada O₂ aporta 2 oxígenos y cada H₂ aporta 2 hidrógenos. Cada H₂O necesita 2 H y 1 O. ¿Cuántas moléculas de H₂O puedes formar con 1 O₂?',
+    salt:       'Cl₂ aporta 2 cloros pero NaCl solo tiene 1. Para gastar los 2 cloros del Cl₂, ¿cuántas NaCl necesitas formar?',
+    ammonia:    'Cada N₂ tiene 2 nitrógenos. Cada NH₃ tiene 1 nitrógeno y 3 hidrógenos. Empieza igualando el nitrógeno y después calcula los hidrógenos.',
+    iron:       'Fe₂O₃ tiene 3 oxígenos (impar). El O₂ aporta 2 (par). Truco clave: tendrás que duplicar el producto para que los oxígenos cuadren.',
+    peroxide:   'Una sola sustancia se rompe en dos. Empieza con 2 H₂O₂ y cuenta cuántos H y O tienes para repartir entre H₂O y O₂.',
+    methane:    'En combustión, sigue este orden: balancea primero el <strong>carbono</strong>, después el <strong>hidrógeno</strong>, y el <strong>oxígeno al final</strong>.',
+    combustion: 'En combustión, sigue este orden: balancea primero el <strong>carbono</strong> (3 C en propano → 3 CO₂), después el <strong>hidrógeno</strong> (8 H → 4 H₂O), y el <strong>oxígeno al final</strong>.'
+  };
+
+  // Sort imbalances by severity
+  imbalances.sort((a, b) => b.diff - a.diff);
+  const worst = imbalances[0];
+  const strategy = STRATEGIES[currentEquation] || 'Cuenta los átomos de cada elemento en ambos lados. Ajusta los coeficientes para que coincidan.';
+
+  // Build a guidance message — never the answer
+  let title, detail;
+  if (imbalances.length === 1) {
+    title = `💡 Casi lo tienes — falta ajustar el ${worst.el}`;
+    detail = `Tienes <strong>${worst.l}</strong> átomos de ${worst.el} a la izquierda y <strong>${worst.r}</strong> a la derecha. ${strategy}`;
+  } else {
+    title = `💡 Empieza por el ${worst.el}`;
+    detail = `Es el elemento más desequilibrado: <strong>${worst.l}</strong> a la izquierda contra <strong>${worst.r}</strong> a la derecha (también hay otros sin equilibrar). ${strategy}`;
+  }
+
   fb.className = 'feedback show success';
   fb.innerHTML = `
-    <div class="feedback-title">💡 Los coeficientes correctos están aplicados</div>
-    <div class="feedback-detail">Estudia las cantidades. ¿Por qué necesita exactamente estos números? Después intenta otra ecuación sin pista.</div>
+    <div class="feedback-title">${title}</div>
+    <div class="feedback-detail">${detail}</div>
   `;
-
-  setTimeout(() => {
-    document.getElementById('sceneCard').classList.add('celebrating');
-  }, 100);
+  // IMPORTANT: do NOT modify coefficients. The student has to think.
 }
 
 function reset() {
@@ -1451,15 +2263,88 @@ function hideFeedback() {
 }
 
 // ============================================
+//  CUSTOM DROPDOWN
+// ============================================
+const customSelect = {
+  el: null, trigger: null, panel: null, label: null,
+  value: 'water', disabled: false, onChange: null,
+
+  init() {
+    this.el = document.getElementById('equationSelect');
+    this.trigger = document.getElementById('selectTrigger');
+    this.panel = document.getElementById('selectPanel');
+    this.label = document.getElementById('selectedLabel');
+
+    this.trigger.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (this.disabled) return;
+      this.panel.hidden ? this.open() : this.close();
+    });
+
+    this.panel.addEventListener('click', (e) => e.stopPropagation());
+
+    this.panel.querySelectorAll('.custom-option').forEach(opt => {
+      opt.addEventListener('click', () => {
+        const v = opt.dataset.value;
+        this.setValue(v);
+        this.close();
+        if (this.onChange) this.onChange(v);
+      });
+    });
+
+    document.addEventListener('click', () => this.close());
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') this.close();
+    });
+  },
+
+  open() {
+    if (this.disabled) return;
+    this.panel.hidden = false;
+    this.el.classList.add('open');
+    this.trigger.setAttribute('aria-expanded', 'true');
+  },
+
+  close() {
+    this.panel.hidden = true;
+    this.el.classList.remove('open');
+    this.trigger.setAttribute('aria-expanded', 'false');
+  },
+
+  setValue(value) {
+    const opt = this.panel.querySelector(`[data-value="${value}"]`);
+    if (!opt) return;
+    this.value = value;
+    this.el.dataset.value = value;
+    this.panel.querySelectorAll('.custom-option').forEach(o =>
+      o.classList.toggle('selected', o === opt));
+    this.label.textContent = opt.textContent;
+  },
+
+  setDisabled(disabled) {
+    this.disabled = disabled;
+    this.el.classList.toggle('disabled', disabled);
+    if (disabled) this.close();
+  }
+};
+
+// ============================================
 //  EVENT WIRING
 // ============================================
-document.getElementById('equationSelect').addEventListener('change', e => {
-  initEquation(e.target.value);
-});
+customSelect.init();
+customSelect.onChange = (value) => {
+  if (mode === 'practice') initEquation(value);
+};
 
 document.getElementById('checkBtn').addEventListener('click', checkBalance);
 document.getElementById('hintBtn').addEventListener('click', showHint);
 document.getElementById('resetBtn').addEventListener('click', reset);
+
+document.querySelectorAll('.mode-tab').forEach(tab => {
+  tab.addEventListener('click', () => setMode(tab.dataset.mode));
+});
+
+document.getElementById('gedNextBtn').addEventListener('click', advanceGed);
 
 // ============================================
 //  INIT
