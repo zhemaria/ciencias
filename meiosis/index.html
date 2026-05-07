@@ -1047,7 +1047,7 @@ footer .author {
       <span><span class="live-dot"></span>VISUALIZACIÓN EN VIVO</span>
       <span id="stage-coordinates">FASE: INTERFASE · t = 0%</span>
       <span class="ploidy-chip" id="ploidy-chip"><span class="ploidy-label">2n</span><span class="ploidy-desc">DIPLOIDE</span></span>
-      <button class="shuffle-btn" id="shuffle-btn" title="Genera nuevos crossovers y orientaciones aleatorias">🎲 Nueva meiosis</button>
+      <button class="shuffle-btn" id="shuffle-btn" title="Genera una nueva meiosis con crossing-over y orientaciones distintas — los 4 gametos finales serán únicos">🎲 Otra combinación</button>
     </div>
 
     <div class="svg-container">
@@ -1269,7 +1269,7 @@ const PHASES = [
       'La orientación materno-paterno es completamente al azar.',
       'En humanos: 2²³ = más de 8 millones de combinaciones posibles.'
     ],
-    callout: '<strong>Segregación independiente.</strong> Pulsa "🎲 Nueva meiosis" para ver cómo cambia la orientación cada vez. En cada meiosis real, esta lotería ocurre de nuevo.'
+    callout: '<strong>Segregación independiente.</strong> Pulsa "🎲 Otra combinación" para ver cómo cambia la orientación cada vez. En cada meiosis real, esta lotería ocurre de nuevo.'
   },
   {
     id: 'anafaseI',
@@ -1346,7 +1346,7 @@ const PHASES = [
       'Las 4 células son haploides (n) y genéticamente distintas.',
       'En humanos: estas células son óvulos o espermatozoides.'
     ],
-    callout: '<strong>El milagro biológico.</strong> Las 4 células finales nunca son idénticas entre sí. Cada vez que pulses "🎲 Nueva meiosis", el resultado será diferente — exactamente como ocurre en tu cuerpo cada día.'
+    callout: '<strong>El milagro biológico.</strong> Las 4 células finales nunca son idénticas entre sí. Cada vez que pulses "🎲 Otra combinación", el resultado será diferente — exactamente como ocurre en tu cuerpo cada día.'
   }
 ];
 
@@ -2441,19 +2441,19 @@ function sceneTelofaseII(local) {
     const finalOp = (local - 0.85) / 0.15;
     html += `
       <g opacity="${finalOp}" transform="translate(400, 525)">
-        <rect x="-185" y="-22" width="370" height="44" rx="22"
+        <rect x="-210" y="-22" width="420" height="44" rx="22"
               fill="rgba(15, 41, 34, 0.92)" stroke="#34d399" stroke-width="1.5"
               filter="url(#glow)"/>
-        <text x="-148" y="0" font-family="JetBrains Mono, monospace" font-size="11"
+        <text x="-175" y="0" font-family="JetBrains Mono, monospace" font-size="11"
               font-weight="600" fill="#6ee7b7" text-anchor="start" dominant-baseline="central"
               letter-spacing="0.15em">✓</text>
-        <text x="-128" y="-1" font-family="Fraunces, serif" font-size="14"
+        <text x="-155" y="-1" font-family="Fraunces, serif" font-size="14"
               font-style="italic" font-weight="500" fill="#e5f4ee" text-anchor="start" dominant-baseline="central">
           4 gametos haploides
         </text>
-        <text x="40" y="-1" font-family="Fraunces, serif" font-style="italic" font-size="14"
+        <text x="20" y="-1" font-family="Fraunces, serif" font-style="italic" font-size="14"
               font-weight="600" fill="#6ee7b7" text-anchor="start" dominant-baseline="central">(n)</text>
-        <text x="68" y="0" font-family="Manrope, sans-serif" font-size="10"
+        <text x="50" y="0" font-family="Manrope, sans-serif" font-size="10"
               fill="#a8c8bc" text-anchor="start" dominant-baseline="central"
               letter-spacing="0.05em">— genéticamente únicos</text>
       </g>
