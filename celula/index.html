@@ -329,6 +329,94 @@ details.seccion-grande ul li, details.seccion-grande ol li {
 }
 .caja p:last-child { margin-bottom: 0; }
 
+/* ---------- Tarjeta interactiva (lanzador de mini-app) ---------- */
+.tarjeta-interactiva {
+  display: block;
+  text-decoration: none;
+  background: linear-gradient(135deg, #0a1f1a 0%, #073d2d 100%);
+  border: 2px solid var(--c-ciencias);
+  border-radius: 10px;
+  padding: 22px 24px;
+  margin: 22px 0;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.18s, box-shadow 0.18s, border-color 0.18s;
+  color: #e5f4ee;
+}
+.tarjeta-interactiva:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 28px rgba(15, 122, 92, 0.25);
+  border-color: #6ee7b7;
+}
+.tarjeta-interactiva::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 140px;
+  height: 100%;
+  background:
+    radial-gradient(circle at 70% 30%, rgba(110, 231, 183, 0.18) 0%, transparent 60%),
+    radial-gradient(circle at 90% 70%, rgba(244, 114, 182, 0.12) 0%, transparent 50%);
+  pointer-events: none;
+}
+.tarjeta-interactiva .ti-cabecera {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  position: relative;
+}
+.tarjeta-interactiva .ti-eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #6ee7b7;
+  font-weight: 700;
+}
+.tarjeta-interactiva .ti-icono {
+  font-size: 18px;
+}
+.tarjeta-interactiva h4 {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+  color: #f0fdf4;
+  letter-spacing: -0.01em;
+  position: relative;
+}
+.tarjeta-interactiva .ti-descripcion {
+  font-size: 14.5px;
+  line-height: 1.55;
+  color: #a8c8bc;
+  margin: 0 0 14px 0;
+  position: relative;
+}
+.tarjeta-interactiva .ti-descripcion strong { color: #6ee7b7; }
+.tarjeta-interactiva .ti-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #34d399;
+  color: #051410;
+  padding: 9px 18px;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  transition: background 0.15s;
+  position: relative;
+}
+.tarjeta-interactiva:hover .ti-cta {
+  background: #6ee7b7;
+}
+.tarjeta-interactiva .ti-cta .flecha {
+  transition: transform 0.15s;
+}
+.tarjeta-interactiva:hover .ti-cta .flecha {
+  transform: translateX(3px);
+}
+
 /* ---------- Tablas ---------- */
 .tabla {
   width: 100%;
@@ -614,6 +702,9 @@ footer.pie a:hover { text-decoration: underline; }
   details.seccion-grande .num-seccion { width: 26px; height: 26px; line-height: 26px; font-size: 12px; }
   .tabla { font-size: 13px; }
   .tabla th, .tabla td { padding: 8px 10px; }
+  .tarjeta-interactiva { padding: 18px 18px; }
+  .tarjeta-interactiva h4 { font-size: 17px; }
+  .tarjeta-interactiva .ti-descripcion { font-size: 14px; }
 }
 </style>
 </head>
@@ -1234,6 +1325,21 @@ footer.pie a:hover { text-decoration: underline; }
       <strong>Telofase:</strong> se forman dos núcleos nuevos, y la célula se divide en dos (citocinesis).
     </li>
   </ol>
+
+  <!-- ===== TARJETA INTERACTIVA: Mitosis en vivo ===== -->
+  <a class="tarjeta-interactiva" href="https://zhemaria.github.io/ciencias/mitosis/" target="_blank" rel="noopener">
+    <div class="ti-cabecera">
+      <span class="ti-icono">🧬</span>
+      <span class="ti-eyebrow">Recurso interactivo · Anímalo tú mismo</span>
+    </div>
+    <h4>La danza de la división celular</h4>
+    <p class="ti-descripcion">
+      Visualiza las <strong>6 fases de la mitosis</strong> en una animación que puedes pausar, adelantar y rebobinar.
+      Verás los cromosomas condensarse, alinearse en el ecuador, separarse hacia los polos y formar
+      dos células hijas idénticas a la madre. Incluye <strong>quiz de práctica tipo GED</strong>.
+    </p>
+    <span class="ti-cta">▶ Abrir el interactivo <span class="flecha">→</span></span>
+  </a>
 
   <div class="caja idea">
     <h4>📌 Para recordar las fases en orden</h4>
