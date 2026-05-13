@@ -1,1 +1,1356 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Curvas de solubilidad — GEDparaHispanos</title>
+<style>
+  :root {
+    --c-q: #c2410c;
+    --c-q-dark: #7c2d12;
+    --c-q-mid: #ea580c;
+    --c-q-soft: #fb923c;
+    --c-q-bg: #fff7ed;
+    --c-q-bg2: #ffedd5;
+    --c-q-border: #fed7aa;
+    --c-text: #1f2937;
+    --c-muted: #6b7280;
+    --c-white: #ffffff;
+    --c-insat: #059669;
+    --c-insat-bg: #d1fae5;
+    --c-satur: #ca8a04;
+    --c-satur-bg: #fef3c7;
+    --c-sobre: #dc2626;
+    --c-sobre-bg: #fee2e2;
+    --c-correct: #059669;
+    --c-correct-bg: #d1fae5;
+    --c-wrong: #dc2626;
+    --c-wrong-bg: #fee2e2;
+  }
 
+  * { box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    line-height: 1.6;
+    color: var(--c-text);
+    background: var(--c-q-bg);
+    margin: 0;
+    padding: 20px 12px 60px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container { max-width: 980px; margin: 0 auto; }
+
+  h1, h2, h3, h4 { font-family: Georgia, "Times New Roman", serif; color: var(--c-q-dark); }
+  h1 { font-size: 2em; margin: 0 0 8px; line-height: 1.2; }
+  h2 { font-size: 1.4em; margin: 0; }
+  h3 { font-size: 1.15em; margin: 24px 0 10px; color: var(--c-q); }
+  h4 { font-size: 1em; margin: 18px 0 8px; color: var(--c-q-dark); }
+
+  .header {
+    background: var(--c-white);
+    border-left: 6px solid var(--c-q);
+    padding: 22px 26px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(124, 45, 18, 0.08);
+    margin-bottom: 18px;
+  }
+  .header .subt {
+    font-style: italic;
+    color: var(--c-muted);
+    font-size: 1.05em;
+    margin: 0 0 12px;
+  }
+  .header .intro { margin: 0; font-size: 1.02em; }
+
+  .controles {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .btn-control {
+    background: var(--c-q);
+    color: var(--c-white);
+    border: none;
+    padding: 9px 18px;
+    border-radius: 6px;
+    font-size: 0.92em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .btn-control:hover { background: var(--c-q-dark); }
+  .btn-control.alt { background: var(--c-white); color: var(--c-q-dark); border: 2px solid var(--c-q); }
+  .btn-control.alt:hover { background: var(--c-q-bg2); }
+
+  details.seccion-grande {
+    background: var(--c-white);
+    border: 2px solid var(--c-q-border);
+    border-radius: 10px;
+    margin-bottom: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(124, 45, 18, 0.05);
+  }
+  details.seccion-grande[open] { border-color: var(--c-q-soft); }
+  details.seccion-grande > summary {
+    background: var(--c-q-bg2);
+    padding: 16px 22px 16px 18px;
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-family: Georgia, serif;
+    font-size: 1.15em;
+    font-weight: 700;
+    color: var(--c-q-dark);
+    user-select: none;
+    transition: background 0.15s;
+  }
+  details.seccion-grande > summary:hover { background: var(--c-q-border); }
+  details.seccion-grande > summary::-webkit-details-marker { display: none; }
+  details.seccion-grande > summary::marker { display: none; }
+  details.seccion-grande > summary::after {
+    content: "▾";
+    margin-left: auto;
+    color: var(--c-q);
+    font-size: 0.9em;
+    transition: transform 0.2s;
+  }
+  details.seccion-grande[open] > summary::after { transform: rotate(180deg); }
+
+  .num-circle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    background: var(--c-q);
+    color: var(--c-white);
+    border-radius: 50%;
+    font-family: Georgia, serif;
+    font-weight: bold;
+    font-size: 1.05em;
+    flex-shrink: 0;
+  }
+
+  .seccion-cuerpo { padding: 18px 26px 24px; }
+
+  .destacado {
+    background: var(--c-q-bg2);
+    border-left: 4px solid var(--c-q);
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin: 14px 0;
+  }
+  .destacado p { margin: 4px 0; }
+
+  /* Gráfica interactiva */
+  .grafica-wrap {
+    background: var(--c-white);
+    border-radius: 8px;
+    padding: 12px;
+    border: 1px solid var(--c-q-border);
+    position: relative;
+  }
+  canvas.grafica {
+    width: 100%;
+    height: auto;
+    display: block;
+    cursor: crosshair;
+    touch-action: none;
+  }
+  .lectura {
+    margin-top: 10px;
+    padding: 10px 14px;
+    background: var(--c-q-bg2);
+    border-radius: 6px;
+    font-size: 0.95em;
+    min-height: 22px;
+    font-family: "Courier New", monospace;
+    color: var(--c-q-dark);
+  }
+  .toggles {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+  }
+  .toggle-sustancia {
+    border: 2px solid;
+    background: var(--c-white);
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.88em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: inherit;
+    user-select: none;
+  }
+  .toggle-sustancia.off { opacity: 0.35; }
+  .toggle-sustancia:hover { transform: translateY(-1px); }
+
+  /* Tres zonas */
+  .zonas-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+    margin: 16px 0;
+  }
+  @media (min-width: 700px) {
+    .zonas-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  .zona-card {
+    padding: 16px;
+    border-radius: 10px;
+    border: 2px solid;
+  }
+  .zona-card h4 { margin: 0 0 8px; font-size: 1.05em; }
+  .zona-card .icono {
+    font-size: 1.8em;
+    margin-bottom: 4px;
+    display: block;
+  }
+  .zona-card p { margin: 6px 0; font-size: 0.94em; }
+  .zona-insat { background: var(--c-insat-bg); border-color: var(--c-insat); }
+  .zona-insat h4, .zona-insat .icono { color: var(--c-insat); }
+  .zona-satur { background: var(--c-satur-bg); border-color: var(--c-satur); }
+  .zona-satur h4, .zona-satur .icono { color: var(--c-satur); }
+  .zona-sobre { background: var(--c-sobre-bg); border-color: var(--c-sobre); }
+  .zona-sobre h4, .zona-sobre .icono { color: var(--c-sobre); }
+
+  .zona-visual {
+    background: var(--c-white);
+    border-radius: 8px;
+    padding: 14px;
+    margin-top: 14px;
+    border: 1px solid var(--c-q-border);
+  }
+
+  /* Detector */
+  .detector {
+    background: var(--c-q-bg2);
+    border-radius: 10px;
+    padding: 18px;
+    margin: 14px 0;
+  }
+  .det-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+  @media (min-width: 760px) {
+    .det-grid { grid-template-columns: 1fr 1fr; }
+  }
+  .det-controles { display: flex; flex-direction: column; gap: 14px; }
+  .det-grupo {
+    background: var(--c-white);
+    padding: 12px 14px;
+    border-radius: 8px;
+  }
+  .det-grupo .titulo-grupo {
+    font-weight: 700;
+    color: var(--c-q-dark);
+    font-size: 0.95em;
+    margin-bottom: 8px;
+  }
+  .det-sustancias {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .det-sust-btn {
+    border: 2px solid var(--c-q-border);
+    background: var(--c-white);
+    padding: 6px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.88em;
+    font-weight: 600;
+    color: var(--c-q-dark);
+    font-family: inherit;
+    transition: all 0.15s;
+  }
+  .det-sust-btn:hover { background: var(--c-q-bg2); }
+  .det-sust-btn.activa { background: var(--c-q); color: var(--c-white); border-color: var(--c-q); }
+
+  .slider-row { display: flex; align-items: center; gap: 12px; }
+  .slider-row input[type=range] {
+    flex: 1;
+    accent-color: var(--c-q);
+  }
+  .slider-row .valor {
+    min-width: 70px;
+    text-align: right;
+    font-family: "Courier New", monospace;
+    font-weight: 700;
+    color: var(--c-q-dark);
+    font-size: 1.05em;
+  }
+
+  .det-resultado {
+    background: var(--c-white);
+    padding: 14px;
+    border-radius: 8px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 240px;
+  }
+  .det-clasif {
+    font-family: Georgia, serif;
+    font-size: 1.5em;
+    font-weight: 700;
+    margin: 8px 0;
+  }
+  .det-explicacion {
+    font-size: 0.95em;
+    margin: 8px 0;
+    line-height: 1.5;
+  }
+  .det-datos {
+    font-family: "Courier New", monospace;
+    background: var(--c-q-bg);
+    padding: 10px;
+    border-radius: 6px;
+    margin-top: 10px;
+    font-size: 0.9em;
+    text-align: left;
+  }
+
+  /* Quiz */
+  .quiz-q {
+    background: var(--c-white);
+    border: 2px solid var(--c-q-border);
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 14px;
+  }
+  .quiz-q .pregunta {
+    font-weight: 700;
+    margin-bottom: 12px;
+    color: var(--c-q-dark);
+  }
+  .quiz-q .num {
+    display: inline-block;
+    background: var(--c-q);
+    color: var(--c-white);
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.85em;
+    margin-right: 8px;
+    font-family: Georgia, serif;
+  }
+  .opciones { display: flex; flex-direction: column; gap: 6px; }
+  .opcion {
+    padding: 10px 14px;
+    border: 2px solid var(--c-q-border);
+    border-radius: 6px;
+    cursor: pointer;
+    background: var(--c-white);
+    transition: all 0.15s;
+    font-family: inherit;
+    font-size: 0.96em;
+    text-align: left;
+    color: var(--c-text);
+  }
+  .opcion:hover { background: var(--c-q-bg); border-color: var(--c-q-soft); }
+  .opcion.elegida { border-color: var(--c-q); background: var(--c-q-bg2); }
+  .opcion.correcta { background: var(--c-correct-bg); border-color: var(--c-correct); color: var(--c-correct); font-weight: 700; }
+  .opcion.incorrecta { background: var(--c-wrong-bg); border-color: var(--c-wrong); color: var(--c-wrong); }
+  .opcion.bloqueada { cursor: default; }
+  .feedback {
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: 6px;
+    font-size: 0.93em;
+    display: none;
+  }
+  .feedback.mostrar { display: block; }
+  .feedback.bien { background: var(--c-correct-bg); color: var(--c-correct); border-left: 4px solid var(--c-correct); }
+  .feedback.mal { background: var(--c-wrong-bg); color: var(--c-wrong); border-left: 4px solid var(--c-wrong); }
+
+  .quiz-resultado {
+    text-align: center;
+    padding: 20px;
+    background: var(--c-q-bg2);
+    border-radius: 10px;
+    margin-top: 14px;
+    display: none;
+  }
+  .quiz-resultado.mostrar { display: block; }
+  .quiz-resultado .score {
+    font-family: Georgia, serif;
+    font-size: 2em;
+    color: var(--c-q-dark);
+    font-weight: 700;
+  }
+
+  .ref-list { padding-left: 22px; }
+  .ref-list li { margin-bottom: 8px; font-size: 0.94em; }
+
+  .footer {
+    text-align: center;
+    margin-top: 30px;
+    padding: 16px;
+    color: var(--c-muted);
+    font-size: 0.88em;
+    font-style: italic;
+  }
+
+  .badge {
+    display: inline-block;
+    background: var(--c-q);
+    color: var(--c-white);
+    padding: 2px 10px;
+    border-radius: 12px;
+    font-size: 0.78em;
+    font-weight: 700;
+    margin-right: 6px;
+    vertical-align: middle;
+  }
+
+  table.datos {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 0.92em;
+  }
+  table.datos th, table.datos td {
+    border: 1px solid var(--c-q-border);
+    padding: 8px 10px;
+    text-align: center;
+  }
+  table.datos th {
+    background: var(--c-q-bg2);
+    color: var(--c-q-dark);
+    font-family: Georgia, serif;
+  }
+  table.datos td:first-child {
+    background: var(--c-q-bg);
+    font-weight: 700;
+    text-align: left;
+  }
+
+  .nota-pequena {
+    font-size: 0.85em;
+    color: var(--c-muted);
+    font-style: italic;
+    margin-top: 6px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header class="header">
+    <h1>Curvas de solubilidad</h1>
+    <p class="subt">Cómo la temperatura cambia cuánto soluto se puede disolver</p>
+    <p class="intro">Una <strong>curva de solubilidad</strong> es una gráfica en el plano X-Y que muestra la <strong>cantidad máxima de soluto</strong> (en gramos) que se puede disolver en <strong>100 g de agua</strong> a distintas temperaturas. La línea misma representa la frontera de la <strong>saturación</strong>: a un lado tu solución todavía puede disolver más; al otro, ya no puede.</p>
+  </header>
+
+  <div class="controles">
+    <button class="btn-control" id="btn-abrir">Abrir todo</button>
+    <button class="btn-control alt" id="btn-cerrar">Cerrar todo</button>
+  </div>
+
+  <!-- SECCIÓN 1 -->
+  <details class="seccion-grande" open>
+    <summary><span class="num-circle">1</span><span>¿Qué es una curva de solubilidad?</span></summary>
+    <div class="seccion-cuerpo">
+      <p>La <strong>solubilidad</strong> de una sustancia es la <em>máxima cantidad</em> que puede disolverse en una cantidad fija de agua a una temperatura determinada. Esa cantidad cambia con la temperatura, y por eso la dibujamos como una curva.</p>
+
+      <h3>Cómo se lee la gráfica</h3>
+      <div class="destacado">
+        <p><strong>Eje X (horizontal):</strong> temperatura, generalmente de 0 °C a 100 °C.</p>
+        <p><strong>Eje Y (vertical):</strong> solubilidad, en <em>gramos de soluto por cada 100 g de agua</em>.</p>
+        <p><strong>La línea curva:</strong> indica la <em>saturación</em>. Para cada temperatura, te dice exactamente cuántos gramos caben antes de que el agua diga "ya no más".</p>
+      </div>
+
+      <h3>Tres comportamientos típicos</h3>
+      <ul>
+        <li><strong>Sólidos comunes (KNO₃, NaNO₃, KCl):</strong> al subir la temperatura, se disuelven mucho más. La curva sube fuerte.</li>
+        <li><strong>Sal de mesa (NaCl):</strong> la temperatura casi no afecta. La curva es casi una línea horizontal.</li>
+        <li><strong>Casos raros (Ce₂(SO₄)₃):</strong> al subir la temperatura, se disuelve <em>menos</em>. La curva <em>baja</em>.</li>
+      </ul>
+
+      <p class="nota-pequena">Para los gases ocurre al revés que para la mayoría de sólidos: al subir la temperatura, los gases se disuelven menos en agua. Por eso una bebida fría retiene más CO₂ que una caliente.</p>
+    </div>
+  </details>
+
+  <!-- SECCIÓN 2 -->
+  <details class="seccion-grande" open>
+    <summary><span class="num-circle">2</span><span>Gráfica interactiva</span></summary>
+    <div class="seccion-cuerpo">
+      <p>Pasa el cursor (o toca con el dedo) sobre la gráfica para leer cualquier punto. Toca los botones de abajo para mostrar u ocultar cada sustancia.</p>
+
+      <div class="grafica-wrap">
+        <canvas class="grafica" id="canvas-principal" width="900" height="520" aria-label="Gráfica interactiva de curvas de solubilidad"></canvas>
+        <div class="lectura" id="lectura-principal">Mueve el cursor sobre la gráfica para leer temperatura y solubilidad.</div>
+        <div class="toggles" id="toggles-principal"></div>
+      </div>
+
+      <h3>Tabla de valores (g de soluto / 100 g de agua)</h3>
+      <div style="overflow-x:auto">
+        <table class="datos">
+          <thead>
+            <tr>
+              <th>Sustancia</th>
+              <th>0 °C</th>
+              <th>20 °C</th>
+              <th>40 °C</th>
+              <th>60 °C</th>
+              <th>80 °C</th>
+              <th>100 °C</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>KNO₃</td><td>13</td><td>32</td><td>64</td><td>110</td><td>169</td><td>246</td></tr>
+            <tr><td>NaNO₃</td><td>73</td><td>88</td><td>105</td><td>124</td><td>148</td><td>180</td></tr>
+            <tr><td>K₂CrO₄</td><td>55</td><td>63</td><td>70</td><td>76</td><td>81</td><td>86</td></tr>
+            <tr><td>KCl</td><td>28</td><td>34</td><td>40</td><td>46</td><td>51</td><td>56</td></tr>
+            <tr><td>NaCl</td><td>35,7</td><td>35,9</td><td>36,4</td><td>37,1</td><td>38,0</td><td>39,2</td></tr>
+            <tr><td>Ce₂(SO₄)₃</td><td>20</td><td>10</td><td>6</td><td>4</td><td>3</td><td>2</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </details>
+
+  <!-- SECCIÓN 3 -->
+  <details class="seccion-grande" open>
+    <summary><span class="num-circle">3</span><span>Las tres zonas: insaturada, saturada y sobresaturada</span></summary>
+    <div class="seccion-cuerpo">
+      <p>La curva divide el plano en tres regiones. Cada región describe el <strong>estado</strong> de la solución según cuánto soluto pusiste:</p>
+
+      <div class="zonas-grid">
+        <div class="zona-card zona-insat">
+          <span class="icono">↓</span>
+          <h4>Debajo de la curva</h4>
+          <p><strong>Insaturada</strong></p>
+          <p>Todavía cabe más soluto. Si añades más, se disolverá sin problema.</p>
+        </div>
+        <div class="zona-card zona-satur">
+          <span class="icono">●</span>
+          <h4>Sobre la curva (en la línea)</h4>
+          <p><strong>Saturada</strong></p>
+          <p>Has llegado al límite. Cualquier gramo más se irá al fondo sin disolverse.</p>
+        </div>
+        <div class="zona-card zona-sobre">
+          <span class="icono">↑</span>
+          <h4>Encima de la curva</h4>
+          <p><strong>Sobresaturada</strong></p>
+          <p>Hay más soluto del que cabe normalmente. Es un estado <em>inestable</em>: al menor movimiento o cristal, el exceso precipita.</p>
+        </div>
+      </div>
+
+      <div class="zona-visual">
+        <canvas id="canvas-zonas" width="900" height="380" aria-label="Visualización de las tres zonas de una curva de solubilidad"></canvas>
+        <p class="nota-pequena">Las tres zonas representadas sobre la curva de KNO₃. La franja verde es donde la solución es <strong>insaturada</strong>; la línea dorada es <strong>saturada</strong>; la franja roja es <strong>sobresaturada</strong>.</p>
+      </div>
+
+      <h3>¿Cómo se logra una solución sobresaturada?</h3>
+      <p>Calientas el agua, disuelves <em>mucho</em> soluto (más de lo que cabría en frío), y luego enfrías la solución <em>con mucho cuidado</em>. Si no la mueves ni le caen partículas, el exceso queda disuelto temporalmente. Es como ponerle a un autobús más pasajeros de los que aguanta: si nadie se mueve, todos siguen ahí, pero al primer empujón sale gente.</p>
+    </div>
+  </details>
+
+  <!-- SECCIÓN 4 -->
+  <details class="seccion-grande" open>
+    <summary><span class="num-circle">4</span><span>Detector de soluciones (interactivo)</span></summary>
+    <div class="seccion-cuerpo">
+      <p>Elige una sustancia, ajusta la temperatura y los gramos de soluto en 100 g de agua. El detector te dice si tu solución es <strong>insaturada</strong>, <strong>saturada</strong> o <strong>sobresaturada</strong>.</p>
+
+      <div class="detector">
+        <div class="det-grid">
+          <div class="det-controles">
+
+            <div class="det-grupo">
+              <div class="titulo-grupo">Sustancia</div>
+              <div class="det-sustancias" id="det-sustancias"></div>
+            </div>
+
+            <div class="det-grupo">
+              <div class="titulo-grupo">Temperatura</div>
+              <div class="slider-row">
+                <input type="range" id="det-temp" min="0" max="100" step="1" value="40">
+                <div class="valor" id="det-temp-val">40 °C</div>
+              </div>
+            </div>
+
+            <div class="det-grupo">
+              <div class="titulo-grupo">Gramos de soluto (en 100 g de agua)</div>
+              <div class="slider-row">
+                <input type="range" id="det-gramos" min="0" max="250" step="1" value="50">
+                <div class="valor" id="det-gramos-val">50 g</div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="det-resultado">
+            <canvas id="canvas-detector" width="400" height="260" aria-label="Gráfica del detector mostrando el punto de la solución"></canvas>
+            <div class="det-clasif" id="det-clasif">—</div>
+            <div class="det-explicacion" id="det-explicacion">Ajusta los controles para clasificar tu solución.</div>
+            <div class="det-datos" id="det-datos"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- SECCIÓN 5 -->
+  <details class="seccion-grande" open>
+    <summary><span class="num-circle">5</span><span>Practica con el quiz</span></summary>
+    <div class="seccion-cuerpo">
+      <p>Siete preguntas tipo GED. Te dejará pensar tranquilo y al final te muestra tu puntuación.</p>
+
+      <div id="quiz"></div>
+
+      <button class="btn-control" id="btn-revisar" style="margin-top: 10px;">Revisar respuestas</button>
+      <button class="btn-control alt" id="btn-reiniciar" style="margin-top: 10px;">Volver a empezar</button>
+
+      <div class="quiz-resultado" id="quiz-resultado">
+        <div class="score" id="quiz-score">—</div>
+        <div id="quiz-msg"></div>
+      </div>
+    </div>
+  </details>
+
+  <!-- REFERENCIAS -->
+  <details class="seccion-grande" open>
+    <summary><span class="num-circle">6</span><span>Referencias y créditos</span></summary>
+    <div class="seccion-cuerpo">
+      <h3>Conceptos clave</h3>
+      <ul>
+        <li><strong>Solubilidad:</strong> cantidad máxima de soluto que puede disolverse en una cantidad dada de disolvente a una temperatura específica.</li>
+        <li><strong>Solución insaturada:</strong> contiene menos soluto del máximo posible. Puede disolver más.</li>
+        <li><strong>Solución saturada:</strong> contiene exactamente la cantidad máxima de soluto que se puede disolver a esa temperatura.</li>
+        <li><strong>Solución sobresaturada:</strong> contiene más soluto del que normalmente se podría disolver. Es inestable.</li>
+      </ul>
+
+      <h3>Estándares GED Ciencias relacionados</h3>
+      <ul>
+        <li><strong>SP.1.b</strong> — Símbolos, términos y notaciones científicas (lectura de gráficas).</li>
+        <li><strong>SP.3</strong> — Razonamiento a partir de datos y evidencia (interpretar tablas y gráficas).</li>
+        <li><strong>P.c.1</strong> — Interacciones físicas y químicas de la materia (soluciones, disolución).</li>
+      </ul>
+
+      <p class="nota-pequena">Los valores de solubilidad usados son aproximaciones didácticas tomadas de tablas estándar de química general. Los valores reales pueden variar ligeramente según la fuente.</p>
+    </div>
+  </details>
+
+  <div class="footer">
+    Material educativo libre · Prof. José M. Fernández (Zhema) · GEDparaHispanos.com<br>
+    Diseñado para estudiantes hispanohablantes del programa GED · Truman College (CCC)
+  </div>
+
+</div>
+
+<script>
+(function() {
+  'use strict';
+
+  // ============================================================
+  // DATOS DE SUSTANCIAS
+  // ============================================================
+  const sustancias = {
+    'KNO₃': {
+      color: '#dc2626',
+      nombre: 'Nitrato de potasio',
+      datos: [[0,13],[10,21],[20,32],[30,46],[40,64],[50,86],[60,110],[70,138],[80,169],[90,205],[100,246]],
+      nota: 'Aumenta MUCHO con la temperatura'
+    },
+    'NaNO₃': {
+      color: '#7c3aed',
+      nombre: 'Nitrato de sodio',
+      datos: [[0,73],[10,80],[20,88],[30,96],[40,105],[50,114],[60,124],[70,136],[80,148],[90,163],[100,180]],
+      nota: 'Aumenta bastante con la temperatura'
+    },
+    'K₂CrO₄': {
+      color: '#ca8a04',
+      nombre: 'Cromato de potasio',
+      datos: [[0,55],[10,59],[20,63],[30,66],[40,70],[50,73],[60,76],[70,79],[80,81],[90,84],[100,86]],
+      nota: 'Aumenta lentamente'
+    },
+    'KCl': {
+      color: '#0891b2',
+      nombre: 'Cloruro de potasio',
+      datos: [[0,28],[10,31],[20,34],[30,37],[40,40],[50,43],[60,46],[70,49],[80,51],[90,54],[100,56]],
+      nota: 'Aumenta moderadamente'
+    },
+    'NaCl': {
+      color: '#1e40af',
+      nombre: 'Cloruro de sodio (sal de mesa)',
+      datos: [[0,35.7],[10,35.8],[20,35.9],[30,36.1],[40,36.4],[50,36.7],[60,37.1],[70,37.5],[80,38.0],[90,38.5],[100,39.2]],
+      nota: 'Casi NO cambia con la temperatura'
+    },
+    'Ce₂(SO₄)₃': {
+      color: '#be185d',
+      nombre: 'Sulfato de cerio',
+      datos: [[0,20],[10,14],[20,10],[30,7.5],[40,6],[50,5],[60,4],[70,3.5],[80,3],[90,2.5],[100,2]],
+      nota: 'DISMINUYE con la temperatura (caso raro)'
+    }
+  };
+
+  // Interpolación lineal: solubilidad a temperatura t
+  function solubilidadEn(sustKey, t) {
+    const datos = sustancias[sustKey].datos;
+    if (t <= datos[0][0]) return datos[0][1];
+    if (t >= datos[datos.length-1][0]) return datos[datos.length-1][1];
+    for (let i = 0; i < datos.length - 1; i++) {
+      if (t >= datos[i][0] && t <= datos[i+1][0]) {
+        const x1 = datos[i][0], y1 = datos[i][1];
+        const x2 = datos[i+1][0], y2 = datos[i+1][1];
+        return y1 + (y2 - y1) * (t - x1) / (x2 - x1);
+      }
+    }
+    return 0;
+  }
+
+  // ============================================================
+  // GRÁFICA PRINCIPAL
+  // ============================================================
+  const canvas = document.getElementById('canvas-principal');
+  const ctx = canvas.getContext('2d');
+  const lectura = document.getElementById('lectura-principal');
+  const togglesDiv = document.getElementById('toggles-principal');
+  const activas = {};
+  Object.keys(sustancias).forEach(k => activas[k] = true);
+
+  let hover = null;
+  const margen = { l: 70, r: 35, t: 30, b: 55 };
+  const xMax = 100, yMax = 250;
+
+  function ajustarCanvas(cv) {
+    const ratio = window.devicePixelRatio || 1;
+    const rect = cv.getBoundingClientRect();
+    cv.width = rect.width * ratio;
+    cv.height = (rect.width * (520 / 900)) * ratio;
+    cv.style.height = (rect.width * (520 / 900)) + 'px';
+    cv.getContext('2d').setTransform(ratio, 0, 0, ratio, 0, 0);
+    return { w: rect.width, h: rect.width * (520 / 900) };
+  }
+
+  function dibujarGrafica() {
+    const dim = ajustarCanvas(canvas);
+    const W = dim.w, H = dim.h;
+    const gw = W - margen.l - margen.r;
+    const gh = H - margen.t - margen.b;
+    const x = t => margen.l + (t/xMax) * gw;
+    const y = s => margen.t + gh - Math.min(s, yMax)/yMax * gh;
+
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, W, H);
+
+    // Grid
+    ctx.strokeStyle = '#fed7aa';
+    ctx.lineWidth = 1;
+    for (let t = 0; t <= 100; t += 10) {
+      ctx.beginPath(); ctx.moveTo(x(t), margen.t); ctx.lineTo(x(t), margen.t + gh); ctx.stroke();
+    }
+    for (let s = 0; s <= 250; s += 25) {
+      ctx.beginPath(); ctx.moveTo(margen.l, y(s)); ctx.lineTo(margen.l + gw, y(s)); ctx.stroke();
+    }
+
+    // Ejes
+    ctx.strokeStyle = '#7c2d12';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(margen.l, margen.t);
+    ctx.lineTo(margen.l, margen.t + gh);
+    ctx.lineTo(margen.l + gw, margen.t + gh);
+    ctx.stroke();
+
+    // Etiquetas eje X
+    ctx.fillStyle = '#7c2d12';
+    ctx.font = '12px sans-serif';
+    ctx.textAlign = 'center';
+    for (let t = 0; t <= 100; t += 20) {
+      ctx.fillText(t + '°', x(t), margen.t + gh + 16);
+    }
+    // Etiquetas eje Y
+    ctx.textAlign = 'right';
+    for (let s = 0; s <= 250; s += 25) {
+      ctx.fillText(s, margen.l - 6, y(s) + 4);
+    }
+
+    // Títulos de ejes
+    ctx.save();
+    ctx.translate(18, margen.t + gh/2);
+    ctx.rotate(-Math.PI/2);
+    ctx.textAlign = 'center';
+    ctx.font = 'bold 13px Georgia';
+    ctx.fillText('Solubilidad (g / 100 g agua)', 0, 0);
+    ctx.restore();
+    ctx.textAlign = 'center';
+    ctx.font = 'bold 13px Georgia';
+    ctx.fillText('Temperatura (°C)', margen.l + gw/2, margen.t + gh + 42);
+
+    // Dibujar curvas
+    Object.keys(sustancias).forEach(key => {
+      if (!activas[key]) return;
+      const s = sustancias[key];
+      ctx.strokeStyle = s.color;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      s.datos.forEach((p, i) => {
+        const px = x(p[0]);
+        const py = y(p[1]);
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      });
+      ctx.stroke();
+
+      // Etiqueta junto a la curva
+      let labelT = 70;
+      const labelS = solubilidadEn(key, labelT);
+      ctx.fillStyle = s.color;
+      ctx.font = 'bold 12px sans-serif';
+      ctx.textAlign = 'left';
+      const ly = Math.max(margen.t + 12, Math.min(margen.t + gh - 4, y(labelS) - 6));
+      ctx.fillText(key, x(labelT) + 4, ly);
+    });
+
+    // Crosshair y punto
+    if (hover) {
+      ctx.strokeStyle = '#7c2d12';
+      ctx.setLineDash([4, 4]);
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x(hover.t), margen.t);
+      ctx.lineTo(x(hover.t), margen.t + gh);
+      ctx.moveTo(margen.l, y(hover.s));
+      ctx.lineTo(margen.l + gw, y(hover.s));
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.fillStyle = '#7c2d12';
+      ctx.beginPath();
+      ctx.arc(x(hover.t), y(hover.s), 5, 0, Math.PI*2);
+      ctx.fill();
+    }
+  }
+
+  function eventoCanvas(e) {
+    const rect = canvas.getBoundingClientRect();
+    const cx = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+    const cy = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+    const gw = rect.width - margen.l - margen.r;
+    const gh = rect.height - margen.t - margen.b;
+    const t = ((cx - margen.l) / gw) * xMax;
+    const s = ((margen.t + gh - cy) / gh) * yMax;
+
+    if (t >= 0 && t <= xMax && s >= 0 && s <= yMax) {
+      hover = { t: t, s: s };
+      // Buscar sustancia más cercana
+      let mejor = null;
+      let minDist = Infinity;
+      Object.keys(sustancias).forEach(key => {
+        if (!activas[key]) return;
+        const ss = solubilidadEn(key, t);
+        const dist = Math.abs(ss - s);
+        if (dist < minDist) { minDist = dist; mejor = { key, ss }; }
+      });
+      let txt = 'Temperatura: ' + t.toFixed(1) + ' °C  ·  Solubilidad leída: ' + s.toFixed(1) + ' g/100g';
+      if (mejor && minDist < 12) {
+        txt += '  →  cerca de ' + mejor.key + ' (saturación a ' + mejor.ss.toFixed(1) + ' g)';
+      }
+      lectura.textContent = txt;
+    } else {
+      hover = null;
+      lectura.textContent = 'Mueve el cursor sobre la gráfica para leer temperatura y solubilidad.';
+    }
+    dibujarGrafica();
+  }
+
+  canvas.addEventListener('mousemove', eventoCanvas);
+  canvas.addEventListener('mouseleave', () => { hover = null; lectura.textContent = 'Mueve el cursor sobre la gráfica para leer temperatura y solubilidad.'; dibujarGrafica(); });
+  canvas.addEventListener('touchmove', (e) => { e.preventDefault(); eventoCanvas(e); }, { passive: false });
+  canvas.addEventListener('touchstart', (e) => { e.preventDefault(); eventoCanvas(e); }, { passive: false });
+
+  // Toggles
+  Object.keys(sustancias).forEach(key => {
+    const btn = document.createElement('button');
+    btn.className = 'toggle-sustancia';
+    btn.style.borderColor = sustancias[key].color;
+    btn.style.color = sustancias[key].color;
+    btn.textContent = key;
+    btn.addEventListener('click', () => {
+      activas[key] = !activas[key];
+      btn.classList.toggle('off', !activas[key]);
+      dibujarGrafica();
+    });
+    togglesDiv.appendChild(btn);
+  });
+
+  // ============================================================
+  // GRÁFICA DE ZONAS
+  // ============================================================
+  const canvasZonas = document.getElementById('canvas-zonas');
+  const ctxZ = canvasZonas.getContext('2d');
+
+  function dibujarZonas() {
+    const ratio = window.devicePixelRatio || 1;
+    const rect = canvasZonas.getBoundingClientRect();
+    const W = rect.width;
+    const H = rect.width * (380 / 900);
+    canvasZonas.width = W * ratio;
+    canvasZonas.height = H * ratio;
+    canvasZonas.style.height = H + 'px';
+    ctxZ.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+    const m = { l: 60, r: 40, t: 25, b: 50 };
+    const gw = W - m.l - m.r;
+    const gh = H - m.t - m.b;
+    const xMaxZ = 100, yMaxZ = 200;
+    const x = t => m.l + (t/xMaxZ) * gw;
+    const y = s => m.t + gh - Math.min(s, yMaxZ)/yMaxZ * gh;
+
+    ctxZ.fillStyle = '#ffffff';
+    ctxZ.fillRect(0, 0, W, H);
+
+    // Zonas: pintar áreas por encima y por debajo de la curva de KNO3
+    const datos = sustancias['KNO₃'].datos.filter(p => p[1] <= yMaxZ);
+    // Debajo (insaturada) - verde claro
+    ctxZ.fillStyle = 'rgba(5, 150, 105, 0.12)';
+    ctxZ.beginPath();
+    ctxZ.moveTo(m.l, m.t + gh);
+    datos.forEach(p => ctxZ.lineTo(x(p[0]), y(p[1])));
+    ctxZ.lineTo(x(datos[datos.length-1][0]), m.t + gh);
+    ctxZ.closePath();
+    ctxZ.fill();
+
+    // Encima (sobresaturada) - rojo claro
+    ctxZ.fillStyle = 'rgba(220, 38, 38, 0.12)';
+    ctxZ.beginPath();
+    ctxZ.moveTo(m.l, m.t);
+    datos.forEach(p => ctxZ.lineTo(x(p[0]), y(p[1])));
+    ctxZ.lineTo(x(datos[datos.length-1][0]), m.t);
+    ctxZ.closePath();
+    ctxZ.fill();
+
+    // Grid
+    ctxZ.strokeStyle = '#fed7aa';
+    ctxZ.lineWidth = 1;
+    for (let t = 0; t <= 100; t += 20) {
+      ctxZ.beginPath(); ctxZ.moveTo(x(t), m.t); ctxZ.lineTo(x(t), m.t + gh); ctxZ.stroke();
+    }
+    for (let s = 0; s <= 200; s += 50) {
+      ctxZ.beginPath(); ctxZ.moveTo(m.l, y(s)); ctxZ.lineTo(m.l + gw, y(s)); ctxZ.stroke();
+    }
+
+    // Ejes
+    ctxZ.strokeStyle = '#7c2d12';
+    ctxZ.lineWidth = 2;
+    ctxZ.beginPath();
+    ctxZ.moveTo(m.l, m.t);
+    ctxZ.lineTo(m.l, m.t + gh);
+    ctxZ.lineTo(m.l + gw, m.t + gh);
+    ctxZ.stroke();
+
+    // Labels
+    ctxZ.fillStyle = '#7c2d12';
+    ctxZ.font = '11px sans-serif';
+    ctxZ.textAlign = 'center';
+    for (let t = 0; t <= 100; t += 20) ctxZ.fillText(t + '°', x(t), m.t + gh + 16);
+    ctxZ.textAlign = 'right';
+    for (let s = 0; s <= 200; s += 50) ctxZ.fillText(s, m.l - 6, y(s) + 4);
+
+    ctxZ.save();
+    ctxZ.translate(15, m.t + gh/2);
+    ctxZ.rotate(-Math.PI/2);
+    ctxZ.textAlign = 'center';
+    ctxZ.font = 'bold 12px Georgia';
+    ctxZ.fillText('Solubilidad (g/100g)', 0, 0);
+    ctxZ.restore();
+    ctxZ.textAlign = 'center';
+    ctxZ.font = 'bold 12px Georgia';
+    ctxZ.fillText('Temperatura (°C)', m.l + gw/2, m.t + gh + 38);
+
+    // Curva
+    ctxZ.strokeStyle = '#ca8a04';
+    ctxZ.lineWidth = 4;
+    ctxZ.beginPath();
+    datos.forEach((p, i) => {
+      if (i === 0) ctxZ.moveTo(x(p[0]), y(p[1]));
+      else ctxZ.lineTo(x(p[0]), y(p[1]));
+    });
+    ctxZ.stroke();
+
+    // Etiquetas de zonas
+    ctxZ.font = 'bold 14px Georgia';
+    ctxZ.textAlign = 'center';
+
+    // Insaturada (debajo)
+    ctxZ.fillStyle = '#059669';
+    ctxZ.fillText('INSATURADA', x(20), y(15));
+    ctxZ.font = '11px sans-serif';
+    ctxZ.fillText('(cabe más soluto)', x(20), y(15) + 14);
+
+    // Saturada (sobre la curva, al final)
+    ctxZ.font = 'bold 13px Georgia';
+    ctxZ.fillStyle = '#ca8a04';
+    ctxZ.fillText('SATURADA', x(75), y(125));
+
+    // Sobresaturada (encima)
+    ctxZ.font = 'bold 14px Georgia';
+    ctxZ.fillStyle = '#dc2626';
+    ctxZ.fillText('SOBRESATURADA', x(35), y(180));
+    ctxZ.font = '11px sans-serif';
+    ctxZ.fillText('(inestable)', x(35), y(180) + 14);
+
+    // Etiqueta de la curva
+    ctxZ.fillStyle = '#7c2d12';
+    ctxZ.font = 'bold 12px sans-serif';
+    ctxZ.fillText('curva KNO₃', x(88), y(195));
+  }
+
+  // ============================================================
+  // DETECTOR
+  // ============================================================
+  const canvasDet = document.getElementById('canvas-detector');
+  const ctxD = canvasDet.getContext('2d');
+  const detSustanciasDiv = document.getElementById('det-sustancias');
+  const detTemp = document.getElementById('det-temp');
+  const detGramos = document.getElementById('det-gramos');
+  const detTempVal = document.getElementById('det-temp-val');
+  const detGramosVal = document.getElementById('det-gramos-val');
+  const detClasif = document.getElementById('det-clasif');
+  const detExpl = document.getElementById('det-explicacion');
+  const detDatos = document.getElementById('det-datos');
+
+  let sustanciaActiva = 'KNO₃';
+
+  Object.keys(sustancias).forEach(key => {
+    const b = document.createElement('button');
+    b.className = 'det-sust-btn';
+    b.textContent = key;
+    if (key === sustanciaActiva) b.classList.add('activa');
+    b.addEventListener('click', () => {
+      sustanciaActiva = key;
+      detSustanciasDiv.querySelectorAll('.det-sust-btn').forEach(x => x.classList.remove('activa'));
+      b.classList.add('activa');
+      actualizarDetector();
+    });
+    detSustanciasDiv.appendChild(b);
+  });
+
+  function dibujarDetector(t, g, satur) {
+    const ratio = window.devicePixelRatio || 1;
+    const rect = canvasDet.getBoundingClientRect();
+    const W = rect.width;
+    const H = rect.width * (260 / 400);
+    canvasDet.width = W * ratio;
+    canvasDet.height = H * ratio;
+    canvasDet.style.height = H + 'px';
+    ctxD.setTransform(ratio, 0, 0, ratio, 0, 0);
+
+    const m = { l: 42, r: 18, t: 14, b: 36 };
+    const gw = W - m.l - m.r;
+    const gh = H - m.t - m.b;
+
+    const sust = sustancias[sustanciaActiva];
+    // Escala Y dinámica
+    let yMaxD = Math.max(...sust.datos.map(p => p[1]), g) * 1.1;
+    yMaxD = Math.max(yMaxD, 30);
+    const x = tt => m.l + (tt/100) * gw;
+    const y = ss => m.t + gh - Math.min(ss, yMaxD)/yMaxD * gh;
+
+    ctxD.fillStyle = '#ffffff';
+    ctxD.fillRect(0, 0, W, H);
+
+    // Grid
+    ctxD.strokeStyle = '#fed7aa';
+    ctxD.lineWidth = 1;
+    for (let tt = 0; tt <= 100; tt += 20) {
+      ctxD.beginPath(); ctxD.moveTo(x(tt), m.t); ctxD.lineTo(x(tt), m.t + gh); ctxD.stroke();
+    }
+    const ySteps = 5;
+    for (let i = 0; i <= ySteps; i++) {
+      const ss = (yMaxD * i / ySteps);
+      ctxD.beginPath(); ctxD.moveTo(m.l, y(ss)); ctxD.lineTo(m.l + gw, y(ss)); ctxD.stroke();
+    }
+
+    // Ejes
+    ctxD.strokeStyle = '#7c2d12';
+    ctxD.lineWidth = 1.5;
+    ctxD.beginPath();
+    ctxD.moveTo(m.l, m.t); ctxD.lineTo(m.l, m.t + gh); ctxD.lineTo(m.l + gw, m.t + gh);
+    ctxD.stroke();
+
+    ctxD.fillStyle = '#7c2d12';
+    ctxD.font = '10px sans-serif';
+    ctxD.textAlign = 'center';
+    for (let tt = 0; tt <= 100; tt += 20) ctxD.fillText(tt + '°', x(tt), m.t + gh + 14);
+    ctxD.textAlign = 'right';
+    for (let i = 0; i <= ySteps; i++) {
+      const ss = (yMaxD * i / ySteps);
+      ctxD.fillText(ss.toFixed(0), m.l - 4, y(ss) + 3);
+    }
+
+    ctxD.textAlign = 'center';
+    ctxD.font = 'bold 10px Georgia';
+    ctxD.fillText('Temperatura (°C)', m.l + gw/2, m.t + gh + 28);
+
+    // Curva
+    ctxD.strokeStyle = sust.color;
+    ctxD.lineWidth = 3;
+    ctxD.beginPath();
+    sust.datos.forEach((p, i) => {
+      if (i === 0) ctxD.moveTo(x(p[0]), y(p[1]));
+      else ctxD.lineTo(x(p[0]), y(p[1]));
+    });
+    ctxD.stroke();
+
+    // Punto del usuario
+    const px = x(t);
+    const py = y(g);
+    let colorPt = '#ca8a04';
+    if (satur === 'insaturada') colorPt = '#059669';
+    else if (satur === 'sobresaturada') colorPt = '#dc2626';
+    // Línea vertical hasta la curva
+    ctxD.strokeStyle = '#9ca3af';
+    ctxD.setLineDash([3, 3]);
+    ctxD.lineWidth = 1;
+    ctxD.beginPath();
+    ctxD.moveTo(px, m.t + gh);
+    ctxD.lineTo(px, py);
+    ctxD.stroke();
+    ctxD.setLineDash([]);
+
+    ctxD.fillStyle = colorPt;
+    ctxD.strokeStyle = '#ffffff';
+    ctxD.lineWidth = 2;
+    ctxD.beginPath();
+    ctxD.arc(px, py, 8, 0, Math.PI*2);
+    ctxD.fill();
+    ctxD.stroke();
+  }
+
+  function actualizarDetector() {
+    const t = parseFloat(detTemp.value);
+    const g = parseFloat(detGramos.value);
+    detTempVal.textContent = t + ' °C';
+    detGramosVal.textContent = g + ' g';
+
+    const sat = solubilidadEn(sustanciaActiva, t);
+    let clasif, color, expl;
+    const margen = 0.5; // tolerancia para "saturada"
+
+    if (Math.abs(g - sat) <= margen) {
+      clasif = 'Saturada';
+      color = '#ca8a04';
+      expl = 'Tu solución está justo en el límite. Tienes la cantidad máxima que se puede disolver. Si añades aunque sea un grano más, no se disolverá.';
+    } else if (g < sat) {
+      clasif = 'Insaturada';
+      color = '#059669';
+      expl = 'Todavía cabe más. Podrías disolver ' + (sat - g).toFixed(1) + ' g adicionales antes de saturar la solución.';
+    } else {
+      clasif = 'Sobresaturada';
+      color = '#dc2626';
+      expl = 'Tienes ' + (g - sat).toFixed(1) + ' g de más. Este estado es inestable: al menor movimiento o cristal, el exceso precipitará.';
+    }
+
+    detClasif.textContent = clasif;
+    detClasif.style.color = color;
+    detExpl.textContent = expl;
+    detDatos.innerHTML = '<strong>' + sustanciaActiva + '</strong> · ' + sustancias[sustanciaActiva].nombre +
+      '<br>Saturación a ' + t + ' °C: <strong>' + sat.toFixed(1) + ' g</strong> / 100 g agua' +
+      '<br>Tú añadiste: <strong>' + g + ' g</strong>';
+
+    dibujarDetector(t, g, clasif.toLowerCase());
+  }
+
+  detTemp.addEventListener('input', actualizarDetector);
+  detGramos.addEventListener('input', actualizarDetector);
+
+  // ============================================================
+  // QUIZ
+  // ============================================================
+  const preguntas = [
+    {
+      p: 'En una curva de solubilidad estándar, ¿qué representa el eje Y (vertical)?',
+      ops: [
+        'La temperatura del agua',
+        'Los gramos de soluto disueltos en 100 g de agua',
+        'El volumen de la solución',
+        'La densidad del soluto'
+      ],
+      correcta: 1,
+      explicacion: 'El eje Y muestra la solubilidad, expresada como gramos de soluto que se pueden disolver en 100 g de agua a esa temperatura.'
+    },
+    {
+      p: 'A 40 °C, la solubilidad del KNO₃ es aproximadamente 64 g / 100 g de agua. Si tienes 50 g de KNO₃ disueltos en 100 g de agua a esa temperatura, tu solución es:',
+      ops: [
+        'Saturada',
+        'Sobresaturada',
+        'Insaturada',
+        'Imposible de clasificar'
+      ],
+      correcta: 2,
+      explicacion: 'Como 50 g es menor que el máximo de 64 g, la solución está por debajo de la curva: es insaturada. Todavía cabrían unos 14 g más.'
+    },
+    {
+      p: 'La curva de solubilidad del NaCl es casi horizontal. ¿Qué significa esto en la práctica?',
+      ops: [
+        'Que el NaCl no se disuelve en agua',
+        'Que la temperatura casi no afecta cuánto NaCl se puede disolver',
+        'Que el NaCl solo se disuelve a altas temperaturas',
+        'Que la sal se evapora al calentarse'
+      ],
+      correcta: 1,
+      explicacion: 'Una curva casi horizontal indica que la solubilidad cambia muy poco con la temperatura. Por eso calentar el agua para disolver más sal de mesa funciona muy poco.'
+    },
+    {
+      p: 'Una solución sobresaturada se caracteriza por ser:',
+      ops: [
+        'Estable y permanente',
+        'La forma más común de las soluciones',
+        'Inestable, con tendencia a precipitar el exceso de soluto',
+        'Una solución con muy poco soluto'
+      ],
+      correcta: 2,
+      explicacion: 'La sobresaturación es un estado inestable: contiene más soluto del que normalmente puede disolverse. Cualquier perturbación (un cristal, un movimiento) hace que el exceso precipite.'
+    },
+    {
+      p: 'Mira la curva de Ce₂(SO₄)₃: su solubilidad DISMINUYE al subir la temperatura. ¿Qué pasaría si calientas una solución saturada de Ce₂(SO₄)₃ a 20 °C hasta llegar a 80 °C?',
+      ops: [
+        'Se disolvería más soluto',
+        'Nada cambiaría',
+        'Parte del soluto disuelto precipitaría al fondo',
+        'La solución se congelaría'
+      ],
+      correcta: 2,
+      explicacion: 'Como la solubilidad baja al subir la temperatura, lo que estaba disuelto a 20 °C ya no cabe a 80 °C. El exceso precipita.'
+    },
+    {
+      p: 'Una solución saturada de KNO₃ a 80 °C contiene 169 g / 100 g de agua. Si la enfrías cuidadosamente a 20 °C (donde la solubilidad es solo 32 g), ¿qué tipo de solución podrías obtener temporalmente?',
+      ops: [
+        'Una solución insaturada',
+        'Una solución saturada estable',
+        'Una solución sobresaturada (inestable)',
+        'No se puede enfriar una solución saturada'
+      ],
+      correcta: 2,
+      explicacion: 'Al enfriar con cuidado, los 169 g siguen disueltos aunque a 20 °C solo deberían caber 32 g. Eso da una sobresaturación temporal, muy inestable.'
+    },
+    {
+      p: 'Si un punto está EXACTAMENTE sobre la línea de la curva de solubilidad, ¿qué representa?',
+      ops: [
+        'Una solución insaturada',
+        'Una solución saturada (en el límite máximo)',
+        'Una solución sobresaturada',
+        'Un error de la gráfica'
+      ],
+      correcta: 1,
+      explicacion: 'La línea curva ES la frontera de saturación. Cualquier punto sobre ella representa una solución saturada: el máximo de soluto que cabe a esa temperatura.'
+    }
+  ];
+
+  const quizDiv = document.getElementById('quiz');
+  const respuestas = new Array(preguntas.length).fill(null);
+
+  function construirQuiz() {
+    quizDiv.innerHTML = '';
+    preguntas.forEach((q, idx) => {
+      const div = document.createElement('div');
+      div.className = 'quiz-q';
+      div.innerHTML = '<div class="pregunta"><span class="num">' + (idx+1) + '</span>' + q.p + '</div>';
+      const opsDiv = document.createElement('div');
+      opsDiv.className = 'opciones';
+      q.ops.forEach((op, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'opcion';
+        btn.textContent = String.fromCharCode(65 + i) + '. ' + op;
+        btn.addEventListener('click', () => {
+          if (btn.classList.contains('bloqueada')) return;
+          opsDiv.querySelectorAll('.opcion').forEach(x => x.classList.remove('elegida'));
+          btn.classList.add('elegida');
+          respuestas[idx] = i;
+        });
+        opsDiv.appendChild(btn);
+      });
+      div.appendChild(opsDiv);
+      const fb = document.createElement('div');
+      fb.className = 'feedback';
+      fb.id = 'fb-' + idx;
+      div.appendChild(fb);
+      quizDiv.appendChild(div);
+    });
+  }
+  construirQuiz();
+
+  document.getElementById('btn-revisar').addEventListener('click', () => {
+    let correctas = 0;
+    preguntas.forEach((q, idx) => {
+      const qDiv = quizDiv.children[idx];
+      const ops = qDiv.querySelectorAll('.opcion');
+      ops.forEach((op, i) => {
+        op.classList.add('bloqueada');
+        op.classList.remove('elegida');
+        if (i === q.correcta) op.classList.add('correcta');
+        if (respuestas[idx] === i && i !== q.correcta) op.classList.add('incorrecta');
+      });
+      const fb = document.getElementById('fb-' + idx);
+      if (respuestas[idx] === q.correcta) {
+        correctas++;
+        fb.className = 'feedback bien mostrar';
+        fb.innerHTML = '<strong>¡Correcto!</strong> ' + q.explicacion;
+      } else if (respuestas[idx] === null) {
+        fb.className = 'feedback mal mostrar';
+        fb.innerHTML = '<strong>Sin responder.</strong> La correcta es <strong>' + String.fromCharCode(65 + q.correcta) + '</strong>. ' + q.explicacion;
+      } else {
+        fb.className = 'feedback mal mostrar';
+        fb.innerHTML = '<strong>Incorrecto.</strong> La correcta es <strong>' + String.fromCharCode(65 + q.correcta) + '</strong>. ' + q.explicacion;
+      }
+    });
+    const res = document.getElementById('quiz-resultado');
+    const score = document.getElementById('quiz-score');
+    const msg = document.getElementById('quiz-msg');
+    res.classList.add('mostrar');
+    score.textContent = correctas + ' / ' + preguntas.length;
+    const pct = correctas / preguntas.length;
+    if (pct === 1) msg.innerHTML = '¡Perfecto! Dominas las curvas de solubilidad.';
+    else if (pct >= 0.7) msg.innerHTML = 'Muy bien. Repasa las que fallaste y vas listo para el GED.';
+    else if (pct >= 0.5) msg.innerHTML = 'Buen comienzo. Revisa las secciones 2 y 3 y vuelve a intentar.';
+    else msg.innerHTML = 'Vuelve al detector y juega con él un rato. Después vuelve al quiz.';
+  });
+
+  document.getElementById('btn-reiniciar').addEventListener('click', () => {
+    respuestas.fill(null);
+    construirQuiz();
+    document.getElementById('quiz-resultado').classList.remove('mostrar');
+  });
+
+  // ============================================================
+  // CONTROLES GENERALES
+  // ============================================================
+  document.getElementById('btn-abrir').addEventListener('click', () => {
+    document.querySelectorAll('details.seccion-grande').forEach(d => d.open = true);
+  });
+  document.getElementById('btn-cerrar').addEventListener('click', () => {
+    document.querySelectorAll('details.seccion-grande').forEach(d => d.open = false);
+  });
+
+  // ============================================================
+  // INICIALIZACIÓN
+  // ============================================================
+  function redibujarTodo() {
+    dibujarGrafica();
+    dibujarZonas();
+    actualizarDetector();
+  }
+  window.addEventListener('resize', redibujarTodo);
+  setTimeout(redibujarTodo, 50);
+
+})();
+</script>
+
+</body>
+</html>
