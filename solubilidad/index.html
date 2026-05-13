@@ -551,7 +551,7 @@
 
       <div class="zona-visual">
         <canvas id="canvas-zonas" width="900" height="380" aria-label="Visualización de las tres zonas de una curva de solubilidad"></canvas>
-        <p class="nota-pequena">Las tres zonas representadas sobre la curva de KNO₃. La franja verde es donde la solución es <strong>insaturada</strong>; la línea dorada es <strong>saturada</strong>; la franja roja es <strong>sobresaturada</strong>.</p>
+        <p class="nota-pequena">Las tres zonas representadas sobre la curva de KNO₃. La franja verde es donde la solución es <strong>insaturada</strong>; la <strong>línea dorada misma</strong> (a la que apunta la flecha) es donde la solución está <strong>saturada</strong>; la franja roja es donde está <strong>sobresaturada</strong>.</p>
       </div>
 
       <h3>¿Cómo se logra una solución sobresaturada?</h3>
@@ -993,10 +993,49 @@
     ctxZ.font = '11px sans-serif';
     ctxZ.fillText('(cabe más soluto)', x(20), y(15) + 14);
 
-    // Saturada (sobre la curva, al final)
+    // SATURADA — etiqueta en zona blanca con flecha apuntando a la curva
     ctxZ.font = 'bold 13px Georgia';
     ctxZ.fillStyle = '#ca8a04';
-    ctxZ.fillText('SATURADA', x(75), y(125));
+    ctxZ.textAlign = 'center';
+    const satTx = x(88);
+    const satTy = y(95);
+    ctxZ.fillText('SATURADA', satTx, satTy);
+    ctxZ.font = '11px sans-serif';
+    ctxZ.fillText('(sobre la curva)', satTx, satTy + 14);
+
+    // Flecha desde la etiqueta hasta un punto claro de la curva
+    const arrFromX = satTx - 32;
+    const arrFromY = satTy - 2;
+    const arrTargetT = 62;
+    const arrTargetS = solubilidadEn('KNO₃', arrTargetT);
+    const arrToX = x(arrTargetT);
+    const arrToY = y(arrTargetS);
+
+    // Margen para que la punta no se monte sobre la línea de la curva
+    const dx = arrToX - arrFromX;
+    const dy = arrToY - arrFromY;
+    const dist = Math.sqrt(dx*dx + dy*dy);
+    const offset = 4;
+    const arrEndX = arrToX - (dx/dist) * offset;
+    const arrEndY = arrToY - (dy/dist) * offset;
+
+    ctxZ.strokeStyle = '#ca8a04';
+    ctxZ.lineWidth = 1.8;
+    ctxZ.beginPath();
+    ctxZ.moveTo(arrFromX, arrFromY);
+    ctxZ.lineTo(arrEndX, arrEndY);
+    ctxZ.stroke();
+
+    // Punta de flecha
+    const ang = Math.atan2(arrEndY - arrFromY, arrEndX - arrFromX);
+    const aLen = 9;
+    ctxZ.fillStyle = '#ca8a04';
+    ctxZ.beginPath();
+    ctxZ.moveTo(arrEndX, arrEndY);
+    ctxZ.lineTo(arrEndX - aLen * Math.cos(ang - Math.PI/6), arrEndY - aLen * Math.sin(ang - Math.PI/6));
+    ctxZ.lineTo(arrEndX - aLen * Math.cos(ang + Math.PI/6), arrEndY - aLen * Math.sin(ang + Math.PI/6));
+    ctxZ.closePath();
+    ctxZ.fill();
 
     // Sobresaturada (encima)
     ctxZ.font = 'bold 14px Georgia';
