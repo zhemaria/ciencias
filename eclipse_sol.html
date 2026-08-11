@@ -1,0 +1,574 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simulador de Eclipses</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      /* Estilos base y de lienzo */
+      body {
+        margin: 0;
+        overflow: hidden;
+        background-color: #05050a;
+        color: white;
+        font-family: 'Inter', system-ui, sans-serif;
+      }
+      #canvas-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+      }
+
+      /* Capa de interfaz de usuario */
+      #ui-layer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 10;
+        pointer-events: none;
+      }
+      .pointer-auto {
+        pointer-events: auto;
+      }
+
+      /* Etiquetas 3D proyectadas en 2D */
+      .planet-label {
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 4px 12px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 1.25rem;
+        transform: translate(-50%, -50%);
+        white-space: nowrap;
+        transition: opacity 0.2s;
+        pointer-events: none;
+      }
+      .sun-label {
+        color: #fde047;
+      }
+      .earth-label {
+        color: #60a5fa;
+      }
+      .moon-label {
+        color: #d1d5db;
+      }
+
+      /* Estilo personalizado para el deslizador del ratón */
+      input[type='range'] {
+        -webkit-appearance: none;
+        width: 100%;
+        background: transparent;
+      }
+      input[type='range']::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        height: 24px;
+        width: 24px;
+        border-radius: 50%;
+        background: #ffffff;
+        cursor: pointer;
+        margin-top: -8px;
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+      }
+      input[type='range']::-webkit-slider-runnable-track {
+        width: 100%;
+        height: 8px;
+        cursor: pointer;
+        background: #4b5563;
+        border-radius: 4px;
+      }
+
+      /* Animaciones para los avisos de eclipse */
+      @keyframes pulse-glow-solar {
+        0%,
+        100% {
+          text-shadow:
+            0 0 20px rgba(239, 68, 68, 0.8),
+            0 0 40px rgba(239, 68, 68, 0.6);
+          transform: scale(1);
+        }
+        50% {
+          text-shadow:
+            0 0 40px rgba(239, 68, 68, 1),
+            0 0 80px rgba(239, 68, 68, 0.8);
+          transform: scale(1.05);
+        }
+      }
+      @keyframes pulse-glow-lunar {
+        0%,
+        100% {
+          text-shadow:
+            0 0 20px rgba(192, 132, 252, 0.8),
+            0 0 40px rgba(192, 132, 252, 0.6);
+          transform: scale(1);
+        }
+        50% {
+          text-shadow:
+            0 0 40px rgba(192, 132, 252, 1),
+            0 0 80px rgba(192, 132, 252, 0.8);
+          transform: scale(1.05);
+        }
+      }
+      .eclipse-solar-active {
+        opacity: 1 !important;
+        animation: pulse-glow-solar 1s infinite alternate;
+        color: #ef4444;
+      }
+      .eclipse-lunar-active {
+        opacity: 1 !important;
+        animation: pulse-glow-lunar 1s infinite alternate;
+        color: #c084fc;
+      }
+    </style>
+    <!-- Mapa de importación para Three.js -->
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <!-- Contenedor del Canvas 3D -->
+    <div id="canvas-container"></div>
+
+    <!-- Capa de Interfaz -->
+    <div id="ui-layer" class="flex flex-col justify-between p-4 md:p-6">
+      <!-- Parte Superior -->
+      <div class="flex justify-between items-start w-full">
+        <div class="bg-gray-900/60 text-gray-300 px-4 py-2 rounded-lg text-sm md:text-base border border-gray-700/50 shadow-lg">
+          <p><strong>Escala didáctica:</strong></p>
+          <p>⚠️ Los tamaños y las distancias NO son proporcionales.</p>
+        </div>
+        <button
+          id="btn-center"
+          class="pointer-auto bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 px-6 rounded-xl shadow-lg transition transform hover:scale-105 active:scale-95 flex items-center gap-2 text-lg">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+            <path d="M3 3v5h5" />
+          </svg>
+          Centrar Vista
+        </button>
+      </div>
+
+      <!-- Aviso Superior (Más pequeño para no tapar la simulación) -->
+      <div id="eclipse-alert" class="absolute top-28 left-0 w-full flex justify-center opacity-0 transition-opacity duration-300 pointer-events-none z-0">
+        <h1 class="text-4xl md:text-[4.5rem] font-black tracking-widest uppercase pointer-events-none">
+          <!-- El texto se inyecta vía JS -->
+        </h1>
+      </div>
+
+      <!-- Etiquetas 2D sobre 3D -->
+      <div id="label-sun" class="planet-label sun-label">SOL</div>
+      <div id="label-earth" class="planet-label earth-label">TIERRA</div>
+      <div id="label-moon" class="planet-label moon-label">LUNA</div>
+
+      <!-- Panel de Controles Inferior -->
+      <div class="pointer-auto bg-gray-900/80 backdrop-blur-md border border-gray-700 p-6 rounded-2xl w-full max-w-5xl mx-auto shadow-2xl flex flex-col gap-6 z-10 relative">
+        <!-- Deslizador de Posición de la Luna -->
+        <div class="w-full flex flex-col gap-2">
+          <label for="moon-slider" class="text-white font-semibold text-lg flex justify-between">
+            <span>Posición manual de la Luna en su órbita</span>
+            <span id="slider-value" class="text-gray-400">0°</span>
+          </label>
+          <input type="range" id="moon-slider" min="0" max="360" step="0.1" value="0" class="w-full" />
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+          <!-- Controles de Reproducción y Velocidad -->
+          <div class="flex flex-col gap-3">
+            <span class="text-gray-400 text-sm font-bold uppercase tracking-wider">Animación</span>
+            <div class="flex gap-2">
+              <button id="btn-play" class="flex-1 bg-green-600 hover:bg-green-500 text-white font-bold py-3 px-4 rounded-xl transition shadow-lg text-lg flex justify-center items-center gap-2">
+                ▶ Reproducir
+              </button>
+              <button id="btn-speed" class="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-bold py-3 px-4 rounded-xl transition shadow-lg text-lg border border-gray-600">Vel: Normal</button>
+            </div>
+          </div>
+
+          <!-- Interruptor de Inclinación -->
+          <div class="flex flex-col gap-3 md:col-span-1 border-t md:border-t-0 md:border-l border-gray-700 pt-4 md:pt-0 md:pl-6">
+            <span class="text-gray-400 text-sm font-bold uppercase tracking-wider">Inclinación de la Órbita</span>
+            <label class="flex items-center cursor-pointer gap-4">
+              <div class="relative">
+                <input type="checkbox" id="toggle-inclination" class="sr-only" />
+                <div class="block bg-gray-700 w-16 h-8 rounded-full transition-colors duration-300" id="toggle-bg"></div>
+                <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition-transform duration-300" id="toggle-dot"></div>
+              </div>
+              <div class="flex flex-col">
+                <span id="inclination-text" class="text-white font-bold text-lg">Desactivada</span>
+                <span class="text-gray-400 text-sm">(Eclipse cada vuelta)</span>
+              </div>
+            </label>
+          </div>
+
+          <!-- Botón de Reinicio -->
+          <div class="flex flex-col gap-3 md:border-l border-gray-700 pt-4 md:pt-0 md:pl-6 justify-end h-full">
+            <button id="btn-reset" class="w-full bg-red-600/80 hover:bg-red-500 text-white font-bold py-3 px-4 rounded-xl transition shadow-lg text-lg flex justify-center items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                <path d="M3 3v5h5" />
+              </svg>
+              Reiniciar Posición
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import * as THREE from 'three';
+      import {OrbitControls} from 'three/addons/controls/OrbitControls.js';
+
+      // --- VARIABLES DE ESTADO ---
+      let isPlaying = false;
+      let speedLevel = 1; // 0: Lento, 1: Normal, 2: Rápido
+      const speeds = [0.002, 0.008, 0.02];
+      const speedLabels = ['Lento', 'Normal', 'Rápido'];
+
+      let inclinationActive = false;
+      let moonOrbitAngle = 0; // En radianes
+      let orbitPrecessionAngle = 0; // Rotación lenta del plano orbital
+
+      // Elementos del DOM
+      const UI = {
+        slider: document.getElementById('moon-slider'),
+        sliderValue: document.getElementById('slider-value'),
+        btnPlay: document.getElementById('btn-play'),
+        btnSpeed: document.getElementById('btn-speed'),
+        toggleInclination: document.getElementById('toggle-inclination'),
+        toggleBg: document.getElementById('toggle-bg'),
+        toggleDot: document.getElementById('toggle-dot'),
+        inclinationText: document.getElementById('inclination-text'),
+        btnReset: document.getElementById('btn-reset'),
+        btnCenter: document.getElementById('btn-center'),
+        eclipseAlert: document.getElementById('eclipse-alert'),
+        labelSun: document.getElementById('label-sun'),
+        labelEarth: document.getElementById('label-earth'),
+        labelMoon: document.getElementById('label-moon')
+      };
+
+      // --- CONFIGURACIÓN THREE.JS ---
+      const container = document.getElementById('canvas-container');
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0x05050a); // Fondo del espacio oscuro
+
+      const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+      // Posición inicial de la cámara para ver todo el sistema
+      camera.position.set(0, 20, 35);
+
+      const renderer = new THREE.WebGLRenderer({antialias: true});
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.shadowMap.enabled = true;
+      renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      container.appendChild(renderer.domElement);
+
+      // Controles de cámara
+      const controls = new OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.05;
+      controls.target.set(0, 0, 0); // Centrado en la Tierra
+      controls.minDistance = 10;
+      controls.maxDistance = 150;
+      // Guardamos la vista inicial para el botón "Centrar"
+      controls.saveState();
+
+      // --- DIMENSIONES (Escala Didáctica) ---
+      const sunRadius = 6;
+      const earthRadius = 2.5;
+      const moonRadius = 0.8;
+      const distanceEarthSun = 30; // Distancia reducida para que quepa en pantalla
+      const distanceEarthMoon = 10;
+      const orbitInclinationAngle = 22 * (Math.PI / 180); // Exagerado para claridad visual (22 grados)
+
+      // 1. EL SOL
+      const sunGeometry = new THREE.SphereGeometry(sunRadius, 64, 64);
+      const sunMaterial = new THREE.MeshBasicMaterial({color: 0xffe066}); // Amarillo brillante
+      const sunMesh = new THREE.Mesh(sunGeometry, sunMaterial);
+      sunMesh.position.set(-distanceEarthSun, 0, 0);
+      scene.add(sunMesh);
+
+      // Luz ambiental suave para no dejar el lado oscuro completamente negro
+      const ambientLight = new THREE.AmbientLight(0x222233, 0.4);
+      scene.add(ambientLight);
+
+      // Luz direccional que simula los rayos del sol (crea las sombras)
+      const sunLight = new THREE.DirectionalLight(0xffffff, 3);
+      sunLight.position.copy(sunMesh.position);
+      sunLight.target.position.set(0, 0, 0);
+      sunLight.castShadow = true;
+
+      // Configuración de la sombra para que sea muy nítida en la Tierra
+      sunLight.shadow.mapSize.width = 2048;
+      sunLight.shadow.mapSize.height = 2048;
+      sunLight.shadow.camera.near = 0.5;
+      sunLight.shadow.camera.far = distanceEarthSun + distanceEarthMoon + 5;
+      const shadowSize = 12; // Ajustado para cubrir la zona Tierra-Luna
+      sunLight.shadow.camera.left = -shadowSize;
+      sunLight.shadow.camera.right = shadowSize;
+      sunLight.shadow.camera.top = shadowSize;
+      sunLight.shadow.camera.bottom = -shadowSize;
+      sunLight.shadow.bias = -0.001; // Evita artefactos visuales
+      scene.add(sunLight);
+      scene.add(sunLight.target);
+
+      // 2. LA TIERRA
+      const earthGeometry = new THREE.SphereGeometry(earthRadius, 64, 64);
+      const earthMaterial = new THREE.MeshStandardMaterial({
+        color: 0x3b82f6, // Azul
+        roughness: 0.6,
+        metalness: 0.1
+      });
+      const earthMesh = new THREE.Mesh(earthGeometry, earthMaterial);
+      earthMesh.position.set(0, 0, 0);
+      earthMesh.castShadow = true;
+      earthMesh.receiveShadow = true; // Recibe la sombra de la Luna
+      scene.add(earthMesh);
+
+      // 3. LA LUNA Y SU ÓRBITA
+      // Usamos grupos anidados para manejar la inclinación fácilmente
+      const inclinationPivot = new THREE.Group();
+      scene.add(inclinationPivot);
+
+      const orbitPivot = new THREE.Group();
+      inclinationPivot.add(orbitPivot);
+
+      const moonGeometry = new THREE.SphereGeometry(moonRadius, 32, 32);
+      const moonMaterial = new THREE.MeshStandardMaterial({
+        color: 0xd1d5db, // Gris claro
+        roughness: 0.8,
+        metalness: 0.0
+      });
+      const moonMesh = new THREE.Mesh(moonGeometry, moonMaterial);
+      moonMesh.position.set(distanceEarthMoon, 0, 0);
+      moonMesh.castShadow = true;
+      moonMesh.receiveShadow = true;
+      orbitPivot.add(moonMesh);
+
+      // Línea visual de la órbita
+      const orbitPathGeometry = new THREE.BufferGeometry();
+      const orbitPoints = [];
+      for (let i = 0; i <= 64; i++) {
+        const theta = (i / 64) * Math.PI * 2;
+        orbitPoints.push(new THREE.Vector3(Math.cos(theta) * distanceEarthMoon, 0, Math.sin(theta) * distanceEarthMoon));
+      }
+      orbitPathGeometry.setFromPoints(orbitPoints);
+      const orbitPathMaterial = new THREE.LineBasicMaterial({color: 0xffffff, transparent: true, opacity: 0.2});
+      const orbitPath = new THREE.Line(orbitPathGeometry, orbitPathMaterial);
+      inclinationPivot.add(orbitPath);
+
+      // --- LÓGICA DE LA INTERFAZ ---
+
+      // Alternar Reproducción/Pausa
+      UI.btnPlay.addEventListener('click', () => {
+        isPlaying = !isPlaying;
+        updatePlayButton();
+      });
+
+      function updatePlayButton() {
+        if (isPlaying) {
+          UI.btnPlay.innerHTML = '⏸ Pausar';
+          UI.btnPlay.classList.replace('bg-green-600', 'bg-yellow-600');
+          UI.btnPlay.classList.replace('hover:bg-green-500', 'hover:bg-yellow-500');
+        } else {
+          UI.btnPlay.innerHTML = '▶ Reproducir';
+          UI.btnPlay.classList.replace('bg-yellow-600', 'bg-green-600');
+          UI.btnPlay.classList.replace('hover:bg-yellow-500', 'hover:bg-green-500');
+        }
+      }
+
+      // Cambiar Velocidad
+      UI.btnSpeed.addEventListener('click', () => {
+        speedLevel = (speedLevel + 1) % 3;
+        UI.btnSpeed.innerText = `Vel: ${speedLabels[speedLevel]}`;
+      });
+
+      // Deslizador manual
+      UI.slider.addEventListener('input', e => {
+        isPlaying = false; // Detener auto-reproducción al tocar el deslizador
+        updatePlayButton();
+        moonOrbitAngle = (e.target.value * Math.PI) / 180;
+        UI.sliderValue.innerText = `${parseFloat(e.target.value).toFixed(0)}°`;
+        updateMoonPosition();
+      });
+
+      // Interruptor de Inclinación
+      UI.toggleInclination.addEventListener('change', e => {
+        inclinationActive = e.target.checked;
+        if (inclinationActive) {
+          UI.toggleBg.classList.replace('bg-gray-700', 'bg-green-500');
+          UI.toggleDot.style.transform = 'translateX(32px)';
+          UI.inclinationText.innerText = 'Activada';
+          UI.inclinationText.nextElementSibling.innerText = '(Real: pocos eclipses)';
+        } else {
+          UI.toggleBg.classList.replace('bg-green-500', 'bg-gray-700');
+          UI.toggleDot.style.transform = 'translateX(0)';
+          UI.inclinationText.innerText = 'Desactivada';
+          UI.inclinationText.nextElementSibling.innerText = '(Eclipse cada vuelta)';
+        }
+      });
+
+      // Reiniciar
+      UI.btnReset.addEventListener('click', () => {
+        isPlaying = false;
+        updatePlayButton();
+        moonOrbitAngle = 0;
+        orbitPrecessionAngle = 0;
+        UI.slider.value = 0;
+        UI.sliderValue.innerText = '0°';
+        updateMoonPosition();
+      });
+
+      // Centrar Vista
+      UI.btnCenter.addEventListener('click', () => {
+        controls.reset(); // Vuelve a la posición guardada
+        camera.position.set(0, 20, 35);
+        controls.target.set(0, 0, 0);
+      });
+
+      // Redimensionamiento de ventana
+      window.addEventListener('resize', () => {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      });
+
+      // --- LÓGICA DE ACTUALIZACIÓN ---
+
+      // Actualiza etiquetas 2D basándose en la posición 3D
+      function updateLabels() {
+        const tempV = new THREE.Vector3();
+
+        const processLabel = (mesh, element, offsetY) => {
+          mesh.getWorldPosition(tempV);
+          tempV.y += offsetY; // Subir la etiqueta un poco por encima del planeta
+          tempV.project(camera);
+
+          // Convertir coordenadas normalizadas a píxeles
+          const x = (tempV.x * 0.5 + 0.5) * window.innerWidth;
+          const y = (tempV.y * -0.5 + 0.5) * window.innerHeight;
+
+          element.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px)`;
+
+          // Ocultar si está detrás de la cámara
+          if (tempV.z > 1) {
+            element.style.opacity = '0';
+          } else {
+            element.style.opacity = '1';
+          }
+        };
+
+        processLabel(sunMesh, UI.labelSun, sunRadius + 2);
+        processLabel(earthMesh, UI.labelEarth, earthRadius + 2);
+        processLabel(moonMesh, UI.labelMoon, moonRadius + 1.5);
+      }
+
+      // Comprueba si hay eclipses
+      function checkEclipse() {
+        const moonWorldPos = new THREE.Vector3();
+        moonMesh.getWorldPosition(moonWorldPos);
+
+        // Calcular distancia de la Luna al eje X (la línea recta entre Sol y Tierra)
+        const distanceToAxis = Math.sqrt(moonWorldPos.y * moonWorldPos.y + moonWorldPos.z * moonWorldPos.z);
+
+        let eclipseType = null;
+
+        // Eclipse Solar: La Luna está entre el Sol y la Tierra (su X es negativo, entre 0 y -35).
+        if (moonWorldPos.x < 0 && moonWorldPos.x > -distanceEarthSun) {
+          // Sombra de la Luna sobre la Tierra
+          if (distanceToAxis < 1.8) {
+            eclipseType = 'solar';
+          }
+        }
+        // Eclipse Lunar: La Tierra está entre el Sol y la Luna (su X es positivo).
+        else if (moonWorldPos.x > 0) {
+          // Sombra de la Tierra sobre la Luna (el radio de sombra es mayor)
+          if (distanceToAxis < 2.5) {
+            eclipseType = 'lunar';
+          }
+        }
+
+        const alertH1 = UI.eclipseAlert.querySelector('h1');
+
+        // Actualizar interfaz dependiendo del tipo de eclipse
+        if (eclipseType === 'solar') {
+          alertH1.innerText = '¡ECLIPSE SOLAR!';
+          UI.eclipseAlert.className = 'absolute top-28 left-0 w-full flex justify-center opacity-0 transition-opacity duration-300 pointer-events-none z-0 eclipse-solar-active';
+        } else if (eclipseType === 'lunar') {
+          alertH1.innerText = '¡ECLIPSE LUNAR!';
+          UI.eclipseAlert.className = 'absolute top-28 left-0 w-full flex justify-center opacity-0 transition-opacity duration-300 pointer-events-none z-0 eclipse-lunar-active';
+        } else {
+          UI.eclipseAlert.className = 'absolute top-28 left-0 w-full flex justify-center opacity-0 transition-opacity duration-300 pointer-events-none z-0';
+        }
+      }
+
+      // Aplica las rotaciones
+      function updateMoonPosition() {
+        // Rotación de la Luna en su órbita
+        orbitPivot.rotation.y = moonOrbitAngle;
+
+        if (inclinationActive) {
+          // Inclinación real (rotamos el pivote sobre el eje Z)
+          inclinationPivot.rotation.z = orbitInclinationAngle;
+          // Precesión: el plano orbital gira muy lentamente para que los eclipses ocurran solo a veces
+          inclinationPivot.rotation.y = orbitPrecessionAngle;
+        } else {
+          // Órbita plana (eclipse cada vuelta)
+          inclinationPivot.rotation.z = 0;
+          inclinationPivot.rotation.y = 0;
+        }
+
+        checkEclipse();
+      }
+
+      // Bucle de animación principal
+      function animate() {
+        requestAnimationFrame(animate);
+
+        // Lógica de reproducción automática
+        if (isPlaying) {
+          const currentSpeed = speeds[speedLevel];
+          moonOrbitAngle -= currentSpeed; // Restamos para rotar en sentido antihorario
+
+          // Normalizar ángulo entre 0 y 2PI para el deslizador
+          let normalizedAngle = moonOrbitAngle % (Math.PI * 2);
+          if (normalizedAngle < 0) normalizedAngle += Math.PI * 2;
+
+          // Actualizar deslizador en la UI sin disparar su evento 'input'
+          UI.slider.value = ((normalizedAngle * 180) / Math.PI).toFixed(1);
+          UI.sliderValue.innerText = `${parseFloat(UI.slider.value).toFixed(0)}°`;
+
+          // Si la inclinación está activa, precesamos la órbita (rotación lenta del plano)
+          if (inclinationActive) {
+            orbitPrecessionAngle -= currentSpeed * 0.15; // Velocidad de precesión
+          }
+        }
+
+        // Aplicar posiciones
+        updateMoonPosition();
+
+        // Rotación natural de los planetas (efecto visual)
+        earthMesh.rotation.y += 0.002;
+        moonMesh.rotation.y += 0.005;
+
+        controls.update(); // Necesario por el damping
+        updateLabels();
+        renderer.render(scene, camera);
+      }
+
+      // Iniciar simulación
+      updateMoonPosition();
+      animate();
+    </script>
+  </body>
+</html>
