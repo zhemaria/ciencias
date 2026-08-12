@@ -1,0 +1,887 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simulador Interactivo de Cuadro de Punnett</title>
+
+    <style>
+      :root {
+        --primary: #0d3b66;
+        --primary-dark: #082844;
+        --primary-light: #e7f3ff;
+        --secondary: #1a7d32;
+        --secondary-light: #e6fff3;
+        --accent: #ffc107;
+        --accent-light: #fff9e6;
+        --text: #1f2933;
+        --muted: #5f6c7b;
+        --card-bg: #ffffff;
+        --page-bg: #f4f7fb;
+        --border: #d8e2ec;
+        --focus: #ffbf47;
+        --success-bg: #d4edda;
+        --success-text: #155724;
+        --warning-bg: #fff3cd;
+        --warning-text: #856404;
+        --danger-bg: #f8d7da;
+        --danger-text: #721c24;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        line-height: 1.6;
+        margin: 0;
+        padding: 0;
+        background: var(--page-bg);
+        color: var(--text);
+      }
+
+      .activity-wrapper {
+        max-width: 1000px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+
+      .activity-header {
+        display: flex;
+        gap: 18px;
+        align-items: center;
+        background: linear-gradient(135deg, var(--primary), #2a6fa8);
+        color: white;
+        padding: 28px;
+        border-radius: 20px;
+        margin-bottom: 24px;
+        box-shadow: 0 8px 20px rgba(13, 59, 102, 0.2);
+      }
+
+      .activity-icon {
+        font-size: 3rem;
+        background: rgba(255, 255, 255, 0.18);
+        width: 76px;
+        height: 76px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .activity-header h1 {
+        margin: 0;
+        font-size: 2rem;
+        line-height: 1.2;
+      }
+
+      .subtitle {
+        margin: 8px 0 0 0;
+        font-size: 1.05rem;
+        opacity: 0.95;
+      }
+
+      .activity-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 22px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+      }
+
+      .activity-card h2 {
+        margin-top: 0;
+        color: var(--primary);
+        line-height: 1.3;
+      }
+
+      .activity-card h3 {
+        color: var(--primary);
+        margin-bottom: 8px;
+      }
+
+      .activity-card p {
+        margin-top: 0;
+      }
+
+      .vocab-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 12px;
+      }
+
+      .vocab-item {
+        background: var(--primary-light);
+        border-left: 5px solid var(--primary);
+        padding: 12px;
+        border-radius: 10px;
+      }
+
+      .vocab-item strong {
+        color: var(--primary-dark);
+      }
+
+      .interactive-section {
+        margin: 24px 0;
+      }
+
+      .reflection-card {
+        border-left: 6px solid var(--accent);
+      }
+
+      .student-response-box {
+        margin-top: 18px;
+      }
+
+      .student-response-box label {
+        display: block;
+        font-weight: 700;
+        margin-bottom: 8px;
+        color: var(--primary-dark);
+      }
+
+      .student-response-box textarea {
+        width: 100%;
+        border: 2px solid var(--border);
+        border-radius: 12px;
+        padding: 14px;
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 1rem;
+        resize: vertical;
+        background: #ffffff;
+        color: var(--text);
+      }
+
+      button,
+      textarea {
+        font-family: inherit;
+      }
+
+      button:focus,
+      textarea:focus,
+      [tabindex]:focus {
+        outline: 4px solid var(--focus);
+        outline-offset: 3px;
+      }
+
+      button {
+        min-height: 44px;
+      }
+
+      .sr-note {
+        font-size: 0.95rem;
+        color: var(--muted);
+        margin-top: 8px;
+      }
+
+      /* ========================================
+       ESTILOS INTERACTIVO PUNNETT
+       ======================================== */
+
+      .punnett-container {
+        max-width: 850px;
+        margin: 20px auto;
+        padding: 22px;
+        background: linear-gradient(135deg, #f0f9ff 0%, #e7f3ff 100%);
+        border-radius: 16px;
+        box-shadow: 0 4px 15px rgba(13, 59, 102, 0.15);
+        border: 1px solid #c9e5ff;
+      }
+
+      .scenario-selector {
+        text-align: center;
+        margin-bottom: 24px;
+        background: #ffffff;
+        padding: 18px;
+        border-radius: 14px;
+        border: 1px solid var(--border);
+      }
+
+      .scenario-selector h3 {
+        margin: 0 0 12px 0;
+        color: var(--primary);
+      }
+
+      .scenario-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+      }
+
+      .scenario-btn {
+        display: inline-block;
+        padding: 10px 18px;
+        border: 2px solid #2a6fa8;
+        border-radius: 999px;
+        background: white;
+        cursor: pointer;
+        font-size: 0.95em;
+        font-weight: 700;
+        color: #2a6fa8;
+        transition: all 0.3s ease;
+      }
+
+      .scenario-btn:hover {
+        background: #e7f3ff;
+        transform: translateY(-2px);
+      }
+
+      .scenario-btn.active,
+      .scenario-btn[aria-pressed='true'] {
+        background: #2a6fa8;
+        color: white;
+      }
+
+      .punnett-controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+        margin-bottom: 25px;
+      }
+
+      .parent-selector {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        border: 2px solid #0d3b66;
+        min-width: 240px;
+        text-align: center;
+        flex: 1;
+        max-width: 340px;
+      }
+
+      .parent-selector h4 {
+        color: #0d3b66;
+        margin: 0 0 15px 0;
+        font-size: 1.1em;
+      }
+
+      .genotype-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .genotype-btn {
+        padding: 12px 20px;
+        border: 2px solid #0d3b66;
+        border-radius: 8px;
+        background: #f8f9fa;
+        cursor: pointer;
+        font-size: 1em;
+        font-weight: 700;
+        color: #0d3b66;
+        transition: all 0.3s ease;
+        text-align: center;
+      }
+
+      .genotype-btn:hover {
+        background: #e7f3ff;
+        transform: translateY(-2px);
+      }
+
+      .genotype-btn.selected,
+      .genotype-btn[aria-pressed='true'] {
+        background: #0d3b66;
+        color: white;
+      }
+
+      .punnett-grid-wrapper {
+        overflow-x: auto;
+        padding-bottom: 6px;
+      }
+
+      .punnett-grid {
+        display: grid;
+        grid-template-columns: 60px repeat(2, 1fr);
+        grid-template-rows: 60px repeat(2, 1fr);
+        gap: 4px;
+        max-width: 370px;
+        min-width: 280px;
+        margin: 0 auto 25px;
+        background: #0d3b66;
+        padding: 4px;
+        border-radius: 12px;
+      }
+
+      .punnett-cell {
+        background: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5em;
+        font-weight: 700;
+        min-height: 80px;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+        text-align: center;
+      }
+
+      .punnett-cell.header {
+        background: #1a5490;
+        color: white;
+        font-size: 1.3em;
+      }
+
+      .punnett-cell.corner {
+        background: #0d3b66;
+      }
+
+      .punnett-cell.result {
+        font-size: 1.4em;
+        border: 3px solid transparent;
+      }
+
+      .punnett-cell.dominant {
+        background: var(--success-bg);
+        color: var(--success-text);
+        border-color: var(--success-text);
+      }
+
+      .punnett-cell.recessive {
+        background: var(--danger-bg);
+        color: var(--danger-text);
+        border-color: var(--danger-text);
+      }
+
+      .punnett-cell.heterozygous {
+        background: var(--warning-bg);
+        color: var(--warning-text);
+        border-color: var(--warning-text);
+      }
+
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        margin: 0 auto 20px auto;
+      }
+
+      .legend-item {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        padding: 8px 12px;
+        font-size: 0.92rem;
+        font-weight: 700;
+      }
+
+      .legend-color {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: inline-block;
+        border: 2px solid #333;
+      }
+
+      .legend-dominant {
+        background: var(--success-bg);
+        border-color: var(--success-text);
+      }
+
+      .legend-heterozygous {
+        background: var(--warning-bg);
+        border-color: var(--warning-text);
+      }
+
+      .legend-recessive {
+        background: var(--danger-bg);
+        border-color: var(--danger-text);
+      }
+
+      .punnett-results {
+        background: white;
+        padding: 20px;
+        border-radius: 12px;
+        border: 2px solid #28a745;
+        text-align: center;
+      }
+
+      .punnett-results h4 {
+        color: #1f7a35;
+        margin: 0 0 15px 0;
+        font-size: 1.15rem;
+      }
+
+      .result-item {
+        display: inline-block;
+        margin: 8px;
+        padding: 10px 20px;
+        border-radius: 20px;
+        font-weight: 700;
+      }
+
+      .result-item.phenotype {
+        background: #e7f3ff;
+        color: #0d3b66;
+        border: 1px solid #a8d4ff;
+      }
+
+      .result-item.genotype {
+        background: #f0f9ff;
+        color: #1a5490;
+        font-size: 0.95em;
+        border: 1px solid #c9e5ff;
+      }
+
+      .law-explanation {
+        background: #fff9e6;
+        border-left: 5px solid #ffc107;
+        padding: 16px;
+        margin-top: 20px;
+        border-radius: 8px;
+      }
+
+      .law-explanation h5 {
+        color: #856404;
+        margin: 0 0 10px 0;
+        font-size: 1.05em;
+      }
+
+      .law-explanation p {
+        margin-bottom: 0;
+      }
+
+      .footer-note {
+        text-align: center;
+        color: var(--muted);
+        font-size: 0.9rem;
+        margin-top: 30px;
+      }
+
+      @media (max-width: 768px) {
+        .activity-wrapper {
+          padding: 14px;
+        }
+
+        .activity-header {
+          flex-direction: column;
+          text-align: center;
+          padding: 22px;
+        }
+
+        .activity-header h1 {
+          font-size: 1.5rem;
+        }
+
+        .activity-icon {
+          width: 64px;
+          height: 64px;
+          font-size: 2.4rem;
+        }
+
+        .vocab-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .punnett-controls {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .parent-selector {
+          width: 100%;
+          max-width: 320px;
+        }
+
+        .punnett-grid {
+          max-width: 300px;
+        }
+
+        .punnett-cell {
+          min-height: 64px;
+          font-size: 1.2em;
+        }
+
+        .scenario-buttons {
+          flex-direction: column;
+        }
+
+        .scenario-btn {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <main class="activity-wrapper">
+      <header class="activity-header">
+        <div class="activity-icon" aria-hidden="true">🧬</div>
+
+        <div>
+          <h1>Simulador Interactivo de Cuadro de Punnett</h1>
+          <p class="subtitle">Explora cómo se heredan los rasgos usando cruces genéticos simples.</p>
+        </div>
+      </header>
+
+      <section class="activity-card" aria-labelledby="objetivo">
+        <h2 id="objetivo">🎯 Objetivo de aprendizaje</h2>
+        <p>Al completar esta actividad, podrás predecir los posibles genotipos y fenotipos de la descendencia usando un cuadro de Punnett.</p>
+      </section>
+
+      <section class="activity-card" aria-labelledby="vocabulario">
+        <h2 id="vocabulario">📚 Vocabulario clave</h2>
+
+        <div class="vocab-grid">
+          <div class="vocab-item">
+            <strong>Genotipo:</strong>
+            combinación genética de un organismo, como AA, Aa o aa.
+          </div>
+
+          <div class="vocab-item">
+            <strong>Fenotipo:</strong>
+            característica observable que resulta del genotipo.
+          </div>
+
+          <div class="vocab-item">
+            <strong>Homocigoto:</strong>
+            organismo con dos alelos iguales, como AA o aa.
+          </div>
+
+          <div class="vocab-item">
+            <strong>Heterocigoto:</strong>
+            organismo con dos alelos diferentes, como Aa.
+          </div>
+        </div>
+      </section>
+
+      <section class="activity-card" aria-labelledby="instrucciones">
+        <h2 id="instrucciones">📝 Instrucciones</h2>
+
+        <ol>
+          <li>Selecciona un escenario predefinido o elige manualmente los genotipos de ambos progenitores.</li>
+          <li>Observa cómo cambian las combinaciones en el cuadro de Punnett.</li>
+          <li>Revisa los resultados de genotipo y fenotipo.</li>
+          <li>Lee la explicación de la ley de Mendel que se aplica al cruce.</li>
+          <li>Contesta las preguntas de reflexión al final.</li>
+        </ol>
+
+        <p class="sr-note">Nota de accesibilidad: puedes usar la tecla Tab para moverte entre los botones y Enter o la barra espaciadora para seleccionarlos.</p>
+      </section>
+
+      <section class="interactive-section" aria-labelledby="simulador">
+        <h2 id="simulador" style="text-align: center; color: #0d3b66">🎮 Simulador</h2>
+
+        <div class="punnett-container">
+          <div class="scenario-selector" aria-labelledby="escenarios">
+            <h3 id="escenarios">Escenarios predefinidos</h3>
+
+            <div class="scenario-buttons" role="group" aria-label="Escenarios predefinidos del cuadro de Punnett">
+              <button class="scenario-btn active" type="button" aria-pressed="true" onclick="setScenario('aa', 'AA', this)">1ª Ley: Puros AA × aa</button>
+
+              <button class="scenario-btn" type="button" aria-pressed="false" onclick="setScenario('Aa', 'Aa', this)">2ª Ley: Híbridos Aa × Aa</button>
+
+              <button class="scenario-btn" type="button" aria-pressed="false" onclick="setScenario('Aa', 'aa', this)">Cruce de prueba Aa × aa</button>
+
+              <button class="scenario-btn" type="button" aria-pressed="false" onclick="setScenario('AA', 'Aa', this)">Dominante × Híbrido</button>
+            </div>
+          </div>
+
+          <div class="punnett-controls">
+            <div class="parent-selector">
+              <h4>🌸 Progenitor 1</h4>
+
+              <div class="genotype-buttons" id="parent1-buttons" role="group" aria-label="Seleccionar genotipo del progenitor 1">
+                <button class="genotype-btn" type="button" aria-pressed="false" onclick="selectParent(1, 'AA', this)">AA — Homocigoto dominante</button>
+
+                <button class="genotype-btn" type="button" aria-pressed="false" onclick="selectParent(1, 'Aa', this)">Aa — Heterocigoto</button>
+
+                <button class="genotype-btn" type="button" aria-pressed="false" onclick="selectParent(1, 'aa', this)">aa — Homocigoto recesivo</button>
+              </div>
+            </div>
+
+            <div class="parent-selector">
+              <h4>🌺 Progenitor 2</h4>
+
+              <div class="genotype-buttons" id="parent2-buttons" role="group" aria-label="Seleccionar genotipo del progenitor 2">
+                <button class="genotype-btn" type="button" aria-pressed="false" onclick="selectParent(2, 'AA', this)">AA — Homocigoto dominante</button>
+
+                <button class="genotype-btn" type="button" aria-pressed="false" onclick="selectParent(2, 'Aa', this)">Aa — Heterocigoto</button>
+
+                <button class="genotype-btn" type="button" aria-pressed="false" onclick="selectParent(2, 'aa', this)">aa — Homocigoto recesivo</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="legend" aria-label="Leyenda de colores del cuadro de Punnett">
+            <div class="legend-item">
+              <span class="legend-color legend-dominant"></span>
+              AA: homocigoto dominante
+            </div>
+
+            <div class="legend-item">
+              <span class="legend-color legend-heterozygous"></span>
+              Aa: heterocigoto
+            </div>
+
+            <div class="legend-item">
+              <span class="legend-color legend-recessive"></span>
+              aa: homocigoto recesivo
+            </div>
+          </div>
+
+          <div class="punnett-grid-wrapper">
+            <div class="punnett-grid" id="punnett-grid" role="table" aria-label="Cuadro de Punnett con combinaciones de alelos">
+              <div class="punnett-cell corner" role="cell" aria-hidden="true"></div>
+
+              <div class="punnett-cell header" id="col1" role="columnheader">-</div>
+              <div class="punnett-cell header" id="col2" role="columnheader">-</div>
+
+              <div class="punnett-cell header" id="row1" role="rowheader">-</div>
+              <div class="punnett-cell result" id="cell11" role="cell">-</div>
+              <div class="punnett-cell result" id="cell12" role="cell">-</div>
+
+              <div class="punnett-cell header" id="row2" role="rowheader">-</div>
+              <div class="punnett-cell result" id="cell21" role="cell">-</div>
+              <div class="punnett-cell result" id="cell22" role="cell">-</div>
+            </div>
+          </div>
+
+          <div class="punnett-results" id="punnett-results" aria-live="polite">
+            <h4>📈 Resultados del cruce</h4>
+            <p id="results-text">Selecciona ambos progenitores para ver los resultados.</p>
+          </div>
+
+          <div class="law-explanation" id="law-explanation" aria-live="polite">
+            <h5>📚 Ley de Mendel aplicada</h5>
+            <p id="law-text">Selecciona un escenario o progenitores para ver qué ley de Mendel se ilustra.</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="activity-card reflection-card" aria-labelledby="reflexion">
+        <h2 id="reflexion">💭 Preguntas de reflexión</h2>
+
+        <ol>
+          <li>¿Qué ocurre cuando cruzas dos organismos homocigotos, uno dominante y uno recesivo?</li>
+
+          <li>En el cruce Aa × Aa, ¿cuál es la proporción genotípica esperada?</li>
+
+          <li>¿Por qué un organismo con genotipo Aa muestra el rasgo dominante?</li>
+
+          <li>Si una característica recesiva aparece en la descendencia, ¿qué puedes inferir sobre los progenitores?</li>
+
+          <li>Explica con tus propias palabras la diferencia entre genotipo y fenotipo.</li>
+        </ol>
+
+        <div class="student-response-box">
+          <label for="punnett-response">Escribe tu respuesta a una de las preguntas:</label>
+
+          <textarea id="punnett-response" rows="6" placeholder="Escribe aquí tu reflexión..."></textarea>
+        </div>
+      </section>
+
+      <p class="footer-note">Actividad interactiva de genética | Cuadro de Punnett</p>
+    </main>
+
+    <script>
+      // =====================================
+      // INTERACTIVO CUADRO DE PUNNETT
+      // =====================================
+
+      let parent1 = null;
+      let parent2 = null;
+
+      function selectParent(parentNum, genotype, buttonElement) {
+        if (parentNum === 1) {
+          parent1 = genotype;
+          updateButtonSelection('parent1-buttons', genotype);
+        } else {
+          parent2 = genotype;
+          updateButtonSelection('parent2-buttons', genotype);
+        }
+
+        clearScenarioButtons();
+
+        if (parent1 && parent2) {
+          updatePunnettSquare();
+        }
+      }
+
+      function updateButtonSelection(containerId, selectedGenotype) {
+        var container = document.getElementById(containerId);
+        var buttons = container.querySelectorAll('.genotype-btn');
+
+        buttons.forEach(function (btn) {
+          btn.classList.remove('selected');
+          btn.setAttribute('aria-pressed', 'false');
+
+          if (btn.textContent.trim().indexOf(selectedGenotype) === 0) {
+            btn.classList.add('selected');
+            btn.setAttribute('aria-pressed', 'true');
+          }
+        });
+      }
+
+      function clearScenarioButtons() {
+        document.querySelectorAll('.scenario-btn').forEach(function (btn) {
+          btn.classList.remove('active');
+          btn.setAttribute('aria-pressed', 'false');
+        });
+      }
+
+      function setScenario(p1, p2, buttonElement) {
+        parent1 = p1;
+        parent2 = p2;
+
+        updateButtonSelection('parent1-buttons', p1);
+        updateButtonSelection('parent2-buttons', p2);
+        updatePunnettSquare();
+
+        document.querySelectorAll('.scenario-btn').forEach(function (btn) {
+          btn.classList.remove('active');
+          btn.setAttribute('aria-pressed', 'false');
+        });
+
+        if (buttonElement) {
+          buttonElement.classList.add('active');
+          buttonElement.setAttribute('aria-pressed', 'true');
+        }
+      }
+
+      function getGametes(genotype) {
+        if (genotype === 'AA') return ['A', 'A'];
+        if (genotype === 'aa') return ['a', 'a'];
+        if (genotype === 'Aa') return ['A', 'a'];
+
+        return ['-', '-'];
+      }
+
+      function combineAlleles(a1, a2) {
+        if (a1 === 'a' && a2 === 'A') {
+          return 'Aa';
+        }
+
+        return a1 + a2;
+      }
+
+      function getCellClass(genotype) {
+        if (genotype === 'AA') return 'dominant';
+        if (genotype === 'aa') return 'recessive';
+        if (genotype === 'Aa') return 'heterozygous';
+
+        return '';
+      }
+
+      function getGenotypeDescription(genotype) {
+        if (genotype === 'AA') return 'homocigoto dominante';
+        if (genotype === 'Aa') return 'heterocigoto';
+        if (genotype === 'aa') return 'homocigoto recesivo';
+
+        return '';
+      }
+
+      function updatePunnettSquare() {
+        var gametes1 = getGametes(parent1);
+        var gametes2 = getGametes(parent2);
+
+        document.getElementById('col1').textContent = gametes2[0];
+        document.getElementById('col2').textContent = gametes2[1];
+        document.getElementById('row1').textContent = gametes1[0];
+        document.getElementById('row2').textContent = gametes1[1];
+
+        var results = [];
+
+        var cells = [
+          ['cell11', gametes1[0], gametes2[0]],
+          ['cell12', gametes1[0], gametes2[1]],
+          ['cell21', gametes1[1], gametes2[0]],
+          ['cell22', gametes1[1], gametes2[1]]
+        ];
+
+        cells.forEach(function (cellInfo) {
+          var cellId = cellInfo[0];
+          var a1 = cellInfo[1];
+          var a2 = cellInfo[2];
+
+          var genotype = combineAlleles(a1, a2);
+          var cell = document.getElementById(cellId);
+
+          cell.textContent = genotype;
+          cell.className = 'punnett-cell result ' + getCellClass(genotype);
+          cell.setAttribute('aria-label', genotype + ', ' + getGenotypeDescription(genotype));
+
+          results.push(genotype);
+        });
+
+        var counts = {};
+
+        results.forEach(function (g) {
+          counts[g] = (counts[g] || 0) + 1;
+        });
+
+        var phenotypeDominant = (counts['AA'] || 0) + (counts['Aa'] || 0);
+        var phenotypeRecessive = counts['aa'] || 0;
+
+        var resultsHTML = '';
+
+        resultsHTML += '<div class="result-item phenotype">Fenotipo dominante: ';
+        resultsHTML += phenotypeDominant + '/4 (' + phenotypeDominant * 25 + '%)</div>';
+
+        resultsHTML += '<div class="result-item phenotype">Fenotipo recesivo: ';
+        resultsHTML += phenotypeRecessive + '/4 (' + phenotypeRecessive * 25 + '%)</div>';
+
+        resultsHTML += '<br><strong>Genotipos:</strong><br>';
+
+        Object.keys(counts)
+          .sort()
+          .forEach(function (g) {
+            resultsHTML += '<div class="result-item genotype">' + g + ': ' + counts[g] + '/4</div>';
+          });
+
+        document.getElementById('results-text').innerHTML = resultsHTML;
+
+        updateLawExplanation();
+      }
+
+      function updateLawExplanation() {
+        var lawText = '';
+        var lawTitle = '';
+
+        if ((parent1 === 'AA' && parent2 === 'aa') || (parent1 === 'aa' && parent2 === 'AA')) {
+          lawTitle = '📗 Primera Ley de Mendel: Uniformidad';
+          lawText =
+            'Al cruzar dos individuos homocigotos, uno dominante AA y otro recesivo aa, <strong>todos los descendientes son heterocigotos Aa</strong> e iguales entre sí. Todos muestran el fenotipo dominante.';
+        } else if (parent1 === 'Aa' && parent2 === 'Aa') {
+          lawTitle = '📘 Segunda Ley de Mendel: Segregación';
+          lawText =
+            'Al cruzar dos heterocigotos Aa × Aa, los alelos se separan durante la formación de gametos. El resultado esperado es una proporción fenotípica de <strong>3:1</strong> y una proporción genotípica de <strong>1:2:1</strong>.';
+        } else if ((parent1 === 'Aa' && parent2 === 'aa') || (parent1 === 'aa' && parent2 === 'Aa')) {
+          lawTitle = '📙 Cruce de prueba';
+          lawText =
+            'Este cruce se usa para determinar si un individuo con fenotipo dominante es homocigoto AA o heterocigoto Aa. La proporción esperada es <strong>1:1</strong>, es decir, 50% Aa y 50% aa.';
+        } else if ((parent1 === 'AA' && parent2 === 'Aa') || (parent1 === 'Aa' && parent2 === 'AA')) {
+          lawTitle = '📕 Cruce dominante × heterocigoto';
+          lawText = 'Al cruzar un homocigoto dominante AA con un heterocigoto Aa, <strong>todos los descendientes muestran el fenotipo dominante</strong>, pero la mitad son AA y la mitad son Aa.';
+        } else if (parent1 === 'AA' && parent2 === 'AA') {
+          lawTitle = '📗 Cruce de homocigotos dominantes';
+          lawText = 'Al cruzar dos homocigotos dominantes AA × AA, <strong>todos los descendientes son AA</strong> y muestran el fenotipo dominante.';
+        } else if (parent1 === 'aa' && parent2 === 'aa') {
+          lawTitle = '📗 Cruce de homocigotos recesivos';
+          lawText = 'Al cruzar dos homocigotos recesivos aa × aa, <strong>todos los descendientes son aa</strong> y muestran el fenotipo recesivo.';
+        } else {
+          lawTitle = '📚 Cruce genético';
+          lawText = 'Observa las proporciones de genotipos y fenotipos en la descendencia.';
+        }
+
+        document.getElementById('law-explanation').innerHTML = '<h5>' + lawTitle + '</h5><p>' + lawText + '</p>';
+      }
+
+      document.addEventListener('DOMContentLoaded', function () {
+        var firstScenario = document.querySelector('.scenario-btn');
+        setScenario('aa', 'AA', firstScenario);
+      });
+    </script>
+  </body>
+</html>
