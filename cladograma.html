@@ -1,0 +1,617 @@
+<!doctype html>
+<!--
+  Cladogramas: lectura y construcción (Lección 4.3) · Spanish ASE Science
+  © 2026 José M. Fernández, ABE/ASE Math Master Teacher,
+  Harry S. Truman College — City Colleges of Chicago.
+  Licencia: Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0
+  Internacional (CC BY-NC-SA 4.0) — https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cladogramas: lectura y construcción</title>
+<meta name="description" content="Interactivo de cladogramas: partes del diagrama y redibujado de las puntas para comprobar que la rotación de las ramas no altera el parentesco.">
+<meta name="author" content="José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago">
+<meta name="license" content="CC BY-NC-SA 4.0">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
+<style>
+@charset "utf-8";
+/* ============================================================================
+   Estilos unificados de los interactivos · Spanish ASE Science
+   José M. Fernández, ABE/ASE Math Master Teacher,
+   Harry S. Truman College — City Colleges of Chicago
+   © 2026 · CC BY-NC-SA 4.0
+   https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+   ----------------------------------------------------------------------------
+   CÓMO SE USA
+   Este bloque se copia completo dentro de <style> en cada interactivo, para que
+   el archivo siga siendo autónomo. La clase de unidad va en el <body>:
+       <body class="u4">   → Unidad 4, verde oliva
+   Unidades: u1 verde azulado · u2 gris pizarra · u3 verde · u4 verde oliva
+             u5 rojo anaranjado · u6 azul índigo · u7 violeta · u8 azul
+   Todos los colores de acento cumplen 4,5:1 sobre blanco y admiten texto
+   blanco encima. El ámbar de los avisos usa #5c3900 (10,29:1).
+   ========================================================================== */
+
+/* ── 1. PALETA POR UNIDAD ──────────────────────────────────────────────── */
+:root{
+  --u:#37474f; --u2:#263238; --u-bg:#eceff1;   /* valor por defecto */
+  --texto:#222; --texto-sec:#555; --linea:#e0e0e0;
+  --pagina:#f5f7fa; --papel:#ffffff;
+  --amb:#5c3900; --amb-bg:#fff8e1; --amb-borde:#b45309;
+  --ok:#1b5e20; --ok-bg:#e8f5e9; --mal:#7f1d1d; --mal-bg:#fbe9e7;
+  --radio:12px; --sombra:0 2px 8px rgba(0,0,0,.07);
+}
+body.u1{--u:#00695c;--u2:#004d40;--u-bg:#e0f2f1;}
+body.u2{--u:#37474f;--u2:#263238;--u-bg:#eceff1;}
+body.u3{--u:#1b5e20;--u2:#0f3d13;--u-bg:#e8f5e9;}
+body.u4{--u:#33691e;--u2:#1f4211;--u-bg:#f1f8e9;}
+body.u5{--u:#bf360c;--u2:#8c2708;--u-bg:#fbe9e7;}
+body.u6{--u:#1e3a8a;--u2:#142a63;--u-bg:#e8eaf6;}
+body.u7{--u:#5b21b6;--u2:#40157f;--u-bg:#ede7f6;}
+body.u8{--u:#0d47a1;--u2:#093271;--u-bg:#e3f2fd;}
+
+/* ── 2. BASE ───────────────────────────────────────────────────────────── */
+*{box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;margin:0;background:var(--pagina);
+  color:var(--texto);line-height:1.55;font-size:16px;}
+.contenedor{max-width:1100px;margin:0 auto;padding:24px;}
+a{color:#0b3d91;}
+h1,h2,h3{line-height:1.3;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+:focus-visible{outline:3px solid var(--u);outline-offset:2px;}
+
+/* ── 3. ENCABEZADO DEL INTERACTIVO ─────────────────────────────────────── */
+header.principal{background:var(--u);background:linear-gradient(135deg,var(--u) 0%,var(--u2) 100%);
+  color:#fff;padding:28px 32px;border-radius:14px;margin-bottom:22px;box-shadow:var(--sombra);}
+header.principal h1{margin:0 0 6px;font-size:26px;font-weight:700;color:#fff;}
+header.principal .meta{font-size:14px;margin:4px 0 0;color:#fff;}
+
+/* ── 4. BLOQUES DE TEXTO ───────────────────────────────────────────────── */
+.tarjeta{background:var(--papel);padding:20px 24px;border-radius:10px;
+  border-left:5px solid var(--u);margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.tarjeta h2{margin-top:0;color:var(--u);font-size:20px;}
+.tarjeta h3{font-size:16px;color:#263238;margin:16px 0 6px;}
+.caja-tip{background:var(--amb-bg);border-left:4px solid var(--amb-borde);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;font-size:15px;}
+.caja-tip strong{color:var(--amb);}
+.caja-ok{background:var(--ok-bg);border-left:5px solid var(--ok);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;}
+.caja-ok strong{color:var(--ok);}
+.caja-mal{background:var(--mal-bg);border-left:5px solid var(--mal);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;}
+.caja-mal strong{color:var(--mal);}
+
+/* ── 5. PANEL DE CONTROLES ─────────────────────────────────────────────── */
+.panel{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:18px 22px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.panel h2{margin:0 0 12px;font-size:18px;color:var(--u);}
+.control{margin-bottom:16px;}
+.control > label{display:block;font-weight:600;font-size:15px;color:#263238;margin-bottom:6px;}
+.control .valor{float:right;font-weight:700;color:var(--u);font-variant-numeric:tabular-nums;}
+.control input[type=range]{width:100%;accent-color:var(--u);height:26px;}
+.control select,.control input[type=number],.control input[type=text]{
+  font-family:inherit;font-size:16px;padding:9px 14px;border-radius:8px;
+  border:1px solid #90a4ae;background:#fff;color:var(--texto);width:100%;max-width:420px;}
+.fila-botones{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;}
+button{font-family:inherit;font-size:15px;font-weight:600;padding:10px 18px;border-radius:8px;
+  border:1px solid transparent;background:var(--u);color:#fff;cursor:pointer;}
+button:hover{background:var(--u2);}
+button.secundario{background:#fff;color:var(--u);border-color:var(--u);}
+button.secundario:hover{background:var(--u-bg);}
+
+/* ── 6. LIENZO / ESCENA ────────────────────────────────────────────────── */
+.escena{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:16px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);overflow-x:auto;}
+
+/* ── 7. LECTURA DEL ESTADO (alternativa textual, siempre visible) ──────── */
+.lectura{background:var(--u-bg);border-left:5px solid var(--u);border-radius:0 8px 8px 0;
+  padding:14px 18px;margin-bottom:22px;font-size:15px;}
+.lectura h2{margin:0 0 8px;font-size:17px;color:var(--u);}
+.lectura p{margin:6px 0;}
+.lectura .dato{font-weight:700;color:var(--u2);font-variant-numeric:tabular-nums;}
+
+/* ── 8. TABLAS (Ally: caption obligatorio y scope en todo th) ──────────── */
+.tabla-wrap{overflow-x:auto;margin-bottom:22px;}
+table.datos{width:100%;border-collapse:collapse;background:var(--papel);border-radius:10px;
+  overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);font-size:15px;}
+table.datos caption{caption-side:top;text-align:left;font-size:14px;color:var(--texto-sec);
+  padding:0 0 8px;font-style:italic;}
+table.datos th,table.datos td{padding:10px 12px;text-align:left;border-bottom:1px solid #eee;}
+table.datos thead th{background:#37474f;color:#fff;font-weight:600;font-size:13px;
+  text-transform:uppercase;letter-spacing:.4px;}
+table.datos tbody th{background:var(--u-bg);color:var(--u2);font-weight:700;}
+table.datos tr:last-child td{border-bottom:none;}
+
+/* ── 9. ACORDEÓN NATIVO ────────────────────────────────────────────────── */
+details.bloque{background:var(--papel);border-radius:var(--radio);margin-bottom:14px;
+  box-shadow:var(--sombra);border-left:5px solid var(--u);overflow:hidden;}
+details.bloque > summary{padding:14px 18px;cursor:pointer;list-style:none;display:flex;
+  gap:10px;align-items:center;background:var(--u-bg);font-weight:600;color:var(--u2);}
+details.bloque > summary::-webkit-details-marker{display:none;}
+details.bloque > summary .chevron{transition:transform .2s;flex-shrink:0;}
+details.bloque[open] > summary .chevron{transform:rotate(90deg);}
+details.bloque .cuerpo{padding:14px 20px 18px;}
+
+/* ── 10. PIE CON LICENCIA ──────────────────────────────────────────────── */
+footer.pie{padding:22px 4px;color:var(--texto-sec);font-size:13px;margin-top:20px;
+  border-top:1px solid #ddd;text-align:center;}
+footer.pie p{margin:5px 0;}
+
+/* ── 11. MOVIMIENTO REDUCIDO ───────────────────────────────────────────── */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;scroll-behavior:auto !important;}
+}
+
+/* ── 12. IMPRESIÓN ─────────────────────────────────────────────────────── */
+@media print{
+  body{background:#fff;}
+  .panel,.escena{page-break-inside:avoid;}
+  details[open] .cuerpo{display:block;}
+}
+
+/* ── PROPIO DE ESTE INTERACTIVO ────────────────────────────────────────── */
+.rejilla-vocab{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-top:12px;}
+.vocab{background:var(--u-bg);border-left:5px solid var(--u);padding:12px 14px;border-radius:0 8px 8px 0;}
+.vocab strong{color:var(--u2);}
+.piezas{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:16px;}
+button.pieza{border-radius:999px;background:#fff;color:var(--u2);border:2px solid var(--u);
+  font-size:15px;min-height:44px;}
+button.pieza:hover{background:var(--u-bg);}
+button.pieza[aria-pressed="true"]{background:var(--u);color:#fff;}
+.lienzo{overflow-x:auto;}
+svg.arbol{display:block;margin:0 auto;min-width:660px;max-width:100%;height:auto;}
+.rotulo-especie{font-size:12px;font-weight:600;fill:#102027;}
+.rotulo-menor{font-size:11px;fill:#37474f;}
+g.parte{cursor:pointer;}
+g.parte:focus-visible{outline:3px solid var(--u);outline-offset:2px;}
+g.parte.resaltada{filter:drop-shadow(0 0 6px #33691e);}
+circle.nodo{fill:#1f4211;stroke:#ffffff;stroke-width:2;}
+.nota-lienzo{font-size:14px;color:var(--texto-sec);margin:10px 0 0;text-align:center;}
+.respuesta textarea{width:100%;border:2px solid #90a4ae;border-radius:10px;padding:12px;
+  font-family:inherit;font-size:16px;resize:vertical;color:var(--texto);background:#fff;}
+.respuesta label{display:block;font-weight:600;margin-bottom:6px;color:var(--u2);}
+ol li,ul li{margin-bottom:6px;}
+</style>
+</head>
+<body class="u4">
+<div class="contenedor">
+
+<header class="principal">
+  <h1>Cladogramas: lectura y construcción</h1>
+  <p class="meta">Lección 4.3 · Selección natural, evidencia evolutiva y ecosistemas</p>
+  <p class="meta">Unidad 4 · Ciencias de la vida II · Spanish ASE Science</p>
+</header>
+
+<div class="tarjeta">
+  <h2>Objetivo de aprendizaje</h2>
+  <p>Al terminar esta actividad podrás identificar las partes de un cladograma, explicar qué relación evolutiva representa cada una y determinar qué organismos están más emparentados entre sí. También comprobarás por qué dos cladogramas que se ven distintos pueden decir exactamente lo mismo.</p>
+</div>
+
+<div class="tarjeta">
+  <h2>Vocabulario clave</h2>
+  <div class="rejilla-vocab">
+    <div class="vocab"><strong>Cladograma:</strong> diagrama que propone una hipótesis sobre las relaciones evolutivas de un grupo de organismos.</div>
+    <div class="vocab"><strong>Clado:</strong> grupo formado por un ancestro común y todos sus descendientes, sin dejar ninguno fuera.</div>
+    <div class="vocab"><strong>Nodo:</strong> punto donde un linaje se divide en dos. Representa un ancestro común.</div>
+    <div class="vocab"><strong>Sinapomorfía:</strong> rasgo derivado compartido que aparece en un ancestro y heredan todos sus descendientes.</div>
+    <div class="vocab"><strong>Grupo externo:</strong> organismo emparentado pero situado fuera del clado que se estudia. Sirve de punto de comparación.</div>
+    <div class="vocab"><strong>Punta:</strong> extremo de una rama, donde se sitúa cada organismo del diagrama.</div>
+  </div>
+</div>
+
+<div class="tarjeta">
+  <h2>Primera parte: las piezas del diagrama</h2>
+  <p>Pulsa cada botón para que se resalte esa pieza en el diagrama y aparezca su explicación debajo. También puedes pulsar directamente sobre el diagrama. Con el teclado, la tecla de tabulación recorre las piezas y la barra espaciadora las selecciona.</p>
+</div>
+
+<div class="escena">
+  <div class="piezas" role="group" aria-label="Piezas del cladograma">
+    <button type="button" class="pieza" aria-pressed="false" data-pieza="raiz">Raíz</button>
+    <button type="button" class="pieza" aria-pressed="false" data-pieza="nodo">Nodo</button>
+    <button type="button" class="pieza" aria-pressed="false" data-pieza="rama">Rama</button>
+    <button type="button" class="pieza" aria-pressed="false" data-pieza="clado">Clado</button>
+    <button type="button" class="pieza" aria-pressed="false" data-pieza="sinapomorfia">Sinapomorfía</button>
+    <button type="button" class="pieza" aria-pressed="false" data-pieza="externo">Grupo externo</button>
+  </div>
+
+  <div class="lienzo">
+  <svg class="arbol" viewBox="0 0 800 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="tit-svg desc-svg">
+    <title id="tit-svg">Cladograma de lagarto, perro, humano, vaca y ballena</title>
+    <desc id="desc-svg">El ancestro común está a la izquierda y los organismos actuales a la derecha. Del ancestro salen dos ramas: una lleva al lagarto, que es el grupo externo, y la otra al clado de los mamíferos. Dentro de ese clado, un nodo separa a perro y humano de vaca y ballena. Sobre las ramas se marcan tres rasgos derivados compartidos: pelo, placenta y pezuñas.</desc>
+
+    <rect x="0" y="0" width="800" height="470" fill="#ffffff"></rect>
+    <text x="50" y="28" class="rotulo-menor">Pasado (ancestro común)</text>
+    <text x="672" y="28" class="rotulo-menor">Presente</text>
+    <line x1="50" y1="40" x2="750" y2="40" stroke="#78909c" stroke-width="1" stroke-dasharray="5,5"></line>
+    <polygon points="750,35 762,40 750,45" fill="#78909c"></polygon>
+
+    <g id="p-rama" class="parte" tabindex="0" role="button" aria-label="Ramas: los linajes evolutivos">
+      <path d="M115 225 Q 180 225, 200 100" stroke="#33691e" stroke-width="4" fill="none"></path>
+      <path d="M115 225 Q 180 225, 250 280" stroke="#33691e" stroke-width="4" fill="none"></path>
+      <path d="M250 280 Q 320 240, 400 200" stroke="#33691e" stroke-width="4" fill="none"></path>
+      <path d="M250 280 Q 350 350, 500 320" stroke="#33691e" stroke-width="4" fill="none"></path>
+      <path d="M400 200 L 700 140" stroke="#33691e" stroke-width="4" fill="none"></path>
+      <path d="M400 200 L 700 260" stroke="#33691e" stroke-width="4" fill="none"></path>
+      <path d="M500 320 L 700 340" stroke="#33691e" stroke-width="4" fill="none"></path>
+      <path d="M500 320 L 700 420" stroke="#33691e" stroke-width="4" fill="none"></path>
+    </g>
+
+    <g id="p-externo" class="parte" tabindex="0" role="button" aria-label="Grupo externo: el lagarto">
+      <path d="M200 100 L 700 70" stroke="#b71c1c" stroke-width="4" fill="none"></path>
+      <circle cx="700" cy="70" r="20" fill="#fbe9e7" stroke="#b71c1c" stroke-width="2"></circle>
+      <text x="700" y="76" text-anchor="middle" font-size="16" aria-hidden="true">🦎</text>
+      <text x="700" y="110" text-anchor="middle" class="rotulo-especie">Lagarto</text>
+      <text x="700" y="126" text-anchor="middle" class="rotulo-menor">(grupo externo)</text>
+    </g>
+
+    <g id="p-raiz" class="parte" tabindex="0" role="button" aria-label="Raíz: el ancestro común de todos">
+      <circle cx="100" cy="225" r="15" fill="#5d4037" stroke="#3e2723" stroke-width="3"></circle>
+      <text x="100" y="266" text-anchor="middle" class="rotulo-especie">Ancestro</text>
+      <text x="100" y="282" text-anchor="middle" class="rotulo-especie">común</text>
+    </g>
+
+    <g id="p-nodo" class="parte" tabindex="0" role="button" aria-label="Nodos: los puntos de bifurcación">
+      <circle cx="250" cy="280" r="10" class="nodo"></circle>
+      <circle cx="400" cy="200" r="10" class="nodo"></circle>
+      <circle cx="500" cy="320" r="10" class="nodo"></circle>
+    </g>
+
+    <g id="p-sinapomorfia" class="parte" tabindex="0" role="button" aria-label="Sinapomorfías: pelo, placenta y pezuñas">
+      <rect x="214" y="238" width="72" height="26" rx="5" fill="#fff8e1" stroke="#b45309" stroke-width="2"></rect>
+      <text x="250" y="256" text-anchor="middle" font-size="12" fill="#5c3900">Pelo</text>
+      <rect x="366" y="158" width="86" height="26" rx="5" fill="#fff8e1" stroke="#b45309" stroke-width="2"></rect>
+      <text x="409" y="176" text-anchor="middle" font-size="12" fill="#5c3900">Placenta</text>
+      <rect x="466" y="278" width="86" height="26" rx="5" fill="#fff8e1" stroke="#b45309" stroke-width="2"></rect>
+      <text x="509" y="296" text-anchor="middle" font-size="12" fill="#5c3900">Pezuñas</text>
+    </g>
+
+    <g id="p-clado" class="parte" tabindex="0" role="button" aria-label="Clado de los mamíferos">
+      <ellipse cx="550" cy="280" rx="200" ry="122" fill="none" stroke="#1e3a8a" stroke-width="3" stroke-dasharray="10,5"></ellipse>
+      <text x="352" y="392" font-size="12" font-weight="600" fill="#1e3a8a">Clado de los mamíferos</text>
+    </g>
+
+    <g>
+      <circle cx="700" cy="140" r="20" fill="#f1f8e9" stroke="#33691e" stroke-width="2"></circle>
+      <text x="700" y="146" text-anchor="middle" font-size="16" aria-hidden="true">🐕</text>
+      <text x="700" y="180" text-anchor="middle" class="rotulo-especie">Perro</text>
+      <circle cx="700" cy="260" r="20" fill="#f1f8e9" stroke="#33691e" stroke-width="2"></circle>
+      <text x="700" y="266" text-anchor="middle" font-size="16" aria-hidden="true">🧑</text>
+      <text x="700" y="300" text-anchor="middle" class="rotulo-especie">Humano</text>
+      <circle cx="700" cy="340" r="20" fill="#f1f8e9" stroke="#33691e" stroke-width="2"></circle>
+      <text x="700" y="346" text-anchor="middle" font-size="16" aria-hidden="true">🐄</text>
+      <text x="700" y="380" text-anchor="middle" class="rotulo-especie">Vaca</text>
+      <circle cx="700" cy="420" r="20" fill="#f1f8e9" stroke="#33691e" stroke-width="2"></circle>
+      <text x="700" y="426" text-anchor="middle" font-size="16" aria-hidden="true">🐋</text>
+      <text x="700" y="460" text-anchor="middle" class="rotulo-especie">Ballena</text>
+    </g>
+  </svg>
+  </div>
+  <p class="nota-lienzo">Si estás en un teléfono, desliza el diagrama horizontalmente para verlo completo.</p>
+</div>
+
+<div class="lectura" aria-live="polite">
+  <h2 id="titulo-info">Explicación de la pieza</h2>
+  <p id="texto-info">Todavía no has seleccionado ninguna pieza. Pulsa uno de los botones de arriba o un elemento del diagrama.</p>
+</div>
+
+<div class="tarjeta">
+  <h2>Segunda parte: redibuja las puntas</h2>
+  <p>Un cladograma es como un móvil colgado del techo: las ramas giran sobre su nodo sin que se rompa nada. Al girarlas, el orden en que aparecen los organismos cambia, y el diagrama parece otro. Pero el parentesco es el mismo, porque el parentesco no lo marca la posición en la lista, sino <strong>cuál es el nodo que dos organismos comparten más recientemente</strong>.</p>
+  <p>Pulsa un nodo del diagrama para girarlo, o usa los botones. Observa cómo cambia el orden de las puntas y cómo no cambia la respuesta a la pregunta de comprobación.</p>
+  <div class="caja-tip">
+    <p><strong>Por qué importa:</strong> el examen suele presentar dos cladogramas dibujados de forma distinta y preguntar si contradicen la misma hipótesis. Casi siempre no la contradicen: son el mismo árbol girado.</p>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>Controles del árbol</h2>
+  <div class="fila-botones">
+    <button type="button" data-rotar="n0">Girar la raíz</button>
+    <button type="button" data-rotar="n1">Girar el nodo de los mamíferos</button>
+    <button type="button" data-rotar="n2">Girar el nodo de perro y humano</button>
+    <button type="button" data-rotar="n3">Girar el nodo de vaca y ballena</button>
+  </div>
+  <div class="fila-botones">
+    <button type="button" class="secundario" id="btn-azar">Girar varios al azar</button>
+    <button type="button" class="secundario" id="btn-reset">Volver al dibujo original</button>
+  </div>
+</div>
+
+<div class="escena">
+  <div class="lienzo" id="lienzo-arbol"></div>
+</div>
+
+<div class="lectura" aria-live="polite">
+  <h2>Lectura del árbol</h2>
+  <p id="lectura-orden">Orden de las puntas, de arriba abajo: lagarto, perro, humano, vaca, ballena.</p>
+  <p id="lectura-giros">Giros aplicados: 0. Este es el dibujo original.</p>
+  <p id="lectura-parentesco">Relaciones: perro y humano comparten el nodo más reciente; vaca y ballena comparten el suyo; el lagarto queda fuera del clado de los mamíferos.</p>
+</div>
+
+<div class="tarjeta">
+  <h2>Comprobación</h2>
+  <p id="pregunta-comprob">Sea cual sea el dibujo que tengas ahora en pantalla, responde: ¿con cuál de estos organismos comparte el humano su ancestro común más reciente?</p>
+  <div class="fila-botones">
+    <button type="button" class="secundario" data-resp="Lagarto">Lagarto</button>
+    <button type="button" class="secundario" data-resp="Perro">Perro</button>
+    <button type="button" class="secundario" data-resp="Vaca">Vaca</button>
+    <button type="button" class="secundario" data-resp="Ballena">Ballena</button>
+  </div>
+  <div id="caja-respuesta" aria-live="polite"></div>
+</div>
+
+<details class="bloque">
+  <summary><span class="chevron" aria-hidden="true">▶</span>Los tres errores que más se cobran en el examen</summary>
+  <div class="cuerpo">
+    <h3>Creer que el orden de las puntas indica parentesco</h3>
+    <p>Dos organismos dibujados uno junto al otro pueden estar lejanamente emparentados. Lo que cuenta es el nodo compartido más reciente, no la vecindad en el papel.</p>
+    <h3>Leer el cladograma como una escalera de progreso</h3>
+    <p>El organismo que aparece al final no es «más evolucionado». Todas las puntas son igual de actuales: todas han tenido el mismo tiempo para evolucionar desde el ancestro común.</p>
+    <h3>Confundir un clado con un grupo cualquiera</h3>
+    <p>Un clado incluye al ancestro y a <em>todos</em> sus descendientes. Si dejas fuera a uno solo, ya no es un clado, y esa es exactamente la trampa de preguntas como «¿forman los reptiles un clado?».</p>
+  </div>
+</details>
+
+<div class="tarjeta">
+  <h2>Preguntas de reflexión</h2>
+  <ol>
+    <li>¿Qué representa la raíz de un cladograma?</li>
+    <li>¿Por qué los nodos son la pieza clave para determinar el parentesco?</li>
+    <li>¿Qué diferencia hay entre un clado y una rama?</li>
+    <li>¿Para qué sirve el grupo externo?</li>
+    <li>Después de girar varios nodos, ¿cambió alguna relación de parentesco? Explica por qué.</li>
+  </ol>
+  <div class="respuesta">
+    <label for="respuesta-libre">Escribe tu respuesta a una de las preguntas</label>
+    <textarea id="respuesta-libre" rows="6" placeholder="Escribe aquí tu reflexión."></textarea>
+    <p class="nota-lienzo">Lo que escribas aquí no se guarda al cerrar la página. Cópialo y pégalo donde tu profesor te indique.</p>
+  </div>
+</div>
+
+<footer class="pie">
+  <p>Cladogramas: lectura y construcción · Lección 4.3 · Spanish ASE Science · 96 horas</p>
+  <p>José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago</p>
+  <p>© 2026. Esta obra está licenciada bajo <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" rel="license">Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0 Internacional (CC BY-NC-SA 4.0)</a>.</p>
+</footer>
+
+</div>
+<script>
+"use strict";
+
+/* ══ PRIMERA PARTE · piezas del cladograma ═══════════════════════════════ */
+var PIEZAS = {
+  raiz:{ titulo:"Raíz: el ancestro común",
+    texto:"La raíz representa el ancestro común más antiguo del que descienden todos los organismos del diagrama. Es el punto de partida de la historia evolutiva del grupo." },
+  nodo:{ titulo:"Nodo: punto de bifurcación",
+    texto:"Un nodo marca un episodio de especiación: una población ancestral se divide en dos linajes. Cada nodo es el ancestro común de todo lo que queda a su derecha. Para saber qué dos organismos están más emparentados, busca el nodo compartido más reciente." },
+  rama:{ titulo:"Rama: el linaje",
+    texto:"Las ramas son los linajes que conectan a los ancestros con sus descendientes. Su longitud en este diagrama no mide tiempo ni cantidad de cambio: solo indica el orden de las divisiones." },
+  clado:{ titulo:"Clado: grupo monofilético",
+    texto:"Un clado reúne a un ancestro y a todos sus descendientes, sin dejar a ninguno fuera. Aquí, el trazo azul discontinuo encierra el clado de los mamíferos: perro, humano, vaca y ballena." },
+  sinapomorfia:{ titulo:"Sinapomorfía: rasgo derivado compartido",
+    texto:"Es un rasgo que apareció en un ancestro y heredaron todos sus descendientes; por eso sirve para definir un clado. En el diagrama aparecen tres: el pelo, la placenta y las pezuñas." },
+  externo:{ titulo:"Grupo externo: la referencia",
+    texto:"El grupo externo está emparentado con el grupo estudiado, pero queda fuera de él. Sirve de punto de comparación para distinguir qué rasgos son antiguos y cuáles son derivados. Aquí el papel lo hace el lagarto." }
+};
+
+function mostrarPieza(clave){
+  var i, g, botones = document.querySelectorAll("button.pieza");
+  var grupos = document.querySelectorAll("g.parte");
+  for (i = 0; i < grupos.length; i++){ grupos[i].classList.remove("resaltada"); }
+  for (i = 0; i < botones.length; i++){ botones[i].setAttribute("aria-pressed","false"); }
+  g = document.getElementById("p-" + clave);
+  if (g) g.classList.add("resaltada");
+  for (i = 0; i < botones.length; i++){
+    if (botones[i].getAttribute("data-pieza") === clave) botones[i].setAttribute("aria-pressed","true");
+  }
+  document.getElementById("titulo-info").textContent = PIEZAS[clave].titulo;
+  document.getElementById("texto-info").textContent = PIEZAS[clave].texto;
+}
+
+(function(){
+  var b = document.querySelectorAll("button.pieza"), i;
+  for (i = 0; i < b.length; i++){
+    b[i].addEventListener("click", function(){ mostrarPieza(this.getAttribute("data-pieza")); });
+  }
+  var mapa = { "p-raiz":"raiz", "p-nodo":"nodo", "p-rama":"rama", "p-clado":"clado",
+               "p-sinapomorfia":"sinapomorfia", "p-externo":"externo" };
+  var g = document.querySelectorAll("g.parte");
+  for (i = 0; i < g.length; i++){
+    (function(el){
+      var clave = mapa[el.id];
+      el.addEventListener("click", function(){ mostrarPieza(clave); });
+      el.addEventListener("keydown", function(e){
+        if (e.key === "Enter" || e.key === " "){ e.preventDefault(); mostrarPieza(clave); }
+      });
+    })(g[i]);
+  }
+})();
+
+/* ══ SEGUNDA PARTE · redibujado de las puntas ════════════════════════════ */
+var NOMBRE_NODO = {
+  n0:"la raíz", n1:"el nodo de los mamíferos",
+  n2:"el nodo de perro y humano", n3:"el nodo de vaca y ballena"
+};
+
+function arbolInicial(){
+  return { id:"n0", hijos:[
+    { id:"lagarto", nombre:"Lagarto" },
+    { id:"n1", hijos:[
+      { id:"n2", hijos:[ {id:"perro",nombre:"Perro"}, {id:"humano",nombre:"Humano"} ] },
+      { id:"n3", hijos:[ {id:"vaca",nombre:"Vaca"}, {id:"ballena",nombre:"Ballena"} ] }
+    ]}
+  ]};
+}
+
+var arbol = arbolInicial();
+var giros = 0;
+
+function esHoja(n){ return !n.hijos; }
+
+function puntas(n, salida){
+  salida = salida || [];
+  if (esHoja(n)) { salida.push(n.nombre); return salida; }
+  for (var i = 0; i < n.hijos.length; i++){ puntas(n.hijos[i], salida); }
+  return salida;
+}
+
+function buscar(n, id){
+  if (n.id === id) return n;
+  if (esHoja(n)) return null;
+  for (var i = 0; i < n.hijos.length; i++){
+    var r = buscar(n.hijos[i], id);
+    if (r) return r;
+  }
+  return null;
+}
+
+function girar(id){
+  var n = buscar(arbol, id);
+  if (n && n.hijos){ n.hijos.reverse(); giros++; dibujar(); }
+}
+
+/* Disposición rectangular: profundidad → x, orden de puntas → y */
+var ANCHO = 800, ALTO = 400, X_HOJA = 620, X_RAIZ = 70, PASO_Y = 66, Y0 = 46;
+
+function disponer(n, prof, contador){
+  n.prof = prof;
+  if (esHoja(n)){
+    n.x = X_HOJA;
+    n.y = Y0 + contador.i * PASO_Y;
+    contador.i++;
+    return n;
+  }
+  var ys = [];
+  for (var i = 0; i < n.hijos.length; i++){
+    disponer(n.hijos[i], prof + 1, contador);
+    ys.push(n.hijos[i].y);
+  }
+  n.x = X_RAIZ + prof * ((X_HOJA - X_RAIZ) / 3);
+  n.y = (Math.min.apply(null, ys) + Math.max.apply(null, ys)) / 2;
+  return n;
+}
+
+function trazar(n, piezas){
+  if (esHoja(n)) return;
+  var i, h, primero = n.hijos[0], ultimo = n.hijos[n.hijos.length - 1];
+  piezas.push('<line x1="' + n.x + '" y1="' + primero.y + '" x2="' + n.x + '" y2="' + ultimo.y +
+    '" stroke="#33691e" stroke-width="4" stroke-linecap="round"></line>');
+  for (i = 0; i < n.hijos.length; i++){
+    h = n.hijos[i];
+    piezas.push('<line x1="' + n.x + '" y1="' + h.y + '" x2="' + h.x + '" y2="' + h.y +
+      '" stroke="#33691e" stroke-width="4" stroke-linecap="round"></line>');
+    trazar(h, piezas);
+  }
+}
+
+function nodosInternos(n, salida){
+  salida = salida || [];
+  if (esHoja(n)) return salida;
+  salida.push(n);
+  for (var i = 0; i < n.hijos.length; i++){ nodosInternos(n.hijos[i], salida); }
+  return salida;
+}
+
+function dibujar(){
+  disponer(arbol, 0, { i:0 });
+  var piezas = [], i, hojas = [], internos = nodosInternos(arbol);
+
+  piezas.push('<rect x="0" y="0" width="' + ANCHO + '" height="' + ALTO + '" fill="#ffffff"></rect>');
+  piezas.push('<line x1="24" y1="' + arbol.y + '" x2="' + arbol.x + '" y2="' + arbol.y +
+    '" stroke="#5d4037" stroke-width="5" stroke-linecap="round"></line>');
+  trazar(arbol, piezas);
+
+  (function recoger(n){
+    if (esHoja(n)) { hojas.push(n); return; }
+    for (var k = 0; k < n.hijos.length; k++){ recoger(n.hijos[k]); }
+  })(arbol);
+
+  for (i = 0; i < hojas.length; i++){
+    piezas.push('<circle cx="' + X_HOJA + '" cy="' + hojas[i].y + '" r="9" fill="#f1f8e9" stroke="#33691e" stroke-width="2"></circle>');
+    piezas.push('<text x="' + (X_HOJA + 20) + '" y="' + (hojas[i].y + 5) + '" class="rotulo-especie">' + hojas[i].nombre + '</text>');
+  }
+
+  for (i = 0; i < internos.length; i++){
+    var n = internos[i];
+    piezas.push('<g class="parte" tabindex="0" role="button" data-nodo="' + n.id +
+      '" aria-label="Girar ' + NOMBRE_NODO[n.id] + '">' +
+      '<circle cx="' + n.x + '" cy="' + n.y + '" r="13" fill="#1f4211" stroke="#ffffff" stroke-width="2"></circle>' +
+      '<text x="' + n.x + '" y="' + (n.y + 5) + '" text-anchor="middle" font-size="14" fill="#ffffff" font-weight="700">↕</text>' +
+      '</g>');
+  }
+
+  piezas.push('<text x="24" y="' + (ALTO - 10) + '" class="rotulo-menor">Pulsa un nodo para girarlo. El dibujo cambia; el parentesco, no.</text>');
+
+  document.getElementById("lienzo-arbol").innerHTML =
+    '<svg class="arbol" viewBox="0 0 ' + ANCHO + ' ' + ALTO + '" xmlns="http://www.w3.org/2000/svg" role="img" ' +
+    'aria-label="Cladograma con el orden de puntas actual: ' + puntas(arbol).join(", ") + '">' +
+    piezas.join("") + '</svg>';
+
+  var gs = document.querySelectorAll("#lienzo-arbol g.parte");
+  for (i = 0; i < gs.length; i++){
+    (function(el){
+      var id = el.getAttribute("data-nodo");
+      el.addEventListener("click", function(){ girar(id); });
+      el.addEventListener("keydown", function(e){
+        if (e.key === "Enter" || e.key === " "){ e.preventDefault(); girar(id); }
+      });
+    })(gs[i]);
+  }
+
+  document.getElementById("lectura-orden").textContent =
+    "Orden de las puntas, de arriba abajo: " + puntas(arbol).join(", ") + ".";
+  document.getElementById("lectura-giros").textContent = giros === 0
+    ? "Giros aplicados: 0. Este es el dibujo original."
+    : "Giros aplicados: " + giros + ". El dibujo ha cambiado " + (giros === 1 ? "una vez" : giros + " veces") + ", pero es el mismo árbol.";
+  document.getElementById("lectura-parentesco").textContent =
+    "Relaciones, que no han cambiado: perro y humano comparten el nodo más reciente; vaca y ballena comparten el suyo; el lagarto queda fuera del clado de los mamíferos.";
+}
+
+/* ── Controles ─────────────────────────────────────────────────────────── */
+(function(){
+  var b = document.querySelectorAll("button[data-rotar]"), i;
+  for (i = 0; i < b.length; i++){
+    b[i].addEventListener("click", function(){ girar(this.getAttribute("data-rotar")); });
+  }
+  document.getElementById("btn-azar").addEventListener("click", function(){
+    var ids = ["n0","n1","n2","n3"], k;
+    for (k = 0; k < ids.length; k++){
+      if (Math.random() < 0.6){ var n = buscar(arbol, ids[k]); if (n){ n.hijos.reverse(); giros++; } }
+    }
+    dibujar();
+  });
+  document.getElementById("btn-reset").addEventListener("click", function(){
+    arbol = arbolInicial(); giros = 0; dibujar();
+  });
+})();
+
+/* ── Comprobación ──────────────────────────────────────────────────────── */
+(function(){
+  var b = document.querySelectorAll("button[data-resp]"), i;
+  var caja = document.getElementById("caja-respuesta");
+  for (i = 0; i < b.length; i++){
+    b[i].addEventListener("click", function(){
+      var r = this.getAttribute("data-resp");
+      if (r === "Perro"){
+        caja.innerHTML = '<div class="caja-ok"><p><strong>Correcto.</strong> El humano y el perro se encuentran en el nodo más reciente que comparten. ' +
+          'Fíjate en que la respuesta es la misma con el árbol original y con el árbol girado: has cambiado el dibujo ' + giros + ' ' +
+          (giros === 1 ? "vez" : "veces") + ' y el parentesco no se ha movido.</p></div>';
+      } else if (r === "Lagarto"){
+        caja.innerHTML = '<div class="caja-mal"><p><strong>Todavía no.</strong> El lagarto es el grupo externo: se separó antes que ninguno de los demás, ' +
+          'de modo que el nodo que comparte con el humano es el más antiguo de todos, no el más reciente.</p></div>';
+      } else {
+        caja.innerHTML = '<div class="caja-mal"><p><strong>Todavía no.</strong> ' + r + ' comparte con el humano el nodo de los mamíferos, ' +
+          'pero el humano comparte con el perro un nodo posterior. Busca siempre el nodo más reciente, es decir, el que está más a la derecha.</p></div>';
+      }
+    });
+  }
+})();
+
+dibujar();
+</script>
+</body>
+</html>

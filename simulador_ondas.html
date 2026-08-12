@@ -1,0 +1,595 @@
+<!doctype html>
+<!--
+  Simulador de ondas (Lección 6.3) · Spanish ASE Science
+  © 2026 José M. Fernández, ABE/ASE Math Master Teacher,
+  Harry S. Truman College — City Colleges of Chicago.
+  Licencia: Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0
+  Internacional (CC BY-NC-SA 4.0) — https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simulador de ondas</title>
+<meta name="description" content="Simulador de ondas con amplitud y frecuencia independientes, longitud de onda medida, onda de referencia y retos de comprobación.">
+<meta name="author" content="José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago">
+<meta name="license" content="CC BY-NC-SA 4.0">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
+<style>
+@charset "utf-8";
+/* ============================================================================
+   Estilos unificados de los interactivos · Spanish ASE Science
+   José M. Fernández, ABE/ASE Math Master Teacher,
+   Harry S. Truman College — City Colleges of Chicago
+   © 2026 · CC BY-NC-SA 4.0
+   https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+   ----------------------------------------------------------------------------
+   CÓMO SE USA
+   Este bloque se copia completo dentro de <style> en cada interactivo, para que
+   el archivo siga siendo autónomo. La clase de unidad va en el <body>:
+       <body class="u4">   → Unidad 4, verde oliva
+   Unidades: u1 verde azulado · u2 gris pizarra · u3 verde · u4 verde oliva
+             u5 rojo anaranjado · u6 azul índigo · u7 violeta · u8 azul
+   Todos los colores de acento cumplen 4,5:1 sobre blanco y admiten texto
+   blanco encima. El ámbar de los avisos usa #5c3900 (10,29:1).
+   ========================================================================== */
+
+/* ── 1. PALETA POR UNIDAD ──────────────────────────────────────────────── */
+:root{
+  --u:#37474f; --u2:#263238; --u-bg:#eceff1;   /* valor por defecto */
+  --texto:#222; --texto-sec:#555; --linea:#e0e0e0;
+  --pagina:#f5f7fa; --papel:#ffffff;
+  --amb:#5c3900; --amb-bg:#fff8e1; --amb-borde:#b45309;
+  --ok:#1b5e20; --ok-bg:#e8f5e9; --mal:#7f1d1d; --mal-bg:#fbe9e7;
+  --radio:12px; --sombra:0 2px 8px rgba(0,0,0,.07);
+}
+body.u1{--u:#00695c;--u2:#004d40;--u-bg:#e0f2f1;}
+body.u2{--u:#37474f;--u2:#263238;--u-bg:#eceff1;}
+body.u3{--u:#1b5e20;--u2:#0f3d13;--u-bg:#e8f5e9;}
+body.u4{--u:#33691e;--u2:#1f4211;--u-bg:#f1f8e9;}
+body.u5{--u:#bf360c;--u2:#8c2708;--u-bg:#fbe9e7;}
+body.u6{--u:#1e3a8a;--u2:#142a63;--u-bg:#e8eaf6;}
+body.u7{--u:#5b21b6;--u2:#40157f;--u-bg:#ede7f6;}
+body.u8{--u:#0d47a1;--u2:#093271;--u-bg:#e3f2fd;}
+
+/* ── 2. BASE ───────────────────────────────────────────────────────────── */
+*{box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;margin:0;background:var(--pagina);
+  color:var(--texto);line-height:1.55;font-size:16px;}
+.contenedor{max-width:1100px;margin:0 auto;padding:24px;}
+a{color:#0b3d91;}
+h1,h2,h3{line-height:1.3;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+:focus-visible{outline:3px solid var(--u);outline-offset:2px;}
+
+/* ── 3. ENCABEZADO DEL INTERACTIVO ─────────────────────────────────────── */
+header.principal{background:var(--u);background:linear-gradient(135deg,var(--u) 0%,var(--u2) 100%);
+  color:#fff;padding:28px 32px;border-radius:14px;margin-bottom:22px;box-shadow:var(--sombra);}
+header.principal h1{margin:0 0 6px;font-size:26px;font-weight:700;color:#fff;}
+header.principal .meta{font-size:14px;margin:4px 0 0;color:#fff;}
+
+/* ── 4. BLOQUES DE TEXTO ───────────────────────────────────────────────── */
+.tarjeta{background:var(--papel);padding:20px 24px;border-radius:10px;
+  border-left:5px solid var(--u);margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.tarjeta h2{margin-top:0;color:var(--u);font-size:20px;}
+.tarjeta h3{font-size:16px;color:#263238;margin:16px 0 6px;}
+.caja-tip{background:var(--amb-bg);border-left:4px solid var(--amb-borde);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;font-size:15px;}
+.caja-tip strong{color:var(--amb);}
+.caja-ok{background:var(--ok-bg);border-left:5px solid var(--ok);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;}
+.caja-ok strong{color:var(--ok);}
+.caja-mal{background:var(--mal-bg);border-left:5px solid var(--mal);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;}
+.caja-mal strong{color:var(--mal);}
+
+/* ── 5. PANEL DE CONTROLES ─────────────────────────────────────────────── */
+.panel{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:18px 22px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.panel h2{margin:0 0 12px;font-size:18px;color:var(--u);}
+.control{margin-bottom:16px;}
+.control > label{display:block;font-weight:600;font-size:15px;color:#263238;margin-bottom:6px;}
+.control .valor{float:right;font-weight:700;color:var(--u);font-variant-numeric:tabular-nums;}
+.control input[type=range]{width:100%;accent-color:var(--u);height:26px;}
+.control select,.control input[type=number],.control input[type=text]{
+  font-family:inherit;font-size:16px;padding:9px 14px;border-radius:8px;
+  border:1px solid #90a4ae;background:#fff;color:var(--texto);width:100%;max-width:420px;}
+.fila-botones{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;}
+button{font-family:inherit;font-size:15px;font-weight:600;padding:10px 18px;border-radius:8px;
+  border:1px solid transparent;background:var(--u);color:#fff;cursor:pointer;}
+button:hover{background:var(--u2);}
+button.secundario{background:#fff;color:var(--u);border-color:var(--u);}
+button.secundario:hover{background:var(--u-bg);}
+
+/* ── 6. LIENZO / ESCENA ────────────────────────────────────────────────── */
+.escena{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:16px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);overflow-x:auto;}
+
+/* ── 7. LECTURA DEL ESTADO (alternativa textual, siempre visible) ──────── */
+.lectura{background:var(--u-bg);border-left:5px solid var(--u);border-radius:0 8px 8px 0;
+  padding:14px 18px;margin-bottom:22px;font-size:15px;}
+.lectura h2{margin:0 0 8px;font-size:17px;color:var(--u);}
+.lectura p{margin:6px 0;}
+.lectura .dato{font-weight:700;color:var(--u2);font-variant-numeric:tabular-nums;}
+
+/* ── 8. TABLAS (Ally: caption obligatorio y scope en todo th) ──────────── */
+.tabla-wrap{overflow-x:auto;margin-bottom:22px;}
+table.datos{width:100%;border-collapse:collapse;background:var(--papel);border-radius:10px;
+  overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);font-size:15px;}
+table.datos caption{caption-side:top;text-align:left;font-size:14px;color:var(--texto-sec);
+  padding:0 0 8px;font-style:italic;}
+table.datos th,table.datos td{padding:10px 12px;text-align:left;border-bottom:1px solid #eee;}
+table.datos thead th{background:#37474f;color:#fff;font-weight:600;font-size:13px;
+  text-transform:uppercase;letter-spacing:.4px;}
+table.datos tbody th{background:var(--u-bg);color:var(--u2);font-weight:700;}
+table.datos tr:last-child td{border-bottom:none;}
+
+/* ── 9. ACORDEÓN NATIVO ────────────────────────────────────────────────── */
+details.bloque{background:var(--papel);border-radius:var(--radio);margin-bottom:14px;
+  box-shadow:var(--sombra);border-left:5px solid var(--u);overflow:hidden;}
+details.bloque > summary{padding:14px 18px;cursor:pointer;list-style:none;display:flex;
+  gap:10px;align-items:center;background:var(--u-bg);font-weight:600;color:var(--u2);}
+details.bloque > summary::-webkit-details-marker{display:none;}
+details.bloque > summary .chevron{transition:transform .2s;flex-shrink:0;}
+details.bloque[open] > summary .chevron{transform:rotate(90deg);}
+details.bloque .cuerpo{padding:14px 20px 18px;}
+
+/* ── 10. PIE CON LICENCIA ──────────────────────────────────────────────── */
+footer.pie{padding:22px 4px;color:var(--texto-sec);font-size:13px;margin-top:20px;
+  border-top:1px solid #ddd;text-align:center;}
+footer.pie p{margin:5px 0;}
+
+/* ── 11. MOVIMIENTO REDUCIDO ───────────────────────────────────────────── */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;scroll-behavior:auto !important;}
+}
+
+/* ── 12. IMPRESIÓN ─────────────────────────────────────────────────────── */
+@media print{
+  body{background:#fff;}
+  .panel,.escena{page-break-inside:avoid;}
+  details[open] .cuerpo{display:block;}
+}
+
+/* ── PROPIO DE ESTE INTERACTIVO ────────────────────────────────────────── */
+.disposicion{display:grid;grid-template-columns:1.25fr .75fr;gap:20px;align-items:start;}
+@media (max-width:900px){ .disposicion{grid-template-columns:1fr;} }
+.marco-lienzo{width:100%;height:360px;border-radius:10px;overflow:hidden;
+  background:#f7f9ff;border:2px solid #c5cae9;}
+canvas{width:100%;height:100%;display:block;}
+.leyenda{display:flex;flex-wrap:wrap;gap:16px;justify-content:center;margin-top:12px;font-size:14px;}
+.leyenda span.marca{display:inline-block;width:16px;height:4px;border-radius:2px;margin-right:6px;vertical-align:middle;}
+.cifras{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;}
+.dato-caja{background:var(--u-bg);border:1px solid var(--linea);border-radius:8px;padding:10px;text-align:center;}
+.dato-caja strong{display:block;font-size:13px;color:var(--u2);text-transform:uppercase;letter-spacing:.3px;}
+.dato-caja span{font-size:20px;font-weight:700;color:var(--texto);font-variant-numeric:tabular-nums;}
+.ayuda{font-size:14px;color:var(--texto-sec);margin:4px 0 0;}
+.formula{background:var(--u-bg);border-left:5px solid var(--u);padding:14px 18px;border-radius:0 8px 8px 0;
+  margin:14px 0;font-weight:600;color:var(--u2);}
+.formula p{margin:6px 0;}
+.reto{border-top:1px solid var(--linea);padding-top:16px;margin-top:16px;}
+.reto:first-of-type{border-top:0;padding-top:0;margin-top:0;}
+.pregunta{border-top:1px solid var(--linea);padding-top:16px;margin-top:16px;}
+.pregunta:first-of-type{border-top:0;padding-top:0;margin-top:0;}
+.pregunta p.enunciado{font-weight:600;margin:0 0 10px;}
+.retro:empty{display:none;}
+</style>
+</head>
+<body class="u6">
+<div class="contenedor">
+
+<header class="principal">
+  <h1>Simulador de ondas</h1>
+  <p class="meta">Lección 6.3 · Calor, transferencia térmica y ondas</p>
+  <p class="meta">Unidad 6 · Ciencias físicas II · Spanish ASE Science</p>
+</header>
+
+<div class="tarjeta">
+  <h2>Qué vas a hacer</h2>
+  <p>Vas a controlar por separado dos propiedades de una onda: su <strong>amplitud</strong>, que es la altura desde la línea de equilibrio hasta la cresta, y su <strong>frecuencia</strong>, que aquí es el número de ondas completas que caben en la pantalla. La cuestión que debes resolver no es qué hace cada una, sino comprobar que <em>son independientes</em>: puedes cambiar una sin tocar la otra.</p>
+  <div class="caja-tip">
+    <p><strong>Por qué importa:</strong> el examen suele mostrar dos ondas y preguntar en qué se diferencian. La respuesta equivocada más común es decir que una onda «más grande» tiene más frecuencia. No: puede ser más alta y tener exactamente la misma frecuencia.</p>
+  </div>
+</div>
+
+<div class="disposicion">
+
+  <div class="escena">
+    <div class="marco-lienzo">
+      <canvas id="lienzo" role="img" aria-label="Gráfica de una onda. Sus valores en texto aparecen debajo, en el bloque «Lectura de la onda».">
+        Tu navegador no puede mostrar la gráfica. Los valores de la onda aparecen más abajo, en el bloque «Lectura de la onda».
+      </canvas>
+    </div>
+    <p class="leyenda">
+      <span><span class="marca" style="background:#1e3a8a"></span>Onda actual</span>
+      <span><span class="marca" style="background:#546e7a"></span>Onda de referencia</span>
+      <span><span class="marca" style="background:#b45309"></span>Amplitud</span>
+      <span><span class="marca" style="background:#5b21b6"></span>Longitud de onda</span>
+    </p>
+    <div class="cifras">
+      <div class="dato-caja"><strong>Amplitud</strong><span id="d-amp">80</span></div>
+      <div class="dato-caja"><strong>Ondas en pantalla</strong><span id="d-frec">2</span></div>
+      <div class="dato-caja"><strong>Longitud de onda</strong><span id="d-lambda">—</span></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Controles</h2>
+
+    <div class="control">
+      <label for="amplitud">Amplitud <span class="valor"><span id="v-amp">80</span> px</span></label>
+      <input type="range" id="amplitud" min="10" max="140" step="5" value="80">
+      <p class="ayuda">Controla la altura. Más amplitud significa crestas más altas y valles más profundos, y también más energía transportada.</p>
+    </div>
+
+    <div class="control">
+      <label for="frecuencia">Frecuencia <span class="valor"><span id="v-frec">2</span> ondas</span></label>
+      <input type="range" id="frecuencia" min="1" max="8" step="0.5" value="2">
+      <p class="ayuda">Controla cuántas ondas completas caben en la pantalla. Más frecuencia significa ondas más juntas.</p>
+    </div>
+
+    <div class="control">
+      <label for="velocidad">Velocidad de la animación <span class="valor"><span id="v-vel">2</span></span></label>
+      <input type="range" id="velocidad" min="0" max="5" step="0.5" value="2">
+      <p class="ayuda">Solo cambia lo rápido que se ve avanzar la onda. No altera ni su amplitud ni su frecuencia.</p>
+    </div>
+
+    <div class="fila-botones">
+      <button type="button" class="secundario" id="btn-pausa">Pausar</button>
+      <button type="button" class="secundario" id="btn-reiniciar">Reiniciar</button>
+      <button type="button" class="secundario" id="btn-referencia" aria-pressed="true">Ocultar referencia</button>
+    </div>
+    <p class="ayuda">La onda de referencia tiene 60 px de amplitud y 2 ondas en pantalla. Sirve de patrón para comparar.</p>
+  </div>
+
+</div>
+
+<div class="lectura" aria-live="polite">
+  <h2>Lectura de la onda</h2>
+  <p id="lectura-texto">Amplitud de 80 píxeles y 2 ondas completas en la pantalla.</p>
+  <p id="lectura-compara">Comparada con la de referencia, esta onda es más alta y tiene el mismo número de ondas.</p>
+</div>
+
+<div class="tarjeta">
+  <h2>Dos retos</h2>
+  <p>Los dos retos se comprueban solos mientras mueves los deslizadores. Cada uno te pide cambiar una propiedad <em>sin</em> tocar la otra: ahí está la prueba de que son independientes.</p>
+
+  <div class="reto">
+    <p class="enunciado"><strong>Reto 1.</strong> Consigue una onda con el doble de altura que la de referencia, sin cambiar el número de ondas.</p>
+    <div id="reto1" aria-live="polite"></div>
+  </div>
+
+  <div class="reto">
+    <p class="enunciado"><strong>Reto 2.</strong> Consigue el doble de ondas que la de referencia, sin cambiar la altura.</p>
+    <div id="reto2" aria-live="polite"></div>
+  </div>
+</div>
+
+<div class="tarjeta">
+  <h2>Las tres relaciones que debes saber</h2>
+  <p>Una onda es una perturbación que transporta energía de un lugar a otro sin transportar materia. De las propiedades que puedes medir en ella, el examen se apoya sobre todo en estas tres relaciones.</p>
+  <div class="formula">
+    <p>Más amplitud → onda más alta → más energía transportada</p>
+    <p>Más frecuencia → más ondas en el mismo espacio</p>
+    <p>Más frecuencia → menor longitud de onda, si la velocidad no cambia</p>
+  </div>
+
+  <div class="tabla-wrap">
+    <table class="datos">
+      <caption>Qué cambia y qué no cambia al modificar cada propiedad de la onda, manteniendo constante la velocidad.</caption>
+      <thead>
+        <tr>
+          <th scope="col">Si aumentas…</th><th scope="col">La altura</th>
+          <th scope="col">El número de ondas</th><th scope="col">La longitud de onda</th><th scope="col">La energía</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">La amplitud</th><td>Aumenta</td><td>No cambia</td><td>No cambia</td><td>Aumenta</td></tr>
+        <tr><th scope="row">La frecuencia</th><td>No cambia</td><td>Aumenta</td><td>Disminuye</td><td>Aumenta</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="caja-tip">
+    <p><strong>Fíjate en la última columna:</strong> la energía sube por los dos caminos, pero por motivos distintos. En una onda mecánica, como el sonido, la amplitud es la que manda: más amplitud, más fuerte se oye. En una onda electromagnética, como la luz, la que manda es la frecuencia: por eso la luz ultravioleta daña la piel y la infrarroja no, aunque las dos vengan del mismo sol.</p>
+  </div>
+</div>
+
+<details class="bloque">
+  <summary><span class="chevron" aria-hidden="true">▶</span>Tres pruebas que conviene que hagas</summary>
+  <div class="cuerpo">
+    <ol>
+      <li>Deja la frecuencia quieta y sube solo la amplitud. Anota qué número de la tabla de datos cambió y cuál se quedó igual.</li>
+      <li>Deja la amplitud quieta y sube solo la frecuencia. Observa qué le pasa a la longitud de onda: si la pantalla mide lo mismo y caben más ondas, cada una tiene que ser más corta.</li>
+      <li>Pon la velocidad de la animación en cero. La onda se congela, pero ni su amplitud ni su frecuencia han cambiado. Eso demuestra que la velocidad de la animación no es una propiedad de la onda.</li>
+    </ol>
+    <p>Al terminar, deberías poder explicar con tus palabras la diferencia entre amplitud y frecuencia sin usar la palabra «grande».</p>
+  </div>
+</details>
+
+<div class="tarjeta">
+  <h2>Preguntas rápidas</h2>
+
+  <div class="pregunta" data-p="1" data-ok="a">
+    <p class="enunciado">1. Si aumentas la amplitud, ¿qué cambia principalmente?</p>
+    <div class="fila-botones">
+      <button type="button" class="secundario" data-op="a">La altura de la onda</button>
+      <button type="button" class="secundario" data-op="b">El número de ondas</button>
+      <button type="button" class="secundario" data-op="c">La longitud de onda</button>
+    </div>
+    <div class="retro" id="r1"></div>
+  </div>
+
+  <div class="pregunta" data-p="2" data-ok="b">
+    <p class="enunciado">2. Si aumentas la frecuencia y la velocidad no cambia, ¿qué le ocurre a la longitud de onda?</p>
+    <div class="fila-botones">
+      <button type="button" class="secundario" data-op="a">Aumenta</button>
+      <button type="button" class="secundario" data-op="b">Disminuye</button>
+      <button type="button" class="secundario" data-op="c">Se queda igual</button>
+    </div>
+    <div class="retro" id="r2"></div>
+  </div>
+
+  <div class="pregunta" data-p="3" data-ok="c">
+    <p class="enunciado">3. Dos ondas de sonido tienen la misma frecuencia, pero una tiene el doble de amplitud. ¿En qué se diferencian al oírlas?</p>
+    <div class="fila-botones">
+      <button type="button" class="secundario" data-op="a">Una es más aguda</button>
+      <button type="button" class="secundario" data-op="b">Una es más grave</button>
+      <button type="button" class="secundario" data-op="c">Una suena más fuerte</button>
+    </div>
+    <div class="retro" id="r3"></div>
+  </div>
+
+  <div class="pregunta" data-p="4" data-ok="a">
+    <p class="enunciado">4. ¿Se puede cambiar la amplitud de una onda sin cambiar su frecuencia?</p>
+    <div class="fila-botones">
+      <button type="button" class="secundario" data-op="a">Sí, son propiedades independientes</button>
+      <button type="button" class="secundario" data-op="b">No, siempre cambian juntas</button>
+      <button type="button" class="secundario" data-op="c">Solo en las ondas de luz</button>
+    </div>
+    <div class="retro" id="r4"></div>
+  </div>
+</div>
+
+<footer class="pie">
+  <p>Simulador de ondas · Lección 6.3 · Spanish ASE Science · 96 horas</p>
+  <p>José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago</p>
+  <p>© 2026. Esta obra está licenciada bajo <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" rel="license">Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0 Internacional (CC BY-NC-SA 4.0)</a>.</p>
+</footer>
+
+</div>
+<script>
+"use strict";
+
+var lienzo = document.getElementById("lienzo");
+var ctx = lienzo.getContext("2d");
+var sAmp = document.getElementById("amplitud");
+var sFrec = document.getElementById("frecuencia");
+var sVel = document.getElementById("velocidad");
+var btnPausa = document.getElementById("btn-pausa");
+var btnRef = document.getElementById("btn-referencia");
+
+var AMP_REF = 60, FREC_REF = 2, ALTO = 360;
+var amp = 80, frec = 2, vel = 2, fase = 0;
+var animando = true, verRef = true, raf = null;
+
+var MOV_REDUCIDO = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ── Dibujo ────────────────────────────────────────────────────────────── */
+function flecha(x1,y1,x2,y2,color){
+  var cab = 9, ang = Math.atan2(y2-y1, x2-x1);
+  ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 3;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-cab*Math.cos(ang-Math.PI/6), y2-cab*Math.sin(ang-Math.PI/6));
+  ctx.lineTo(x2-cab*Math.cos(ang+Math.PI/6), y2-cab*Math.sin(ang+Math.PI/6));
+  ctx.lineTo(x2,y2); ctx.fill();
+}
+
+function onda(a, f, color, grosor, discontinua){
+  var an = lienzo.clientWidth, medio = ALTO/2, x, y, ang;
+  ctx.beginPath();
+  ctx.setLineDash(discontinua ? [8,8] : []);
+  for (x = 0; x <= an; x++){
+    ang = (x/an)*Math.PI*2*f + fase;
+    y = medio + Math.sin(ang)*a;
+    if (x === 0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.strokeStyle = color; ctx.lineWidth = grosor; ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+function rotulos(){
+  var an = lienzo.clientWidth, medio = ALTO/2;
+
+  ctx.strokeStyle = "#37474f"; ctx.lineWidth = 2; ctx.setLineDash([6,6]);
+  ctx.beginPath(); ctx.moveTo(0, medio); ctx.lineTo(an, medio); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.font = "bold 13px 'Segoe UI', system-ui, sans-serif";
+  ctx.fillStyle = "#37474f";
+  ctx.fillText("Línea de equilibrio", 12, medio - 8);
+
+  var xa = Math.min(80, an*0.2);
+  flecha(xa, medio, xa, medio - amp, "#b45309");
+  ctx.fillStyle = "#5c3900";
+  ctx.font = "bold 13px 'Segoe UI', system-ui, sans-serif";
+  ctx.fillText("Amplitud", xa + 10, medio - amp/2);
+
+  var lambda = an/frec, y2 = ALTO - 34, x1 = 20, x2 = Math.min(x1 + lambda, an - 20);
+  flecha(x1, y2, x2, y2, "#5b21b6");
+  flecha(x2, y2, x1, y2, "#5b21b6");
+  ctx.fillStyle = "#5b21b6";
+  ctx.fillText("Longitud de onda", x1 + 12, y2 - 10);
+}
+
+function dibujar(){
+  var an = lienzo.clientWidth;
+  ctx.clearRect(0, 0, an, ALTO);
+  ctx.fillStyle = "#f7f9ff"; ctx.fillRect(0, 0, an, ALTO);
+  rotulos();
+  if (verRef){
+    onda(AMP_REF, FREC_REF, "#546e7a", 3, true);
+    ctx.fillStyle = "#37474f";
+    ctx.font = "bold 13px 'Segoe UI', system-ui, sans-serif";
+    ctx.fillText("Onda de referencia", an - 150, 26);
+  }
+  onda(amp, frec, "#1e3a8a", 4, false);
+  ctx.fillStyle = "#1e3a8a";
+  ctx.font = "bold 14px 'Segoe UI', system-ui, sans-serif";
+  ctx.fillText("Onda actual", 12, 26);
+  if (animando && vel > 0) fase += 0.025*vel;
+}
+
+function bucle(){ dibujar(); if (animando) raf = requestAnimationFrame(bucle); }
+function arrancar(){ if (!raf && animando) raf = requestAnimationFrame(bucle); }
+function detener(){ if (raf){ cancelAnimationFrame(raf); raf = null; } }
+
+/* ── Lectura en texto ──────────────────────────────────────────────────── */
+function actualizarLectura(){
+  var an = lienzo.clientWidth || 700;
+  var lambda = Math.round(an/frec);
+  document.getElementById("d-amp").textContent = amp;
+  document.getElementById("d-frec").textContent = String(frec);
+  document.getElementById("d-lambda").textContent = lambda;
+  document.getElementById("v-amp").textContent = amp;
+  document.getElementById("v-frec").textContent = String(frec);
+  document.getElementById("v-vel").textContent = String(vel);
+
+  var t1 = "Amplitud de " + amp + " píxeles y " + String(frec) + " ondas completas en la pantalla, " +
+    "de modo que cada onda mide unos " + lambda + " píxeles de largo.";
+
+  var alto = amp > AMP_REF ? "más alta" : (amp < AMP_REF ? "más baja" : "igual de alta");
+  var juntas = frec > FREC_REF ? "más ondas" : (frec < FREC_REF ? "menos ondas" : "el mismo número de ondas");
+  var t2 = "Comparada con la de referencia, esta onda es " + alto + " y tiene " + juntas + ".";
+  if (amp === AMP_REF && frec === FREC_REF) t2 = "Ahora mismo esta onda coincide exactamente con la de referencia.";
+
+  document.getElementById("lectura-texto").textContent = t1;
+  document.getElementById("lectura-compara").textContent = t2;
+  lienzo.setAttribute("aria-label", t1 + " " + t2);
+}
+
+/* ── Retos ─────────────────────────────────────────────────────────────── */
+function pinta(id, ok, texto){
+  document.getElementById(id).innerHTML =
+    '<div class="' + (ok ? "caja-ok" : "caja-tip") + '"><p>' + texto + '</p></div>';
+}
+
+function revisarRetos(){
+  var dobleAlto = (amp === AMP_REF*2), mismaFrec = (frec === FREC_REF);
+  if (dobleAlto && mismaFrec){
+    pinta("reto1", true, "<strong>Conseguido.</strong> La amplitud es de " + amp + " píxeles, el doble de los " + AMP_REF +
+      " de la referencia, y el número de ondas sigue siendo " + String(FREC_REF) + ". Has cambiado la altura sin tocar la frecuencia: por eso decimos que son independientes.");
+  } else if (dobleAlto && !mismaFrec){
+    pinta("reto1", false, "La altura ya es el doble, pero has movido también la frecuencia. Devuélvela a " + String(FREC_REF) + " ondas.");
+  } else if (!dobleAlto && mismaFrec){
+    pinta("reto1", false, "La frecuencia está donde debe. Ajusta la amplitud hasta " + (AMP_REF*2) + " píxeles; ahora tienes " + amp + ".");
+  } else {
+    pinta("reto1", false, "Necesitas " + (AMP_REF*2) + " píxeles de amplitud y " + String(FREC_REF) + " ondas. Ahora tienes " + amp + " y " + String(frec) + ".");
+  }
+
+  var dobleFrec = (frec === FREC_REF*2), mismaAmp = (amp === AMP_REF);
+  if (dobleFrec && mismaAmp){
+    pinta("reto2", true, "<strong>Conseguido.</strong> Hay " + String(frec) + " ondas, el doble de las " + String(FREC_REF) +
+      " de la referencia, y la altura sigue en " + AMP_REF + " píxeles. Observa además que la longitud de onda se ha reducido a la mitad: caben más ondas en el mismo espacio, así que cada una es más corta.");
+  } else if (dobleFrec && !mismaAmp){
+    pinta("reto2", false, "Ya tienes el doble de ondas, pero la altura ha cambiado. Devuelve la amplitud a " + AMP_REF + " píxeles.");
+  } else if (!dobleFrec && mismaAmp){
+    pinta("reto2", false, "La altura está donde debe. Sube la frecuencia hasta " + String(FREC_REF*2) + " ondas; ahora tienes " + String(frec) + ".");
+  } else {
+    pinta("reto2", false, "Necesitas " + String(FREC_REF*2) + " ondas y " + AMP_REF + " píxeles de amplitud. Ahora tienes " + String(frec) + " y " + amp + ".");
+  }
+}
+
+/* ── Controles ─────────────────────────────────────────────────────────── */
+function alCambiar(){
+  amp = Number(sAmp.value); frec = Number(sFrec.value); vel = Number(sVel.value);
+  actualizarLectura();
+  revisarRetos();
+  if (!animando) dibujar();
+}
+
+sAmp.addEventListener("input", alCambiar);
+sFrec.addEventListener("input", alCambiar);
+sVel.addEventListener("input", alCambiar);
+
+btnPausa.addEventListener("click", function(){
+  animando = !animando;
+  btnPausa.textContent = animando ? "Pausar" : "Reproducir";
+  if (animando) arrancar(); else { detener(); dibujar(); }
+});
+
+btnRef.addEventListener("click", function(){
+  verRef = !verRef;
+  btnRef.textContent = verRef ? "Ocultar referencia" : "Mostrar referencia";
+  btnRef.setAttribute("aria-pressed", verRef ? "true" : "false");
+  if (!animando) dibujar();
+});
+
+document.getElementById("btn-reiniciar").addEventListener("click", function(){
+  sAmp.value = 80; sFrec.value = 2; sVel.value = 2;
+  fase = 0; verRef = true;
+  btnRef.textContent = "Ocultar referencia";
+  btnRef.setAttribute("aria-pressed", "true");
+  alCambiar();
+  for (var i = 1; i <= 4; i++){ document.getElementById("r" + i).innerHTML = ""; }
+});
+
+/* ── Preguntas rápidas ─────────────────────────────────────────────────── */
+var RETRO = {
+  "1a":"Correcto. La amplitud es la altura desde la línea de equilibrio hasta la cresta; el número de ondas no se entera.",
+  "1b":"Todavía no. El número de ondas lo fija la frecuencia. Sube solo la amplitud en el simulador y comprueba que el segundo dato no se mueve.",
+  "1c":"Todavía no. La longitud de onda depende de cuántas ondas caben en el espacio, es decir, de la frecuencia.",
+  "2a":"Todavía no. Si caben más ondas en el mismo espacio, cada una tiene que ocupar menos, no más.",
+  "2b":"Correcto. A velocidad constante, frecuencia y longitud de onda van en sentidos contrarios: si una sube, la otra baja.",
+  "2c":"Todavía no. Compruébalo en el simulador: sube la frecuencia y mira cómo baja el tercer dato.",
+  "3a":"Todavía no. Lo agudo o lo grave depende de la frecuencia, y aquí las dos ondas tienen la misma.",
+  "3b":"Todavía no. Igual que la anterior: el tono lo marca la frecuencia, que no ha cambiado.",
+  "3c":"Correcto. En el sonido, la amplitud es el volumen. Misma frecuencia significa mismo tono; más amplitud, más fuerte.",
+  "4a":"Correcto. Ese es el punto central de esta lección, y los dos retos de arriba lo demuestran.",
+  "4b":"Todavía no. Haz el reto 1: subirás la altura al doble dejando la frecuencia intacta.",
+  "4c":"Todavía no. La independencia vale para cualquier onda, sea sonido, luz o una ola del mar."
+};
+
+(function(){
+  var preguntas = document.querySelectorAll(".pregunta"), i, j;
+  for (i = 0; i < preguntas.length; i++){
+    (function(bloque){
+      var n = bloque.getAttribute("data-p"), ok = bloque.getAttribute("data-ok");
+      var ops = bloque.querySelectorAll("button[data-op]");
+      for (j = 0; j < ops.length; j++){
+        ops[j].addEventListener("click", function(){
+          var op = this.getAttribute("data-op");
+          document.getElementById("r" + n).innerHTML =
+            '<div class="' + (op === ok ? "caja-ok" : "caja-mal") + '"><p>' + RETRO[n + op] + '</p></div>';
+        });
+      }
+    })(preguntas[i]);
+  }
+})();
+
+/* ── Arranque ──────────────────────────────────────────────────────────── */
+function ajustarLienzo(){
+  var rect = lienzo.getBoundingClientRect();
+  var prop = window.devicePixelRatio || 1;
+  lienzo.width = rect.width * prop;
+  lienzo.height = ALTO * prop;
+  ctx.setTransform(prop, 0, 0, prop, 0, 0);
+  actualizarLectura();
+  dibujar();
+}
+
+window.addEventListener("resize", ajustarLienzo);
+
+if (MOV_REDUCIDO){
+  animando = false;
+  btnPausa.textContent = "Reproducir";
+}
+
+alCambiar();
+ajustarLienzo();
+if (animando) arrancar(); else dibujar();
+</script>
+</body>
+</html>

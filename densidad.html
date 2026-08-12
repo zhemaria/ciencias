@@ -1,0 +1,738 @@
+<!doctype html>
+<!--
+  Laboratorio de densidad (Lección 5.2) · Spanish ASE Science
+  © 2026 José M. Fernández, ABE/ASE Math Master Teacher,
+  Harry S. Truman College — City Colleges of Chicago.
+  Licencia: Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0
+  Internacional (CC BY-NC-SA 4.0) — https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Laboratorio de densidad: flotar, hundirse y calcular</title>
+<meta name="description" content="Laboratorio de densidad con ocho materiales y tres líquidos, cálculo paso a paso, práctica de despeje de fórmula y diez preguntas tipo GED.">
+<meta name="author" content="José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago">
+<meta name="license" content="CC BY-NC-SA 4.0">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
+<style>
+@charset "utf-8";
+/* ============================================================================
+   Estilos unificados de los interactivos · Spanish ASE Science
+   José M. Fernández, ABE/ASE Math Master Teacher,
+   Harry S. Truman College — City Colleges of Chicago
+   © 2026 · CC BY-NC-SA 4.0
+   https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+   ----------------------------------------------------------------------------
+   CÓMO SE USA
+   Este bloque se copia completo dentro de <style> en cada interactivo, para que
+   el archivo siga siendo autónomo. La clase de unidad va en el <body>:
+       <body class="u4">   → Unidad 4, verde oliva
+   Unidades: u1 verde azulado · u2 gris pizarra · u3 verde · u4 verde oliva
+             u5 rojo anaranjado · u6 azul índigo · u7 violeta · u8 azul
+   Todos los colores de acento cumplen 4,5:1 sobre blanco y admiten texto
+   blanco encima. El ámbar de los avisos usa #5c3900 (10,29:1).
+   ========================================================================== */
+
+/* ── 1. PALETA POR UNIDAD ──────────────────────────────────────────────── */
+:root{
+  --u:#37474f; --u2:#263238; --u-bg:#eceff1;   /* valor por defecto */
+  --texto:#222; --texto-sec:#555; --linea:#e0e0e0;
+  --pagina:#f5f7fa; --papel:#ffffff;
+  --amb:#5c3900; --amb-bg:#fff8e1; --amb-borde:#b45309;
+  --ok:#1b5e20; --ok-bg:#e8f5e9; --mal:#7f1d1d; --mal-bg:#fbe9e7;
+  --radio:12px; --sombra:0 2px 8px rgba(0,0,0,.07);
+}
+body.u1{--u:#00695c;--u2:#004d40;--u-bg:#e0f2f1;}
+body.u2{--u:#37474f;--u2:#263238;--u-bg:#eceff1;}
+body.u3{--u:#1b5e20;--u2:#0f3d13;--u-bg:#e8f5e9;}
+body.u4{--u:#33691e;--u2:#1f4211;--u-bg:#f1f8e9;}
+body.u5{--u:#bf360c;--u2:#8c2708;--u-bg:#fbe9e7;}
+body.u6{--u:#1e3a8a;--u2:#142a63;--u-bg:#e8eaf6;}
+body.u7{--u:#5b21b6;--u2:#40157f;--u-bg:#ede7f6;}
+body.u8{--u:#0d47a1;--u2:#093271;--u-bg:#e3f2fd;}
+
+/* ── 2. BASE ───────────────────────────────────────────────────────────── */
+*{box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;margin:0;background:var(--pagina);
+  color:var(--texto);line-height:1.55;font-size:16px;}
+.contenedor{max-width:1100px;margin:0 auto;padding:24px;}
+a{color:#0b3d91;}
+h1,h2,h3{line-height:1.3;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+:focus-visible{outline:3px solid var(--u);outline-offset:2px;}
+
+/* ── 3. ENCABEZADO DEL INTERACTIVO ─────────────────────────────────────── */
+header.principal{background:var(--u);background:linear-gradient(135deg,var(--u) 0%,var(--u2) 100%);
+  color:#fff;padding:28px 32px;border-radius:14px;margin-bottom:22px;box-shadow:var(--sombra);}
+header.principal h1{margin:0 0 6px;font-size:26px;font-weight:700;color:#fff;}
+header.principal .meta{font-size:14px;margin:4px 0 0;color:#fff;}
+
+/* ── 4. BLOQUES DE TEXTO ───────────────────────────────────────────────── */
+.tarjeta{background:var(--papel);padding:20px 24px;border-radius:10px;
+  border-left:5px solid var(--u);margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.tarjeta h2{margin-top:0;color:var(--u);font-size:20px;}
+.tarjeta h3{font-size:16px;color:#263238;margin:16px 0 6px;}
+.caja-tip{background:var(--amb-bg);border-left:4px solid var(--amb-borde);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;font-size:15px;}
+.caja-tip strong{color:var(--amb);}
+.caja-ok{background:var(--ok-bg);border-left:5px solid var(--ok);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;}
+.caja-ok strong{color:var(--ok);}
+.caja-mal{background:var(--mal-bg);border-left:5px solid var(--mal);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;}
+.caja-mal strong{color:var(--mal);}
+
+/* ── 5. PANEL DE CONTROLES ─────────────────────────────────────────────── */
+.panel{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:18px 22px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.panel h2{margin:0 0 12px;font-size:18px;color:var(--u);}
+.control{margin-bottom:16px;}
+.control > label{display:block;font-weight:600;font-size:15px;color:#263238;margin-bottom:6px;}
+.control .valor{float:right;font-weight:700;color:var(--u);font-variant-numeric:tabular-nums;}
+.control input[type=range]{width:100%;accent-color:var(--u);height:26px;}
+.control select,.control input[type=number],.control input[type=text]{
+  font-family:inherit;font-size:16px;padding:9px 14px;border-radius:8px;
+  border:1px solid #90a4ae;background:#fff;color:var(--texto);width:100%;max-width:420px;}
+.fila-botones{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;}
+button{font-family:inherit;font-size:15px;font-weight:600;padding:10px 18px;border-radius:8px;
+  border:1px solid transparent;background:var(--u);color:#fff;cursor:pointer;}
+button:hover{background:var(--u2);}
+button.secundario{background:#fff;color:var(--u);border-color:var(--u);}
+button.secundario:hover{background:var(--u-bg);}
+
+/* ── 6. LIENZO / ESCENA ────────────────────────────────────────────────── */
+.escena{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:16px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);overflow-x:auto;}
+
+/* ── 7. LECTURA DEL ESTADO (alternativa textual, siempre visible) ──────── */
+.lectura{background:var(--u-bg);border-left:5px solid var(--u);border-radius:0 8px 8px 0;
+  padding:14px 18px;margin-bottom:22px;font-size:15px;}
+.lectura h2{margin:0 0 8px;font-size:17px;color:var(--u);}
+.lectura p{margin:6px 0;}
+.lectura .dato{font-weight:700;color:var(--u2);font-variant-numeric:tabular-nums;}
+
+/* ── 8. TABLAS (Ally: caption obligatorio y scope en todo th) ──────────── */
+.tabla-wrap{overflow-x:auto;margin-bottom:22px;}
+table.datos{width:100%;border-collapse:collapse;background:var(--papel);border-radius:10px;
+  overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);font-size:15px;}
+table.datos caption{caption-side:top;text-align:left;font-size:14px;color:var(--texto-sec);
+  padding:0 0 8px;font-style:italic;}
+table.datos th,table.datos td{padding:10px 12px;text-align:left;border-bottom:1px solid #eee;}
+table.datos thead th{background:#37474f;color:#fff;font-weight:600;font-size:13px;
+  text-transform:uppercase;letter-spacing:.4px;}
+table.datos tbody th{background:var(--u-bg);color:var(--u2);font-weight:700;}
+table.datos tr:last-child td{border-bottom:none;}
+
+/* ── 9. ACORDEÓN NATIVO ────────────────────────────────────────────────── */
+details.bloque{background:var(--papel);border-radius:var(--radio);margin-bottom:14px;
+  box-shadow:var(--sombra);border-left:5px solid var(--u);overflow:hidden;}
+details.bloque > summary{padding:14px 18px;cursor:pointer;list-style:none;display:flex;
+  gap:10px;align-items:center;background:var(--u-bg);font-weight:600;color:var(--u2);}
+details.bloque > summary::-webkit-details-marker{display:none;}
+details.bloque > summary .chevron{transition:transform .2s;flex-shrink:0;}
+details.bloque[open] > summary .chevron{transform:rotate(90deg);}
+details.bloque .cuerpo{padding:14px 20px 18px;}
+
+/* ── 10. PIE CON LICENCIA ──────────────────────────────────────────────── */
+footer.pie{padding:22px 4px;color:var(--texto-sec);font-size:13px;margin-top:20px;
+  border-top:1px solid #ddd;text-align:center;}
+footer.pie p{margin:5px 0;}
+
+/* ── 11. MOVIMIENTO REDUCIDO ───────────────────────────────────────────── */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;scroll-behavior:auto !important;}
+}
+
+/* ── 12. IMPRESIÓN ─────────────────────────────────────────────────────── */
+@media print{
+  body{background:#fff;}
+  .panel,.escena{page-break-inside:avoid;}
+  details[open] .cuerpo{display:block;}
+}
+
+/* ── 13. NOMBRES RESERVADOS ────────────────────────────────────────────── */
+/* Estas clases pertenecen a la hoja unificada. No las reutilices como
+   clase local en un interactivo: el selector local se sumaría al de aquí y
+   descuadraría el componente. Reservadas:
+   contenedor · sr-only · principal · meta · tarjeta · caja-tip · caja-ok ·
+   caja-mal · panel · control · valor · fila-botones · secundario · escena ·
+   lectura · dato · tabla-wrap · datos · bloque · cuerpo · chevron · pie
+   Para rejillas de cifras usa .cifras, no .datos. */
+
+/* ── PROPIO DE ESTE INTERACTIVO ────────────────────────────────────────── */
+nav.saltos{background:var(--papel);border:1px solid var(--linea);border-radius:10px;
+  padding:10px 14px;margin-bottom:22px;display:flex;flex-wrap:wrap;gap:8px 20px;}
+nav.saltos a{font-weight:600;font-size:15px;}
+.laboratorio{display:grid;grid-template-columns:330px 1fr;gap:20px;align-items:start;}
+@media (max-width:980px){ .laboratorio{grid-template-columns:1fr;} }
+.vista{display:grid;grid-template-columns:330px 1fr;gap:24px;align-items:center;}
+@media (max-width:760px){ .vista{grid-template-columns:1fr;} }
+.vaso-wrap{position:relative;width:min(310px,100%);margin:0 auto;padding-top:14px;}
+.pico{position:absolute;top:0;left:6px;width:44px;height:16px;border-top:7px solid #78909c;
+  border-left:7px solid #78909c;border-radius:14px 0 0 0;transform:skewX(-18deg);}
+.tanque{width:100%;height:400px;border:7px solid #78909c;border-top:none;
+  border-radius:0 0 26px 26px;position:relative;background:#fbfdfe;overflow:hidden;
+  box-shadow:inset 0 0 22px rgba(96,125,139,.18), 0 10px 20px rgba(0,0,0,.10);}
+.tanque::before{content:"";position:absolute;top:0;left:16px;width:26px;height:100%;
+  background:linear-gradient(90deg,rgba(255,255,255,.85),rgba(255,255,255,0));z-index:6;pointer-events:none;}
+.escala{position:absolute;right:0;top:0;width:100%;height:100%;z-index:6;pointer-events:none;}
+.escala i{position:absolute;right:0;height:0;border-top:2px solid rgba(55,71,79,.45);}
+.escala i.larga{width:34px;} .escala i.corta{width:20px;}
+.escala b{position:absolute;right:40px;font-size:11px;font-style:normal;font-weight:600;
+  color:#37474f;transform:translateY(-8px);}
+.liquido{position:absolute;bottom:0;width:100%;height:76%;transition:background .35s ease;overflow:hidden;}
+.superficie{position:absolute;top:-5px;left:-25%;width:150%;height:20px;border-radius:50%;
+  background:rgba(255,255,255,.42);animation:vaiven 3.6s ease-in-out infinite;}
+.burbuja{position:absolute;bottom:-30px;width:10px;height:10px;background:rgba(255,255,255,.5);
+  border-radius:50%;animation:sube 6s linear infinite;}
+.burbuja:nth-of-type(2){left:24%;animation-delay:.4s;}
+.burbuja:nth-of-type(3){left:44%;width:7px;height:7px;animation-delay:1.8s;}
+.burbuja:nth-of-type(4){left:68%;width:12px;height:12px;animation-delay:2.7s;}
+@keyframes vaiven{0%,100%{transform:translateX(-8px);}50%{transform:translateX(8px);}}
+@keyframes sube{0%{transform:translateY(0);opacity:0;}15%{opacity:1;}100%{transform:translateY(-330px);opacity:0;}}
+.objeto{position:absolute;left:50%;width:74px;height:74px;transform:translateX(-50%);
+  border-radius:14px;display:flex;justify-content:center;align-items:center;text-align:center;
+  padding:6px;font-weight:700;font-size:13px;line-height:1.2;z-index:5;
+  box-shadow:0 8px 18px rgba(0,0,0,.3);transition:top .75s ease,background .3s ease;}
+.fondo-tanque{position:absolute;bottom:0;width:100%;height:16px;background:#546e7a;z-index:4;}
+.veredicto{text-align:center;border-radius:10px;padding:14px;font-size:20px;font-weight:700;margin-bottom:14px;border:2px solid;}
+.veredicto.flota{background:var(--ok-bg);border-color:var(--ok);color:var(--ok);}
+.veredicto.hunde{background:var(--mal-bg);border-color:var(--mal);color:var(--mal);}
+.veredicto.suspende{background:var(--amb-bg);border-color:var(--amb-borde);color:var(--amb);}
+.cifras{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+.dato-caja{background:var(--u-bg);border:1px solid var(--linea);border-radius:8px;padding:9px 11px;}
+.dato-caja strong{display:block;font-size:12px;color:var(--u2);text-transform:uppercase;letter-spacing:.3px;}
+.dato-caja span{font-size:17px;font-weight:700;color:var(--texto);font-variant-numeric:tabular-nums;}
+.paso{padding:9px 12px;border-radius:8px;background:var(--u-bg);border:1px solid var(--linea);margin:8px 0;font-size:15px;}
+.formulario{background:var(--u-bg);border-left:5px solid var(--u);border-radius:0 8px 8px 0;padding:14px 18px;margin:14px 0;}
+.formulario p{margin:6px 0;font-weight:700;color:var(--u2);font-size:18px;}
+.ayuda{font-size:14px;color:var(--texto-sec);margin:4px 0 0;}
+.rejilla-practica{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:14px 0;}
+@media (max-width:700px){ .rejilla-practica{grid-template-columns:1fr;} }
+.rejilla-practica label{display:block;font-weight:600;font-size:15px;margin-bottom:6px;color:#263238;}
+.rejilla-practica input{width:100%;font-family:inherit;font-size:16px;padding:9px 12px;
+  border:1px solid #90a4ae;border-radius:8px;}
+.rejilla-practica input:disabled{background:#eceff1;color:var(--texto-sec);}
+.salida{background:var(--papel);border:1px solid var(--linea);border-radius:10px;padding:14px 18px;margin-top:14px;}
+.salida p{margin:6px 0;}
+.quiz{display:grid;grid-template-columns:1fr 300px;gap:20px;align-items:start;}
+@media (max-width:900px){ .quiz{grid-template-columns:1fr;} }
+.item{border:1px solid var(--linea);border-radius:10px;padding:16px;background:var(--papel);margin-bottom:14px;}
+.item-cab{display:flex;gap:12px;align-items:flex-start;}
+.num{min-width:32px;height:32px;display:inline-grid;place-items:center;background:var(--u);
+  color:#fff;border-radius:50%;font-weight:700;flex-shrink:0;}
+.item-cab p{margin:4px 0;font-weight:600;}
+.opciones{display:grid;gap:8px;margin-top:12px;}
+.opcion{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--linea);background:#fafafa;
+  padding:10px 12px;border-radius:8px;cursor:pointer;}
+.opcion:hover{background:var(--u-bg);border-color:var(--u);}
+.opcion input{width:auto;margin-top:4px;accent-color:var(--u);}
+.retro{margin-top:12px;}
+.retro:empty{display:none;}
+.marcador{position:sticky;top:16px;}
+.marcador .cifra{font-size:38px;font-weight:700;color:var(--u2);text-align:center;font-variant-numeric:tabular-nums;}
+.barra{height:14px;background:#eceff1;border-radius:999px;overflow:hidden;margin:14px 0;border:1px solid var(--linea);}
+.barra div{height:100%;width:0;background:var(--u);transition:width .3s ease;}
+</style>
+</head>
+<body class="u5">
+<div class="contenedor">
+
+<header class="principal">
+  <h1>Laboratorio de densidad: flotar, hundirse y calcular</h1>
+  <p class="meta">Lección 5.2 · Estados de la materia, densidad y disoluciones</p>
+  <p class="meta">Unidad 5 · Ciencias físicas I · Spanish ASE Science</p>
+</header>
+
+<nav class="saltos" aria-label="Secciones de la actividad">
+  <a href="#laboratorio">Laboratorio</a>
+  <a href="#analisis">Análisis</a>
+  <a href="#referencia">Tabla de densidades</a>
+  <a href="#practica">Práctica de fórmula</a>
+  <a href="#examen">Preguntas tipo GED</a>
+</nav>
+
+<div class="tarjeta">
+  <h2>Objetivos de esta actividad</h2>
+  <ul>
+    <li>Usar la fórmula de la densidad y despejar de ella la masa y el volumen.</li>
+    <li>Comparar la densidad de un objeto con la del líquido para predecir si flota o se hunde.</li>
+    <li>Justificar una conclusión científica con los datos del experimento, no con la impresión de que algo «pesa mucho».</li>
+  </ul>
+  <div class="caja-tip">
+    <p><strong>La idea que hay que sacar de aquí:</strong> que un objeto flote no depende de cuánta masa tiene, sino de cuánta masa hay en cada centímetro cúbico. Un barco de acero flota y un tornillo del mismo acero se hunde.</p>
+  </div>
+</div>
+
+<h2 id="laboratorio" style="color:var(--u2);font-size:22px;margin:26px 0 12px;">1. Configura el experimento y observa</h2>
+
+<div class="laboratorio">
+
+  <div class="panel">
+    <h3 style="margin:0 0 12px;font-size:17px;color:var(--u2);">Ajustes</h3>
+
+    <div class="control">
+      <label for="material">Material del objeto</label>
+      <select id="material"></select>
+    </div>
+
+    <div class="control">
+      <label for="volumen">Volumen del objeto <span class="valor"><span id="v-vol">100</span> cm³</span></label>
+      <input type="range" id="volumen" min="10" max="500" step="10" value="100">
+      <p class="ayuda">El volumen va en centímetros cúbicos. La masa se calcula sola a partir de la densidad del material.</p>
+    </div>
+
+    <div class="control">
+      <label for="liquido">Líquido del recipiente</label>
+      <select id="liquido"></select>
+    </div>
+
+    <div class="formulario">
+      <p>ρ = m ÷ V</p>
+      <p>m = ρ × V</p>
+      <p>V = m ÷ ρ</p>
+    </div>
+    <p class="ayuda">ρ es la densidad, m es la masa y V es el volumen.</p>
+  </div>
+
+  <div class="escena">
+    <div class="vista">
+      <div class="vaso-wrap">
+      <span class="pico" aria-hidden="true"></span>
+      <div class="tanque">
+        <div class="escala" aria-hidden="true">
+          <i class="larga" style="top:96px"></i><b style="top:96px">500</b>
+          <i class="corta" style="top:172px"></i>
+          <i class="larga" style="top:248px"></i><b style="top:248px">250</b>
+          <i class="corta" style="top:324px"></i>
+        </div>
+        <div class="liquido" id="liquido-visual">
+          <div class="superficie"></div>
+          <div class="burbuja"></div>
+          <div class="burbuja"></div>
+          <div class="burbuja"></div>
+        </div>
+        <div class="objeto" id="objeto-visual">Objeto</div>
+        <div class="fondo-tanque"></div>
+      </div>
+      </div>
+
+      <div>
+        <p id="veredicto" class="veredicto flota">Flota</p>
+        <div class="cifras">
+          <div class="dato-caja"><strong>Material</strong><span id="d-material">—</span></div>
+          <div class="dato-caja"><strong>Densidad del objeto</strong><span id="d-dens-obj">—</span></div>
+          <div class="dato-caja"><strong>Volumen</strong><span id="d-vol">—</span></div>
+          <div class="dato-caja"><strong>Masa calculada</strong><span id="d-masa">—</span></div>
+          <div class="dato-caja"><strong>Líquido</strong><span id="d-liquido">—</span></div>
+          <div class="dato-caja"><strong>Densidad del líquido</strong><span id="d-dens-liq">—</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="lectura" aria-live="polite">
+  <h2>Lectura del experimento</h2>
+  <p id="lectura-texto">Selecciona un material y un líquido para ver el resultado.</p>
+</div>
+
+<h2 id="analisis" style="color:var(--u2);font-size:22px;margin:26px 0 12px;">2. Análisis</h2>
+
+<div class="laboratorio">
+  <div class="tarjeta">
+    <h3 style="margin-top:0;">Cálculo paso a paso</h3>
+    <div id="pasos"></div>
+  </div>
+
+  <div class="tarjeta">
+    <h3 style="margin-top:0;">Explicación científica</h3>
+    <div id="explicacion"></div>
+  </div>
+</div>
+
+<h2 id="referencia" style="color:var(--u2);font-size:22px;margin:26px 0 12px;">3. Tabla de densidades</h2>
+
+<div class="tarjeta">
+  <p>Estas son las densidades que usa el laboratorio, medidas a temperatura ambiente. La columna de la derecha resume la comparación con el agua, que es la referencia habitual del examen porque su densidad vale justo 1.00 g/cm³.</p>
+  <div class="tabla-wrap">
+    <table class="datos">
+      <caption>Densidad de los ocho materiales y los tres líquidos del laboratorio, en gramos por centímetro cúbico, y su comportamiento en agua.</caption>
+      <thead>
+        <tr><th scope="col">Sustancia</th><th scope="col">Tipo</th><th scope="col">Densidad (g/cm³)</th><th scope="col">En agua</th></tr>
+      </thead>
+      <tbody id="tabla-densidades"></tbody>
+    </table>
+  </div>
+  <div class="caja-tip">
+    <p><strong>Observa el hielo:</strong> es el único sólido de la tabla que flota en su propio líquido. El agua es rara en esto, y por eso los lagos se congelan por arriba y los peces sobreviven debajo. Si el hielo se hundiera, los lagos se congelarían desde el fondo.</p>
+  </div>
+</div>
+
+<h2 id="practica" style="color:var(--u2);font-size:22px;margin:26px 0 12px;">4. Práctica de fórmula</h2>
+
+<div class="tarjeta">
+  <p>Practica despejando cada una de las tres variables. Elige qué quieres calcular y el campo correspondiente se desactivará: ese es el que va a salir del cálculo, no el que tú introduces.</p>
+
+  <div class="control">
+    <label for="modo">¿Qué quieres calcular?</label>
+    <select id="modo">
+      <option value="masa">La masa, con m = ρ × V</option>
+      <option value="densidad">La densidad, con ρ = m ÷ V</option>
+      <option value="volumen">El volumen, con V = m ÷ ρ</option>
+    </select>
+  </div>
+
+  <div class="rejilla-practica">
+    <div>
+      <label for="p-masa">Masa, m, en gramos</label>
+      <input type="number" id="p-masa" value="100" step="1" min="0">
+    </div>
+    <div>
+      <label for="p-densidad">Densidad, ρ, en g/cm³</label>
+      <input type="number" id="p-densidad" value="2.5" step="0.01" min="0">
+    </div>
+    <div>
+      <label for="p-volumen">Volumen, V, en cm³</label>
+      <input type="number" id="p-volumen" value="40" step="1" min="0">
+    </div>
+  </div>
+
+  <div class="fila-botones">
+    <button type="button" id="btn-calcular">Calcular con pasos</button>
+  </div>
+
+  <div class="salida" id="salida-practica" aria-live="polite">
+    <p>Elige qué calcular, escribe los dos datos que conoces y pulsa el botón.</p>
+  </div>
+</div>
+
+<h2 id="examen" style="color:var(--u2);font-size:22px;margin:26px 0 12px;">5. Preguntas tipo GED</h2>
+
+<div class="quiz">
+  <div>
+    <div id="preguntas"></div>
+    <div class="fila-botones">
+      <button type="button" id="btn-verificar">Verificar respuestas</button>
+      <button type="button" class="secundario" id="btn-reiniciar-quiz">Reiniciar la práctica</button>
+    </div>
+  </div>
+
+  <div class="panel marcador">
+    <h3 style="margin:0 0 8px;font-size:17px;color:var(--u2);">Resultado</h3>
+    <div class="cifra" id="marcador-cifra">0/10</div>
+    <div class="barra"><div id="marcador-barra"></div></div>
+    <div aria-live="polite">
+      <p id="marcador-pct" style="text-align:center;font-weight:700;margin:0 0 8px;">0 %</p>
+      <p id="marcador-mensaje" style="font-size:15px;margin:0;">Responde las preguntas y pulsa «Verificar respuestas».</p>
+    </div>
+  </div>
+</div>
+
+<footer class="pie">
+  <p>Laboratorio de densidad · Lección 5.2 · Spanish ASE Science · 96 horas</p>
+  <p>José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago</p>
+  <p>© 2026. Esta obra está licenciada bajo <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" rel="license">Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0 Internacional (CC BY-NC-SA 4.0)</a>.</p>
+</footer>
+
+</div>
+<script>
+"use strict";
+
+/* ── Datos ─────────────────────────────────────────────────────────────── */
+var MATERIALES = [
+  { nombre:"Madera de balsa", d:0.16, fondo:"#6d4c41", texto:"#ffffff" },
+  { nombre:"Corcho",          d:0.24, fondo:"#795548", texto:"#ffffff" },
+  { nombre:"Hielo",           d:0.92, fondo:"#b3e5fc", texto:"#01579b" },
+  { nombre:"Plástico",        d:0.95, fondo:"#2e7d32", texto:"#ffffff" },
+  { nombre:"Aluminio",        d:2.70, fondo:"#90a4ae", texto:"#102027" },
+  { nombre:"Hierro",          d:7.87, fondo:"#455a64", texto:"#ffffff" },
+  { nombre:"Cobre",           d:8.96, fondo:"#8c4a1e", texto:"#ffffff" },
+  { nombre:"Plomo",           d:11.34, fondo:"#37474f", texto:"#ffffff" }
+];
+
+var LIQUIDOS = [
+  { nombre:"Aceite vegetal", d:0.90, fondo:"linear-gradient(#ffe082,#ffb300)" },
+  { nombre:"Agua",           d:1.00, fondo:"linear-gradient(#81d4fa,#0277bd)" },
+  { nombre:"Mercurio",       d:13.60, fondo:"linear-gradient(#cfd8dc,#78909c)" }
+];
+
+var PREGUNTAS = [
+  { t:"Un objeto tiene una masa de 120 g y un volumen de 60 cm³. ¿Cuál es su densidad?",
+    o:["0.5 g/cm³","2.0 g/cm³","60 g/cm³","180 g/cm³"], r:1,
+    ok:"La densidad es masa entre volumen: 120 ÷ 60 = 2.0 g/cm³.",
+    mal:"Aplica ρ = m ÷ V. Divide 120 g entre 60 cm³ y obtendrás 2.0 g/cm³." },
+  { t:"Un bloque de densidad 0.8 g/cm³ se coloca en agua, cuya densidad es 1.0 g/cm³. ¿Qué ocurre?",
+    o:["Se hunde, porque su densidad es menor.","Flota, porque su densidad es menor que la del agua.","Queda en el fondo, porque su masa aumenta.","La densidad del agua baja hasta 0.8 g/cm³."], r:1,
+    ok:"Cuando la densidad del objeto es menor que la del líquido, el objeto flota.",
+    mal:"Compara las dos densidades: 0.8 es menor que 1.0, así que el bloque flota." },
+  { t:"¿Qué fórmula usas para hallar la masa si conoces la densidad y el volumen?",
+    o:["m = ρ × V","m = ρ ÷ V","m = V ÷ ρ","m = ρ + V"], r:0,
+    ok:"Al despejar la masa de ρ = m ÷ V se obtiene m = ρ × V.",
+    mal:"Parte de ρ = m ÷ V y despeja la masa: hay que multiplicar, no dividir." },
+  { t:"Un objeto de aluminio tiene una densidad de 2.70 g/cm³. Si duplicas su volumen, ¿qué le pasa a su densidad?",
+    o:["Se duplica.","Se reduce a la mitad.","No cambia, porque es una propiedad del material.","Pasa a ser la del agua."], r:2,
+    ok:"Al crecer el objeto crecen la masa y el volumen en la misma proporción, de modo que su cociente no varía.",
+    mal:"La densidad es una propiedad del material. Si sigue siendo aluminio, sigue midiendo 2.70 g/cm³." },
+  { t:"Un objeto de densidad 11.34 g/cm³ se coloca en mercurio, de densidad 13.60 g/cm³. ¿Qué ocurre?",
+    o:["Se hunde, porque 11.34 es menor que 13.60.","Flota, porque su densidad es menor que la del mercurio.","Se evapora.","Su volumen pasa a ser cero."], r:1,
+    ok:"Por muy denso que sea el objeto, flota si el líquido lo es todavía más. Eso hace flotar al plomo en mercurio.",
+    mal:"Compara: 11.34 g/cm³ es menor que 13.60 g/cm³, así que el objeto flota." },
+  { t:"Un estudiante calcula 80 g ÷ 20 cm³. ¿Qué magnitud está hallando?",
+    o:["El volumen","La masa","La densidad","La temperatura"], r:2,
+    ok:"Masa dividida entre volumen da densidad: en este caso, 4.0 g/cm³.",
+    mal:"Fíjate en las unidades del resultado: gramos entre centímetros cúbicos son g/cm³, la unidad de la densidad." },
+  { t:"Un objeto se hunde en aceite vegetal, de densidad 0.90 g/cm³, pero flota en agua, de densidad 1.00 g/cm³. ¿Cuál puede ser su densidad?",
+    o:["0.50 g/cm³","0.95 g/cm³","1.50 g/cm³","13.60 g/cm³"], r:1,
+    ok:"Tiene que ser mayor que 0.90, para hundirse en aceite, y menor que 1.00, para flotar en agua. Solo 0.95 cumple las dos condiciones.",
+    mal:"El valor debe quedar entre 0.90 y 1.00 g/cm³: por encima del aceite y por debajo del agua." },
+  { t:"¿Por qué no basta con decir que un objeto «pesa mucho» para saber si se hunde?",
+    o:["Porque la flotación depende de la densidad, no solo de la masa.","Porque todos los objetos pesados flotan.","Porque la masa y el volumen son lo mismo.","Porque la densidad siempre vale cero."], r:0,
+    ok:"Lo que decide es comparar la densidad del objeto con la del líquido. Un barco tiene muchísima masa y flota.",
+    mal:"Un objeto puede tener mucha masa y flotar igualmente si esa masa está repartida en mucho volumen." },
+  { t:"Si un objeto tiene una masa de 45 g y una densidad de 3 g/cm³, ¿cuál es su volumen?",
+    o:["15 cm³","42 cm³","48 cm³","135 cm³"], r:0,
+    ok:"Con V = m ÷ ρ: 45 ÷ 3 = 15 cm³.",
+    mal:"Para hallar el volumen hay que dividir la masa entre la densidad, no sumarlas ni restarlas." },
+  { t:"Un objeto queda suspendido dentro de un líquido, sin subir ni bajar. ¿Cuál es la mejor explicación?",
+    o:["Su densidad es mucho mayor que la del líquido.","Su densidad es mucho menor que la del líquido.","Su densidad es prácticamente igual a la del líquido.","El objeto no tiene masa."], r:2,
+    ok:"Cuando las dos densidades coinciden, no hay empuje neto hacia arriba ni hacia abajo.",
+    mal:"Si una densidad fuera mucho mayor o mucho menor, el objeto se movería. La suspensión pide igualdad." }
+];
+
+var TOLERANCIA = 0.03;
+
+/* ── Elementos ─────────────────────────────────────────────────────────── */
+var selMaterial = document.getElementById("material");
+var selLiquido = document.getElementById("liquido");
+var rngVolumen = document.getElementById("volumen");
+
+function n2(x){ return x.toFixed(2); }
+
+/* ── Simulación ────────────────────────────────────────────────────────── */
+function poblarSelectores(){
+  var i, op;
+  for (i = 0; i < MATERIALES.length; i++){
+    op = document.createElement("option");
+    op.value = i;
+    op.textContent = MATERIALES[i].nombre + " — " + n2(MATERIALES[i].d) + " g/cm³";
+    selMaterial.appendChild(op);
+  }
+  for (i = 0; i < LIQUIDOS.length; i++){
+    op = document.createElement("option");
+    op.value = i;
+    op.textContent = LIQUIDOS[i].nombre + " — " + n2(LIQUIDOS[i].d) + " g/cm³";
+    selLiquido.appendChild(op);
+  }
+  selMaterial.value = 5;
+  selLiquido.value = 1;
+}
+
+function poblarTabla(){
+  var html = "", i, m;
+  for (i = 0; i < MATERIALES.length; i++){
+    m = MATERIALES[i];
+    html += '<tr><th scope="row">' + m.nombre + "</th><td>Sólido</td><td>" + n2(m.d) + "</td><td>" +
+      (m.d < 1 ? "Flota" : "Se hunde") + "</td></tr>";
+  }
+  for (i = 0; i < LIQUIDOS.length; i++){
+    m = LIQUIDOS[i];
+    html += '<tr><th scope="row">' + m.nombre + "</th><td>Líquido</td><td>" + n2(m.d) + "</td><td>" +
+      (m.d < 1 ? "Se queda encima" : (m.d > 1 ? "Se va al fondo" : "Es el agua")) + "</td></tr>";
+  }
+  document.getElementById("tabla-densidades").innerHTML = html;
+}
+
+function actualizar(){
+  var mat = MATERIALES[Number(selMaterial.value)];
+  var liq = LIQUIDOS[Number(selLiquido.value)];
+  var vol = Number(rngVolumen.value);
+  var masa = mat.d * vol;
+  var dif = mat.d - liq.d;
+  var estado, texto, signo, clase;
+
+  if (Math.abs(dif) <= TOLERANCIA){ estado = "suspende"; texto = "Queda suspendido"; signo = "≈"; }
+  else if (mat.d < liq.d){ estado = "flota"; texto = "Flota"; signo = "<"; }
+  else { estado = "hunde"; texto = "Se hunde"; signo = ">"; }
+  clase = estado;
+
+  document.getElementById("v-vol").textContent = vol;
+  document.getElementById("d-material").textContent = mat.nombre;
+  document.getElementById("d-dens-obj").textContent = n2(mat.d) + " g/cm³";
+  document.getElementById("d-vol").textContent = vol + " cm³";
+  document.getElementById("d-masa").textContent = n2(masa) + " g";
+  document.getElementById("d-liquido").textContent = liq.nombre;
+  document.getElementById("d-dens-liq").textContent = n2(liq.d) + " g/cm³";
+
+  var ver = document.getElementById("veredicto");
+  ver.className = "veredicto " + clase;
+  ver.textContent = texto;
+
+  var obj = document.getElementById("objeto-visual");
+  obj.textContent = mat.nombre;
+  obj.style.background = mat.fondo;
+  obj.style.color = mat.texto;
+  obj.style.top = estado === "flota" ? "70px" : (estado === "hunde" ? "306px" : "208px");
+  document.getElementById("liquido-visual").style.background = liq.fondo;
+
+  document.getElementById("pasos").innerHTML =
+    '<div class="paso"><strong>1.</strong> Densidad del material: ' + n2(mat.d) + " g/cm³.</div>" +
+    '<div class="paso"><strong>2.</strong> Volumen elegido: ' + vol + " cm³.</div>" +
+    '<div class="paso"><strong>3.</strong> Fórmula de la masa: m = ρ × V.</div>' +
+    '<div class="paso"><strong>4.</strong> Sustitución: m = ' + n2(mat.d) + " × " + vol + ".</div>" +
+    '<div class="paso"><strong>5.</strong> Resultado: m = ' + n2(masa) + " g.</div>" +
+    '<div class="paso"><strong>6.</strong> Comparación de densidades: ' + n2(mat.d) + " " + signo + " " + n2(liq.d) + ".</div>";
+
+  var expl, lectura;
+  if (estado === "flota"){
+    expl = "<p>El objeto <strong>flota</strong> porque la densidad de " + mat.nombre.toLowerCase() +
+      " es menor que la de " + liq.nombre.toLowerCase() + ".</p>" +
+      "<p>Su masa es de " + n2(masa) + " g, pero eso no decide nada por sí solo: lo que cuenta es cuánta masa hay en cada centímetro cúbico.</p>" +
+      "<p><strong>Regla:</strong> si la densidad del objeto es menor que la del líquido, flota.</p>";
+    lectura = "Un objeto de " + mat.nombre.toLowerCase() + " de " + vol + " centímetros cúbicos tiene una masa de " +
+      n2(masa) + " gramos. Su densidad, " + n2(mat.d) + " gramos por centímetro cúbico, es menor que la de " +
+      liq.nombre.toLowerCase() + ", que es " + n2(liq.d) + ". Por eso flota y se queda en la superficie.";
+  } else if (estado === "hunde"){
+    expl = "<p>El objeto <strong>se hunde</strong> porque la densidad de " + mat.nombre.toLowerCase() +
+      " es mayor que la de " + liq.nombre.toLowerCase() + ".</p>" +
+      "<p>Si subes el volumen, la masa sube con él, pero la densidad del material no se mueve: por eso el resultado sigue siendo el mismo por grande que hagas el objeto.</p>" +
+      "<p><strong>Regla:</strong> si la densidad del objeto es mayor que la del líquido, se hunde.</p>";
+    lectura = "Un objeto de " + mat.nombre.toLowerCase() + " de " + vol + " centímetros cúbicos tiene una masa de " +
+      n2(masa) + " gramos. Su densidad, " + n2(mat.d) + " gramos por centímetro cúbico, es mayor que la de " +
+      liq.nombre.toLowerCase() + ", que es " + n2(liq.d) + ". Por eso se hunde hasta el fondo.";
+  } else {
+    expl = "<p>El objeto <strong>queda suspendido</strong> porque su densidad y la del líquido son casi idénticas: " +
+      n2(mat.d) + " frente a " + n2(liq.d) + ".</p>" +
+      "<p>Es una situación de equilibrio: no hay empuje neto hacia arriba ni hacia abajo.</p>" +
+      "<p><strong>Regla:</strong> si las dos densidades coinciden, el objeto queda suspendido.</p>";
+    lectura = "Un objeto de " + mat.nombre.toLowerCase() + " de " + vol + " centímetros cúbicos tiene una masa de " +
+      n2(masa) + " gramos. Su densidad, " + n2(mat.d) + ", y la de " + liq.nombre.toLowerCase() + ", " + n2(liq.d) +
+      ", son casi iguales, de modo que el objeto queda suspendido en mitad del líquido.";
+  }
+  document.getElementById("explicacion").innerHTML = expl;
+  document.getElementById("lectura-texto").textContent = lectura;
+}
+
+/* ── Práctica de fórmula ───────────────────────────────────────────────── */
+var selModo = document.getElementById("modo");
+var inMasa = document.getElementById("p-masa");
+var inDens = document.getElementById("p-densidad");
+var inVol  = document.getElementById("p-volumen");
+
+function ajustarCampos(){
+  var modo = selModo.value;
+  inMasa.disabled = (modo === "masa");
+  inDens.disabled = (modo === "densidad");
+  inVol.disabled  = (modo === "volumen");
+}
+
+function calcularPractica(){
+  var modo = selModo.value;
+  var m = Number(inMasa.value), d = Number(inDens.value), v = Number(inVol.value);
+  var salida = document.getElementById("salida-practica"), r;
+
+  if (modo === "masa"){
+    r = d * v;
+    salida.innerHTML = "<p><strong>Buscamos la masa.</strong></p><p>Fórmula: m = ρ × V</p>" +
+      "<p>Sustitución: m = " + d + " × " + v + "</p><p><strong>Resultado: m = " + r.toFixed(2) + " g</strong></p>";
+  } else if (modo === "densidad"){
+    if (v <= 0){ salida.innerHTML = "<div class=\"caja-mal\"><p>El volumen tiene que ser mayor que cero: no se puede dividir entre cero.</p></div>"; return; }
+    r = m / v;
+    salida.innerHTML = "<p><strong>Buscamos la densidad.</strong></p><p>Fórmula: ρ = m ÷ V</p>" +
+      "<p>Sustitución: ρ = " + m + " ÷ " + v + "</p><p><strong>Resultado: ρ = " + r.toFixed(2) + " g/cm³</strong></p>" +
+      "<p>" + (r < 1 ? "Como es menor que 1.00, este material flotaría en agua." : (r > 1 ? "Como es mayor que 1.00, este material se hundiría en agua." : "Justo la densidad del agua: quedaría suspendido.")) + "</p>";
+  } else {
+    if (d <= 0){ salida.innerHTML = "<div class=\"caja-mal\"><p>La densidad tiene que ser mayor que cero: no se puede dividir entre cero.</p></div>"; return; }
+    r = m / d;
+    salida.innerHTML = "<p><strong>Buscamos el volumen.</strong></p><p>Fórmula: V = m ÷ ρ</p>" +
+      "<p>Sustitución: V = " + m + " ÷ " + d + "</p><p><strong>Resultado: V = " + r.toFixed(2) + " cm³</strong></p>";
+  }
+}
+
+/* ── Preguntas tipo GED ────────────────────────────────────────────────── */
+function pintarPreguntas(){
+  var html = "", i, j, p;
+  for (i = 0; i < PREGUNTAS.length; i++){
+    p = PREGUNTAS[i];
+    html += '<div class="item"><div class="item-cab"><span class="num" aria-hidden="true">' + (i+1) + "</span>" +
+      "<p>" + (i+1) + ". " + p.t + "</p></div>";
+    html += '<div class="opciones" role="group" aria-label="Opciones de la pregunta ' + (i+1) + '">';
+    for (j = 0; j < p.o.length; j++){
+      html += '<label class="opcion"><input type="radio" name="p' + i + '" value="' + j + '"><span>' + p.o[j] + "</span></label>";
+    }
+    html += '</div><div class="retro" id="retro' + i + '"></div></div>';
+  }
+  document.getElementById("preguntas").innerHTML = html;
+  marcador(0, false);
+}
+
+function verificar(){
+  var aciertos = 0, sinResponder = 0, i, sel, caja;
+  for (i = 0; i < PREGUNTAS.length; i++){
+    sel = document.querySelector('input[name="p' + i + '"]:checked');
+    caja = document.getElementById("retro" + i);
+    if (!sel){
+      sinResponder++;
+      caja.innerHTML = '<div class="caja-tip"><p><strong>Sin responder.</strong> Elige una opción. Empieza por identificar qué dato te dan y qué dato te piden.</p></div>';
+      continue;
+    }
+    if (Number(sel.value) === PREGUNTAS[i].r){
+      aciertos++;
+      caja.innerHTML = '<div class="caja-ok"><p><strong>Correcto.</strong> ' + PREGUNTAS[i].ok + "</p></div>";
+    } else {
+      caja.innerHTML = '<div class="caja-mal"><p><strong>Todavía no.</strong> ' + PREGUNTAS[i].mal + "</p></div>";
+    }
+  }
+  marcador(aciertos, true, sinResponder);
+}
+
+function marcador(aciertos, verificado, sinResponder){
+  var total = PREGUNTAS.length;
+  var pct = Math.round(aciertos/total*100);
+  document.getElementById("marcador-cifra").textContent = aciertos + "/" + total;
+  document.getElementById("marcador-pct").textContent = pct + " %";
+  document.getElementById("marcador-barra").style.width = pct + "%";
+  var msg = document.getElementById("marcador-mensaje");
+
+  if (!verificado){
+    msg.textContent = "Responde las preguntas y pulsa «Verificar respuestas».";
+    return;
+  }
+  var texto = "Has acertado " + aciertos + " de " + total + " preguntas. ";
+  if (sinResponder) texto += "Quedan " + sinResponder + " sin responder. ";
+  if (pct >= 90) texto += "Dominio excelente: puedes explicar la relación entre masa, volumen y densidad con soltura.";
+  else if (pct >= 70) texto += "Buen avance. Repasa las falladas y fíjate en qué fórmula necesitaba cada una.";
+  else if (pct >= 50) texto += "Vas encaminado. Insiste sobre todo en comparar la densidad del objeto con la del líquido.";
+  else texto += "Conviene repasar. Empieza por ρ = m ÷ V y practica identificando cuál de las tres magnitudes te piden.";
+  msg.textContent = texto;
+}
+
+function reiniciarQuiz(){
+  var radios = document.querySelectorAll('.opciones input[type="radio"]'), i;
+  for (i = 0; i < radios.length; i++){ radios[i].checked = false; }
+  for (i = 0; i < PREGUNTAS.length; i++){ document.getElementById("retro" + i).innerHTML = ""; }
+  marcador(0, false);
+  document.getElementById("examen").scrollIntoView({ behavior:"smooth" });
+}
+
+/* ── Arranque ──────────────────────────────────────────────────────────── */
+selMaterial.addEventListener("change", actualizar);
+selLiquido.addEventListener("change", actualizar);
+rngVolumen.addEventListener("input", actualizar);
+selModo.addEventListener("change", ajustarCampos);
+document.getElementById("btn-calcular").addEventListener("click", calcularPractica);
+document.getElementById("btn-verificar").addEventListener("click", verificar);
+document.getElementById("btn-reiniciar-quiz").addEventListener("click", reiniciarQuiz);
+
+poblarSelectores();
+poblarTabla();
+actualizar();
+ajustarCampos();
+pintarPreguntas();
+</script>
+</body>
+</html>

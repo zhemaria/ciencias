@@ -1,0 +1,707 @@
+<!doctype html>
+<!--
+  Simulador de ósmosis (Lección 3.1) · Spanish ASE Science
+  © 2026 José M. Fernández, ABE/ASE Math Master Teacher,
+  Harry S. Truman College — City Colleges of Chicago.
+  Licencia: Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0
+  Internacional (CC BY-NC-SA 4.0) — https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Simulador de ósmosis</title>
+<meta name="description" content="Simulador de ósmosis en medios hipotónico, isotónico e hipertónico, con lectura textual del estado de la célula y célula vegetal opcional.">
+<meta name="author" content="José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago">
+<meta name="license" content="CC BY-NC-SA 4.0">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
+<style>
+@charset "utf-8";
+/* ============================================================================
+   Estilos unificados de los interactivos · Spanish ASE Science
+   José M. Fernández, ABE/ASE Math Master Teacher,
+   Harry S. Truman College — City Colleges of Chicago
+   © 2026 · CC BY-NC-SA 4.0
+   https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+   ----------------------------------------------------------------------------
+   CÓMO SE USA
+   Este bloque se copia completo dentro de <style> en cada interactivo, para que
+   el archivo siga siendo autónomo. La clase de unidad va en el <body>:
+       <body class="u4">   → Unidad 4, verde oliva
+   Unidades: u1 verde azulado · u2 gris pizarra · u3 verde · u4 verde oliva
+             u5 rojo anaranjado · u6 azul índigo · u7 violeta · u8 azul
+   Todos los colores de acento cumplen 4,5:1 sobre blanco y admiten texto
+   blanco encima. El ámbar de los avisos usa #5c3900 (10,29:1).
+   ========================================================================== */
+
+/* ── 1. PALETA POR UNIDAD ──────────────────────────────────────────────── */
+:root{
+  --u:#37474f; --u2:#263238; --u-bg:#eceff1;   /* valor por defecto */
+  --texto:#222; --texto-sec:#555; --linea:#e0e0e0;
+  --pagina:#f5f7fa; --papel:#ffffff;
+  --amb:#5c3900; --amb-bg:#fff8e1; --amb-borde:#b45309;
+  --ok:#1b5e20; --ok-bg:#e8f5e9; --mal:#7f1d1d; --mal-bg:#fbe9e7;
+  --radio:12px; --sombra:0 2px 8px rgba(0,0,0,.07);
+}
+body.u1{--u:#00695c;--u2:#004d40;--u-bg:#e0f2f1;}
+body.u2{--u:#37474f;--u2:#263238;--u-bg:#eceff1;}
+body.u3{--u:#1b5e20;--u2:#0f3d13;--u-bg:#e8f5e9;}
+body.u4{--u:#33691e;--u2:#1f4211;--u-bg:#f1f8e9;}
+body.u5{--u:#bf360c;--u2:#8c2708;--u-bg:#fbe9e7;}
+body.u6{--u:#1e3a8a;--u2:#142a63;--u-bg:#e8eaf6;}
+body.u7{--u:#5b21b6;--u2:#40157f;--u-bg:#ede7f6;}
+body.u8{--u:#0d47a1;--u2:#093271;--u-bg:#e3f2fd;}
+
+/* ── 2. BASE ───────────────────────────────────────────────────────────── */
+*{box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;margin:0;background:var(--pagina);
+  color:var(--texto);line-height:1.55;font-size:16px;}
+.contenedor{max-width:1100px;margin:0 auto;padding:24px;}
+a{color:#0b3d91;}
+h1,h2,h3{line-height:1.3;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+:focus-visible{outline:3px solid var(--u);outline-offset:2px;}
+
+/* ── 3. ENCABEZADO DEL INTERACTIVO ─────────────────────────────────────── */
+header.principal{background:var(--u);background:linear-gradient(135deg,var(--u) 0%,var(--u2) 100%);
+  color:#fff;padding:28px 32px;border-radius:14px;margin-bottom:22px;box-shadow:var(--sombra);}
+header.principal h1{margin:0 0 6px;font-size:26px;font-weight:700;color:#fff;}
+header.principal .meta{font-size:14px;margin:4px 0 0;color:#fff;}
+
+/* ── 4. BLOQUES DE TEXTO ───────────────────────────────────────────────── */
+.tarjeta{background:var(--papel);padding:20px 24px;border-radius:10px;
+  border-left:5px solid var(--u);margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.tarjeta h2{margin-top:0;color:var(--u);font-size:20px;}
+.tarjeta h3{font-size:16px;color:#263238;margin:16px 0 6px;}
+.caja-tip{background:var(--amb-bg);border-left:4px solid var(--amb-borde);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;font-size:15px;}
+.caja-tip strong{color:var(--amb);}
+.caja-ok{background:var(--ok-bg);border-left:5px solid var(--ok);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;}
+.caja-ok strong{color:var(--ok);}
+.caja-mal{background:var(--mal-bg);border-left:5px solid var(--mal);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;}
+.caja-mal strong{color:var(--mal);}
+
+/* ── 5. PANEL DE CONTROLES ─────────────────────────────────────────────── */
+.panel{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:18px 22px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.panel h2{margin:0 0 12px;font-size:18px;color:var(--u);}
+.control{margin-bottom:16px;}
+.control > label{display:block;font-weight:600;font-size:15px;color:#263238;margin-bottom:6px;}
+.control .valor{float:right;font-weight:700;color:var(--u);font-variant-numeric:tabular-nums;}
+.control input[type=range]{width:100%;accent-color:var(--u);height:26px;}
+.control select,.control input[type=number],.control input[type=text]{
+  font-family:inherit;font-size:16px;padding:9px 14px;border-radius:8px;
+  border:1px solid #90a4ae;background:#fff;color:var(--texto);width:100%;max-width:420px;}
+.fila-botones{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;}
+button{font-family:inherit;font-size:15px;font-weight:600;padding:10px 18px;border-radius:8px;
+  border:1px solid transparent;background:var(--u);color:#fff;cursor:pointer;}
+button:hover{background:var(--u2);}
+button.secundario{background:#fff;color:var(--u);border-color:var(--u);}
+button.secundario:hover{background:var(--u-bg);}
+
+/* ── 6. LIENZO / ESCENA ────────────────────────────────────────────────── */
+.escena{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:16px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);overflow-x:auto;}
+
+/* ── 7. LECTURA DEL ESTADO (alternativa textual, siempre visible) ──────── */
+.lectura{background:var(--u-bg);border-left:5px solid var(--u);border-radius:0 8px 8px 0;
+  padding:14px 18px;margin-bottom:22px;font-size:15px;}
+.lectura h2{margin:0 0 8px;font-size:17px;color:var(--u);}
+.lectura p{margin:6px 0;}
+.lectura .dato{font-weight:700;color:var(--u2);font-variant-numeric:tabular-nums;}
+
+/* ── 8. TABLAS (Ally: caption obligatorio y scope en todo th) ──────────── */
+.tabla-wrap{overflow-x:auto;margin-bottom:22px;}
+table.datos{width:100%;border-collapse:collapse;background:var(--papel);border-radius:10px;
+  overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);font-size:15px;}
+table.datos caption{caption-side:top;text-align:left;font-size:14px;color:var(--texto-sec);
+  padding:0 0 8px;font-style:italic;}
+table.datos th,table.datos td{padding:10px 12px;text-align:left;border-bottom:1px solid #eee;}
+table.datos thead th{background:#37474f;color:#fff;font-weight:600;font-size:13px;
+  text-transform:uppercase;letter-spacing:.4px;}
+table.datos tbody th{background:var(--u-bg);color:var(--u2);font-weight:700;}
+table.datos tr:last-child td{border-bottom:none;}
+
+/* ── 9. ACORDEÓN NATIVO ────────────────────────────────────────────────── */
+details.bloque{background:var(--papel);border-radius:var(--radio);margin-bottom:14px;
+  box-shadow:var(--sombra);border-left:5px solid var(--u);overflow:hidden;}
+details.bloque > summary{padding:14px 18px;cursor:pointer;list-style:none;display:flex;
+  gap:10px;align-items:center;background:var(--u-bg);font-weight:600;color:var(--u2);}
+details.bloque > summary::-webkit-details-marker{display:none;}
+details.bloque > summary .chevron{transition:transform .2s;flex-shrink:0;}
+details.bloque[open] > summary .chevron{transform:rotate(90deg);}
+details.bloque .cuerpo{padding:14px 20px 18px;}
+
+/* ── 10. PIE CON LICENCIA ──────────────────────────────────────────────── */
+footer.pie{padding:22px 4px;color:var(--texto-sec);font-size:13px;margin-top:20px;
+  border-top:1px solid #ddd;text-align:center;}
+footer.pie p{margin:5px 0;}
+
+/* ── 11. MOVIMIENTO REDUCIDO ───────────────────────────────────────────── */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;scroll-behavior:auto !important;}
+}
+
+/* ── 12. IMPRESIÓN ─────────────────────────────────────────────────────── */
+@media print{
+  body{background:#fff;}
+  .panel,.escena{page-break-inside:avoid;}
+  details[open] .cuerpo{display:block;}
+}
+
+/* ── PROPIO DE ESTE INTERACTIVO ────────────────────────────────────────── */
+.disposicion{display:grid;grid-template-columns:1.2fr .8fr;gap:20px;align-items:start;}
+@media (max-width:900px){ .disposicion{grid-template-columns:1fr;} }
+.marco-sim{position:relative;width:100%;height:470px;border-radius:10px;overflow:hidden;
+  background:#f7fbf8;border:2px solid #c8e6c9;}
+@media (max-width:650px){ .marco-sim{height:520px;} }
+canvas{width:100%;height:100%;display:block;}
+.rotulo-estado{margin-top:14px;padding:14px 16px;border-radius:8px;font-weight:600;text-align:center;}
+.rotulo-estado.hipo{background:#e3f2fd;color:#0d47a1;border:2px solid #0d47a1;}
+.rotulo-estado.iso{background:var(--u-bg);color:var(--u2);border:2px solid var(--u);}
+.rotulo-estado.hiper{background:#fbe9e7;color:#7f1d1d;border:2px solid #7f1d1d;}
+.cifras{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px;}
+.dato-caja{background:var(--u-bg);border:1px solid var(--linea);border-radius:8px;padding:10px;text-align:center;}
+.dato-caja strong{display:block;font-size:13px;color:var(--u2);text-transform:uppercase;letter-spacing:.3px;}
+.dato-caja span{font-size:20px;font-weight:700;color:var(--texto);}
+.ayuda{font-size:14px;color:var(--texto-sec);margin:4px 0 0;}
+.formula{background:var(--u-bg);border-left:5px solid var(--u);padding:14px 18px;border-radius:0 8px 8px 0;
+  margin:14px 0;font-weight:600;color:var(--u2);}
+.formula p{margin:6px 0;}
+.pregunta{border-top:1px solid var(--linea);padding-top:16px;margin-top:16px;}
+.pregunta:first-of-type{border-top:0;padding-top:0;margin-top:0;}
+.pregunta p.enunciado{font-weight:600;margin:0 0 10px;}
+.retro{margin-top:10px;}
+.retro:empty{display:none;}
+</style>
+</head>
+<body class="u3">
+<div class="contenedor">
+
+<header class="principal">
+  <h1>Simulador de ósmosis</h1>
+  <p class="meta">Lección 3.1 · Teoría celular, organelos y membrana plasmática</p>
+  <p class="meta">Unidad 3 · Ciencias de la vida I · Spanish ASE Science</p>
+</header>
+
+<div class="tarjeta">
+  <h2>Qué vas a hacer</h2>
+  <p>Vas a controlar cuánto soluto hay dentro y fuera de una célula, y a observar hacia dónde se mueve el agua a través de la membrana. La membrana de este simulador es semipermeable: deja pasar el agua, pero retiene las partículas de soluto. Por eso lo único que se mueve de verdad es el agua.</p>
+  <div class="caja-tip">
+    <p><strong>La regla que resuelve casi todas las preguntas del examen:</strong> el agua se mueve hacia el lado donde hay <em>más</em> soluto. Si te aprendes esa frase y sabes en qué lado está el soluto, tienes la respuesta.</p>
+  </div>
+</div>
+
+<div class="disposicion">
+
+  <div class="escena">
+    <div class="marco-sim">
+      <canvas id="lienzo" role="img" aria-label="Simulación de una célula en su medio. La descripción en texto aparece debajo, en el bloque «Lectura de la simulación».">
+        Tu navegador no puede mostrar la simulación. La descripción completa del estado de la célula aparece más abajo, en el bloque «Lectura de la simulación».
+      </canvas>
+    </div>
+    <p id="rotulo-estado" class="rotulo-estado iso">Solución isotónica: el agua entra y sale por igual.</p>
+    <div class="cifras">
+      <div class="dato-caja"><strong>Soluto dentro</strong><span id="d-dentro">5</span></div>
+      <div class="dato-caja"><strong>Soluto fuera</strong><span id="d-fuera">5</span></div>
+      <div class="dato-caja"><strong>Tamaño celular</strong><span id="d-tamano">Normal</span></div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <h2>Controles</h2>
+
+    <div class="control">
+      <label for="dentro">Soluto dentro de la célula <span class="valor" id="v-dentro">5</span></label>
+      <input type="range" id="dentro" min="1" max="10" step="1" value="5">
+      <p class="ayuda">Cuánta sal, azúcar u otras partículas hay dentro.</p>
+    </div>
+
+    <div class="control">
+      <label for="fuera">Soluto fuera de la célula <span class="valor" id="v-fuera">5</span></label>
+      <input type="range" id="fuera" min="1" max="10" step="1" value="5">
+      <p class="ayuda">Cuánta sal, azúcar u otras partículas hay en el líquido exterior.</p>
+    </div>
+
+    <div class="control">
+      <label for="velocidad">Velocidad de la animación <span class="valor" id="v-velocidad">2</span></label>
+      <input type="range" id="velocidad" min="0" max="5" step="0.5" value="2">
+      <p class="ayuda">Solo cambia lo rápido que se ven moverse las partículas. No altera el resultado.</p>
+    </div>
+
+    <h3 style="font-size:16px;color:var(--u2);margin:18px 0 8px;">Escenarios</h3>
+    <div class="fila-botones">
+      <button type="button" data-esc="hipo">Hipotónica</button>
+      <button type="button" data-esc="iso">Isotónica</button>
+      <button type="button" data-esc="hiper">Hipertónica</button>
+    </div>
+
+    <h3 style="font-size:16px;color:var(--u2);margin:18px 0 8px;">Simulación</h3>
+    <div class="fila-botones">
+      <button type="button" class="secundario" id="btn-pausa">Pausar</button>
+      <button type="button" class="secundario" id="btn-reiniciar">Reiniciar</button>
+      <button type="button" class="secundario" id="btn-vegetal" aria-pressed="false">Célula vegetal: no</button>
+    </div>
+    <p class="ayuda">La célula vegetal tiene pared celular: se hincha hasta ponerse turgente, pero no revienta.</p>
+  </div>
+
+</div>
+
+<div class="lectura" aria-live="polite">
+  <h2>Lectura de la simulación</h2>
+  <p id="lectura-texto">Hay 5 partículas de soluto dentro y 5 fuera. La solución es isotónica: entra tanta agua como sale, de modo que no hay movimiento neto y la célula conserva su tamaño normal.</p>
+</div>
+
+<div class="tarjeta">
+  <h2>Los tres casos</h2>
+  <p>La ósmosis es el paso del agua a través de una membrana semipermeable. Los prefijos describen el <em>líquido de fuera</em> comparado con el interior de la célula, y ese es el detalle que más confusión causa: «hipertónica» no describe a la célula, describe al medio que la rodea.</p>
+  <div class="formula">
+    <p>Menos soluto fuera que dentro → hipotónica → el agua entra</p>
+    <p>Igual soluto fuera y dentro → isotónica → no hay movimiento neto</p>
+    <p>Más soluto fuera que dentro → hipertónica → el agua sale</p>
+  </div>
+
+  <div class="tabla-wrap">
+    <table class="datos">
+      <caption>Comportamiento de la célula animal y de la célula vegetal en cada uno de los tres medios.</caption>
+      <thead>
+        <tr>
+          <th scope="col">Medio</th><th scope="col">Soluto fuera</th><th scope="col">Movimiento del agua</th>
+          <th scope="col">Célula animal</th><th scope="col">Célula vegetal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">Hipotónico</th><td>Menos que dentro</td><td>Entra</td><td>Se hincha y puede reventar</td><td>Se pone turgente; la pared la sostiene</td></tr>
+        <tr><th scope="row">Isotónico</th><td>Igual que dentro</td><td>Entra y sale por igual</td><td>Conserva su tamaño</td><td>Fláccida</td></tr>
+        <tr><th scope="row">Hipertónico</th><td>Más que dentro</td><td>Sale</td><td>Se encoge y se arruga</td><td>Plasmólisis: el contenido se separa de la pared</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="caja-tip">
+    <p><strong>Ojo con esto:</strong> el soluto no atraviesa la membrana en este modelo. Cuando la célula se hincha no es porque haya entrado soluto, sino porque ha entrado agua. La cantidad de soluto sigue siendo la misma; lo que cambia es en cuánta agua está repartida.</p>
+  </div>
+</div>
+
+<details class="bloque">
+  <summary><span class="chevron" aria-hidden="true">▶</span>Tres pruebas que conviene que hagas</summary>
+  <div class="cuerpo">
+    <ol>
+      <li>Pon más soluto dentro que fuera y observa hacia dónde apuntan las flechas. Anota qué le pasa al tamaño de la célula.</li>
+      <li>Iguala las dos cantidades y comprueba que las flechas van en los dos sentidos. Fíjate en que las partículas siguen moviéndose: el equilibrio no es quietud, es igualdad de entradas y salidas.</li>
+      <li>Pon más soluto fuera que dentro, activa la célula vegetal y compárala con la animal en el mismo medio. Esa diferencia es la pared celular.</li>
+    </ol>
+    <p>Al terminar, deberías poder completar esta frase sin mirar: «el agua se mueve hacia el lado donde hay…».</p>
+  </div>
+</details>
+
+<div class="tarjeta">
+  <h2>Preguntas rápidas</h2>
+
+  <div class="pregunta" data-p="1" data-ok="b">
+    <p class="enunciado">1. Si hay más soluto fuera de la célula que dentro, ¿hacia dónde se mueve el agua?</p>
+    <div class="fila-botones">
+      <button type="button" class="secundario" data-op="a">Entra en la célula</button>
+      <button type="button" class="secundario" data-op="b">Sale de la célula</button>
+      <button type="button" class="secundario" data-op="c">No se mueve nunca</button>
+    </div>
+    <div class="retro" id="r1"></div>
+  </div>
+
+  <div class="pregunta" data-p="2" data-ok="b">
+    <p class="enunciado">2. En una solución isotónica, ¿qué le ocurre al tamaño de la célula?</p>
+    <div class="fila-botones">
+      <button type="button" class="secundario" data-op="a">Se hincha mucho</button>
+      <button type="button" class="secundario" data-op="b">Conserva su tamaño</button>
+      <button type="button" class="secundario" data-op="c">Se encoge poco a poco</button>
+    </div>
+    <div class="retro" id="r2"></div>
+  </div>
+
+  <div class="pregunta" data-p="3" data-ok="a">
+    <p class="enunciado">3. ¿Qué sustancia atraviesa la membrana en la ósmosis?</p>
+    <div class="fila-botones">
+      <button type="button" class="secundario" data-op="a">El agua</button>
+      <button type="button" class="secundario" data-op="b">El soluto</button>
+      <button type="button" class="secundario" data-op="c">Las dos por igual</button>
+    </div>
+    <div class="retro" id="r3"></div>
+  </div>
+
+  <div class="pregunta" data-p="4" data-ok="c">
+    <p class="enunciado">4. Una célula vegetal se coloca en agua destilada, que casi no tiene soluto. ¿Qué ocurre?</p>
+    <div class="fila-botones">
+      <button type="button" class="secundario" data-op="a">Se encoge por plasmólisis</button>
+      <button type="button" class="secundario" data-op="b">Revienta enseguida</button>
+      <button type="button" class="secundario" data-op="c">Entra agua y se pone turgente</button>
+    </div>
+    <div class="retro" id="r4"></div>
+  </div>
+</div>
+
+<footer class="pie">
+  <p>Simulador de ósmosis · Lección 3.1 · Spanish ASE Science · 96 horas</p>
+  <p>José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago</p>
+  <p>© 2026. Esta obra está licenciada bajo <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" rel="license">Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0 Internacional (CC BY-NC-SA 4.0)</a>.</p>
+</footer>
+
+</div>
+<script>
+"use strict";
+
+var lienzo = document.getElementById("lienzo");
+var ctx = lienzo.getContext("2d");
+
+var sDentro = document.getElementById("dentro");
+var sFuera  = document.getElementById("fuera");
+var sVel    = document.getElementById("velocidad");
+
+var dentro = 5, fuera = 5, velocidad = 2;
+var animando = true, vegetal = false, t = 0, raf = null, particulas = [];
+
+var MOV_REDUCIDO = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ── Geometría ─────────────────────────────────────────────────────────── */
+function medidas(){ return { an: lienzo.clientWidth, al: lienzo.clientHeight }; }
+function entre(a,b){ return a + Math.random()*(b-a); }
+function radioBase(){ var m = medidas(); return Math.min(m.an, m.al) * 0.18; }
+
+function radioCelula(){
+  var base = radioBase(), dif = dentro - fuera, r = base + dif*8;
+  if (vegetal){ r = base + Math.max(dif*4, -28); r = Math.min(r, base + 22); }
+  return Math.max(base - 45, Math.min(base + 55, r));
+}
+
+function tonicidad(){
+  if (fuera < dentro) return "hipo";
+  if (fuera > dentro) return "hiper";
+  return "iso";
+}
+
+/* ── Partículas ────────────────────────────────────────────────────────── */
+function crearParticulas(){
+  particulas = [];
+  var m = medidas(), cx = m.an/2, cy = m.al/2 + 15, base = radioBase(), i;
+
+  for (i = 0; i < fuera*7; i++){
+    var x, y, d, intentos = 0;
+    do {
+      x = entre(25, m.an-25); y = entre(48, m.al-45);
+      d = Math.sqrt((x-cx)*(x-cx) + (y-cy)*(y-cy)); intentos++;
+    } while (d < base + 30 && intentos < 100);
+    particulas.push({ tipo:"soluto", zona:"fuera", x:x, y:y,
+      vx:entre(-0.4,0.4), vy:entre(-0.4,0.4), color:"#0d47a1" });
+  }
+
+  for (i = 0; i < dentro*5; i++){
+    var ang = Math.random()*Math.PI*2, r = Math.sqrt(Math.random())*(base-18);
+    particulas.push({ tipo:"soluto", zona:"dentro", x:cx+Math.cos(ang)*r, y:cy+Math.sin(ang)*r,
+      vx:entre(-0.25,0.25), vy:entre(-0.25,0.25), color:"#7f1d1d" });
+  }
+
+  for (i = 0; i < 45; i++){
+    particulas.push({ tipo:"agua", zona: Math.random()<0.5 ? "fuera":"dentro",
+      x:entre(30, m.an-30), y:entre(48, m.al-45),
+      vx:entre(-0.7,0.7), vy:entre(-0.7,0.7), color:"#4fc3f7" });
+  }
+}
+
+/* ── Dibujo ────────────────────────────────────────────────────────────── */
+function flecha(x1,y1,x2,y2,color){
+  var cab = 10, ang = Math.atan2(y2-y1, x2-x1);
+  ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 4;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-cab*Math.cos(ang-Math.PI/6), y2-cab*Math.sin(ang-Math.PI/6));
+  ctx.lineTo(x2-cab*Math.cos(ang+Math.PI/6), y2-cab*Math.sin(ang+Math.PI/6));
+  ctx.lineTo(x2,y2); ctx.fill();
+}
+
+function dibujarCelula(cx,cy,r){
+  var ton = tonicidad(), i;
+  if (vegetal){
+    ctx.fillStyle = "rgba(27,94,32,0.10)"; ctx.strokeStyle = "#1b5e20"; ctx.lineWidth = 8;
+    ctx.beginPath();
+    var x0 = cx-r-18, y0 = cy-r-18, an = r*2+36, al = r*2+36, rad = 24;
+    ctx.moveTo(x0+rad, y0);
+    ctx.arcTo(x0+an, y0, x0+an, y0+al, rad);
+    ctx.arcTo(x0+an, y0+al, x0, y0+al, rad);
+    ctx.arcTo(x0, y0+al, x0, y0, rad);
+    ctx.arcTo(x0, y0, x0+an, y0, rad);
+    ctx.closePath(); ctx.fill(); ctx.stroke();
+  }
+  ctx.fillStyle = "#ef9a9a"; ctx.strokeStyle = "#7f1d1d"; ctx.lineWidth = 5;
+  ctx.beginPath();
+  if (ton === "hiper" && !vegetal){
+    var n = 32;
+    for (i = 0; i <= n; i++){
+      var a = (i/n)*Math.PI*2, arruga = Math.sin(a*8 + t*2)*8, rr = r + arruga;
+      var px = cx + Math.cos(a)*rr, py = cy + Math.sin(a)*rr;
+      if (i === 0) ctx.moveTo(px,py); else ctx.lineTo(px,py);
+    }
+  } else {
+    ctx.arc(cx, cy, r, 0, Math.PI*2);
+  }
+  ctx.closePath(); ctx.fill(); ctx.stroke();
+  ctx.fillStyle = "rgba(255,255,255,0.30)";
+  ctx.beginPath(); ctx.ellipse(cx-r*0.25, cy-r*0.25, r*0.35, r*0.18, -0.5, 0, Math.PI*2); ctx.fill();
+}
+
+function dibujarParticulas(cx,cy,r){
+  var m = medidas(), mueve = animando && velocidad > 0;
+  for (var i = 0; i < particulas.length; i++){
+    var p = particulas[i];
+    if (mueve){
+      p.x += p.vx*velocidad; p.y += p.vy*velocidad;
+      if (p.x < 15 || p.x > m.an-15) p.vx *= -1;
+      if (p.y < 24 || p.y > m.al-20) p.vy *= -1;
+      if (p.tipo === "soluto"){
+        var d = Math.sqrt((p.x-cx)*(p.x-cx) + (p.y-cy)*(p.y-cy)), a;
+        if (p.zona === "dentro" && d > r-10){
+          a = Math.atan2(p.y-cy, p.x-cx);
+          p.x = cx+Math.cos(a)*(r-12); p.y = cy+Math.sin(a)*(r-12); p.vx *= -1; p.vy *= -1;
+        }
+        if (p.zona === "fuera" && d < r+12){
+          a = Math.atan2(p.y-cy, p.x-cx);
+          p.x = cx+Math.cos(a)*(r+14); p.y = cy+Math.sin(a)*(r+14); p.vx *= -1; p.vy *= -1;
+        }
+      }
+    }
+    ctx.fillStyle = p.color;
+    ctx.strokeStyle = p.tipo === "agua" ? "#01579b" : "#102027";
+    ctx.lineWidth = p.tipo === "agua" ? 1.5 : 1;
+    ctx.beginPath(); ctx.arc(p.x, p.y, p.tipo === "agua" ? 5 : 6, 0, Math.PI*2);
+    ctx.fill(); ctx.stroke();
+  }
+}
+
+function dibujarFlechas(cx,cy,r){
+  var ton = tonicidad(), col = "#01579b";
+  ctx.font = "bold 16px 'Segoe UI', system-ui, sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillStyle = "#01579b";
+  if (ton === "hipo"){
+    flecha(cx-r-75, cy-50, cx-r+10, cy-20, col);
+    flecha(cx+r+75, cy+45, cx+r-10, cy+20, col);
+    flecha(cx, cy-r-70, cx, cy-r+10, col);
+    ctx.fillText("Entra agua", cx, cy+r+58);
+  } else if (ton === "hiper"){
+    flecha(cx-r+10, cy-20, cx-r-75, cy-50, col);
+    flecha(cx+r-10, cy+20, cx+r+75, cy+45, col);
+    flecha(cx, cy-r+10, cx, cy-r-70, col);
+    ctx.fillText("Sale agua", cx, cy+r+58);
+  } else {
+    flecha(cx-r-60, cy-40, cx-r+5, cy-15, col);
+    flecha(cx-r+5, cy+25, cx-r-60, cy+55, col);
+    flecha(cx+r+60, cy+40, cx+r-5, cy+15, col);
+    flecha(cx+r-5, cy-25, cx+r+60, cy-55, col);
+    ctx.fillText("Movimiento neto cero", cx, cy+r+58);
+  }
+}
+
+function dibujarRotulos(cx,cy,r){
+  var m = medidas(), ton = tonicidad();
+  var titulo = ton === "hipo" ? "Solución hipotónica" : (ton === "hiper" ? "Solución hipertónica" : "Solución isotónica");
+  ctx.textAlign = "center";
+  ctx.fillStyle = "#102027"; ctx.font = "bold 18px 'Segoe UI', system-ui, sans-serif";
+  ctx.fillText(titulo, m.an/2, 30);
+  ctx.font = "14px 'Segoe UI', system-ui, sans-serif"; ctx.fillStyle = "#37474f";
+  ctx.fillText("Exterior de la célula", m.an/2, m.al-16);
+  ctx.fillStyle = "#ffffff"; ctx.font = "bold 15px 'Segoe UI', system-ui, sans-serif";
+  ctx.fillText("Interior", cx, cy+5);
+
+  ctx.textAlign = "left";
+  ctx.fillStyle = "#4fc3f7"; ctx.beginPath(); ctx.arc(22, 60, 6, 0, Math.PI*2); ctx.fill();
+  ctx.strokeStyle = "#01579b"; ctx.lineWidth = 1.5; ctx.stroke();
+  ctx.fillStyle = "#102027"; ctx.font = "13px 'Segoe UI', system-ui, sans-serif";
+  ctx.fillText("Molécula de agua", 36, 65);
+  ctx.fillStyle = "#0d47a1"; ctx.beginPath(); ctx.arc(22, 84, 6, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = "#102027"; ctx.fillText("Soluto de fuera", 36, 89);
+  ctx.fillStyle = "#7f1d1d"; ctx.beginPath(); ctx.arc(22, 108, 6, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = "#102027"; ctx.fillText("Soluto de dentro", 36, 113);
+  ctx.fillStyle = "#01579b"; ctx.fillText("Flechas: por dónde va el agua", 36, 137);
+}
+
+function dibujar(){
+  var m = medidas(), cx = m.an/2, cy = m.al/2 + 15, r = radioCelula();
+  ctx.clearRect(0, 0, m.an, m.al);
+  ctx.fillStyle = "#eaf4fb"; ctx.fillRect(0, 0, m.an, m.al);
+  dibujarParticulas(cx, cy, r);
+  dibujarCelula(cx, cy, r);
+  dibujarFlechas(cx, cy, r);
+  dibujarRotulos(cx, cy, r);
+  if (animando && velocidad > 0) t += 0.02*velocidad;
+}
+
+function bucle(){ dibujar(); if (animando) raf = requestAnimationFrame(bucle); }
+function arrancar(){ if (!raf && animando) raf = requestAnimationFrame(bucle); }
+function detener(){ if (raf){ cancelAnimationFrame(raf); raf = null; } }
+
+/* ── Estado en texto (alternativa a la animación) ──────────────────────── */
+function actualizarEstado(){
+  var ton = tonicidad();
+  var rotulo = document.getElementById("rotulo-estado");
+  var tam = document.getElementById("d-tamano");
+  var pct = Math.round(radioCelula() / radioBase() * 100);
+  var frase, clase, tamTexto;
+
+  if (ton === "hipo"){
+    clase = "hipo";
+    frase = "Solución hipotónica: el agua entra en la célula y la célula se hincha.";
+    tamTexto = vegetal ? "Turgente" : "Hinchada";
+  } else if (ton === "hiper"){
+    clase = "hiper";
+    frase = "Solución hipertónica: el agua sale de la célula y la célula se encoge.";
+    tamTexto = vegetal ? "Plasmólisis" : "Encogida";
+  } else {
+    clase = "iso";
+    frase = "Solución isotónica: el agua entra y sale por igual; no hay movimiento neto.";
+    tamTexto = vegetal ? "Fláccida" : "Normal";
+  }
+
+  rotulo.className = "rotulo-estado " + clase;
+  rotulo.textContent = frase;
+  document.getElementById("d-dentro").textContent = dentro;
+  document.getElementById("d-fuera").textContent = fuera;
+  document.getElementById("d-tamano").textContent = tamTexto;
+  document.getElementById("v-dentro").textContent = dentro;
+  document.getElementById("v-fuera").textContent = fuera;
+  document.getElementById("v-velocidad").textContent = velocidad;
+
+  var tipoCel = vegetal ? "vegetal, con pared celular" : "animal, sin pared celular";
+  var detalle;
+  if (ton === "hipo"){
+    detalle = "Como fuera hay menos soluto que dentro, el agua entra. La célula se ha hinchado hasta un " + pct + " por ciento de su tamaño normal";
+    detalle += vegetal ? ", y la pared celular la sostiene: queda turgente en vez de reventar." : "; si el desequilibrio fuera mayor, podría reventar.";
+  } else if (ton === "hiper"){
+    detalle = "Como fuera hay más soluto que dentro, el agua sale. La célula se ha encogido hasta un " + pct + " por ciento de su tamaño normal";
+    detalle += vegetal ? ", y el contenido empieza a separarse de la pared: eso es la plasmólisis." : ", y su borde se ve arrugado.";
+  } else {
+    detalle = "Como hay la misma cantidad de soluto a los dos lados, entra tanta agua como sale. No hay movimiento neto y la célula conserva su tamaño normal. Las partículas siguen moviéndose: el equilibrio no es quietud.";
+  }
+
+  document.getElementById("lectura-texto").textContent =
+    "Célula " + tipoCel + ". Hay " + dentro + " partículas de soluto dentro y " + fuera + " fuera. " + detalle;
+
+  lienzo.setAttribute("aria-label", frase + " " + detalle);
+}
+
+/* ── Controles ─────────────────────────────────────────────────────────── */
+function leerControles(){
+  dentro = Number(sDentro.value);
+  fuera = Number(sFuera.value);
+  velocidad = Number(sVel.value);
+}
+
+function alCambiar(recrear){
+  leerControles();
+  if (recrear) crearParticulas();
+  actualizarEstado();
+  if (!animando) dibujar();
+}
+
+sDentro.addEventListener("input", function(){ alCambiar(true); });
+sFuera.addEventListener("input", function(){ alCambiar(true); });
+sVel.addEventListener("input", function(){ alCambiar(false); });
+
+(function(){
+  var b = document.querySelectorAll("button[data-esc]"), i;
+  for (i = 0; i < b.length; i++){
+    b[i].addEventListener("click", function(){
+      var e = this.getAttribute("data-esc");
+      if (e === "hipo"){ sDentro.value = 8; sFuera.value = 3; }
+      else if (e === "hiper"){ sDentro.value = 3; sFuera.value = 8; }
+      else { sDentro.value = 5; sFuera.value = 5; }
+      alCambiar(true);
+    });
+  }
+})();
+
+var btnPausa = document.getElementById("btn-pausa");
+btnPausa.addEventListener("click", function(){
+  animando = !animando;
+  btnPausa.textContent = animando ? "Pausar" : "Reproducir";
+  if (animando) arrancar(); else { detener(); dibujar(); }
+});
+
+document.getElementById("btn-reiniciar").addEventListener("click", function(){
+  sDentro.value = 5; sFuera.value = 5; sVel.value = 2;
+  vegetal = false;
+  var bv = document.getElementById("btn-vegetal");
+  bv.textContent = "Célula vegetal: no";
+  bv.setAttribute("aria-pressed", "false");
+  t = 0;
+  alCambiar(true);
+  for (var i = 1; i <= 4; i++){ document.getElementById("r" + i).innerHTML = ""; }
+});
+
+document.getElementById("btn-vegetal").addEventListener("click", function(){
+  vegetal = !vegetal;
+  this.textContent = vegetal ? "Célula vegetal: sí" : "Célula vegetal: no";
+  this.setAttribute("aria-pressed", vegetal ? "true" : "false");
+  alCambiar(false);
+});
+
+/* ── Preguntas rápidas ─────────────────────────────────────────────────── */
+var RETRO = {
+  "1a":"Todavía no. Si fuera hay más soluto, el agua se dirige hacia fuera, porque el agua siempre va hacia el lado más concentrado.",
+  "1b":"Correcto. Con más soluto fuera, el medio es hipertónico y el agua sale; la célula se encoge.",
+  "1c":"Todavía no. El agua se mueve siempre; lo que puede ser cero es el movimiento neto, y eso solo ocurre cuando las dos concentraciones son iguales.",
+  "2a":"Todavía no. La célula se hincha cuando el medio es hipotónico, es decir, cuando fuera hay menos soluto.",
+  "2b":"Correcto. En un medio isotónico entra tanta agua como sale, de modo que el tamaño se mantiene.",
+  "2c":"Todavía no. La célula se encoge en un medio hipertónico, cuando fuera hay más soluto que dentro.",
+  "3a":"Correcto. En la ósmosis lo que atraviesa la membrana es el agua. El soluto queda retenido, y por eso se genera el desequilibrio.",
+  "3b":"Todavía no. El soluto es justamente lo que la membrana semipermeable no deja pasar con facilidad.",
+  "3c":"Todavía no. Si pasaran las dos por igual, no habría desequilibrio que corregir y no existiría la ósmosis.",
+  "4a":"Todavía no. La plasmólisis ocurre en el caso contrario: cuando el medio tiene más soluto que la célula y el agua sale.",
+  "4b":"Todavía no. Esa es la respuesta para una célula animal. La vegetal tiene pared celular, y ahí está la diferencia.",
+  "4c":"Correcto. El agua destilada es un medio hipotónico, así que el agua entra. La pared celular resiste la presión y la célula queda turgente en lugar de reventar."
+};
+
+(function(){
+  var preguntas = document.querySelectorAll(".pregunta"), i, j;
+  for (i = 0; i < preguntas.length; i++){
+    (function(bloque){
+      var n = bloque.getAttribute("data-p"), ok = bloque.getAttribute("data-ok");
+      var ops = bloque.querySelectorAll("button[data-op]");
+      for (j = 0; j < ops.length; j++){
+        ops[j].addEventListener("click", function(){
+          var op = this.getAttribute("data-op");
+          var acierto = (op === ok);
+          document.getElementById("r" + n).innerHTML =
+            '<div class="' + (acierto ? "caja-ok" : "caja-mal") + '"><p>' + RETRO[n + op] + '</p></div>';
+        });
+      }
+    })(preguntas[i]);
+  }
+})();
+
+/* ── Arranque ──────────────────────────────────────────────────────────── */
+function ajustarLienzo(){
+  var rect = lienzo.getBoundingClientRect();
+  var prop = window.devicePixelRatio || 1;
+  lienzo.width = rect.width * prop;
+  lienzo.height = rect.height * prop;
+  ctx.setTransform(prop, 0, 0, prop, 0, 0);
+  crearParticulas();
+  dibujar();
+}
+
+window.addEventListener("resize", ajustarLienzo);
+
+if (MOV_REDUCIDO){
+  animando = false;
+  btnPausa.textContent = "Reproducir";
+}
+
+leerControles();
+ajustarLienzo();
+actualizarEstado();
+if (animando) arrancar(); else dibujar();
+</script>
+</body>
+</html>

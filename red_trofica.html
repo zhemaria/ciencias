@@ -1,0 +1,649 @@
+<!doctype html>
+<!--
+  Red trófica y cascadas (Lección 4.3) · Spanish ASE Science
+  © 2026 José M. Fernández, ABE/ASE Math Master Teacher,
+  Harry S. Truman College — City Colleges of Chicago.
+  Licencia: Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0
+  Internacional (CC BY-NC-SA 4.0) — https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Red trófica y cascadas</title>
+<meta name="description" content="Simulador de red trófica: extingue especies o cambia los recursos y observa la cascada trófica que se propaga por el ecosistema.">
+<meta name="author" content="José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago">
+<meta name="license" content="CC BY-NC-SA 4.0">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
+<style>
+@charset "utf-8";
+/* ============================================================================
+   Estilos unificados de los interactivos · Spanish ASE Science
+   José M. Fernández, ABE/ASE Math Master Teacher,
+   Harry S. Truman College — City Colleges of Chicago
+   © 2026 · CC BY-NC-SA 4.0
+   https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+   ----------------------------------------------------------------------------
+   CÓMO SE USA
+   Este bloque se copia completo dentro de <style> en cada interactivo, para que
+   el archivo siga siendo autónomo. La clase de unidad va en el <body>:
+       <body class="u4">   → Unidad 4, verde oliva
+   Unidades: u1 verde azulado · u2 gris pizarra · u3 verde · u4 verde oliva
+             u5 rojo anaranjado · u6 azul índigo · u7 violeta · u8 azul
+   Todos los colores de acento cumplen 4,5:1 sobre blanco y admiten texto
+   blanco encima. El ámbar de los avisos usa #5c3900 (10,29:1).
+   ========================================================================== */
+
+/* ── 1. PALETA POR UNIDAD ──────────────────────────────────────────────── */
+:root{
+  --u:#37474f; --u2:#263238; --u-bg:#eceff1;   /* valor por defecto */
+  --texto:#222; --texto-sec:#555; --linea:#e0e0e0;
+  --pagina:#f5f7fa; --papel:#ffffff;
+  --amb:#5c3900; --amb-bg:#fff8e1; --amb-borde:#b45309;
+  --ok:#1b5e20; --ok-bg:#e8f5e9; --mal:#7f1d1d; --mal-bg:#fbe9e7;
+  --radio:12px; --sombra:0 2px 8px rgba(0,0,0,.07);
+}
+body.u1{--u:#00695c;--u2:#004d40;--u-bg:#e0f2f1;}
+body.u2{--u:#37474f;--u2:#263238;--u-bg:#eceff1;}
+body.u3{--u:#1b5e20;--u2:#0f3d13;--u-bg:#e8f5e9;}
+body.u4{--u:#33691e;--u2:#1f4211;--u-bg:#f1f8e9;}
+body.u5{--u:#bf360c;--u2:#8c2708;--u-bg:#fbe9e7;}
+body.u6{--u:#1e3a8a;--u2:#142a63;--u-bg:#e8eaf6;}
+body.u7{--u:#5b21b6;--u2:#40157f;--u-bg:#ede7f6;}
+body.u8{--u:#0d47a1;--u2:#093271;--u-bg:#e3f2fd;}
+
+/* ── 2. BASE ───────────────────────────────────────────────────────────── */
+*{box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;margin:0;background:var(--pagina);
+  color:var(--texto);line-height:1.55;font-size:16px;}
+.contenedor{max-width:1100px;margin:0 auto;padding:24px;}
+a{color:#0b3d91;}
+h1,h2,h3{line-height:1.3;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+:focus-visible{outline:3px solid var(--u);outline-offset:2px;}
+
+/* ── 3. ENCABEZADO DEL INTERACTIVO ─────────────────────────────────────── */
+header.principal{background:var(--u);background:linear-gradient(135deg,var(--u) 0%,var(--u2) 100%);
+  color:#fff;padding:28px 32px;border-radius:14px;margin-bottom:22px;box-shadow:var(--sombra);}
+header.principal h1{margin:0 0 6px;font-size:26px;font-weight:700;color:#fff;}
+header.principal .meta{font-size:14px;margin:4px 0 0;color:#fff;}
+
+/* ── 4. BLOQUES DE TEXTO ───────────────────────────────────────────────── */
+.tarjeta{background:var(--papel);padding:20px 24px;border-radius:10px;
+  border-left:5px solid var(--u);margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.tarjeta h2{margin-top:0;color:var(--u);font-size:20px;}
+.tarjeta h3{font-size:16px;color:#263238;margin:16px 0 6px;}
+.caja-tip{background:var(--amb-bg);border-left:4px solid var(--amb-borde);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;font-size:15px;}
+.caja-tip strong{color:var(--amb);}
+.caja-ok{background:var(--ok-bg);border-left:5px solid var(--ok);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;}
+.caja-ok strong{color:var(--ok);}
+.caja-mal{background:var(--mal-bg);border-left:5px solid var(--mal);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;}
+.caja-mal strong{color:var(--mal);}
+
+/* ── 5. PANEL DE CONTROLES ─────────────────────────────────────────────── */
+.panel{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:18px 22px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.panel h2{margin:0 0 12px;font-size:18px;color:var(--u);}
+.control{margin-bottom:16px;}
+.control > label{display:block;font-weight:600;font-size:15px;color:#263238;margin-bottom:6px;}
+.control .valor{float:right;font-weight:700;color:var(--u);font-variant-numeric:tabular-nums;}
+.control input[type=range]{width:100%;accent-color:var(--u);height:26px;}
+.control select,.control input[type=number],.control input[type=text]{
+  font-family:inherit;font-size:16px;padding:9px 14px;border-radius:8px;
+  border:1px solid #90a4ae;background:#fff;color:var(--texto);width:100%;max-width:420px;}
+.fila-botones{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;}
+button{font-family:inherit;font-size:15px;font-weight:600;padding:10px 18px;border-radius:8px;
+  border:1px solid transparent;background:var(--u);color:#fff;cursor:pointer;}
+button:hover{background:var(--u2);}
+button.secundario{background:#fff;color:var(--u);border-color:var(--u);}
+button.secundario:hover{background:var(--u-bg);}
+
+/* ── 6. LIENZO / ESCENA ────────────────────────────────────────────────── */
+.escena{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:16px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);overflow-x:auto;}
+
+/* ── 7. LECTURA DEL ESTADO (alternativa textual, siempre visible) ──────── */
+.lectura{background:var(--u-bg);border-left:5px solid var(--u);border-radius:0 8px 8px 0;
+  padding:14px 18px;margin-bottom:22px;font-size:15px;}
+.lectura h2{margin:0 0 8px;font-size:17px;color:var(--u);}
+.lectura p{margin:6px 0;}
+.lectura .dato{font-weight:700;color:var(--u2);font-variant-numeric:tabular-nums;}
+
+/* ── 8. TABLAS (Ally: caption obligatorio y scope en todo th) ──────────── */
+.tabla-wrap{overflow-x:auto;margin-bottom:22px;}
+table.datos{width:100%;border-collapse:collapse;background:var(--papel);border-radius:10px;
+  overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);font-size:15px;}
+table.datos caption{caption-side:top;text-align:left;font-size:14px;color:var(--texto-sec);
+  padding:0 0 8px;font-style:italic;}
+table.datos th,table.datos td{padding:10px 12px;text-align:left;border-bottom:1px solid #eee;}
+table.datos thead th{background:#37474f;color:#fff;font-weight:600;font-size:13px;
+  text-transform:uppercase;letter-spacing:.4px;}
+table.datos tbody th{background:var(--u-bg);color:var(--u2);font-weight:700;}
+table.datos tr:last-child td{border-bottom:none;}
+
+/* ── 9. ACORDEÓN NATIVO ────────────────────────────────────────────────── */
+details.bloque{background:var(--papel);border-radius:var(--radio);margin-bottom:14px;
+  box-shadow:var(--sombra);border-left:5px solid var(--u);overflow:hidden;}
+details.bloque > summary{padding:14px 18px;cursor:pointer;list-style:none;display:flex;
+  gap:10px;align-items:center;background:var(--u-bg);font-weight:600;color:var(--u2);}
+details.bloque > summary::-webkit-details-marker{display:none;}
+details.bloque > summary .chevron{transition:transform .2s;flex-shrink:0;}
+details.bloque[open] > summary .chevron{transform:rotate(90deg);}
+details.bloque .cuerpo{padding:14px 20px 18px;}
+
+/* ── 10. PIE CON LICENCIA ──────────────────────────────────────────────── */
+footer.pie{padding:22px 4px;color:var(--texto-sec);font-size:13px;margin-top:20px;
+  border-top:1px solid #ddd;text-align:center;}
+footer.pie p{margin:5px 0;}
+
+/* ── 11. MOVIMIENTO REDUCIDO ───────────────────────────────────────────── */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;scroll-behavior:auto !important;}
+}
+
+/* ── 12. IMPRESIÓN ─────────────────────────────────────────────────────── */
+@media print{
+  body{background:#fff;}
+  .panel,.escena{page-break-inside:avoid;}
+  details[open] .cuerpo{display:block;}
+}
+
+/* ── 13. NOMBRES RESERVADOS ────────────────────────────────────────────── */
+/* Estas clases pertenecen a la hoja unificada. No las reutilices como
+   clase local en un interactivo: el selector local se sumaría al de aquí y
+   descuadraría el componente. Reservadas:
+   contenedor · sr-only · principal · meta · tarjeta · caja-tip · caja-ok ·
+   caja-mal · panel · control · valor · fila-botones · secundario · escena ·
+   lectura · dato · tabla-wrap · datos · bloque · cuerpo · chevron · pie
+   Para rejillas de cifras usa .cifras, no .datos. */
+
+/* ── PROPIO DE ESTE INTERACTIVO ────────────────────────────────────────── */
+.dos{display:grid;grid-template-columns:320px 1fr;gap:20px;align-items:start;}
+@media (max-width:900px){ .dos{grid-template-columns:1fr;} }
+.lienzo{overflow-x:auto;}
+svg.red{display:block;margin:0 auto;min-width:640px;max-width:100%;height:auto;
+  background:#fbfdf9;border:1px solid var(--linea);border-radius:8px;}
+.especies{display:flex;flex-direction:column;gap:8px;}
+button.especie{display:flex;align-items:center;justify-content:space-between;gap:10px;
+  width:100%;text-align:left;background:#fff;color:var(--texto);border:1px solid var(--linea);
+  font-weight:600;padding:10px 12px;}
+button.especie:hover{background:var(--u-bg);border-color:var(--u);}
+button.especie[aria-pressed="false"]{background:#eceff1;color:var(--texto-sec);
+  text-decoration:line-through;border-style:dashed;}
+button.especie .marca{font-size:13px;font-weight:700;white-space:nowrap;}
+button.especie[aria-pressed="true"] .marca{color:var(--ok);}
+button.especie[aria-pressed="false"] .marca{color:var(--mal);}
+.extremos{display:flex;justify-content:space-between;font-size:13px;color:var(--texto-sec);}
+.ayuda{font-size:14px;color:var(--texto-sec);margin:4px 0 0;}
+.leyenda-estados{display:flex;flex-wrap:wrap;gap:14px;justify-content:center;font-size:14px;margin-top:12px;}
+.leyenda-estados span.punto{display:inline-block;width:18px;height:18px;border-radius:50%;
+  border:3px solid #37474f;vertical-align:-4px;margin-right:6px;}
+.piramide div{padding:10px 12px;color:#fff;font-size:14px;font-weight:600;margin:0 auto 4px;
+  border-radius:6px;text-align:center;}
+.pregunta{border-top:1px solid var(--linea);padding-top:16px;margin-top:16px;}
+.pregunta:first-of-type{border-top:0;padding-top:0;margin-top:0;}
+.pregunta p.enunciado{font-weight:600;margin:0 0 10px;}
+.retro:empty{display:none;}
+</style>
+</head>
+<body class="u4">
+<div class="contenedor">
+
+<header class="principal">
+  <h1>Red trófica y cascadas</h1>
+  <p class="meta">Lección 4.3 · Selección natural, evidencia evolutiva y ecosistemas</p>
+  <p class="meta">Unidad 4 · Ciencias de la vida II · Spanish ASE Science</p>
+</header>
+
+<div class="tarjeta">
+  <h2>Qué vas a hacer</h2>
+  <p>Vas a quitar especies de un ecosistema, o a cambiar cuánta lluvia y cuánto sol recibe, y a observar el resultado. Lo interesante nunca es lo que le pasa a la especie que tocas: es lo que les pasa a las demás. A ese efecto en cadena se le llama <strong>cascada trófica</strong>, y es lo que el examen quiere que sepas anticipar.</p>
+  <div class="caja-tip">
+    <p><strong>Cómo se leen las flechas:</strong> apuntan en la dirección en que fluye la energía, es decir, de la presa hacia el depredador. La flecha del conejo al halcón significa que el halcón se come al conejo, no al revés. Es la convención del examen, y confundirla invalida toda la respuesta.</p>
+  </div>
+</div>
+
+<div class="dos">
+
+  <div class="panel">
+    <h2>Controles</h2>
+
+    <h3 style="font-size:16px;color:var(--u2);margin:6px 0 8px;">Especies</h3>
+    <p class="ayuda" style="margin-bottom:10px;">Pulsa una especie para extinguirla, y vuelve a pulsarla para devolverla al ecosistema.</p>
+    <div class="especies" id="especies"></div>
+
+    <h3 style="font-size:16px;color:var(--u2);margin:18px 0 8px;">Recursos del ambiente</h3>
+    <div class="control">
+      <label for="lluvia">Lluvia y sol disponibles <span class="valor" id="v-lluvia">normal</span></label>
+      <input type="range" id="lluvia" min="0.2" max="2" step="0.1" value="1">
+      <p class="extremos"><span>Sequía</span><span>Normal</span><span>Abundancia</span></p>
+    </div>
+
+    <h3 style="font-size:16px;color:var(--u2);margin:18px 0 8px;">Escenarios</h3>
+    <div class="fila-botones">
+      <button type="button" class="secundario" data-esc="halcon">Extinguir el halcón</button>
+      <button type="button" class="secundario" data-esc="sequia">Sequía severa</button>
+      <button type="button" class="secundario" data-esc="pasto">Perder el pasto</button>
+      <button type="button" id="btn-reiniciar">Reiniciar</button>
+    </div>
+  </div>
+
+  <div class="escena">
+    <div class="lienzo" id="lienzo-red"></div>
+    <p class="leyenda-estados">
+      <span><span class="punto" style="background:#e8f5e9;border-color:#33691e"></span>Estable</span>
+      <span><span class="punto" style="background:#e1f5fe;border-color:#0277bd"></span>Superpoblación</span>
+      <span><span class="punto" style="background:#fff8e1;border-color:#b45309"></span>En inanición</span>
+      <span><span class="punto" style="background:#eceff1;border-color:#78909c;border-style:dashed"></span>Extinta</span>
+    </p>
+  </div>
+
+</div>
+
+<div class="lectura" aria-live="polite">
+  <h2>Lectura del ecosistema</h2>
+  <p id="lectura-texto"></p>
+</div>
+
+<div class="tabla-wrap">
+  <table class="datos">
+    <caption>Estado de cada especie del ecosistema. La población se expresa como proporción respecto de la situación de partida, en la que todas las especies están presentes y la lluvia es normal.</caption>
+    <thead>
+      <tr><th scope="col">Especie</th><th scope="col">Papel</th><th scope="col">Nivel trófico</th><th scope="col">Población</th><th scope="col">Cambio</th><th scope="col">Estado</th></tr>
+    </thead>
+    <tbody id="tabla-estado"></tbody>
+  </table>
+</div>
+
+<div class="dos">
+  <div class="tarjeta">
+    <h2>La regla del diez por ciento</h2>
+    <p>De toda la energía que hay en un nivel trófico, solo alrededor de una décima parte llega al nivel siguiente. El resto se gasta en respirar, moverse y mantener el cuerpo, y se pierde como calor.</p>
+    <div class="piramide">
+      <div style="background:#7f1d1d;width:24%;">Depredador ápice · 0.1 %</div>
+      <div style="background:#a1370a;width:38%;">Consumidor terciario · 1 %</div>
+      <div style="background:#bf360c;width:56%;">Consumidor secundario · 10 %</div>
+      <div style="background:#33691e;width:76%;">Consumidor primario · 100 %</div>
+      <div style="background:#1b5e20;width:100%;">Productores · 1 000 %</div>
+    </div>
+    <p class="ayuda">Por eso las pirámides tróficas se estrechan hacia arriba y por eso hay pocos halcones y muchísimo pasto. Un ecosistema no puede sostener muchos niveles: al quinto ya casi no queda energía que repartir.</p>
+  </div>
+
+  <div class="tarjeta">
+    <h2>Tres conceptos que el examen evalúa</h2>
+    <h3>Cascada trófica</h3>
+    <p>Quitar un depredador ápice no beneficia al ecosistema. Sus presas se multiplican sin control, arrasan con los productores y acaban muriendo de hambre ellas mismas. El caso real más citado son los lobos de Yellowstone.</p>
+    <h3>Capacidad de carga</h3>
+    <p>Todo ambiente tiene un tope de población que puede sostener, marcado por los recursos disponibles. Cuando una población lo supera, no se queda ahí: colapsa.</p>
+    <h3>Especie clave</h3>
+    <p>Algunas especies sostienen la estructura entera aunque no sean abundantes. Al quitarlas, el ecosistema se reorganiza por completo. Prueba a extinguir cada especie de una en una y fíjate en cuál provoca más cambios.</p>
+  </div>
+</div>
+
+<div class="tarjeta">
+  <h2>Preguntas rápidas</h2>
+
+  <div class="pregunta" data-p="1" data-ok="b">
+    <p class="enunciado">1. En una red trófica, la flecha que va del conejo al halcón significa que:</p>
+    <div class="fila-botones">
+      <button type="button" class="secundario" data-op="a">El conejo se come al halcón</button>
+      <button type="button" class="secundario" data-op="b">La energía pasa del conejo al halcón</button>
+      <button type="button" class="secundario" data-op="c">Los dos compiten por el mismo alimento</button>
+    </div>
+    <div class="retro" id="r1"></div>
+  </div>
+
+  <div class="pregunta" data-p="2" data-ok="c">
+    <p class="enunciado">2. Si desaparece el depredador ápice, ¿qué es lo más probable que ocurra a corto plazo?</p>
+    <div class="fila-botones">
+      <button type="button" class="secundario" data-op="a">El ecosistema se estabiliza</button>
+      <button type="button" class="secundario" data-op="b">Los productores aumentan</button>
+      <button type="button" class="secundario" data-op="c">Sus presas se multiplican y agotan los productores</button>
+    </div>
+    <div class="retro" id="r2"></div>
+  </div>
+
+  <div class="pregunta" data-p="3" data-ok="a">
+    <p class="enunciado">3. ¿Por qué hay muchísimo más pasto que halcones en un ecosistema?</p>
+    <div class="fila-botones">
+      <button type="button" class="secundario" data-op="a">Porque solo un diez por ciento de la energía pasa a cada nivel</button>
+      <button type="button" class="secundario" data-op="b">Porque las plantas se reproducen más deprisa</button>
+      <button type="button" class="secundario" data-op="c">Porque los halcones son más grandes</button>
+    </div>
+    <div class="retro" id="r3"></div>
+  </div>
+
+  <div class="pregunta" data-p="4" data-ok="b">
+    <p class="enunciado">4. Una sequía prolongada reduce el pasto. ¿A qué nivel afecta?</p>
+    <div class="fila-botones">
+      <button type="button" class="secundario" data-op="a">Solo a los herbívoros</button>
+      <button type="button" class="secundario" data-op="b">A toda la red, porque la energía entra por los productores</button>
+      <button type="button" class="secundario" data-op="c">A ninguno, porque los depredadores no comen plantas</button>
+    </div>
+    <div class="retro" id="r4"></div>
+  </div>
+
+  <div class="pregunta" data-p="5" data-ok="c">
+    <p class="enunciado">5. ¿Qué es la capacidad de carga de un ecosistema?</p>
+    <div class="fila-botones">
+      <button type="button" class="secundario" data-op="a">El número de especies distintas que contiene</button>
+      <button type="button" class="secundario" data-op="b">El peso total de todos los organismos</button>
+      <button type="button" class="secundario" data-op="c">La población máxima que sus recursos pueden sostener</button>
+    </div>
+    <div class="retro" id="r5"></div>
+  </div>
+</div>
+
+<footer class="pie">
+  <p>Red trófica y cascadas · Lección 4.3 · Spanish ASE Science · 96 horas</p>
+  <p>José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago</p>
+  <p>© 2026. Esta obra está licenciada bajo <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" rel="license">Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0 Internacional (CC BY-NC-SA 4.0)</a>.</p>
+</footer>
+
+</div>
+<script>
+"use strict";
+
+/* ── El ecosistema ─────────────────────────────────────────────────────── */
+var ESPECIES = [
+  {id:"pasto",    n:"Pasto y plantas", emo:"\uD83C\uDF3F", papel:"Productor",             nivel:0, x:330, y:400, activa:true},
+  {id:"saltamontes", n:"Saltamontes",  emo:"\uD83E\uDD97", papel:"Consumidor primario",   nivel:1, x:150, y:300, activa:true},
+  {id:"conejo",   n:"Conejo",          emo:"\uD83D\uDC07", papel:"Consumidor primario",   nivel:1, x:510, y:300, activa:true},
+  {id:"rana",     n:"Rana",            emo:"\uD83D\uDC38", papel:"Consumidor secundario", nivel:2, x:150, y:200, activa:true},
+  {id:"serpiente",n:"Serpiente",       emo:"\uD83D\uDC0D", papel:"Consumidor terciario",  nivel:3, x:390, y:150, activa:true},
+  {id:"halcon",   n:"Halcón",          emo:"\uD83E\uDD85", papel:"Depredador ápice",      nivel:4, x:330, y:60,  activa:true}
+];
+
+/* La flecha va de la presa al depredador: así fluye la energía */
+var ENLACES = [
+  {de:"pasto", a:"saltamontes"}, {de:"pasto", a:"conejo"},
+  {de:"saltamontes", a:"rana"},  {de:"rana", a:"serpiente"},
+  {de:"conejo", a:"serpiente"},  {de:"conejo", a:"halcon"},
+  {de:"serpiente", a:"halcon"}
+];
+
+var lluvia = 1.0;
+var pob = {};
+
+function esp(id){
+  for (var i = 0; i < ESPECIES.length; i++){ if (ESPECIES[i].id === id) return ESPECIES[i]; }
+  return null;
+}
+function depredadoresDe(id){ return ENLACES.filter(function(l){ return l.de === id; }); }
+function presasDe(id){ return ENLACES.filter(function(l){ return l.a === id; }); }
+
+/* ── El modelo de poblaciones ──────────────────────────────────────────── */
+/* El punto de partida es 1.00 para todas las especies, con lluvia normal.
+   Los valores de la tabla se leen como proporción respecto de ese punto. */
+var HERBIVOROS_BASE = 2;   /* saltamontes y conejo pastan sobre el productor */
+var PASTOREO = 0.15;       /* cuánto castiga al pasto cada herbívoro de más */
+
+function calcular(){
+  var i, j, nivel, presion = {};
+
+  for (i = 0; i < ESPECIES.length; i++){
+    var e = ESPECIES[i];
+    pob[e.id] = !e.activa ? 0 : (e.nivel === 0 ? lluvia : 1.0);
+    presion[e.id] = 0;
+  }
+
+  /* 1. Presión de depredación, de arriba hacia abajo */
+  for (j = 0; j < ENLACES.length; j++){
+    if (pob[ENLACES[j].a] > 0) presion[ENLACES[j].de] += pob[ENLACES[j].a];
+  }
+
+  /* 2. Menos depredadores encima significa más población */
+  for (i = 0; i < ESPECIES.length; i++){
+    var c = ESPECIES[i];
+    if (c.activa && c.nivel > 0){
+      var nDep = depredadoresDe(c.id).length;
+      if (nDep > 0){
+        var razon = presion[c.id] / nDep;
+        pob[c.id] = Math.max(0.1, 1.0 + (1.0 - razon)*1.5);
+      }
+    }
+  }
+
+  /* 3. Los productores: la lluvia menos el sobrepastoreo.
+        El pastoreo se recuenta AQUÍ, con las poblaciones de herbívoros ya
+        ajustadas, para que un exceso de herbívoros castigue de verdad al pasto. */
+  var p = esp("pasto");
+  if (p.activa){
+    var pastoreo = 0;
+    for (j = 0; j < ENLACES.length; j++){
+      if (ENLACES[j].de === "pasto") pastoreo += pob[ENLACES[j].a];
+    }
+    pob.pasto = Math.max(0.2, Math.min(2.0, lluvia - (pastoreo - HERBIVOROS_BASE)*PASTOREO));
+  }
+
+  /* 4. El alimento disponible, nivel por nivel de abajo hacia arriba.
+        Recalcular en cada nivel es lo que permite que la escasez suba por
+        toda la red en vez de detenerse en el primer escalón. */
+  for (nivel = 1; nivel <= 4; nivel++){
+    for (i = 0; i < ESPECIES.length; i++){
+      var d = ESPECIES[i];
+      if (!d.activa || d.nivel !== nivel) continue;
+      var presas = presasDe(d.id);
+      if (!presas.length) continue;
+      var comida = 0;
+      for (j = 0; j < presas.length; j++){ comida += pob[presas[j].de]; }
+      var razonC = comida / presas.length;
+      pob[d.id] = razonC < 0.1 ? 0.2 : Math.min(2.5, pob[d.id]*razonC);
+    }
+  }
+}
+
+function estado(id){
+  var v = pob[id];
+  if (!esp(id).activa) return {clave:"extinta",  texto:"Extinta",        fondo:"#eceff1", borde:"#78909c"};
+  if (v < 0.5)         return {clave:"inanicion",texto:"En inanición",   fondo:"#fff8e1", borde:"#b45309"};
+  if (v > 1.5)         return {clave:"super",    texto:"Superpoblación", fondo:"#e1f5fe", borde:"#0277bd"};
+  return                      {clave:"estable",  texto:"Estable",        fondo:"#e8f5e9", borde:"#33691e"};
+}
+
+/* ── Dibujo de la red ──────────────────────────────────────────────────── */
+function dibujar(){
+  var s = "", i, j, e, st;
+
+  s += '<defs><marker id="punta" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">' +
+       '<path d="M0,0 L10,5 L0,10 z" fill="#37474f"></path></marker>' +
+       '<marker id="punta-gris" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">' +
+       '<path d="M0,0 L10,5 L0,10 z" fill="#cfd8dc"></path></marker></defs>';
+
+  s += '<rect x="0" y="0" width="660" height="460" fill="#fbfdf9"></rect>';
+  for (i = 0; i <= 4; i++){
+    var yl = 400 - i*85;
+    s += '<line x1="16" y1="' + yl + '" x2="644" y2="' + yl + '" stroke="#e0e0e0" stroke-width="1" stroke-dasharray="4,6"></line>';
+    s += '<text x="20" y="' + (yl-6) + '" font-size="11" fill="#78909c">Nivel ' + i + "</text>";
+  }
+
+  /* Flechas */
+  for (j = 0; j < ENLACES.length; j++){
+    var a = esp(ENLACES[j].de), b = esp(ENLACES[j].a);
+    var vivo = a.activa && b.activa && pob[a.id] > 0 && pob[b.id] > 0;
+    var dx = b.x - a.x, dy = b.y - a.y, L = Math.sqrt(dx*dx + dy*dy);
+    var ra = radio(a.id) + 4, rb = radio(b.id) + 12;
+    var x1 = a.x + dx/L*ra, y1 = a.y + dy/L*ra;
+    var x2 = b.x - dx/L*rb, y2 = b.y - dy/L*rb;
+    s += '<line x1="' + x1.toFixed(1) + '" y1="' + y1.toFixed(1) + '" x2="' + x2.toFixed(1) + '" y2="' + y2.toFixed(1) +
+         '" stroke="' + (vivo ? "#37474f" : "#cfd8dc") + '" stroke-width="' + (vivo ? 3 : 2) +
+         '" marker-end="url(#' + (vivo ? "punta" : "punta-gris") + ')"' + (vivo ? "" : ' stroke-dasharray="6,5"') + "></line>";
+  }
+
+  /* Nodos */
+  for (i = 0; i < ESPECIES.length; i++){
+    e = ESPECIES[i]; st = estado(e.id);
+    var r = radio(e.id);
+    s += '<circle cx="' + e.x + '" cy="' + e.y + '" r="' + r + '" fill="' + st.fondo +
+         '" stroke="' + st.borde + '" stroke-width="5"' + (st.clave === "extinta" ? ' stroke-dasharray="7,5"' : "") + "></circle>";
+    s += '<text x="' + e.x + '" y="' + (e.y + r*0.40) + '" text-anchor="middle" font-size="' + (r*1.15).toFixed(0) +
+         '" opacity="' + (st.clave === "extinta" ? "0.4" : "1") + '" aria-hidden="true">' + e.emo + "</text>";
+    if (st.clave === "extinta"){
+      s += '<line x1="' + (e.x-r*0.8) + '" y1="' + (e.y+r*0.8) + '" x2="' + (e.x+r*0.8) + '" y2="' + (e.y-r*0.8) +
+           '" stroke="#7f1d1d" stroke-width="3"></line>';
+    }
+    s += '<text x="' + e.x + '" y="' + (e.y + r + 18) + '" text-anchor="middle" font-size="13" font-weight="700" fill="#102027">' + e.n + "</text>";
+    s += '<text x="' + e.x + '" y="' + (e.y + r + 33) + '" text-anchor="middle" font-size="12" fill="#37474f">' + st.texto + "</text>";
+  }
+
+  document.getElementById("lienzo-red").innerHTML =
+    '<svg class="red" viewBox="0 0 660 460" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' +
+    resumenCorto() + '">' + s + "</svg>";
+}
+
+function radio(id){
+  if (!esp(id).activa) return 20;
+  return 22 + Math.min(2.5, pob[id])*8;
+}
+
+function resumenCorto(){
+  var vivas = 0, i;
+  for (i = 0; i < ESPECIES.length; i++){ if (ESPECIES[i].activa) vivas++; }
+  return "Red trófica con " + vivas + " de " + ESPECIES.length +
+    " especies presentes. Las flechas van de la presa al depredador. El detalle en texto aparece debajo.";
+}
+
+/* ── Tabla y lectura ───────────────────────────────────────────────────── */
+function cambio(id){
+  if (!esp(id).activa) return "−100 %";
+  var d = Math.round((pob[id] - 1) * 100);
+  return d === 0 ? "sin cambio" : (d > 0 ? "+" + d + " %" : d + " %");
+}
+
+function pintarTabla(){
+  var html = "", i, e, st;
+  for (i = 0; i < ESPECIES.length; i++){
+    e = ESPECIES[i]; st = estado(e.id);
+    html += '<tr><th scope="row">' + e.n + "</th><td>" + e.papel + "</td><td>" + e.nivel + "</td>" +
+      "<td>" + (e.activa ? pob[e.id].toFixed(2) : "0") + "</td><td>" + cambio(e.id) + "</td><td>" + st.texto + "</td></tr>";
+  }
+  document.getElementById("tabla-estado").innerHTML = html;
+}
+
+function lectura(){
+  var i, extintas = [], super_ = [], hambre = [], texto;
+  for (i = 0; i < ESPECIES.length; i++){
+    var e = ESPECIES[i], st = estado(e.id);
+    if (st.clave === "extinta") extintas.push(e.n.toLowerCase());
+    else if (st.clave === "super") super_.push(e.n.toLowerCase());
+    else if (st.clave === "inanicion") hambre.push(e.n.toLowerCase());
+  }
+
+  var clima = lluvia < 0.7 ? "El ambiente está en sequía, de modo que los productores crecen poco. " :
+              (lluvia > 1.4 ? "El ambiente tiene recursos abundantes y los productores crecen con holgura. " : "");
+
+  if (!extintas.length && !super_.length && !hambre.length){
+    texto = clima + "Todas las especies están presentes y en equilibrio. La energía entra por el pasto y sube por la red hasta el halcón, perdiéndose alrededor del noventa por ciento en cada escalón.";
+  } else {
+    texto = clima;
+    if (extintas.length) texto += "Faltan del ecosistema: " + extintas.join(", ") + ". ";
+    if (super_.length) texto += "Están en superpoblación: " + super_.join(", ") +
+      ", porque han perdido parte de la presión de sus depredadores. ";
+    if (hambre.length) texto += "Están en inanición: " + hambre.join(", ") +
+      ", porque se han quedado sin suficiente alimento por debajo. ";
+    texto += "Esa reacción en cadena es la cascada trófica: tocas una especie y el efecto viaja por toda la red.";
+  }
+  document.getElementById("lectura-texto").textContent = texto;
+}
+
+function actualizar(){ calcular(); dibujar(); pintarTabla(); lectura(); botonesEspecies(); }
+
+/* ── Controles ─────────────────────────────────────────────────────────── */
+function botonesEspecies(){
+  var cont = document.getElementById("especies"), html = "", i, e, st;
+  for (i = 0; i < ESPECIES.length; i++){
+    e = ESPECIES[i]; st = estado(e.id);
+    html += '<button type="button" class="especie" data-id="' + e.id + '" aria-pressed="' + (e.activa ? "true" : "false") +
+      '"><span><span aria-hidden="true">' + e.emo + '</span> ' + e.n + '</span><span class="marca">' + (e.activa ? st.texto : "Extinta") + "</span></button>";
+  }
+  cont.innerHTML = html;
+  var b = cont.querySelectorAll("button.especie");
+  for (i = 0; i < b.length; i++){
+    b[i].addEventListener("click", function(){
+      var e = esp(this.getAttribute("data-id"));
+      e.activa = !e.activa;
+      actualizar();
+    });
+  }
+}
+
+document.getElementById("lluvia").addEventListener("input", function(){
+  lluvia = Number(this.value);
+  document.getElementById("v-lluvia").textContent =
+    lluvia < 0.7 ? "sequía" : (lluvia > 1.4 ? "abundancia" : "normal");
+  actualizar();
+});
+
+function reiniciar(){
+  var i;
+  for (i = 0; i < ESPECIES.length; i++){ ESPECIES[i].activa = true; }
+  lluvia = 1.0;
+  document.getElementById("lluvia").value = 1;
+  document.getElementById("v-lluvia").textContent = "normal";
+  actualizar();
+}
+
+(function(){
+  var b = document.querySelectorAll("button[data-esc]"), i;
+  for (i = 0; i < b.length; i++){
+    b[i].addEventListener("click", function(){
+      var e = this.getAttribute("data-esc"), j;
+      for (j = 0; j < ESPECIES.length; j++){ ESPECIES[j].activa = true; }
+      lluvia = 1.0;
+      if (e === "halcon") esp("halcon").activa = false;
+      if (e === "pasto") esp("pasto").activa = false;
+      if (e === "sequia") lluvia = 0.3;
+      document.getElementById("lluvia").value = lluvia;
+      document.getElementById("v-lluvia").textContent = lluvia < 0.7 ? "sequía" : "normal";
+      actualizar();
+    });
+  }
+})();
+
+document.getElementById("btn-reiniciar").addEventListener("click", reiniciar);
+
+/* ── Preguntas rápidas ─────────────────────────────────────────────────── */
+var RETRO = {
+  "1a":"Todavía no. La flecha nunca indica quién se come a quién en ese sentido: apunta hacia donde va la energía, y la energía va de la presa al depredador.",
+  "1b":"Correcto. La flecha sigue el recorrido de la energía, del conejo hacia el halcón que se lo come.",
+  "1c":"Todavía no. La competencia se daría entre dos especies que comen lo mismo, y aquí una se come a la otra.",
+  "2a":"Todavía no. Ocurre lo contrario: quitar el depredador ápice desestabiliza la red entera.",
+  "2b":"Todavía no. Los productores acaban disminuyendo, porque los herbívoros se multiplican y los arrasan.",
+  "2c":"Correcto. Sin depredador, las presas se multiplican, agotan los productores y después pasan hambre ellas mismas. Pruébalo con el escenario del halcón.",
+  "3a":"Correcto. En cada escalón se pierde alrededor del noventa por ciento de la energía, así que arriba queda muy poca y solo alcanza para pocos individuos.",
+  "3b":"Todavía no. La velocidad de reproducción influye, pero lo que impone el límite es la energía disponible en cada nivel.",
+  "3c":"Todavía no. El tamaño no explica la proporción: hay depredadores pequeños que también son escasos.",
+  "4a":"Todavía no. Los herbívoros son los primeros afectados, pero no los únicos.",
+  "4b":"Correcto. Toda la energía de la red entra por los productores, así que si ellos disminuyen, la escasez sube nivel a nivel hasta el depredador ápice.",
+  "4c":"Todavía no. Los depredadores no comen plantas, pero sí comen animales que sí las comen.",
+  "5a":"Todavía no. Eso es la biodiversidad, que es otra cosa distinta.",
+  "5b":"Todavía no. Eso se llama biomasa.",
+  "5c":"Correcto. La capacidad de carga es el techo que imponen los recursos. Superarlo no se sostiene: la población colapsa."
+};
+
+(function(){
+  var preguntas = document.querySelectorAll(".pregunta"), i, j;
+  for (i = 0; i < preguntas.length; i++){
+    (function(bloque){
+      var n = bloque.getAttribute("data-p"), ok = bloque.getAttribute("data-ok");
+      var ops = bloque.querySelectorAll("button[data-op]");
+      for (j = 0; j < ops.length; j++){
+        ops[j].addEventListener("click", function(){
+          var op = this.getAttribute("data-op");
+          document.getElementById("r" + n).innerHTML =
+            '<div class="' + (op === ok ? "caja-ok" : "caja-mal") + '"><p>' + RETRO[n + op] + "</p></div>";
+        });
+      }
+    })(preguntas[i]);
+  }
+})();
+
+actualizar();
+</script>
+</body>
+</html>

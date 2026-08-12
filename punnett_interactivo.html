@@ -1,0 +1,603 @@
+<!doctype html>
+<!--
+  Cuadro de Punnett interactivo (Lección 4.2) · Spanish ASE Science
+  © 2026 José M. Fernández, ABE/ASE Math Master Teacher,
+  Harry S. Truman College — City Colleges of Chicago.
+  Licencia: Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0
+  Internacional (CC BY-NC-SA 4.0) — https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cuadro de Punnett interactivo</title>
+<meta name="description" content="Simulador del cuadro de Punnett con proporciones en fracción, decimal, porcentaje y razón. Cruces monohíbrido, dihíbrido y ligado al sexo.">
+<meta name="author" content="José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago">
+<meta name="license" content="CC BY-NC-SA 4.0">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
+<style>
+@charset "utf-8";
+/* ============================================================================
+   Estilos unificados de los interactivos · Spanish ASE Science
+   José M. Fernández, ABE/ASE Math Master Teacher,
+   Harry S. Truman College — City Colleges of Chicago
+   © 2026 · CC BY-NC-SA 4.0
+   https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+   ----------------------------------------------------------------------------
+   CÓMO SE USA
+   Este bloque se copia completo dentro de <style> en cada interactivo, para que
+   el archivo siga siendo autónomo. La clase de unidad va en el <body>:
+       <body class="u4">   → Unidad 4, verde oliva
+   Unidades: u1 verde azulado · u2 gris pizarra · u3 verde · u4 verde oliva
+             u5 rojo anaranjado · u6 azul índigo · u7 violeta · u8 azul
+   Todos los colores de acento cumplen 4,5:1 sobre blanco y admiten texto
+   blanco encima. El ámbar de los avisos usa #5c3900 (10,29:1).
+   ========================================================================== */
+
+/* ── 1. PALETA POR UNIDAD ──────────────────────────────────────────────── */
+:root{
+  --u:#37474f; --u2:#263238; --u-bg:#eceff1;   /* valor por defecto */
+  --texto:#222; --texto-sec:#555; --linea:#e0e0e0;
+  --pagina:#f5f7fa; --papel:#ffffff;
+  --amb:#5c3900; --amb-bg:#fff8e1; --amb-borde:#b45309;
+  --ok:#1b5e20; --ok-bg:#e8f5e9; --mal:#7f1d1d; --mal-bg:#fbe9e7;
+  --radio:12px; --sombra:0 2px 8px rgba(0,0,0,.07);
+}
+body.u1{--u:#00695c;--u2:#004d40;--u-bg:#e0f2f1;}
+body.u2{--u:#37474f;--u2:#263238;--u-bg:#eceff1;}
+body.u3{--u:#1b5e20;--u2:#0f3d13;--u-bg:#e8f5e9;}
+body.u4{--u:#33691e;--u2:#1f4211;--u-bg:#f1f8e9;}
+body.u5{--u:#bf360c;--u2:#8c2708;--u-bg:#fbe9e7;}
+body.u6{--u:#1e3a8a;--u2:#142a63;--u-bg:#e8eaf6;}
+body.u7{--u:#5b21b6;--u2:#40157f;--u-bg:#ede7f6;}
+body.u8{--u:#0d47a1;--u2:#093271;--u-bg:#e3f2fd;}
+
+/* ── 2. BASE ───────────────────────────────────────────────────────────── */
+*{box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;margin:0;background:var(--pagina);
+  color:var(--texto);line-height:1.55;font-size:16px;}
+.contenedor{max-width:1100px;margin:0 auto;padding:24px;}
+a{color:#0b3d91;}
+h1,h2,h3{line-height:1.3;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+:focus-visible{outline:3px solid var(--u);outline-offset:2px;}
+
+/* ── 3. ENCABEZADO DEL INTERACTIVO ─────────────────────────────────────── */
+header.principal{background:var(--u);background:linear-gradient(135deg,var(--u) 0%,var(--u2) 100%);
+  color:#fff;padding:28px 32px;border-radius:14px;margin-bottom:22px;box-shadow:var(--sombra);}
+header.principal h1{margin:0 0 6px;font-size:26px;font-weight:700;color:#fff;}
+header.principal .meta{font-size:14px;margin:4px 0 0;color:#fff;}
+
+/* ── 4. BLOQUES DE TEXTO ───────────────────────────────────────────────── */
+.tarjeta{background:var(--papel);padding:20px 24px;border-radius:10px;
+  border-left:5px solid var(--u);margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.tarjeta h2{margin-top:0;color:var(--u);font-size:20px;}
+.tarjeta h3{font-size:16px;color:#263238;margin:16px 0 6px;}
+.caja-tip{background:var(--amb-bg);border-left:4px solid var(--amb-borde);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;font-size:15px;}
+.caja-tip strong{color:var(--amb);}
+.caja-ok{background:var(--ok-bg);border-left:5px solid var(--ok);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;}
+.caja-ok strong{color:var(--ok);}
+.caja-mal{background:var(--mal-bg);border-left:5px solid var(--mal);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;}
+.caja-mal strong{color:var(--mal);}
+
+/* ── 5. PANEL DE CONTROLES ─────────────────────────────────────────────── */
+.panel{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:18px 22px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.panel h2{margin:0 0 12px;font-size:18px;color:var(--u);}
+.control{margin-bottom:16px;}
+.control > label{display:block;font-weight:600;font-size:15px;color:#263238;margin-bottom:6px;}
+.control .valor{float:right;font-weight:700;color:var(--u);font-variant-numeric:tabular-nums;}
+.control input[type=range]{width:100%;accent-color:var(--u);height:26px;}
+.control select,.control input[type=number],.control input[type=text]{
+  font-family:inherit;font-size:16px;padding:9px 14px;border-radius:8px;
+  border:1px solid #90a4ae;background:#fff;color:var(--texto);width:100%;max-width:420px;}
+.fila-botones{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;}
+button{font-family:inherit;font-size:15px;font-weight:600;padding:10px 18px;border-radius:8px;
+  border:1px solid transparent;background:var(--u);color:#fff;cursor:pointer;}
+button:hover{background:var(--u2);}
+button.secundario{background:#fff;color:var(--u);border-color:var(--u);}
+button.secundario:hover{background:var(--u-bg);}
+
+/* ── 6. LIENZO / ESCENA ────────────────────────────────────────────────── */
+.escena{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:16px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);overflow-x:auto;}
+
+/* ── 7. LECTURA DEL ESTADO (alternativa textual, siempre visible) ──────── */
+.lectura{background:var(--u-bg);border-left:5px solid var(--u);border-radius:0 8px 8px 0;
+  padding:14px 18px;margin-bottom:22px;font-size:15px;}
+.lectura h2{margin:0 0 8px;font-size:17px;color:var(--u);}
+.lectura p{margin:6px 0;}
+.lectura .dato{font-weight:700;color:var(--u2);font-variant-numeric:tabular-nums;}
+
+/* ── 8. TABLAS (Ally: caption obligatorio y scope en todo th) ──────────── */
+.tabla-wrap{overflow-x:auto;margin-bottom:22px;}
+table.datos{width:100%;border-collapse:collapse;background:var(--papel);border-radius:10px;
+  overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);font-size:15px;}
+table.datos caption{caption-side:top;text-align:left;font-size:14px;color:var(--texto-sec);
+  padding:0 0 8px;font-style:italic;}
+table.datos th,table.datos td{padding:10px 12px;text-align:left;border-bottom:1px solid #eee;}
+table.datos thead th{background:#37474f;color:#fff;font-weight:600;font-size:13px;
+  text-transform:uppercase;letter-spacing:.4px;}
+table.datos tbody th{background:var(--u-bg);color:var(--u2);font-weight:700;}
+table.datos tr:last-child td{border-bottom:none;}
+
+/* ── 9. ACORDEÓN NATIVO ────────────────────────────────────────────────── */
+details.bloque{background:var(--papel);border-radius:var(--radio);margin-bottom:14px;
+  box-shadow:var(--sombra);border-left:5px solid var(--u);overflow:hidden;}
+details.bloque > summary{padding:14px 18px;cursor:pointer;list-style:none;display:flex;
+  gap:10px;align-items:center;background:var(--u-bg);font-weight:600;color:var(--u2);}
+details.bloque > summary::-webkit-details-marker{display:none;}
+details.bloque > summary .chevron{transition:transform .2s;flex-shrink:0;}
+details.bloque[open] > summary .chevron{transform:rotate(90deg);}
+details.bloque .cuerpo{padding:14px 20px 18px;}
+
+/* ── 10. PIE CON LICENCIA ──────────────────────────────────────────────── */
+footer.pie{padding:22px 4px;color:var(--texto-sec);font-size:13px;margin-top:20px;
+  border-top:1px solid #ddd;text-align:center;}
+footer.pie p{margin:5px 0;}
+
+/* ── 11. MOVIMIENTO REDUCIDO ───────────────────────────────────────────── */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;scroll-behavior:auto !important;}
+}
+
+/* ── 12. IMPRESIÓN ─────────────────────────────────────────────────────── */
+@media print{
+  body{background:#fff;}
+  .panel,.escena{page-break-inside:avoid;}
+  details[open] .cuerpo{display:block;}
+}
+
+/* ── PROPIO DE ESTE INTERACTIVO ────────────────────────────────────────── */
+.taller{display:flex;gap:34px;flex-wrap:wrap;align-items:flex-start;justify-content:center;}
+.reserva{background:var(--u-bg);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:16px;min-width:150px;}
+.reserva h3{margin:0 0 10px;font-size:15px;color:var(--u2);text-align:center;}
+.lista-alelos{display:flex;flex-direction:column;gap:10px;}
+button.alelo{font-size:1.4rem;font-weight:700;padding:10px 18px;min-width:92px;
+  background:var(--u);color:#fff;border-radius:8px;cursor:grab;}
+button.alelo[aria-pressed="true"]{background:var(--amb);outline:3px solid var(--amb-borde);outline-offset:2px;}
+table.punnett{border-collapse:collapse;margin:0 auto;}
+table.punnett caption{caption-side:top;text-align:left;font-size:14px;color:var(--texto-sec);
+  padding:0 0 10px;font-style:italic;}
+table.punnett th,table.punnett td{width:clamp(72px,8vw,100px);height:clamp(72px,8vw,100px);
+  text-align:center;vertical-align:middle;font-size:clamp(1.2rem,2vw,1.7rem);font-weight:700;padding:0;}
+table.punnett td.celda{border:2px solid #607d8b;background:#fff;color:#102027;}
+table.punnett th.margen{border:0;padding:2px;}
+table.punnett th.vacia{border:0;background:transparent;}
+button.hueco{width:100%;height:100%;font-size:inherit;font-weight:700;background:#fff;
+  color:var(--u2);border:3px dashed #78909c;border-radius:6px;cursor:pointer;padding:0;}
+button.hueco:hover{background:var(--u-bg);border-color:var(--u);}
+button.hueco.vacio{color:var(--texto-sec);font-size:.9rem;font-weight:600;}
+button.hueco.encima{background:var(--u-bg);border-style:solid;border-color:var(--u);}
+sup{font-size:.62em;}
+.pista{font-size:14px;color:var(--texto-sec);margin-top:10px;}
+</style>
+</head>
+<body class="u4">
+<div class="contenedor">
+
+<header class="principal">
+  <h1>Cuadro de Punnett interactivo</h1>
+  <p class="meta">Lección 4.2 · Meiosis, cuadros de Punnett y probabilidad genética</p>
+  <p class="meta">Unidad 4 · Ciencias de la vida II · Spanish ASE Science</p>
+</header>
+
+<div class="tarjeta">
+  <h2>Qué vas a hacer</h2>
+  <p>Vas a colocar los gametos de cada progenitor en los márgenes del cuadro. El simulador combinará los alelos, contará los genotipos que resultan y expresará la proporción de cuatro maneras distintas: en fracción, en decimal, en porcentaje y en razón. El examen pregunta indistintamente por cualquiera de las cuatro.</p>
+  <h3>Cómo colocar un alelo</h3>
+  <p>Hay tres caminos, y todos llevan al mismo sitio. Puedes arrastrar un alelo desde la reserva hasta un margen; puedes pulsar un alelo de la reserva para seleccionarlo y después pulsar el margen donde quieres ponerlo; o puedes pulsar directamente un margen para ir alternando entre los alelos disponibles. Con el teclado, la tecla de tabulación recorre todos los botones y la barra espaciadora los acciona.</p>
+  <div class="caja-tip">
+    <p><strong>Recuerda:</strong> cada casilla del cuadro representa un resultado igualmente probable de la fecundación, no un hijo real. Una proporción de tres a uno no significa que de cuatro hijos vayan a nacer tres con el rasgo dominante: significa que cada hijo tiene tres probabilidades entre cuatro de tenerlo.</p>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>Controles</h2>
+  <div class="control">
+    <label for="tipo-cruce">Tipo de cruce</label>
+    <select id="tipo-cruce">
+      <option value="mono">Monohíbrido (Aa × Aa)</option>
+      <option value="di">Dihíbrido (AaBb × AaBb)</option>
+      <option value="sexo">Ligado al sexo (XRXr × XRY)</option>
+    </select>
+  </div>
+  <div class="fila-botones">
+    <button type="button" id="btn-auto">Rellenar los márgenes</button>
+    <button type="button" class="secundario" id="btn-limpiar">Vaciar el cuadro</button>
+  </div>
+  <p class="pista" id="pista-seleccion">Ningún alelo seleccionado.</p>
+</div>
+
+<div class="lectura" id="lectura" aria-live="polite">
+  <h2>Lectura del cuadro</h2>
+  <p id="lectura-texto">Cruce monohíbrido. Los márgenes están vacíos: coloca los cuatro gametos para obtener las proporciones.</p>
+</div>
+
+<div class="escena">
+  <div class="taller">
+    <div class="reserva">
+      <h3>Alelos disponibles</h3>
+      <div class="lista-alelos" id="reserva"></div>
+    </div>
+    <div id="caja-cuadro"></div>
+  </div>
+</div>
+
+<div class="tabla-wrap">
+  <table class="datos">
+    <caption id="cap-geno">Proporción genotípica del cruce seleccionado, expresada en fracción, decimal, porcentaje y razón.</caption>
+    <thead>
+      <tr>
+        <th scope="col">Genotipo</th><th scope="col">Casillas</th><th scope="col">Fracción</th>
+        <th scope="col">Decimal</th><th scope="col">Porcentaje</th><th scope="col">Razón</th>
+      </tr>
+    </thead>
+    <tbody id="tabla-geno">
+      <tr><td colspan="6">Coloca todos los alelos de los márgenes para calcular los resultados.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="tabla-wrap">
+  <table class="datos">
+    <caption>Proporción fenotípica, es decir, el rasgo que se observa. Varios genotipos distintos pueden dar el mismo fenotipo.</caption>
+    <thead>
+      <tr>
+        <th scope="col">Fenotipo</th><th scope="col">Casillas</th><th scope="col">Fracción</th>
+        <th scope="col">Decimal</th><th scope="col">Porcentaje</th><th scope="col">Razón</th>
+      </tr>
+    </thead>
+    <tbody id="tabla-feno">
+      <tr><td colspan="6">Coloca todos los alelos de los márgenes para calcular los resultados.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<details class="bloque">
+  <summary><span class="chevron" aria-hidden="true">▶</span>Qué debes observar en cada cruce</summary>
+  <div class="cuerpo">
+    <h3>Monohíbrido</h3>
+    <p>La proporción genotípica es de uno a dos a uno, pero la fenotípica es de tres a uno. Esa diferencia es la pregunta más repetida del examen: el heterocigoto se ve igual que el homocigoto dominante, de modo que dos genotipos distintos se cuentan como un solo fenotipo.</p>
+    <h3>Dihíbrido</h3>
+    <p>Dieciséis casillas y una proporción fenotípica de nueve a tres a tres a uno. Fíjate en que los dos rasgos se reparten de forma independiente: el color de un guisante no arrastra consigo su textura.</p>
+    <h3>Ligado al sexo</h3>
+    <p>Aquí está el error que el examen persigue. El cromosoma Y no lleva copia del gen, así que un varón con un solo alelo recesivo manifiesta el rasgo, mientras que una mujer necesitaría dos. Por eso en este cruce aparecen mujeres portadoras, que llevan el alelo sin manifestarlo, y varones afectados, que lo manifiestan con una sola copia.</p>
+  </div>
+</details>
+
+<footer class="pie">
+  <p>Cuadro de Punnett interactivo · Lección 4.2 · Spanish ASE Science · 96 horas</p>
+  <p>José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago</p>
+  <p>© 2026. Esta obra está licenciada bajo <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" rel="license">Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0 Internacional (CC BY-NC-SA 4.0)</a>.</p>
+</footer>
+
+</div>
+<script>
+"use strict";
+
+/* ── Configuración de los tres cruces ──────────────────────────────────── */
+var ALELOS = {
+  A : {html:"A",  txt:"A mayúscula"},
+  a : {html:"a",  txt:"a minúscula"},
+  AB: {html:"AB", txt:"A B"},   Ab:{html:"Ab", txt:"A b"},
+  aB: {html:"aB", txt:"a B"},   ab:{html:"ab", txt:"a b"},
+  XR: {html:"X<sup>R</sup>", txt:"X con R dominante"},
+  Xr: {html:"X<sup>r</sup>", txt:"X con r recesivo"},
+  Y : {html:"Y",  txt:"Y"}
+};
+
+var CRUCES = {
+  mono: {
+    nombre:"monohíbrido", reserva:["A","a"], orden:["A","a"],
+    arriba:["A","a"], izquierda:["A","a"],
+    rotuloArriba:"gametos del primer progenitor (Aa)",
+    rotuloIzq:"gametos del segundo progenitor (Aa)"
+  },
+  di: {
+    nombre:"dihíbrido", reserva:["AB","Ab","aB","ab"], orden:["AB","Ab","aB","ab"],
+    arriba:["AB","Ab","aB","ab"], izquierda:["AB","Ab","aB","ab"],
+    rotuloArriba:"gametos del primer progenitor (AaBb)",
+    rotuloIzq:"gametos del segundo progenitor (AaBb)"
+  },
+  sexo: {
+    nombre:"ligado al sexo", reserva:["XR","Xr","Y"], orden:["XR","Xr","Y"],
+    arriba:["XR","Y"], izquierda:["XR","Xr"],
+    rotuloArriba:"gametos del padre (X R Y)",
+    rotuloIzq:"gametos de la madre (X R X r)"
+  }
+};
+
+var tipo = "mono";
+var seleccionado = null;
+
+/* ── Utilidades ────────────────────────────────────────────────────────── */
+function mcd(a,b){ return b === 0 ? a : mcd(b, a % b); }
+
+function fraccion(n,d){
+  if (n === 0) return "0";
+  if (n === d) return "1";
+  var k = mcd(n,d);
+  return (n/k) + "/" + (d/k);
+}
+
+function decimal(n,d){
+  return (n/d).toFixed(4).replace(/0+$/,"").replace(/\.$/,"");
+}
+
+function porciento(n,d){
+  return (n/d*100).toFixed(2).replace(/0+$/,"").replace(/\.$/,"") + " %";
+}
+
+/* ── Combinación de alelos ─────────────────────────────────────────────── */
+function combinar(idA, idB){
+  var conf = CRUCES[tipo], ids;
+  if (tipo === "di"){
+    var r1 = ["A","a"], r2 = ["B","b"];
+    var t1 = [idA.charAt(0), idB.charAt(0)].sort(function(x,y){ return r1.indexOf(x) - r1.indexOf(y); });
+    var t2 = [idA.charAt(1), idB.charAt(1)].sort(function(x,y){ return r2.indexOf(x) - r2.indexOf(y); });
+    ids = [t1[0]+t1[1], t2[0]+t2[1]];
+    return { clave: ids.join(""), html: ids.join(""), ids: [idA, idB] };
+  }
+  ids = [idA, idB].sort(function(x,y){ return conf.orden.indexOf(x) - conf.orden.indexOf(y); });
+  return {
+    clave: ids.join("|"),
+    html: ALELOS[ids[0]].html + ALELOS[ids[1]].html,
+    ids: ids
+  };
+}
+
+/* ── Fenotipo ──────────────────────────────────────────────────────────── */
+function fenotipo(cel){
+  if (tipo === "mono"){
+    return cel.ids.indexOf("A") >= 0 ? "Rasgo dominante" : "Rasgo recesivo";
+  }
+  if (tipo === "di"){
+    var d1 = cel.clave.indexOf("A") >= 0, d2 = cel.clave.indexOf("B") >= 0;
+    if (d1 && d2)  return "Dominante en los dos rasgos";
+    if (d1 && !d2) return "Dominante en el primer rasgo, recesivo en el segundo";
+    if (!d1 && d2) return "Recesivo en el primer rasgo, dominante en el segundo";
+    return "Recesivo en los dos rasgos";
+  }
+  var varon = cel.ids.indexOf("Y") >= 0;
+  if (varon) return cel.ids.indexOf("XR") >= 0 ? "Varón sano" : "Varón afectado";
+  if (cel.ids[0] === "XR" && cel.ids[1] === "XR") return "Mujer sana";
+  if (cel.ids[0] === "Xr" && cel.ids[1] === "Xr") return "Mujer afectada";
+  return "Mujer portadora";
+}
+
+/* ── Construcción del cuadro ───────────────────────────────────────────── */
+function construir(){
+  var conf = CRUCES[tipo];
+  var caja = document.getElementById("caja-cuadro");
+  var nCol = conf.arriba.length, nFil = conf.izquierda.length;
+  var html = '<table class="punnett"><caption>Cuadro de Punnett del cruce ' + conf.nombre +
+    '. La primera fila recoge los ' + conf.rotuloArriba + ' y la primera columna, los ' +
+    conf.rotuloIzq + '. Las casillas interiores muestran el genotipo de la descendencia.</caption><tbody>';
+
+  html += '<tr><th class="vacia"><span class="sr-only">Cruce de gametos</span></th>';
+  for (var c = 0; c < nCol; c++){
+    html += '<th class="margen" scope="col"><button type="button" class="hueco vacio" ' +
+      'data-eje="arriba" data-i="' + c + '" data-alelo="">Vacío</button></th>';
+  }
+  html += '</tr>';
+
+  for (var f = 0; f < nFil; f++){
+    html += '<tr><th class="margen" scope="row"><button type="button" class="hueco vacio" ' +
+      'data-eje="izq" data-i="' + f + '" data-alelo="">Vacío</button></th>';
+    for (var c2 = 0; c2 < nCol; c2++){
+      html += '<td class="celda" id="celda-' + f + '-' + c2 + '"></td>';
+    }
+    html += '</tr>';
+  }
+  html += '</tbody></table>';
+  caja.innerHTML = html;
+
+  var huecos = caja.querySelectorAll("button.hueco");
+  for (var k = 0; k < huecos.length; k++){
+    huecos[k].addEventListener("click", alPulsarHueco);
+    huecos[k].addEventListener("dragover", function(e){ e.preventDefault(); this.classList.add("encima"); });
+    huecos[k].addEventListener("dragleave", function(){ this.classList.remove("encima"); });
+    huecos[k].addEventListener("drop", alSoltar);
+  }
+}
+
+function construirReserva(){
+  var conf = CRUCES[tipo];
+  var cont = document.getElementById("reserva");
+  cont.innerHTML = "";
+  for (var i = 0; i < conf.reserva.length; i++){
+    var id = conf.reserva[i];
+    var b = document.createElement("button");
+    b.type = "button";
+    b.className = "alelo";
+    b.draggable = true;
+    b.innerHTML = ALELOS[id].html;
+    b.setAttribute("data-alelo", id);
+    b.setAttribute("aria-pressed", "false");
+    b.setAttribute("aria-label", "Alelo " + ALELOS[id].txt + ". Selecciónalo y después elige un margen.");
+    b.addEventListener("dragstart", function(e){ e.dataTransfer.setData("text/plain", this.getAttribute("data-alelo")); });
+    b.addEventListener("click", alPulsarAlelo);
+    cont.appendChild(b);
+  }
+}
+
+/* ── Interacción ───────────────────────────────────────────────────────── */
+function alPulsarAlelo(){
+  var id = this.getAttribute("data-alelo");
+  var todos = document.querySelectorAll("button.alelo");
+  for (var i = 0; i < todos.length; i++){ todos[i].setAttribute("aria-pressed","false"); }
+  if (seleccionado === id){
+    seleccionado = null;
+    document.getElementById("pista-seleccion").textContent = "Ningún alelo seleccionado.";
+  } else {
+    seleccionado = id;
+    this.setAttribute("aria-pressed","true");
+    document.getElementById("pista-seleccion").textContent =
+      "Alelo " + ALELOS[id].txt + " seleccionado. Ahora elige el margen donde colocarlo.";
+  }
+}
+
+function colocar(boton, id){
+  boton.setAttribute("data-alelo", id);
+  boton.innerHTML = ALELOS[id].html;
+  boton.classList.remove("vacio");
+  boton.setAttribute("aria-label", "Margen con el alelo " + ALELOS[id].txt + ". Púlsalo para cambiarlo.");
+  calcular();
+}
+
+function alPulsarHueco(){
+  var conf = CRUCES[tipo];
+  if (seleccionado){
+    colocar(this, seleccionado);
+    return;
+  }
+  var actual = this.getAttribute("data-alelo");
+  var lista = conf.reserva;
+  var idx = lista.indexOf(actual);
+  colocar(this, lista[(idx + 1) % lista.length]);
+}
+
+function alSoltar(e){
+  e.preventDefault();
+  this.classList.remove("encima");
+  var id = e.dataTransfer.getData("text/plain");
+  if (id && ALELOS[id]) colocar(this, id);
+}
+
+function autorrellenar(){
+  var conf = CRUCES[tipo];
+  var arriba = document.querySelectorAll('button.hueco[data-eje="arriba"]');
+  var izq = document.querySelectorAll('button.hueco[data-eje="izq"]');
+  for (var i = 0; i < arriba.length; i++){ colocar(arriba[i], conf.arriba[i]); }
+  for (var j = 0; j < izq.length; j++){ colocar(izq[j], conf.izquierda[j]); }
+}
+
+function vaciar(){
+  var huecos = document.querySelectorAll("button.hueco");
+  for (var i = 0; i < huecos.length; i++){
+    huecos[i].setAttribute("data-alelo","");
+    huecos[i].textContent = "Vacío";
+    huecos[i].classList.add("vacio");
+    huecos[i].setAttribute("aria-label","Margen vacío. Púlsalo para colocar un alelo.");
+  }
+  calcular();
+}
+
+/* ── Cálculo y salida ──────────────────────────────────────────────────── */
+var ORDEN_FENO = {
+  mono: ["Rasgo dominante","Rasgo recesivo"],
+  di:   ["Dominante en los dos rasgos",
+         "Dominante en el primer rasgo, recesivo en el segundo",
+         "Recesivo en el primer rasgo, dominante en el segundo",
+         "Recesivo en los dos rasgos"],
+  sexo: ["Mujer sana","Mujer portadora","Mujer afectada","Varón sano","Varón afectado"]
+};
+
+function filasTabla(mapa, total, orden){
+  var claves = Object.keys(mapa);
+  if (orden){
+    claves.sort(function(x,y){ return orden.indexOf(x) - orden.indexOf(y); });
+  } else {
+    claves.sort();
+  }
+  var razon = [];
+  for (var i = 0; i < claves.length; i++){ razon.push(mapa[claves[i]].n); }
+  var textoRazon = razon.join(" : ");
+  var html = "";
+  for (var k = 0; k < claves.length; k++){
+    var it = mapa[claves[k]], n = it.n;
+    html += "<tr><th scope=\"row\">" + it.html + "</th>" +
+      "<td>" + n + " de " + total + "</td>" +
+      "<td>" + fraccion(n, total) + "</td>" +
+      "<td>" + decimal(n, total) + "</td>" +
+      "<td>" + porciento(n, total) + "</td>";
+    if (k === 0){
+      html += "<td rowspan=\"" + claves.length + "\"><strong>" + textoRazon + "</strong></td>";
+    }
+    html += "</tr>";
+  }
+  return { html: html, razon: textoRazon };
+}
+
+function calcular(){
+  var conf = CRUCES[tipo];
+  var arriba = document.querySelectorAll('button.hueco[data-eje="arriba"]');
+  var izq = document.querySelectorAll('button.hueco[data-eje="izq"]');
+  var tops = [], lefts = [], i, j;
+
+  for (i = 0; i < arriba.length; i++){ tops.push(arriba[i].getAttribute("data-alelo")); }
+  for (j = 0; j < izq.length; j++){ lefts.push(izq[j].getAttribute("data-alelo")); }
+
+  var faltan = tops.indexOf("") >= 0 || lefts.indexOf("") >= 0;
+  var celdas = document.querySelectorAll("td.celda");
+  var aviso = "<tr><td colspan=\"6\">Coloca todos los alelos de los márgenes para calcular los resultados.</td></tr>";
+
+  if (faltan){
+    for (i = 0; i < celdas.length; i++){ celdas[i].innerHTML = ""; }
+    document.getElementById("tabla-geno").innerHTML = aviso;
+    document.getElementById("tabla-feno").innerHTML = aviso;
+    var puestos = 0;
+    for (i = 0; i < tops.length; i++){ if (tops[i]) puestos++; }
+    for (j = 0; j < lefts.length; j++){ if (lefts[j]) puestos++; }
+    var totalM = tops.length + lefts.length;
+    document.getElementById("lectura-texto").textContent =
+      "Cruce " + conf.nombre + ". Has colocado " + puestos + " de los " + totalM +
+      " gametos de los márgenes. Cuando estén todos, aparecerán las proporciones.";
+    return;
+  }
+
+  var geno = {}, feno = {}, total = 0;
+  for (j = 0; j < lefts.length; j++){
+    for (i = 0; i < tops.length; i++){
+      var cel = combinar(tops[i], lefts[j]);
+      document.getElementById("celda-" + j + "-" + i).innerHTML = cel.html;
+      if (!geno[cel.clave]) geno[cel.clave] = { n:0, html:cel.html };
+      geno[cel.clave].n++;
+      var f = fenotipo(cel);
+      if (!feno[f]) feno[f] = { n:0, html:f };
+      feno[f].n++;
+      total++;
+    }
+  }
+
+  var rg = filasTabla(geno, total, null);
+  var rf = filasTabla(feno, total, ORDEN_FENO[tipo]);
+  document.getElementById("tabla-geno").innerHTML = rg.html;
+  document.getElementById("tabla-feno").innerHTML = rf.html;
+
+  var ordenF = ORDEN_FENO[tipo];
+  var clavesF = Object.keys(feno).sort(function(x,y){ return ordenF.indexOf(x) - ordenF.indexOf(y); });
+  var listaF = [];
+  for (i = 0; i < clavesF.length; i++){
+    listaF.push(clavesF[i].toLowerCase() + ", " + feno[clavesF[i]].n + " de " + total);
+  }
+  document.getElementById("lectura-texto").textContent =
+    "Cruce " + conf.nombre + ", cuadro completo con " + total + " casillas. " +
+    "La proporción genotípica es " + rg.razon + " y la fenotípica es " + rf.razon + ". " +
+    "Por fenotipo: " + listaF.join("; ") + ".";
+}
+
+/* ── Arranque ──────────────────────────────────────────────────────────── */
+function cambiarTipo(){
+  tipo = document.getElementById("tipo-cruce").value;
+  seleccionado = null;
+  document.getElementById("pista-seleccion").textContent = "Ningún alelo seleccionado.";
+  construirReserva();
+  construir();
+  calcular();
+}
+
+document.getElementById("tipo-cruce").addEventListener("change", cambiarTipo);
+document.getElementById("btn-auto").addEventListener("click", autorrellenar);
+document.getElementById("btn-limpiar").addEventListener("click", vaciar);
+cambiarTipo();
+</script>
+</body>
+</html>

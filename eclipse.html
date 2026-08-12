@@ -1,0 +1,655 @@
+<!doctype html>
+<!--
+  Eclipses: la geometría Sol, Tierra y Luna (Lección 7.3) · Spanish ASE Science
+  © 2026 José M. Fernández, ABE/ASE Math Master Teacher,
+  Harry S. Truman College — City Colleges of Chicago.
+  Licencia: Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0
+  Internacional (CC BY-NC-SA 4.0) — https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eclipses: la geometría Sol, Tierra y Luna</title>
+<meta name="description" content="Simulador de eclipses solares y lunares con vista desde arriba y vista de canto, para entender por qué la inclinación de la órbita lunar impide que haya un eclipse cada mes.">
+<meta name="author" content="José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago">
+<meta name="license" content="CC BY-NC-SA 4.0">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
+<style>
+@charset "utf-8";
+/* ============================================================================
+   Estilos unificados de los interactivos · Spanish ASE Science
+   José M. Fernández, ABE/ASE Math Master Teacher,
+   Harry S. Truman College — City Colleges of Chicago
+   © 2026 · CC BY-NC-SA 4.0
+   https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+   ----------------------------------------------------------------------------
+   CÓMO SE USA
+   Este bloque se copia completo dentro de <style> en cada interactivo, para que
+   el archivo siga siendo autónomo. La clase de unidad va en el <body>:
+       <body class="u4">   → Unidad 4, verde oliva
+   Unidades: u1 verde azulado · u2 gris pizarra · u3 verde · u4 verde oliva
+             u5 rojo anaranjado · u6 azul índigo · u7 violeta · u8 azul
+   Todos los colores de acento cumplen 4,5:1 sobre blanco y admiten texto
+   blanco encima. El ámbar de los avisos usa #5c3900 (10,29:1).
+   ========================================================================== */
+
+/* ── 1. PALETA POR UNIDAD ──────────────────────────────────────────────── */
+:root{
+  --u:#37474f; --u2:#263238; --u-bg:#eceff1;   /* valor por defecto */
+  --texto:#222; --texto-sec:#555; --linea:#e0e0e0;
+  --pagina:#f5f7fa; --papel:#ffffff;
+  --amb:#5c3900; --amb-bg:#fff8e1; --amb-borde:#b45309;
+  --ok:#1b5e20; --ok-bg:#e8f5e9; --mal:#7f1d1d; --mal-bg:#fbe9e7;
+  --radio:12px; --sombra:0 2px 8px rgba(0,0,0,.07);
+}
+body.u1{--u:#00695c;--u2:#004d40;--u-bg:#e0f2f1;}
+body.u2{--u:#37474f;--u2:#263238;--u-bg:#eceff1;}
+body.u3{--u:#1b5e20;--u2:#0f3d13;--u-bg:#e8f5e9;}
+body.u4{--u:#33691e;--u2:#1f4211;--u-bg:#f1f8e9;}
+body.u5{--u:#bf360c;--u2:#8c2708;--u-bg:#fbe9e7;}
+body.u6{--u:#1e3a8a;--u2:#142a63;--u-bg:#e8eaf6;}
+body.u7{--u:#5b21b6;--u2:#40157f;--u-bg:#ede7f6;}
+body.u8{--u:#0d47a1;--u2:#093271;--u-bg:#e3f2fd;}
+
+/* ── 2. BASE ───────────────────────────────────────────────────────────── */
+*{box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;margin:0;background:var(--pagina);
+  color:var(--texto);line-height:1.55;font-size:16px;}
+.contenedor{max-width:1100px;margin:0 auto;padding:24px;}
+a{color:#0b3d91;}
+h1,h2,h3{line-height:1.3;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+:focus-visible{outline:3px solid var(--u);outline-offset:2px;}
+
+/* ── 3. ENCABEZADO DEL INTERACTIVO ─────────────────────────────────────── */
+header.principal{background:var(--u);background:linear-gradient(135deg,var(--u) 0%,var(--u2) 100%);
+  color:#fff;padding:28px 32px;border-radius:14px;margin-bottom:22px;box-shadow:var(--sombra);}
+header.principal h1{margin:0 0 6px;font-size:26px;font-weight:700;color:#fff;}
+header.principal .meta{font-size:14px;margin:4px 0 0;color:#fff;}
+
+/* ── 4. BLOQUES DE TEXTO ───────────────────────────────────────────────── */
+.tarjeta{background:var(--papel);padding:20px 24px;border-radius:10px;
+  border-left:5px solid var(--u);margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.tarjeta h2{margin-top:0;color:var(--u);font-size:20px;}
+.tarjeta h3{font-size:16px;color:#263238;margin:16px 0 6px;}
+.caja-tip{background:var(--amb-bg);border-left:4px solid var(--amb-borde);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;font-size:15px;}
+.caja-tip strong{color:var(--amb);}
+.caja-ok{background:var(--ok-bg);border-left:5px solid var(--ok);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;}
+.caja-ok strong{color:var(--ok);}
+.caja-mal{background:var(--mal-bg);border-left:5px solid var(--mal);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;}
+.caja-mal strong{color:var(--mal);}
+
+/* ── 5. PANEL DE CONTROLES ─────────────────────────────────────────────── */
+.panel{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:18px 22px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.panel h2{margin:0 0 12px;font-size:18px;color:var(--u);}
+.control{margin-bottom:16px;}
+.control > label{display:block;font-weight:600;font-size:15px;color:#263238;margin-bottom:6px;}
+.control .valor{float:right;font-weight:700;color:var(--u);font-variant-numeric:tabular-nums;}
+.control input[type=range]{width:100%;accent-color:var(--u);height:26px;}
+.control select,.control input[type=number],.control input[type=text]{
+  font-family:inherit;font-size:16px;padding:9px 14px;border-radius:8px;
+  border:1px solid #90a4ae;background:#fff;color:var(--texto);width:100%;max-width:420px;}
+.fila-botones{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;}
+button{font-family:inherit;font-size:15px;font-weight:600;padding:10px 18px;border-radius:8px;
+  border:1px solid transparent;background:var(--u);color:#fff;cursor:pointer;}
+button:hover{background:var(--u2);}
+button.secundario{background:#fff;color:var(--u);border-color:var(--u);}
+button.secundario:hover{background:var(--u-bg);}
+
+/* ── 6. LIENZO / ESCENA ────────────────────────────────────────────────── */
+.escena{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:16px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);overflow-x:auto;}
+
+/* ── 7. LECTURA DEL ESTADO (alternativa textual, siempre visible) ──────── */
+.lectura{background:var(--u-bg);border-left:5px solid var(--u);border-radius:0 8px 8px 0;
+  padding:14px 18px;margin-bottom:22px;font-size:15px;}
+.lectura h2{margin:0 0 8px;font-size:17px;color:var(--u);}
+.lectura p{margin:6px 0;}
+.lectura .dato{font-weight:700;color:var(--u2);font-variant-numeric:tabular-nums;}
+
+/* ── 8. TABLAS (Ally: caption obligatorio y scope en todo th) ──────────── */
+.tabla-wrap{overflow-x:auto;margin-bottom:22px;}
+table.datos{width:100%;border-collapse:collapse;background:var(--papel);border-radius:10px;
+  overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);font-size:15px;}
+table.datos caption{caption-side:top;text-align:left;font-size:14px;color:var(--texto-sec);
+  padding:0 0 8px;font-style:italic;}
+table.datos th,table.datos td{padding:10px 12px;text-align:left;border-bottom:1px solid #eee;}
+table.datos thead th{background:#37474f;color:#fff;font-weight:600;font-size:13px;
+  text-transform:uppercase;letter-spacing:.4px;}
+table.datos tbody th{background:var(--u-bg);color:var(--u2);font-weight:700;}
+table.datos tr:last-child td{border-bottom:none;}
+
+/* ── 9. ACORDEÓN NATIVO ────────────────────────────────────────────────── */
+details.bloque{background:var(--papel);border-radius:var(--radio);margin-bottom:14px;
+  box-shadow:var(--sombra);border-left:5px solid var(--u);overflow:hidden;}
+details.bloque > summary{padding:14px 18px;cursor:pointer;list-style:none;display:flex;
+  gap:10px;align-items:center;background:var(--u-bg);font-weight:600;color:var(--u2);}
+details.bloque > summary::-webkit-details-marker{display:none;}
+details.bloque > summary .chevron{transition:transform .2s;flex-shrink:0;}
+details.bloque[open] > summary .chevron{transform:rotate(90deg);}
+details.bloque .cuerpo{padding:14px 20px 18px;}
+
+/* ── 10. PIE CON LICENCIA ──────────────────────────────────────────────── */
+footer.pie{padding:22px 4px;color:var(--texto-sec);font-size:13px;margin-top:20px;
+  border-top:1px solid #ddd;text-align:center;}
+footer.pie p{margin:5px 0;}
+
+/* ── 11. MOVIMIENTO REDUCIDO ───────────────────────────────────────────── */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;scroll-behavior:auto !important;}
+}
+
+/* ── 12. IMPRESIÓN ─────────────────────────────────────────────────────── */
+@media print{
+  body{background:#fff;}
+  .panel,.escena{page-break-inside:avoid;}
+  details[open] .cuerpo{display:block;}
+}
+
+/* ── 13. NOMBRES RESERVADOS ────────────────────────────────────────────── */
+/* Estas clases pertenecen a la hoja unificada. No las reutilices como
+   clase local en un interactivo: el selector local se sumaría al de aquí y
+   descuadraría el componente. Reservadas:
+   contenedor · sr-only · principal · meta · tarjeta · caja-tip · caja-ok ·
+   caja-mal · panel · control · valor · fila-botones · secundario · escena ·
+   lectura · dato · tabla-wrap · datos · bloque · cuerpo · chevron · pie
+   Para rejillas de cifras usa .cifras, no .datos. */
+
+/* ── PROPIO DE ESTE INTERACTIVO ────────────────────────────────────────── */
+.dos{display:grid;grid-template-columns:320px 1fr;gap:20px;align-items:start;}
+@media (max-width:900px){ .dos{grid-template-columns:1fr;} }
+.lienzo{overflow-x:auto;margin-bottom:14px;}
+svg.vista{display:block;margin:0 auto;min-width:640px;max-width:100%;height:auto;
+  background:#0d1b2a;border:1px solid #37474f;border-radius:8px;}
+.rotulo-vista{font-size:15px;font-weight:700;color:var(--u2);margin:0 0 6px;}
+.aviso-escala{font-size:14px;color:var(--texto-sec);margin:0 0 12px;}
+.marcador{text-align:center;font-size:22px;font-weight:700;padding:12px;border-radius:8px;
+  border:2px solid;margin-bottom:14px;}
+.marcador.nada{background:var(--u-bg);border-color:var(--u);color:var(--u2);}
+.marcador.solar{background:#fff8e1;border-color:#b45309;color:#5c3900;}
+.marcador.lunar{background:#fbe9e7;border-color:#7f1d1d;color:#7f1d1d;}
+.extremos{display:flex;justify-content:space-between;font-size:13px;color:var(--texto-sec);}
+.ayuda{font-size:14px;color:var(--texto-sec);margin:4px 0 0;}
+.cifras{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px;}
+.dato-caja{background:var(--u-bg);border:1px solid var(--linea);border-radius:8px;padding:9px 11px;}
+.dato-caja strong{display:block;font-size:12px;color:var(--u2);text-transform:uppercase;letter-spacing:.3px;}
+.dato-caja span{font-size:17px;font-weight:700;color:var(--texto);font-variant-numeric:tabular-nums;}
+.pregunta{border-top:1px solid var(--linea);padding-top:16px;margin-top:16px;}
+.pregunta:first-of-type{border-top:0;padding-top:0;margin-top:0;}
+.pregunta p.enunciado{font-weight:600;margin:0 0 10px;}
+.retro:empty{display:none;}
+</style>
+</head>
+<body class="u7">
+<div class="contenedor">
+
+<header class="principal">
+  <h1>Eclipses: la geometría Sol, Tierra y Luna</h1>
+  <p class="meta">Lección 7.3 · El sistema solar, el universo y los recursos energéticos</p>
+  <p class="meta">Unidad 7 · Ciencias de la Tierra y el espacio · Spanish ASE Science</p>
+</header>
+
+<div class="tarjeta">
+  <h2>La pregunta que hay que responder</h2>
+  <p>La Luna da una vuelta completa alrededor de la Tierra cada mes. Si en cada vuelta pasa una vez por delante del Sol y una vez por detrás de la Tierra, <strong>¿por qué no hay un eclipse solar y otro lunar todos los meses?</strong> La respuesta está en algo que un dibujo plano no deja ver, y por eso aquí tienes dos vistas del mismo sistema al mismo tiempo.</p>
+  <div class="caja-tip">
+    <p><strong>El Sol y la Tierra están quietos aquí, pero no en la realidad.</strong> La Tierra recorre su órbita alrededor del Sol a unos treinta kilómetros por segundo, y el Sol entero se desplaza por la galaxia. Lo que se ha hecho en este simulador es fijarlos para poder observar el <em>movimiento relativo</em> de la Luna, que es lo que determina los eclipses. Es una decisión habitual en ciencia: se congela lo que no se está estudiando para poder ver con claridad lo que sí. Al leer cualquier modelo conviene preguntarse qué se ha simplificado en él y qué consecuencias tiene esa simplificación.</p>
+  </div>
+  <div class="caja-tip">
+    <p><strong>Los tamaños y las distancias no están a escala.</strong> Si lo estuvieran, con la Tierra del tamaño que tiene aquí, el Sol quedaría a más de cien metros de distancia y no cabría en la pantalla. Lo que sí es fiel es la <em>geometría</em>: quién se pone delante de quién, y cuándo las tres esferas se alinean.</p>
+  </div>
+</div>
+
+<div class="dos">
+
+  <div class="panel">
+    <h2>Controles</h2>
+
+    <div class="control">
+      <label for="angulo">Posición de la Luna en su órbita <span class="valor"><span id="v-angulo">0</span>°</span></label>
+      <input type="range" id="angulo" min="0" max="359" step="1" value="0">
+      <p class="extremos"><span>0°: luna llena</span><span>180°: luna nueva</span></p>
+    </div>
+
+    <div class="fila-botones">
+      <button type="button" id="btn-play">Reproducir</button>
+      <button type="button" class="secundario" id="btn-velocidad">Velocidad: normal</button>
+    </div>
+
+    <h3 style="font-size:16px;color:var(--u2);margin:18px 0 8px;">Inclinación de la órbita</h3>
+    <div class="fila-botones">
+      <button type="button" class="secundario" id="btn-inclinacion" aria-pressed="true">Activada</button>
+    </div>
+    <p class="ayuda" id="ayuda-inclinacion">Con la inclinación activada, la Luna casi siempre pasa por encima o por debajo del eje y no hay eclipse. Es lo que ocurre de verdad. Desactívala para ver qué pasaría si la órbita fuese plana.</p>
+
+    <div class="fila-botones" style="margin-top:16px;">
+      <button type="button" class="secundario" id="btn-buscar">Llévame al próximo eclipse</button>
+      <button type="button" class="secundario" id="btn-reiniciar">Reiniciar</button>
+    </div>
+
+    <div class="cifras">
+      <div class="dato-caja"><strong>Fase lunar</strong><span id="d-fase">—</span></div>
+      <div class="dato-caja"><strong>Desvío del eje</strong><span id="d-desvio">—</span></div>
+    </div>
+  </div>
+
+  <div class="escena">
+    <p id="marcador" class="marcador nada">Sin eclipse</p>
+
+    <p class="rotulo-vista">Vista desde arriba</p>
+    <div class="lienzo" id="lienzo-arriba"></div>
+
+    <p class="rotulo-vista">Vista de canto, desde el borde del plano</p>
+    <div class="lienzo" id="lienzo-canto"></div>
+    <p class="aviso-escala">La vista de canto es la que revela si la Luna pasa por encima o por debajo de la línea que une el Sol con la Tierra.</p>
+  </div>
+
+</div>
+
+<div class="lectura" aria-live="polite">
+  <h2>Lectura de la simulación</h2>
+  <p id="lectura-texto"></p>
+</div>
+
+<div class="dos">
+  <div class="tarjeta">
+    <h2>Por qué no hay eclipse todos los meses</h2>
+    <p>La órbita de la Luna está <strong>inclinada unos cinco grados</strong> respecto del plano en que la Tierra gira alrededor del Sol. Cinco grados parecen poca cosa, pero a la distancia a la que está la Luna bastan para que su sombra pase muy por encima o muy por debajo de la Tierra la mayoría de los meses.</p>
+    <p>Solo hay eclipse cuando la luna nueva o la luna llena coinciden con uno de los dos puntos en que la órbita de la Luna cruza el plano de la órbita terrestre. A esos dos puntos se les llama <strong>nodos</strong>, y esa coincidencia se da unas cuatro o cinco veces al año, no doce.</p>
+    <div class="caja-tip">
+      <p><strong>Nota sobre el dibujo:</strong> aquí la inclinación está exagerada hasta unos quince grados. Con los cinco grados reales, en pantalla el desvío sería de dos o tres píxeles y no se vería nada. La idea que hay que retener es la relación, no el número.</p>
+    </div>
+  </div>
+
+  <div class="tarjeta">
+    <h2>Los dos eclipses</h2>
+    <div class="tabla-wrap">
+      <table class="datos">
+        <caption>Diferencias entre el eclipse solar y el eclipse lunar: qué se coloca en medio, en qué fase ocurre y quién puede verlo.</caption>
+        <thead>
+          <tr><th scope="col">Eclipse</th><th scope="col">Quién está en medio</th><th scope="col">Fase lunar</th><th scope="col">Quién lo ve</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Solar</th><td>La Luna, entre el Sol y la Tierra</td><td>Luna nueva</td><td>Solo una franja estrecha de la Tierra, unos minutos</td></tr>
+          <tr><th scope="row">Lunar</th><td>La Tierra, entre el Sol y la Luna</td><td>Luna llena</td><td>Todo el hemisferio nocturno, durante horas</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="ayuda">De ahí sale la pregunta con trampa del examen: el eclipse lunar parece más raro porque se habla menos de él, pero en realidad es el que más gente ve, porque la sombra de la Tierra es enorme comparada con la de la Luna.</p>
+  </div>
+</div>
+
+<div class="tarjeta">
+  <h2>Preguntas rápidas</h2>
+
+  <div class="pregunta" data-p="1" data-ok="b">
+    <p class="enunciado">1. Durante un eclipse solar, ¿qué cuerpo está en medio?</p>
+    <div class="fila-botones">
+      <button type="button" class="secundario" data-op="a">La Tierra</button>
+      <button type="button" class="secundario" data-op="b">La Luna</button>
+      <button type="button" class="secundario" data-op="c">El Sol</button>
+    </div>
+    <div class="retro" id="r1"></div>
+  </div>
+
+  <div class="pregunta" data-p="2" data-ok="c">
+    <p class="enunciado">2. ¿En qué fase lunar puede ocurrir un eclipse lunar?</p>
+    <div class="fila-botones">
+      <button type="button" class="secundario" data-op="a">Luna nueva</button>
+      <button type="button" class="secundario" data-op="b">Cuarto creciente</button>
+      <button type="button" class="secundario" data-op="c">Luna llena</button>
+    </div>
+    <div class="retro" id="r2"></div>
+  </div>
+
+  <div class="pregunta" data-p="3" data-ok="a">
+    <p class="enunciado">3. ¿Por qué no hay un eclipse cada mes, si la Luna completa una vuelta cada mes?</p>
+    <div class="fila-botones">
+      <button type="button" class="secundario" data-op="a">Porque su órbita está inclinada y casi siempre pasa por encima o por debajo</button>
+      <button type="button" class="secundario" data-op="b">Porque la Luna se aleja demasiado</button>
+      <button type="button" class="secundario" data-op="c">Porque el Sol cambia de posición</button>
+    </div>
+    <div class="retro" id="r3"></div>
+  </div>
+
+  <div class="pregunta" data-p="4" data-ok="b">
+    <p class="enunciado">4. Un eclipse lunar lo ve mucha más gente que uno solar. ¿Por qué?</p>
+    <div class="fila-botones">
+      <button type="button" class="secundario" data-op="a">Porque dura años</button>
+      <button type="button" class="secundario" data-op="b">Porque la sombra de la Tierra es enorme y cubre todo el hemisferio nocturno</button>
+      <button type="button" class="secundario" data-op="c">Porque ocurre con más frecuencia que el solar</button>
+    </div>
+    <div class="retro" id="r4"></div>
+  </div>
+
+  <div class="pregunta" data-p="6" data-ok="b">
+    <p class="enunciado">6. En este simulador el Sol y la Tierra aparecen quietos. ¿Qué conclusión es correcta?</p>
+    <div class="fila-botones">
+      <button type="button" class="secundario" data-op="a">Que el Sol y la Tierra no se mueven</button>
+      <button type="button" class="secundario" data-op="b">Que el modelo los fija para mostrar mejor el movimiento relativo de la Luna</button>
+      <button type="button" class="secundario" data-op="c">Que el modelo tiene un error</button>
+    </div>
+    <div class="retro" id="r6"></div>
+  </div>
+
+  <div class="pregunta" data-p="5" data-ok="c">
+    <p class="enunciado">5. ¿Cómo se llaman los dos puntos en que la órbita de la Luna cruza el plano de la órbita terrestre?</p>
+    <div class="fila-botones">
+      <button type="button" class="secundario" data-op="a">Polos</button>
+      <button type="button" class="secundario" data-op="b">Cuadraturas</button>
+      <button type="button" class="secundario" data-op="c">Nodos</button>
+    </div>
+    <div class="retro" id="r5"></div>
+  </div>
+</div>
+
+<footer class="pie">
+  <p>Eclipses: la geometría Sol, Tierra y Luna · Lección 7.3 · Spanish ASE Science · 96 horas</p>
+  <p>José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago</p>
+  <p>© 2026. Esta obra está licenciada bajo <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" rel="license">Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0 Internacional (CC BY-NC-SA 4.0)</a>.</p>
+</footer>
+
+</div>
+<script>
+"use strict";
+
+/* ── Geometría del sistema ─────────────────────────────────────────────── */
+var SOL_X = 78, SOL_Y = 172, SOL_R = 46;
+var TIERRA_X = 452, TIERRA_Y = 172, TIERRA_R = 24;
+var ORBITA = 118, LUNA_R = 10;
+var INCLINACION = 15 * Math.PI / 180;   /* exagerada; en la realidad son unos 5° */
+var UMBRAL_SOLAR = 15, UMBRAL_LUNAR = 30;
+
+var theta = 0;          /* posición de la Luna en su órbita, en radianes */
+var nodo = 1.5;         /* orientación de la línea de nodos: de partida, sin alineación */
+var inclinada = true;   /* así es la realidad: la órbita lunar está inclinada */
+var animando = false;
+var velocidades = [0.004, 0.012, 0.03];
+var etiquetasVel = ["lenta", "normal", "rápida"];
+var nivelVel = 1;
+var raf = null;
+
+/* Posición de la Luna respecto de la Tierra, en el marco de la eclíptica.
+   El Sol queda en la dirección −X. */
+function posicionLuna(th){
+  var i = inclinada ? INCLINACION : 0;
+  var fi = th - nodo;
+  var ci = Math.cos(i);
+  return {
+    x: ORBITA * (Math.cos(nodo)*Math.cos(fi) - Math.sin(nodo)*Math.sin(fi)*ci),
+    y: ORBITA * (Math.sin(nodo)*Math.cos(fi) + Math.cos(nodo)*Math.sin(fi)*ci),
+    z: ORBITA * Math.sin(fi) * Math.sin(i)
+  };
+}
+
+function desvioEje(p){ return Math.sqrt(p.y*p.y + p.z*p.z); }
+
+function tipoEclipse(p){
+  var d = desvioEje(p);
+  if (p.x < 0 && d < UMBRAL_SOLAR) return "solar";
+  if (p.x > 0 && d < UMBRAL_LUNAR) return "lunar";
+  return null;
+}
+
+function fase(p){
+  if (p.x < -ORBITA*0.55) return "Luna nueva";
+  if (p.x >  ORBITA*0.55) return "Luna llena";
+  return p.y < 0 ? "Cuarto creciente" : "Cuarto menguante";
+}
+
+/* ── Vista desde arriba ────────────────────────────────────────────────── */
+function vistaArriba(p){
+  var mx = TIERRA_X + p.x, my = TIERRA_Y + p.y, s = "";
+
+  s += '<rect x="0" y="0" width="720" height="344" fill="#0d1b2a"></rect>';
+  for (var k = 0; k < 34; k++){
+    var ex = (k*97 + 31) % 700 + 10, ey = (k*61 + 17) % 320 + 12;
+    s += '<circle cx="' + ex + '" cy="' + ey + '" r="1.2" fill="#ffffff" opacity="0.55"></circle>';
+  }
+
+  /* Sombra de la Tierra, siempre hacia el lado opuesto al Sol */
+  s += '<path d="M' + TIERRA_X + ',' + (TIERRA_Y-TIERRA_R) + ' L720,' + (TIERRA_Y-34) +
+       ' L720,' + (TIERRA_Y+34) + ' L' + TIERRA_X + ',' + (TIERRA_Y+TIERRA_R) + ' Z" fill="#000000" opacity="0.62"></path>';
+
+  /* Órbita lunar */
+  s += '<circle cx="' + TIERRA_X + '" cy="' + TIERRA_Y + '" r="' + ORBITA +
+       '" fill="none" stroke="#7e57c2" stroke-width="2" stroke-dasharray="6,7" opacity="0.8"></circle>';
+
+  /* Eje Sol-Tierra */
+  s += '<line x1="' + (SOL_X+SOL_R) + '" y1="' + SOL_Y + '" x2="716" y2="' + TIERRA_Y +
+       '" stroke="#ffd54f" stroke-width="1.5" stroke-dasharray="5,6" opacity="0.55"></line>';
+
+  /* Sombra de la Luna, en la dirección Sol → Luna */
+  var dx = mx - SOL_X, dy = my - SOL_Y, L = Math.sqrt(dx*dx + dy*dy);
+  var ux = dx/L, uy = dy/L, px = -uy, py = ux;
+  var largo = 150;
+  s += '<path d="M' + (mx + px*LUNA_R) + ',' + (my + py*LUNA_R) +
+       ' L' + (mx + ux*largo + px*2) + ',' + (my + uy*largo + py*2) +
+       ' L' + (mx + ux*largo - px*2) + ',' + (my + uy*largo - py*2) +
+       ' L' + (mx - px*LUNA_R) + ',' + (my - py*LUNA_R) + ' Z" fill="#000000" opacity="0.55"></path>';
+
+  /* Sol */
+  s += '<circle cx="' + SOL_X + '" cy="' + SOL_Y + '" r="' + (SOL_R+9) + '" fill="#ffd54f" opacity="0.22"></circle>';
+  s += '<circle cx="' + SOL_X + '" cy="' + SOL_Y + '" r="' + SOL_R + '" fill="#ffca28" stroke="#f57f17" stroke-width="3"></circle>';
+  s += '<text x="' + SOL_X + '" y="' + (SOL_Y+SOL_R+24) + '" text-anchor="middle" font-size="14" font-weight="700" fill="#ffe082">Sol</text>';
+
+  /* Tierra */
+  s += '<circle cx="' + TIERRA_X + '" cy="' + TIERRA_Y + '" r="' + TIERRA_R + '" fill="#42a5f5" stroke="#1565c0" stroke-width="3"></circle>';
+  s += '<text x="' + TIERRA_X + '" y="' + (TIERRA_Y+TIERRA_R+24) + '" text-anchor="middle" font-size="14" font-weight="700" fill="#90caf9">Tierra</text>';
+
+  /* Luna */
+  s += '<circle cx="' + mx.toFixed(1) + '" cy="' + my.toFixed(1) + '" r="' + LUNA_R +
+       '" fill="#eceff1" stroke="#90a4ae" stroke-width="2"></circle>';
+  s += '<text x="' + mx.toFixed(1) + '" y="' + (my-LUNA_R-9).toFixed(1) + '" text-anchor="middle" font-size="13" font-weight="700" fill="#eceff1">Luna</text>';
+
+  s += '<text x="12" y="20" font-size="12" fill="#b0bec5">Tamaños y distancias sin escala. El Sol y la Tierra se dibujan quietos para ver el movimiento relativo de la Luna.</text>';
+  return s;
+}
+
+/* ── Vista de canto ────────────────────────────────────────────────────── */
+function vistaCanto(p){
+  var mx = TIERRA_X + p.x, mz = 86 - p.z*1.5, s = "";
+
+  s += '<rect x="0" y="0" width="720" height="172" fill="#0d1b2a"></rect>';
+  s += '<line x1="20" y1="86" x2="712" y2="86" stroke="#ffd54f" stroke-width="2" stroke-dasharray="7,7" opacity="0.75"></line>';
+  s += '<text x="24" y="78" font-size="12" fill="#ffe082">Plano de la órbita de la Tierra</text>';
+
+  s += '<circle cx="' + SOL_X + '" cy="86" r="30" fill="#ffca28" stroke="#f57f17" stroke-width="3"></circle>';
+  s += '<text x="' + SOL_X + '" y="140" text-anchor="middle" font-size="13" font-weight="700" fill="#ffe082">Sol</text>';
+  s += '<circle cx="' + TIERRA_X + '" cy="86" r="18" fill="#42a5f5" stroke="#1565c0" stroke-width="3"></circle>';
+  s += '<text x="' + TIERRA_X + '" y="130" text-anchor="middle" font-size="13" font-weight="700" fill="#90caf9">Tierra</text>';
+
+  s += '<line x1="' + mx.toFixed(1) + '" y1="86" x2="' + mx.toFixed(1) + '" y2="' + mz.toFixed(1) +
+       '" stroke="#b39ddb" stroke-width="1.5" stroke-dasharray="3,4"></line>';
+  s += '<circle cx="' + mx.toFixed(1) + '" cy="' + mz.toFixed(1) + '" r="9" fill="#eceff1" stroke="#90a4ae" stroke-width="2"></circle>';
+  s += '<text x="' + mx.toFixed(1) + '" y="' + (mz-14).toFixed(1) + '" text-anchor="middle" font-size="12" font-weight="700" fill="#eceff1">Luna</text>';
+
+  if (Math.abs(p.z) > 3){
+    s += '<text x="' + (mx+16).toFixed(1) + '" y="' + ((86+mz)/2).toFixed(1) +
+         '" font-size="12" fill="#b39ddb">' + (p.z > 0 ? "por debajo" : "por encima") + " del plano</text>";
+  }
+  return s;
+}
+
+/* ── Pintado y lectura ─────────────────────────────────────────────────── */
+function grados(){ var g = theta*180/Math.PI % 360; return g < 0 ? g + 360 : g; }
+
+function pintar(){
+  var p = posicionLuna(theta), tipo = tipoEclipse(p), d = desvioEje(p);
+
+  document.getElementById("lienzo-arriba").innerHTML =
+    '<svg class="vista" viewBox="0 0 720 344" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' +
+    "Vista desde arriba del sistema Sol, Tierra y Luna. " + resumen(p, tipo) + '">' + vistaArriba(p) + "</svg>";
+
+  document.getElementById("lienzo-canto").innerHTML =
+    '<svg class="vista" viewBox="0 0 720 172" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' +
+    "Vista de canto. " + (inclinada
+      ? "La órbita de la Luna está inclinada, de modo que la Luna se sitúa " +
+        (Math.abs(p.z) < 3 ? "prácticamente sobre el plano." : (p.z > 0 ? "por debajo del plano." : "por encima del plano."))
+      : "La órbita de la Luna no está inclinada: la Luna se mueve siempre sobre el plano.") +
+    '">' + vistaCanto(p) + "</svg>";
+
+  var m = document.getElementById("marcador");
+  m.className = "marcador " + (tipo === "solar" ? "solar" : (tipo === "lunar" ? "lunar" : "nada"));
+  m.textContent = tipo === "solar" ? "¡Eclipse solar!" : (tipo === "lunar" ? "¡Eclipse lunar!" : "Sin eclipse");
+
+  document.getElementById("v-angulo").textContent = grados().toFixed(0);
+  document.getElementById("d-fase").textContent = fase(p);
+  document.getElementById("d-desvio").textContent = d.toFixed(0) + " px";
+  document.getElementById("lectura-texto").textContent = resumen(p, tipo);
+}
+
+function resumen(p, tipo){
+  var f = fase(p), d = desvioEje(p);
+  var base = "La Luna está a " + grados().toFixed(0) + " grados de su órbita, en " + f.toLowerCase() + ". ";
+
+  if (tipo === "solar"){
+    return base + "La Luna se ha colocado justo entre el Sol y la Tierra y su sombra alcanza nuestro planeta: hay eclipse solar. " +
+      "Solo lo verá la franja estrecha de la Tierra sobre la que cae esa sombra, y durante unos pocos minutos.";
+  }
+  if (tipo === "lunar"){
+    return base + "La Tierra se ha colocado justo entre el Sol y la Luna, y la Luna ha entrado en la sombra terrestre: hay eclipse lunar. " +
+      "Lo verá todo el hemisferio de la Tierra donde sea de noche, y durante horas.";
+  }
+  if (f === "Luna nueva"){
+    return base + "Está en el lado del Sol, que es la posición en que podría haber eclipse solar, pero " +
+      (inclinada ? "su órbita inclinada la mantiene " + (Math.abs(p.z) < 6 ? "algo apartada" : (p.z > 0 ? "por debajo" : "por encima")) +
+        " del eje que une el Sol con la Tierra, así que su sombra pasa de largo y no toca la Tierra."
+        : "no está bastante alineada todavía; sigue moviendo el deslizador.");
+  }
+  if (f === "Luna llena"){
+    return base + "Está en el lado opuesto al Sol, que es la posición en que podría haber eclipse lunar, pero " +
+      (inclinada ? "su órbita inclinada la mantiene " + (Math.abs(p.z) < 6 ? "algo apartada" : (p.z > 0 ? "por debajo" : "por encima")) +
+        " del eje, de modo que se libra de la sombra de la Tierra."
+        : "todavía no ha entrado en el cono de sombra; sigue moviendo el deslizador.");
+  }
+  return base + "En esta posición no puede haber eclipse de ningún tipo: la Luna está a un lado, no entre los tres cuerpos alineados. " +
+    "Los eclipses solo son posibles en luna nueva, para los solares, y en luna llena, para los lunares.";
+}
+
+/* ── Animación ─────────────────────────────────────────────────────────── */
+function paso(){
+  theta += velocidades[nivelVel];
+  if (inclinada) nodo += velocidades[nivelVel] * 0.12;
+  pintar();
+  if (animando) raf = requestAnimationFrame(paso);
+}
+
+function arrancar(){ if (!raf && animando) raf = requestAnimationFrame(paso); }
+function detener(){ if (raf){ cancelAnimationFrame(raf); raf = null; } }
+
+/* ── Controles ─────────────────────────────────────────────────────────── */
+var sAng = document.getElementById("angulo");
+sAng.addEventListener("input", function(){
+  theta = Number(this.value) * Math.PI / 180;
+  pintar();
+});
+
+var btnPlay = document.getElementById("btn-play");
+btnPlay.addEventListener("click", function(){
+  animando = !animando;
+  btnPlay.textContent = animando ? "Pausar" : "Reproducir";
+  if (animando) arrancar(); else { detener(); sAng.value = grados().toFixed(0); }
+});
+
+document.getElementById("btn-velocidad").addEventListener("click", function(){
+  nivelVel = (nivelVel + 1) % 3;
+  this.textContent = "Velocidad: " + etiquetasVel[nivelVel];
+});
+
+document.getElementById("btn-inclinacion").addEventListener("click", function(){
+  inclinada = !inclinada;
+  this.setAttribute("aria-pressed", inclinada ? "true" : "false");
+  this.textContent = inclinada ? "Activada" : "Desactivada";
+  document.getElementById("ayuda-inclinacion").textContent = inclinada
+    ? "Con la inclinación activada, la Luna casi siempre pasa por encima o por debajo del eje y no hay eclipse. Es lo que ocurre de verdad: solo hay eclipse cuando la luna nueva o la llena coinciden con un nodo."
+    : "Con la inclinación desactivada, la órbita de la Luna está en el mismo plano que la de la Tierra y hay eclipse en cada vuelta. No es lo que ocurre en la realidad.";
+  pintar();
+});
+
+document.getElementById("btn-buscar").addEventListener("click", function(){
+  var t = theta, nodoOrig = nodo, i, p, encontrado = false;
+  for (i = 0; i < 20000; i++){
+    t += 0.004;
+    if (inclinada) nodo += 0.004 * 0.12;   /* la órbita también precesa */
+    p = posicionLuna(t);
+    if (tipoEclipse(p)){ encontrado = true; break; }
+  }
+  if (encontrado){
+    theta = t;
+    sAng.value = grados().toFixed(0);
+    pintar();
+  } else {
+    nodo = nodoOrig;
+    document.getElementById("lectura-texto").textContent =
+      "Con la línea de nodos donde está ahora, la Luna no llega a alinearse. Pulsa reproducir: la órbita gira poco a poco y acabará habiendo eclipse. Eso es exactamente lo que ocurre en la realidad, y por eso los eclipses vienen en temporadas.";
+  }
+});
+
+document.getElementById("btn-reiniciar").addEventListener("click", function(){
+  theta = 0; nodo = 1.5; animando = false; nivelVel = 1; inclinada = true;
+  detener();
+  var bi = document.getElementById("btn-inclinacion");
+  bi.setAttribute("aria-pressed", "true");
+  bi.textContent = "Activada";
+  btnPlay.textContent = "Reproducir";
+  document.getElementById("btn-velocidad").textContent = "Velocidad: normal";
+  sAng.value = 0;
+  pintar();
+});
+
+/* ── Preguntas rápidas ─────────────────────────────────────────────────── */
+var RETRO = {
+  "1a":"Todavía no. La Tierra en medio produce un eclipse lunar, no uno solar.",
+  "1b":"Correcto. La Luna se interpone y tapa el Sol para una franja de la Tierra.",
+  "1c":"Todavía no. El Sol es la fuente de luz; nunca está en medio.",
+  "2a":"Todavía no. En luna nueva la Luna está del lado del Sol: ahí lo que puede ocurrir es un eclipse solar.",
+  "2b":"Todavía no. En los cuartos, la Luna está a un lado y no puede alinearse con los otros dos cuerpos.",
+  "2c":"Correcto. Solo en luna llena la Tierra queda entre el Sol y la Luna, y puede proyectarle su sombra.",
+  "3a":"Correcto. Los cinco grados de inclinación bastan para que la sombra pase de largo casi todos los meses.",
+  "3b":"Todavía no. La distancia varía un poco, pero no es lo que impide los eclipses.",
+  "3c":"Todavía no. Lo que gira es la Tierra alrededor del Sol; el problema es la inclinación de la órbita lunar.",
+  "4a":"Todavía no. Un eclipse lunar dura unas horas, no años.",
+  "4b":"Correcto. La sombra de la Tierra es mucho mayor que la de la Luna, así que cubre a la vez todo el hemisferio nocturno.",
+  "4c":"Todavía no. Ocurren con frecuencia parecida; lo que cambia es cuánta gente puede verlos.",
+  "5a":"Todavía no. Los polos son los extremos del eje de rotación de un cuerpo.",
+  "5b":"Todavía no. Las cuadraturas son las posiciones de los cuartos lunares.",
+  "5c":"Correcto. Los nodos son los dos puntos de cruce, y solo allí es posible un eclipse.",
+  "6a":"Todavía no. La Tierra orbita el Sol a unos treinta kilómetros por segundo, y el Sol se desplaza por la galaxia. Lo que ves es una simplificación, no la realidad.",
+  "6b":"Correcto. Un modelo congela lo que no se está estudiando para dejar ver con claridad lo que sí. Saber detectar esas simplificaciones forma parte del razonamiento científico que evalúa el examen.",
+  "6c":"Todavía no. No es un error, sino una simplificación deliberada y declarada. Un error sería no advertirla."
+};
+
+(function(){
+  var preguntas = document.querySelectorAll(".pregunta"), i, j;
+  for (i = 0; i < preguntas.length; i++){
+    (function(bloque){
+      var n = bloque.getAttribute("data-p"), ok = bloque.getAttribute("data-ok");
+      var ops = bloque.querySelectorAll("button[data-op]");
+      for (j = 0; j < ops.length; j++){
+        ops[j].addEventListener("click", function(){
+          var op = this.getAttribute("data-op");
+          document.getElementById("r" + n).innerHTML =
+            '<div class="' + (op === ok ? "caja-ok" : "caja-mal") + '"><p>' + RETRO[n + op] + "</p></div>";
+        });
+      }
+    })(preguntas[i]);
+  }
+})();
+
+if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+  nivelVel = 0;
+  document.getElementById("btn-velocidad").textContent = "Velocidad: lenta";
+}
+
+pintar();
+</script>
+</body>
+</html>

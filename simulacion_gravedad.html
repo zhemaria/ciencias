@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulación: Campo Gravitatorio Tierra-Luna</title>
+    <style>
+        body { 
+            margin: 0; 
+            overflow: hidden; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #0b0b1a; 
+            color: #333;
+        }
+        #ui-container { 
+            position: absolute; 
+            top: 20px; 
+            left: 20px; 
+            background: rgba(255, 255, 255, 0.95); 
+            padding: 20px; 
+            border-radius: 12px; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.5); 
+            width: 350px; 
+            max-height: 90vh; 
+            overflow-y: auto;
+            backdrop-filter: blur(5px);
+        }
+        h2 { margin-top: 0; font-size: 1.3rem; color: #1a1a1a; margin-bottom: 10px; }
+        .disclaimer { 
+            font-size: 0.8rem; 
+            background: #fff3cd; 
+            color: #856404; 
+            padding: 10px; 
+            border-left: 4px solid #ffeeba; 
+            border-radius: 4px;
+            margin-bottom: 15px; 
+        }
+        .info-box {
+            font-size: 0.85rem;
+            background: #e2e8f0;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            color: #2d3748;
+            line-height: 1.4;
+        }
+        .legend-color {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
+        .control-group { margin-bottom: 15px; }
+        label { 
+            display: block; 
+            margin-bottom: 5px; 
+            font-weight: 600; 
+            font-size: 0.9rem; 
+            color: #444; 
+        }
+        input[type="range"] { 
+            width: 100%; 
+            cursor: pointer;
+        }
+        .value-display { 
+            font-size: 0.9rem; 
+            color: #0056b3; 
+            float: right;
+            font-weight: bold;
+        }
+        .btn-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        button { 
+            background: #2b6cb0; 
+            color: white; 
+            border: none; 
+            padding: 8px 12px; 
+            border-radius: 6px; 
+            cursor: pointer; 
+            font-size: 0.85rem; 
+            flex: 1;
+            transition: background 0.2s;
+            font-weight: 600;
+        }
+        button:hover { background: #2c5282; }
+        #btn-reset {
+            background: #e53e3e;
+            width: 100%;
+            margin-top: 5px;
+        }
+        #btn-reset:hover { background: #c53030; }
+        
+        .checkbox-container {
+            display: flex;
+            align-items: center;
+            background: #ebf8fa;
+            padding: 10px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            border: 1px solid #b2ebf2;
+        }
+        .checkbox-container input {
+            margin-right: 10px;
+            transform: scale(1.2);
+            cursor: pointer;
+        }
+        
+        #probe-panel { 
+            margin-top: 10px; 
+            padding: 12px; 
+            background: #fff; 
+            border-radius: 8px; 
+            border: 2px solid #90cdf4; 
+            display: none; 
+            text-align: center;
+        }
+        #probe-value { 
+            font-size: 1.8rem; 
+            font-weight: bold; 
+            color: #2b6cb0; 
+            margin-top: 5px;
+            font-family: monospace;
+        }
+        
+        hr { border: 0; border-top: 1px solid #cbd5e0; margin: 15px 0; }
+        
+        .instructions {
+            font-size: 0.75rem;
+            color: #718096;
+            margin-top: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div id="ui-container">
+        <h2>Campo Gravitatorio</h2>
+        
+        <div class="info-box">
+            <div><span class="legend-color" style="background: linear-gradient(to right, #4299e1, #f56565);"></span> <strong>Vectores:</strong> Dirección de la fuerza <em>neta</em> (Tierra + Luna).<br>El color indica intensidad (rojo = fuerte, azul = débil).</div>
+            <div style="margin-top: 5px;"><span class="legend-color" style="background: #48bb78;"></span> <strong>Punto Neutro (L1):</strong> Zona donde la gravedad de ambos cuerpos se cancela exactamente (gravedad neta = 0).</div>
+        </div>
+        
+        <div class="disclaimer">
+            <strong>Escala didáctica:</strong> tamaños y distancias no proporcionales.
+        </div>
+        
+        <div class="control-group">
+            <label for="moon-mass">Masa de la Luna (relativa a Tierra): <span id="moon-mass-val" class="value-display">0.012</span></label>
+            <input type="range" id="moon-mass" min="0" max="0.5" step="0.005" value="0.012">
+        </div>
+        
+        <div class="control-group">
+            <label for="distance">Distancia Tierra - Luna: <span id="distance-val" class="value-display">40</span></label>
+            <input type="range" id="distance" min="20" max="70" step="1" value="40">
+        </div>
+        
+        <label class="checkbox-container">
+            <input type="checkbox" id="show-probe">
+            <span style="font-weight:600; font-size:0.9rem; color:#2d3748;">Activar sensor (punto amarillo)</span>
+        </label>
+        
+        <div id="probe-panel">
+            <div style="font-size: 0.9rem; color: #4a5568;">Intensidad del campo (g):</div>
+            <div id="probe-value">0.00 m/s²</div>
+            <div style="font-size: 0.75rem; color: #718096; margin-top: 5px;">Arrastra el sensor por la escena</div>
+        </div>
+        
+        <hr>
+        
+        <div class="control-group">
+            <label>Cámara y Vista:</label>
+            <div class="btn-row">
+                <button id="btn-zoomin">Acercar</button>
+                <button id="btn-zoomout">Alejar</button>
+            </div>
+            <button id="btn-center" style="width: 100%; margin-bottom: 10px; background: #4a5568;">Centrar Vista</button>
+            <button id="btn-reset">Restablecer Iniciales</button>
+        </div>
+        
+        <div class="instructions">
+            🖱️ Clic izq: Rotar | 🖱️ Clic der: Mover | 📜 Rueda: Zoom
+        </div>
+    </div>
+
+    <!-- Bibliotecas 3D -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    
+    <script>
+        // --- CONSTANTES Y CONFIGURACIÓN ---
+        const G_ME = 980; // Constante G * Masa Tierra
+        const R_EARTH = 10;
+        const R_MOON = 3;
+        
+        // Estado
+        let moonMassRatio = 0.012;
+        let distance = 40;
+        let showProbe = false;
+        
+        // Elementos DOM
+        const moonMassSlider = document.getElementById('moon-mass');
+        const distanceSlider = document.getElementById('distance');
+        const moonMassVal = document.getElementById('moon-mass-val');
+        const distanceVal = document.getElementById('distance-val');
+        const showProbeCheck = document.getElementById('show-probe');
+        const probePanel = document.getElementById('probe-panel');
+        const probeValueDisplay = document.getElementById('probe-value');
+        
+        // --- CONFIGURACIÓN DE ESCENA 3D ---
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0a0a14);
+        
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1500);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        document.body.appendChild(renderer.domElement);
+        
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        
+        // Luces
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+        scene.add(ambientLight);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        dirLight.position.set(20, 50, 50);
+        scene.add(dirLight);
+        
+        // Planetas (Mallas)
+        const earthGeo = new THREE.SphereGeometry(R_EARTH, 32, 32);
+        const earthMat = new THREE.MeshPhongMaterial({ color: 0x3182ce, shininess: 20 });
+        const earth = new THREE.Mesh(earthGeo, earthMat);
+        scene.add(earth);
+        
+        const moonGeo = new THREE.SphereGeometry(R_MOON, 32, 32);
+        const moonMat = new THREE.MeshPhongMaterial({ color: 0xa0aec0, shininess: 5 });
+        const moon = new THREE.Mesh(moonGeo, moonMat);
+        scene.add(moon);
+        
+        // Punto Neutro (Lagrange L1)
+        const l1Geo = new THREE.SphereGeometry(0.8, 16, 16);
+        const l1Mat = new THREE.MeshBasicMaterial({ color: 0x48bb78 });
+        const l1Marker = new THREE.Mesh(l1Geo, l1Mat);
+        scene.add(l1Marker);
+        
+        // Cuadrícula y Líneas de Campo (Vectores)
+        const arrows = [];
+        const arrowSpacing = 2.5; // Más denso para visualizar las curvas del campo
+        const gridLimitXMin = -20;
+        const gridLimitXMax = 70;
+        const gridLimitZ = 35;
+        
+        function initField() {
+            // Limpiar anteriores si los hubiera
+            arrows.forEach(a => scene.remove(a));
+            arrows.length = 0;
+            
+            for(let x = gridLimitXMin; x <= gridLimitXMax; x += arrowSpacing) {
+                for(let z = -gridLimitZ; z <= gridLimitZ; z += arrowSpacing) {
+                    const dir = new THREE.Vector3(1,0,0);
+                    const arrow = new THREE.ArrowHelper(dir, new THREE.Vector3(x, 0, z), 1, 0x00ffff, 0.6, 0.3);
+                    arrow.userData = { baseX: x, baseZ: z };
+                    scene.add(arrow);
+                    arrows.push(arrow);
+                }
+            }
+        }
+        
+        function calculateGravityAt(x, z) {
+            // Campo vectorial Tierra
+            const rE2 = x*x + z*z;
+            const gE_vec = new THREE.Vector3();
+            if(rE2 > 0) {
+                const gE_mag = G_ME / rE2;
+                gE_vec.set(-x, 0, -z).normalize().multiplyScalar(gE_mag);
+            }
+            
+            // Campo vectorial Luna
+            const dx = x - distance;
+            const dz = z;
+            const rM2 = dx*dx + dz*dz;
+            const gM_vec = new THREE.Vector3();
+            if(rM2 > 0) {
+                const gM_mag = (G_ME * moonMassRatio) / rM2;
+                gM_vec.set(-dx, 0, -dz).normalize().multiplyScalar(gM_mag);
+            }
+            
+            // Suma vectorial estricta (Superposición)
+            return gE_vec.add(gM_vec);
+        }
+        
+        function updateField() {
+            moon.position.set(distance, 0, 0);
+            
+            // Posicionar el Punto Neutro L1
+            // La fórmula para la posición L1 entre dos cuerpos: d / (1 + sqrt(M2/M1))
+            const l1_x = distance / (1 + Math.sqrt(moonMassRatio));
+            l1Marker.position.set(l1_x, 0, 0);
+            
+            arrows.forEach(arrow => {
+                const x = arrow.userData.baseX;
+                const z = arrow.userData.baseZ;
+                
+                // Ocultar si está dentro de los cuerpos
+                const distToEarth = Math.sqrt(x*x + z*z);
+                const distToMoon = Math.sqrt((x-distance)**2 + z*z);
+                
+                if (distToEarth < R_EARTH || distToMoon < R_MOON) {
+                    arrow.visible = false;
+                    return;
+                } else {
+                    arrow.visible = true;
+                }
+                
+                const gVec = calculateGravityAt(x, z);
+                const mag = gVec.length();
+                
+                if(mag > 0.001) {
+                    // Actualizar dirección
+                    arrow.setDirection(gVec.normalize());
+                    
+                    // Para visualizar los campos vectoriales donde la magnitud decae rápidamente (r^2),
+                    // es mejor usar una longitud de flecha uniforme y variar el color.
+                    // Esto revela el punto de anulación y las separatrices claramente.
+                    const visLength = arrowSpacing * 0.75; 
+                    
+                    // Color basado en logaritmo de la magnitud
+                    const logMag = Math.log10(mag + 1); // Rango típico 0 a ~2-3
+                    const intensity = Math.min(Math.max(logMag / 1.5, 0), 1);
+                    
+                    // HSL de 0.6 (azul/débil) a 0.0 (rojo/fuerte)
+                    const hue = (1.0 - intensity) * 0.6;
+                    const color = new THREE.Color().setHSL(hue, 1.0, 0.5);
+                    
+                    arrow.setColor(color);
+                    arrow.setLength(visLength, visLength*0.4, visLength*0.3);
+                } else {
+                    arrow.visible = false;
+                }
+            });
+            
+            updateProbeValue();
+        }
+        
+        // --- SENSOR DE MEDICIÓN (Sonda) ---
+        const probeGeo = new THREE.SphereGeometry(1.2, 32, 32);
+        const probeMat = new THREE.MeshBasicMaterial({ color: 0xf6e05e });
+        const probe = new THREE.Mesh(probeGeo, probeMat);
+        probe.position.set(distance / 2, 0, 10);
+        probe.visible = false;
+        scene.add(probe);
+        
+        // Aura brillante para el sensor
+        const probeAuraGeo = new THREE.SphereGeometry(1.8, 16, 16);
+        const probeAuraMat = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.5 });
+        const probeAura = new THREE.Mesh(probeAuraGeo, probeAuraMat);
+        probe.add(probeAura);
+        
+        // Plano invisible para arrastrar el sensor
+        const planeGeo = new THREE.PlaneGeometry(500, 500);
+        planeGeo.rotateX(-Math.PI / 2);
+        const planeMat = new THREE.MeshBasicMaterial({visible: false});
+        const interactPlane = new THREE.Mesh(planeGeo, planeMat);
+        scene.add(interactPlane);
+        
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+        let isDragging = false;
+        
+        function updateProbeValue() {
+            if(!showProbe) return;
+            const gVec = calculateGravityAt(probe.position.x, probe.position.z);
+            const mag = gVec.length();
+            probeValueDisplay.textContent = mag.toFixed(2) + " m/s²";
+        }
+        
+        // Eventos de ratón para el sensor
+        window.addEventListener('pointerdown', (e) => {
+            if(!showProbe || e.button !== 0) return;
+            if(e.target.closest('#ui-container')) return;
+            
+            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+            raycaster.setFromCamera(mouse, camera);
+            
+            const intersects = raycaster.intersectObject(probe);
+            if(intersects.length > 0) {
+                isDragging = true;
+                controls.enabled = false;
+            } else {
+                const planeIntersects = raycaster.intersectObject(interactPlane);
+                if(planeIntersects.length > 0) {
+                    probe.position.copy(planeIntersects[0].point);
+                    updateProbeValue();
+                }
+            }
+        });
+        
+        window.addEventListener('pointermove', (e) => {
+            if(!isDragging) return;
+            mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObject(interactPlane);
+            if(intersects.length > 0) {
+                probe.position.copy(intersects[0].point);
+                updateProbeValue();
+            }
+        });
+        
+        window.addEventListener('pointerup', () => {
+            isDragging = false;
+            controls.enabled = true;
+        });
+        
+        // --- EVENTOS DE UI ---
+        moonMassSlider.addEventListener('input', (e) => {
+            moonMassRatio = parseFloat(e.target.value);
+            moonMassVal.textContent = moonMassRatio.toFixed(3);
+            updateField();
+        });
+        
+        distanceSlider.addEventListener('input', (e) => {
+            distance = parseFloat(e.target.value);
+            distanceVal.textContent = distance;
+            updateField();
+        });
+        
+        showProbeCheck.addEventListener('change', (e) => {
+            showProbe = e.target.checked;
+            probe.visible = showProbe;
+            probePanel.style.display = showProbe ? 'block' : 'none';
+            if(showProbe) updateProbeValue();
+        });
+        
+        // --- CONTROL DE CÁMARA ---
+        function centerView() {
+            const midX = distance / 2;
+            controls.target.set(midX, 0, 0);
+            
+            const fov = camera.fov * (Math.PI / 180);
+            const w = distance + R_EARTH + R_MOON + 20; 
+            const distToFit = (w / 2) / Math.tan(fov / 2);
+            
+            // Posición cenital ligeramente inclinada
+            camera.position.set(midX, distToFit * 0.8, distToFit * 0.4);
+            controls.update();
+        }
+        
+        document.getElementById('btn-center').addEventListener('click', centerView);
+        document.getElementById('btn-zoomin').addEventListener('click', () => {
+            camera.position.lerp(controls.target, 0.2);
+            controls.update();
+        });
+        document.getElementById('btn-zoomout').addEventListener('click', () => {
+            camera.position.lerp(controls.target, -0.25);
+            controls.update();
+        });
+        
+        document.getElementById('btn-reset').addEventListener('click', () => {
+            moonMassSlider.value = 0.012;
+            distanceSlider.value = 40;
+            moonMassSlider.dispatchEvent(new Event('input'));
+            distanceSlider.dispatchEvent(new Event('input'));
+            showProbeCheck.checked = false;
+            showProbeCheck.dispatchEvent(new Event('change'));
+            centerView();
+        });
+        
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+        
+        // --- INICIALIZACIÓN ---
+        initField();
+        updateField();
+        setTimeout(centerView, 100);
+        
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        animate();
+    </script>
+</body>
+</html>

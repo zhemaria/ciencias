@@ -1,0 +1,700 @@
+<!doctype html>
+<!--
+  El átomo, la tabla periódica y los enlaces (Lección 5.1) · Spanish ASE Science
+  © 2026 José M. Fernández, ABE/ASE Math Master Teacher,
+  Harry S. Truman College — City Colleges of Chicago.
+  Licencia: Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0
+  Internacional (CC BY-NC-SA 4.0) — https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El átomo, la tabla periódica y los enlaces</title>
+<meta name="description" content="Interactivo de estructura atómica: partículas subatómicas, tabla periódica de los veinte primeros elementos, modelos de Bohr, isótopos e iones, y predicción de enlaces.">
+<meta name="author" content="José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago">
+<meta name="license" content="CC BY-NC-SA 4.0">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
+<style>
+@charset "utf-8";
+/* ============================================================================
+   Estilos unificados de los interactivos · Spanish ASE Science
+   José M. Fernández, ABE/ASE Math Master Teacher,
+   Harry S. Truman College — City Colleges of Chicago
+   © 2026 · CC BY-NC-SA 4.0
+   https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+   ----------------------------------------------------------------------------
+   CÓMO SE USA
+   Este bloque se copia completo dentro de <style> en cada interactivo, para que
+   el archivo siga siendo autónomo. La clase de unidad va en el <body>:
+       <body class="u4">   → Unidad 4, verde oliva
+   Unidades: u1 verde azulado · u2 gris pizarra · u3 verde · u4 verde oliva
+             u5 rojo anaranjado · u6 azul índigo · u7 violeta · u8 azul
+   Todos los colores de acento cumplen 4,5:1 sobre blanco y admiten texto
+   blanco encima. El ámbar de los avisos usa #5c3900 (10,29:1).
+   ========================================================================== */
+
+/* ── 1. PALETA POR UNIDAD ──────────────────────────────────────────────── */
+:root{
+  --u:#37474f; --u2:#263238; --u-bg:#eceff1;   /* valor por defecto */
+  --texto:#222; --texto-sec:#555; --linea:#e0e0e0;
+  --pagina:#f5f7fa; --papel:#ffffff;
+  --amb:#5c3900; --amb-bg:#fff8e1; --amb-borde:#b45309;
+  --ok:#1b5e20; --ok-bg:#e8f5e9; --mal:#7f1d1d; --mal-bg:#fbe9e7;
+  --radio:12px; --sombra:0 2px 8px rgba(0,0,0,.07);
+}
+body.u1{--u:#00695c;--u2:#004d40;--u-bg:#e0f2f1;}
+body.u2{--u:#37474f;--u2:#263238;--u-bg:#eceff1;}
+body.u3{--u:#1b5e20;--u2:#0f3d13;--u-bg:#e8f5e9;}
+body.u4{--u:#33691e;--u2:#1f4211;--u-bg:#f1f8e9;}
+body.u5{--u:#bf360c;--u2:#8c2708;--u-bg:#fbe9e7;}
+body.u6{--u:#1e3a8a;--u2:#142a63;--u-bg:#e8eaf6;}
+body.u7{--u:#5b21b6;--u2:#40157f;--u-bg:#ede7f6;}
+body.u8{--u:#0d47a1;--u2:#093271;--u-bg:#e3f2fd;}
+
+/* ── 2. BASE ───────────────────────────────────────────────────────────── */
+*{box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;margin:0;background:var(--pagina);
+  color:var(--texto);line-height:1.55;font-size:16px;}
+.contenedor{max-width:1100px;margin:0 auto;padding:24px;}
+a{color:#0b3d91;}
+h1,h2,h3{line-height:1.3;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+:focus-visible{outline:3px solid var(--u);outline-offset:2px;}
+
+/* ── 3. ENCABEZADO DEL INTERACTIVO ─────────────────────────────────────── */
+header.principal{background:var(--u);background:linear-gradient(135deg,var(--u) 0%,var(--u2) 100%);
+  color:#fff;padding:28px 32px;border-radius:14px;margin-bottom:22px;box-shadow:var(--sombra);}
+header.principal h1{margin:0 0 6px;font-size:26px;font-weight:700;color:#fff;}
+header.principal .meta{font-size:14px;margin:4px 0 0;color:#fff;}
+
+/* ── 4. BLOQUES DE TEXTO ───────────────────────────────────────────────── */
+.tarjeta{background:var(--papel);padding:20px 24px;border-radius:10px;
+  border-left:5px solid var(--u);margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.tarjeta h2{margin-top:0;color:var(--u);font-size:20px;}
+.tarjeta h3{font-size:16px;color:#263238;margin:16px 0 6px;}
+.caja-tip{background:var(--amb-bg);border-left:4px solid var(--amb-borde);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;font-size:15px;}
+.caja-tip strong{color:var(--amb);}
+.caja-ok{background:var(--ok-bg);border-left:5px solid var(--ok);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;}
+.caja-ok strong{color:var(--ok);}
+.caja-mal{background:var(--mal-bg);border-left:5px solid var(--mal);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;}
+.caja-mal strong{color:var(--mal);}
+
+/* ── 5. PANEL DE CONTROLES ─────────────────────────────────────────────── */
+.panel{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:18px 22px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.panel h2{margin:0 0 12px;font-size:18px;color:var(--u);}
+.control{margin-bottom:16px;}
+.control > label{display:block;font-weight:600;font-size:15px;color:#263238;margin-bottom:6px;}
+.control .valor{float:right;font-weight:700;color:var(--u);font-variant-numeric:tabular-nums;}
+.control input[type=range]{width:100%;accent-color:var(--u);height:26px;}
+.control select,.control input[type=number],.control input[type=text]{
+  font-family:inherit;font-size:16px;padding:9px 14px;border-radius:8px;
+  border:1px solid #90a4ae;background:#fff;color:var(--texto);width:100%;max-width:420px;}
+.fila-botones{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;}
+button{font-family:inherit;font-size:15px;font-weight:600;padding:10px 18px;border-radius:8px;
+  border:1px solid transparent;background:var(--u);color:#fff;cursor:pointer;}
+button:hover{background:var(--u2);}
+button.secundario{background:#fff;color:var(--u);border-color:var(--u);}
+button.secundario:hover{background:var(--u-bg);}
+
+/* ── 6. LIENZO / ESCENA ────────────────────────────────────────────────── */
+.escena{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:16px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);overflow-x:auto;}
+
+/* ── 7. LECTURA DEL ESTADO (alternativa textual, siempre visible) ──────── */
+.lectura{background:var(--u-bg);border-left:5px solid var(--u);border-radius:0 8px 8px 0;
+  padding:14px 18px;margin-bottom:22px;font-size:15px;}
+.lectura h2{margin:0 0 8px;font-size:17px;color:var(--u);}
+.lectura p{margin:6px 0;}
+.lectura .dato{font-weight:700;color:var(--u2);font-variant-numeric:tabular-nums;}
+
+/* ── 8. TABLAS (Ally: caption obligatorio y scope en todo th) ──────────── */
+.tabla-wrap{overflow-x:auto;margin-bottom:22px;}
+table.datos{width:100%;border-collapse:collapse;background:var(--papel);border-radius:10px;
+  overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);font-size:15px;}
+table.datos caption{caption-side:top;text-align:left;font-size:14px;color:var(--texto-sec);
+  padding:0 0 8px;font-style:italic;}
+table.datos th,table.datos td{padding:10px 12px;text-align:left;border-bottom:1px solid #eee;}
+table.datos thead th{background:#37474f;color:#fff;font-weight:600;font-size:13px;
+  text-transform:uppercase;letter-spacing:.4px;}
+table.datos tbody th{background:var(--u-bg);color:var(--u2);font-weight:700;}
+table.datos tr:last-child td{border-bottom:none;}
+
+/* ── 9. ACORDEÓN NATIVO ────────────────────────────────────────────────── */
+details.bloque{background:var(--papel);border-radius:var(--radio);margin-bottom:14px;
+  box-shadow:var(--sombra);border-left:5px solid var(--u);overflow:hidden;}
+details.bloque > summary{padding:14px 18px;cursor:pointer;list-style:none;display:flex;
+  gap:10px;align-items:center;background:var(--u-bg);font-weight:600;color:var(--u2);}
+details.bloque > summary::-webkit-details-marker{display:none;}
+details.bloque > summary .chevron{transition:transform .2s;flex-shrink:0;}
+details.bloque[open] > summary .chevron{transform:rotate(90deg);}
+details.bloque .cuerpo{padding:14px 20px 18px;}
+
+/* ── 10. PIE CON LICENCIA ──────────────────────────────────────────────── */
+footer.pie{padding:22px 4px;color:var(--texto-sec);font-size:13px;margin-top:20px;
+  border-top:1px solid #ddd;text-align:center;}
+footer.pie p{margin:5px 0;}
+
+/* ── 11. MOVIMIENTO REDUCIDO ───────────────────────────────────────────── */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;scroll-behavior:auto !important;}
+}
+
+/* ── 12. IMPRESIÓN ─────────────────────────────────────────────────────── */
+@media print{
+  body{background:#fff;}
+  .panel,.escena{page-break-inside:avoid;}
+  details[open] .cuerpo{display:block;}
+}
+
+/* ── 13. NOMBRES RESERVADOS ────────────────────────────────────────────── */
+/* Estas clases pertenecen a la hoja unificada. No las reutilices como
+   clase local en un interactivo: el selector local se sumaría al de aquí y
+   descuadraría el componente. Reservadas:
+   contenedor · sr-only · principal · meta · tarjeta · caja-tip · caja-ok ·
+   caja-mal · panel · control · valor · fila-botones · secundario · escena ·
+   lectura · dato · tabla-wrap · datos · bloque · cuerpo · chevron · pie
+   Para rejillas de cifras usa .cifras, no .datos. */
+
+/* ── PROPIO DE ESTE INTERACTIVO ────────────────────────────────────────── */
+.dos{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start;}
+@media (max-width:820px){ .dos{grid-template-columns:1fr;} }
+.ficha-formulas{background:var(--u-bg);border-left:5px solid var(--u);border-radius:0 8px 8px 0;padding:14px 18px;}
+.ficha-formulas h4{margin:0 0 8px;font-size:16px;color:var(--u2);}
+.ficha-formulas p{margin:6px 0;font-size:15px;}
+.ficha-formulas strong{color:var(--u2);}
+.ayuda{font-size:14px;color:var(--texto-sec);margin:4px 0 0;}
+.salida{background:var(--papel);border:1px solid var(--linea);border-radius:8px;padding:14px 16px;margin-top:14px;}
+.salida p{margin:5px 0;}
+.tabla-p{display:grid;grid-template-columns:repeat(18,minmax(46px,1fr));gap:3px;min-width:900px;}
+.envoltura-tabla{overflow-x:auto;padding-bottom:8px;}
+button.elemento{padding:4px 2px;border-radius:5px;border:1px solid rgba(0,0,0,.25);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:56px;
+  font-family:inherit;cursor:pointer;}
+button.elemento .z{font-size:10px;font-weight:600;}
+button.elemento .sim{font-size:17px;font-weight:700;line-height:1.1;}
+button.elemento .nom{font-size:8px;text-align:center;line-height:1.1;}
+button.elemento[aria-pressed="true"]{outline:3px solid var(--u);outline-offset:1px;}
+.t-alcalino{background:#ffcdd2;color:#7f1d1d;}
+.t-alcalinoterreo{background:#f8bbd0;color:#880e4f;}
+.t-metal{background:#d7ccc8;color:#4e342e;}
+.t-metaloide{background:#b2dfdb;color:#004d40;}
+.t-nometal{background:#bbdefb;color:#0d47a1;}
+.t-halogeno{background:#e1bee7;color:#4a148c;}
+.t-noble{background:#cfd8dc;color:#263238;}
+.leyenda-p{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0;font-size:13px;}
+.leyenda-p span{padding:4px 10px;border-radius:999px;border:1px solid rgba(0,0,0,.2);}
+.etiqueta{display:inline-block;background:var(--u-bg);color:var(--u2);border:1px solid var(--u);
+  border-radius:999px;padding:2px 10px;font-size:13px;font-weight:600;margin:0 6px 6px 0;}
+.bohr-caja{display:flex;justify-content:center;}
+.pregunta p.enunciado{font-weight:600;margin:0 0 10px;font-size:17px;}
+.marcador-quiz{font-weight:700;color:var(--u2);font-size:17px;}
+.retro:empty{display:none;}
+</style>
+</head>
+<body class="u5">
+<div class="contenedor">
+
+<header class="principal">
+  <h1>El átomo, la tabla periódica y los enlaces</h1>
+  <p class="meta">Lección 5.1 · El átomo, la tabla periódica y los enlaces químicos</p>
+  <p class="meta">Unidad 5 · Ciencias físicas I · Spanish ASE Science</p>
+</header>
+
+<div class="tarjeta">
+  <h2>Qué vas a hacer</h2>
+  <p>Vas a usar la tabla periódica como lo que realmente es: una herramienta para predecir. Con ella podrás identificar las partículas de un átomo, calcular su número másico, distinguir un isótopo de un ion y anticipar qué tipo de enlace formarán dos elementos, sin haber visto nunca esa sustancia.</p>
+  <p>La actividad tiene seis bloques. Puedes abrirlos en cualquier orden, aunque el primero explica las fórmulas que necesitarás en los demás.</p>
+  <div class="fila-botones">
+    <button type="button" class="secundario" id="btn-abrir">Abrir todo</button>
+    <button type="button" class="secundario" id="btn-cerrar">Cerrar todo</button>
+  </div>
+</div>
+
+<details class="bloque" open>
+<summary><span class="chevron" aria-hidden="true">▶</span>1. Protones, neutrones y electrones</summary>
+<div class="cuerpo">
+  <div class="dos">
+    <div>
+      <h3 style="margin-top:0;font-size:17px;color:var(--u2);">Calculadora atómica</h3>
+      <div class="control">
+        <label for="elemento-a">Elemento</label>
+        <select id="elemento-a"></select>
+      </div>
+      <div class="control">
+        <label for="masico">Número másico, A</label>
+        <input type="number" id="masico" min="1" value="23">
+        <p class="ayuda">Es la suma de protones y neutrones. Siempre es un número entero.</p>
+      </div>
+      <div class="control">
+        <label for="carga">Carga del ion</label>
+        <input type="number" id="carga" value="0" min="-4" max="4">
+        <p class="ayuda">Escribe 0 si el átomo es neutro, un número positivo si perdió electrones y uno negativo si los ganó.</p>
+      </div>
+      <div class="fila-botones"><button type="button" id="btn-calcular">Calcular</button></div>
+      <div class="salida" id="salida-atomo" aria-live="polite"></div>
+    </div>
+
+    <div class="ficha-formulas">
+      <h4>Las cinco fórmulas que necesitas</h4>
+      <p><strong>Número atómico:</strong> Z es el número de protones, y es lo que define al elemento.</p>
+      <p><strong>Número másico:</strong> A = protones + neutrones.</p>
+      <p><strong>Neutrones:</strong> neutrones = A − Z.</p>
+      <p><strong>Átomo neutro:</strong> electrones = protones.</p>
+      <p><strong>Ion:</strong> electrones = protones − carga.</p>
+      <p class="ayuda">Ejemplo: si Z = 11 y A = 23, el átomo tiene 11 protones, 12 neutrones y, si es neutro, 11 electrones.</p>
+    </div>
+  </div>
+</div>
+</details>
+
+<details class="bloque">
+<summary><span class="chevron" aria-hidden="true">▶</span>2. La tabla periódica como herramienta de predicción</summary>
+<div class="cuerpo">
+  <p>Pulsa un elemento para ver sus datos y lo que la tabla permite predecir sobre su comportamiento. Aquí aparecen los veinte primeros elementos, que son los que el examen utiliza.</p>
+  <div class="leyenda-p">
+    <span class="t-alcalino">Metales alcalinos</span>
+    <span class="t-alcalinoterreo">Alcalinotérreos</span>
+    <span class="t-metal">Metales</span>
+    <span class="t-metaloide">Metaloides</span>
+    <span class="t-nometal">No metales</span>
+    <span class="t-halogeno">Halógenos</span>
+    <span class="t-noble">Gases nobles</span>
+  </div>
+  <div class="envoltura-tabla">
+    <div class="tabla-p" id="tabla-periodica" role="group" aria-label="Tabla periódica de los veinte primeros elementos"></div>
+  </div>
+  <div class="salida" id="info-elemento" aria-live="polite">
+    <p>Todavía no has seleccionado ningún elemento.</p>
+  </div>
+</div>
+</details>
+
+<details class="bloque">
+<summary><span class="chevron" aria-hidden="true">▶</span>3. El modelo de Bohr</summary>
+<div class="cuerpo">
+  <p>El modelo de Bohr reparte los electrones en capas alrededor del núcleo. La primera capa admite dos electrones y las siguientes, ocho. Los electrones de la capa más externa, llamados de valencia, son los que deciden cómo reacciona el elemento.</p>
+  <div class="dos">
+    <div>
+      <div class="control">
+        <label for="elemento-b">Elemento</label>
+        <select id="elemento-b"></select>
+      </div>
+      <div class="salida" id="info-bohr" aria-live="polite"></div>
+    </div>
+    <div class="bohr-caja" id="dibujo-bohr"></div>
+  </div>
+</div>
+</details>
+
+<details class="bloque">
+<summary><span class="chevron" aria-hidden="true">▶</span>4. Isótopos e iones: en qué se diferencian</summary>
+<div class="cuerpo">
+  <p>Estos dos conceptos se confunden constantemente, y el examen se aprovecha de ello. Escribe las partículas de dos especies y el comparador te dirá qué son y por qué.</p>
+  <div class="dos">
+    <div>
+      <h3 style="margin-top:0;font-size:17px;color:var(--u2);">Especie A</h3>
+      <div class="control"><label for="pa">Protones</label><input type="number" id="pa" value="6" min="1"></div>
+      <div class="control"><label for="na">Neutrones</label><input type="number" id="na" value="6" min="0"></div>
+      <div class="control"><label for="ea">Electrones</label><input type="number" id="ea" value="6" min="0"></div>
+      <h3 style="font-size:17px;color:var(--u2);">Especie B</h3>
+      <div class="control"><label for="pb">Protones</label><input type="number" id="pb" value="6" min="1"></div>
+      <div class="control"><label for="nb">Neutrones</label><input type="number" id="nb" value="8" min="0"></div>
+      <div class="control"><label for="eb">Electrones</label><input type="number" id="eb" value="6" min="0"></div>
+      <div class="fila-botones"><button type="button" id="btn-comparar">Comparar</button></div>
+      <div class="salida" id="salida-comparar" aria-live="polite"></div>
+    </div>
+
+    <div class="ficha-formulas">
+      <h4>Las reglas</h4>
+      <p><strong>Isótopos:</strong> mismo número de protones, distinto número de neutrones. Son el mismo elemento con distinta masa.</p>
+      <p><strong>Iones:</strong> el número de protones no coincide con el de electrones. La carga aparece porque se han ganado o perdido electrones, nunca protones.</p>
+      <p><strong>Catión:</strong> carga positiva, porque perdió electrones.</p>
+      <p><strong>Anión:</strong> carga negativa, porque ganó electrones.</p>
+      <div class="caja-tip">
+        <p><strong>La clave:</strong> los protones no cambian nunca. Si cambian los protones, ya no es el mismo elemento. Los isótopos se diferencian en los neutrones y los iones, en los electrones.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</details>
+
+<details class="bloque">
+<summary><span class="chevron" aria-hidden="true">▶</span>5. Predecir el tipo de enlace</summary>
+<div class="cuerpo">
+  <p>Elige dos elementos y comprueba qué tipo de enlace formarían. La predicción no sale de memorizar sustancias, sino de mirar dónde está cada elemento en la tabla.</p>
+  <div class="dos">
+    <div>
+      <div class="control"><label for="enlace-a">Primer elemento</label><select id="enlace-a"></select></div>
+      <div class="control"><label for="enlace-b">Segundo elemento</label><select id="enlace-b"></select></div>
+      <div class="fila-botones"><button type="button" id="btn-enlace">Predecir el enlace</button></div>
+      <div class="salida" id="salida-enlace" aria-live="polite"></div>
+    </div>
+    <div class="ficha-formulas">
+      <h4>Guía rápida</h4>
+      <p><strong>Metal más no metal:</strong> normalmente enlace iónico. Uno cede electrones y el otro los acepta.</p>
+      <p><strong>No metal más no metal:</strong> normalmente enlace covalente. Los dos comparten.</p>
+      <p><strong>Metal más metal:</strong> enlace metálico.</p>
+      <p><strong>Con un gas noble:</strong> casi nunca hay enlace, porque su capa externa ya está completa.</p>
+      <p class="ayuda">Los metales tienden a perder electrones; los no metales, a ganarlos o compartirlos. Toda la predicción sale de ahí.</p>
+    </div>
+  </div>
+</div>
+</details>
+
+<details class="bloque">
+<summary><span class="chevron" aria-hidden="true">▶</span>6. Reto tipo GED</summary>
+<div class="cuerpo">
+  <p class="marcador-quiz" id="marcador">Aciertos: 0 de 0 respondidas.</p>
+  <div class="pregunta">
+    <p class="enunciado" id="enunciado"></p>
+    <div class="fila-botones" id="opciones"></div>
+    <div class="retro" id="retro-quiz" aria-live="polite"></div>
+  </div>
+  <div class="fila-botones" style="margin-top:16px;">
+    <button type="button" id="btn-siguiente">Siguiente pregunta</button>
+    <button type="button" class="secundario" id="btn-reiniciar">Reiniciar el reto</button>
+  </div>
+</div>
+</details>
+
+<footer class="pie">
+  <p>El átomo, la tabla periódica y los enlaces · Lección 5.1 · Spanish ASE Science · 96 horas</p>
+  <p>José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago</p>
+  <p>© 2026. Esta obra está licenciada bajo <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" rel="license">Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0 Internacional (CC BY-NC-SA 4.0)</a>.</p>
+</footer>
+
+</div>
+<script>
+"use strict";
+
+/* ── Los veinte primeros elementos ─────────────────────────────────────── */
+var ELEMENTOS = [
+  {z:1,  s:"H",  n:"Hidrógeno",  a:1,  g:1,  p:1, t:"nometal",        cat:"No metal",              v:1, fila:1, col:1},
+  {z:2,  s:"He", n:"Helio",      a:4,  g:18, p:1, t:"noble",          cat:"Gas noble",             v:2, fila:1, col:18},
+  {z:3,  s:"Li", n:"Litio",      a:7,  g:1,  p:2, t:"alcalino",       cat:"Metal alcalino",        v:1, fila:2, col:1},
+  {z:4,  s:"Be", n:"Berilio",    a:9,  g:2,  p:2, t:"alcalinoterreo", cat:"Metal alcalinotérreo",  v:2, fila:2, col:2},
+  {z:5,  s:"B",  n:"Boro",       a:11, g:13, p:2, t:"metaloide",      cat:"Metaloide",             v:3, fila:2, col:13},
+  {z:6,  s:"C",  n:"Carbono",    a:12, g:14, p:2, t:"nometal",        cat:"No metal",              v:4, fila:2, col:14},
+  {z:7,  s:"N",  n:"Nitrógeno",  a:14, g:15, p:2, t:"nometal",        cat:"No metal",              v:5, fila:2, col:15},
+  {z:8,  s:"O",  n:"Oxígeno",    a:16, g:16, p:2, t:"nometal",        cat:"No metal",              v:6, fila:2, col:16},
+  {z:9,  s:"F",  n:"Flúor",      a:19, g:17, p:2, t:"halogeno",       cat:"Halógeno",              v:7, fila:2, col:17},
+  {z:10, s:"Ne", n:"Neón",       a:20, g:18, p:2, t:"noble",          cat:"Gas noble",             v:8, fila:2, col:18},
+  {z:11, s:"Na", n:"Sodio",      a:23, g:1,  p:3, t:"alcalino",       cat:"Metal alcalino",        v:1, fila:3, col:1},
+  {z:12, s:"Mg", n:"Magnesio",   a:24, g:2,  p:3, t:"alcalinoterreo", cat:"Metal alcalinotérreo",  v:2, fila:3, col:2},
+  {z:13, s:"Al", n:"Aluminio",   a:27, g:13, p:3, t:"metal",          cat:"Metal",                 v:3, fila:3, col:13},
+  {z:14, s:"Si", n:"Silicio",    a:28, g:14, p:3, t:"metaloide",      cat:"Metaloide",             v:4, fila:3, col:14},
+  {z:15, s:"P",  n:"Fósforo",    a:31, g:15, p:3, t:"nometal",        cat:"No metal",              v:5, fila:3, col:15},
+  {z:16, s:"S",  n:"Azufre",     a:32, g:16, p:3, t:"nometal",        cat:"No metal",              v:6, fila:3, col:16},
+  {z:17, s:"Cl", n:"Cloro",      a:35, g:17, p:3, t:"halogeno",       cat:"Halógeno",              v:7, fila:3, col:17},
+  {z:18, s:"Ar", n:"Argón",      a:40, g:18, p:3, t:"noble",          cat:"Gas noble",             v:8, fila:3, col:18},
+  {z:19, s:"K",  n:"Potasio",    a:39, g:1,  p:4, t:"alcalino",       cat:"Metal alcalino",        v:1, fila:4, col:1},
+  {z:20, s:"Ca", n:"Calcio",     a:40, g:2,  p:4, t:"alcalinoterreo", cat:"Metal alcalinotérreo",  v:2, fila:4, col:2}
+];
+
+function porSimbolo(s){
+  for (var i = 0; i < ELEMENTOS.length; i++){ if (ELEMENTOS[i].s === s) return ELEMENTOS[i]; }
+  return null;
+}
+
+function llenarSelectores(){
+  var ids = ["elemento-a","elemento-b","enlace-a","enlace-b"], i, j, sel, op;
+  for (i = 0; i < ids.length; i++){
+    sel = document.getElementById(ids[i]);
+    for (j = 0; j < ELEMENTOS.length; j++){
+      op = document.createElement("option");
+      op.value = ELEMENTOS[j].s;
+      op.textContent = ELEMENTOS[j].s + " — " + ELEMENTOS[j].n;
+      sel.appendChild(op);
+    }
+  }
+  document.getElementById("elemento-a").value = "Na";
+  document.getElementById("elemento-b").value = "O";
+  document.getElementById("enlace-a").value = "Na";
+  document.getElementById("enlace-b").value = "Cl";
+}
+
+/* ── 1. Calculadora atómica ────────────────────────────────────────────── */
+function calcularAtomo(){
+  var el = porSimbolo(document.getElementById("elemento-a").value);
+  var A = Number(document.getElementById("masico").value);
+  var q = Number(document.getElementById("carga").value);
+  var neutrones = A - el.z, electrones = el.z - q;
+  var caja = document.getElementById("salida-atomo");
+
+  if (neutrones < 0 || electrones < 0){
+    caja.innerHTML = '<div class="caja-mal"><p>Revisa los datos: el número másico no puede ser menor que el número atómico (' +
+      el.z + "), y los electrones no pueden salir negativos.</p></div>";
+    return;
+  }
+  var tipo = q === 0 ? "átomo neutro" : (q > 0 ? "catión con carga +" + q : "anión con carga " + q);
+  caja.innerHTML =
+    "<p><strong>" + el.n + " (" + el.s + ")</strong></p>" +
+    "<p>Número atómico: Z = " + el.z + "</p>" +
+    "<p>Número másico: A = " + A + "</p>" +
+    "<p>Protones = Z = " + el.z + "</p>" +
+    "<p>Neutrones = A − Z = " + A + " − " + el.z + " = " + neutrones + "</p>" +
+    "<p>Electrones = protones − carga = " + el.z + " − (" + q + ") = " + electrones + "</p>" +
+    "<p><strong>Es un " + tipo + ".</strong></p>";
+}
+
+/* ── 2. Tabla periódica ────────────────────────────────────────────────── */
+function construirTabla(){
+  var cont = document.getElementById("tabla-periodica"), i, e, b;
+  cont.innerHTML = "";
+  for (i = 0; i < ELEMENTOS.length; i++){
+    e = ELEMENTOS[i];
+    b = document.createElement("button");
+    b.type = "button";
+    b.className = "elemento t-" + e.t;
+    b.style.gridColumn = e.col;
+    b.style.gridRow = e.fila;
+    b.setAttribute("data-s", e.s);
+    b.setAttribute("aria-pressed", "false");
+    b.setAttribute("aria-label", e.n + ", símbolo " + e.s + ", número atómico " + e.z + ", grupo " + e.g + ", periodo " + e.p + ".");
+    b.innerHTML = '<span class="z" aria-hidden="true">' + e.z + '</span>' +
+                  '<span class="sim" aria-hidden="true">' + e.s + '</span>' +
+                  '<span class="nom" aria-hidden="true">' + e.n + "</span>";
+    b.addEventListener("click", function(){ elegirElemento(this.getAttribute("data-s"), this); });
+    cont.appendChild(b);
+  }
+}
+
+function prediccion(e){
+  if (e.t === "alcalino")       return "Tiende a perder un electrón y formar un ion de carga +1. Es muy reactivo.";
+  if (e.t === "alcalinoterreo") return "Tiende a perder dos electrones y formar un ion de carga +2.";
+  if (e.t === "halogeno")       return "Tiende a ganar un electrón y formar un ion de carga −1. Reacciona con mucha facilidad con los metales.";
+  if (e.t === "noble")          return "Su capa externa ya está completa, de modo que casi no reacciona con nada.";
+  if (e.t === "nometal")        return "Suele compartir electrones en enlaces covalentes, o ganarlos.";
+  if (e.t === "metaloide")      return "Tiene propiedades intermedias entre los metales y los no metales.";
+  return "Suele perder electrones y formar cationes.";
+}
+
+function elegirElemento(s, boton){
+  var todos = document.querySelectorAll("button.elemento"), i;
+  for (i = 0; i < todos.length; i++){ todos[i].setAttribute("aria-pressed","false"); }
+  if (boton) boton.setAttribute("aria-pressed","true");
+  var e = porSimbolo(s);
+  document.getElementById("info-elemento").innerHTML =
+    "<p><strong>" + e.n + " (" + e.s + ")</strong></p>" +
+    '<p><span class="etiqueta">Número atómico: ' + e.z + '</span><span class="etiqueta">Masa aproximada: ' + e.a +
+    '</span><span class="etiqueta">Grupo: ' + e.g + '</span><span class="etiqueta">Periodo: ' + e.p + "</span></p>" +
+    "<p><strong>Categoría:</strong> " + e.cat + "</p>" +
+    "<p><strong>Electrones de valencia:</strong> " + e.v + "</p>" +
+    "<p><strong>Predicción:</strong> " + prediccion(e) + "</p>" +
+    '<p class="ayuda">El periodo indica cuántos niveles de energía tiene ocupados. El grupo permite anticipar los electrones de valencia y, con ellos, el comportamiento químico.</p>';
+}
+
+/* ── 3. Modelo de Bohr ─────────────────────────────────────────────────── */
+function capas(z){
+  var cap = [2,8,8,2], resto = z, salida = [], i;
+  for (i = 0; i < cap.length; i++){
+    if (resto <= 0) break;
+    salida.push(Math.min(resto, cap[i]));
+    resto -= salida[i];
+  }
+  return salida;
+}
+
+function dibujarBohr(){
+  var e = porSimbolo(document.getElementById("elemento-b").value);
+  var reparto = capas(e.z), radios = [42,74,106,132], i, j, s = "";
+  var cx = 160, cy = 160;
+
+  s += '<svg width="320" height="320" viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg" role="img" ' +
+       'aria-label="Modelo de Bohr del ' + e.n.toLowerCase() + ': núcleo con ' + e.z +
+       ' protones y electrones repartidos en capas de ' + reparto.join(", ") + '.">';
+  s += '<rect x="0" y="0" width="320" height="320" fill="#ffffff"></rect>';
+  for (i = 0; i < reparto.length; i++){
+    s += '<circle cx="' + cx + '" cy="' + cy + '" r="' + radios[i] + '" fill="none" stroke="#b0bec5" stroke-width="2"></circle>';
+  }
+  s += '<circle cx="' + cx + '" cy="' + cy + '" r="26" fill="#bf360c" stroke="#8c2708" stroke-width="3"></circle>';
+  s += '<text x="' + cx + '" y="' + (cy+6) + '" text-anchor="middle" font-size="16" font-weight="700" fill="#ffffff">' + e.s + "</text>";
+  for (i = 0; i < reparto.length; i++){
+    for (j = 0; j < reparto[i]; j++){
+      var ang = (2*Math.PI*j)/reparto[i] + i*0.4;
+      var x = cx + Math.cos(ang)*radios[i], y = cy + Math.sin(ang)*radios[i];
+      s += '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="7" fill="#1565c0" stroke="#0d47a1" stroke-width="2"></circle>';
+    }
+  }
+  s += "</svg>";
+  document.getElementById("dibujo-bohr").innerHTML = s;
+
+  var valencia = reparto[reparto.length-1];
+  document.getElementById("info-bohr").innerHTML =
+    "<p><strong>" + e.n + " (" + e.s + ")</strong></p>" +
+    "<p>Número atómico: " + e.z + ", de modo que un átomo neutro tiene " + e.z + " electrones.</p>" +
+    "<p>Reparto por capas, de dentro hacia fuera: " + reparto.join(" y ") + ".</p>" +
+    "<p>Periodo " + e.p + ", grupo " + e.g + ".</p>" +
+    "<p><strong>Electrones en la capa externa: " + valencia + ".</strong> " +
+    (valencia === 8 || (e.z === 2) ? "La capa externa está completa, así que es un elemento muy poco reactivo." :
+     (valencia <= 3 ? "Con pocos electrones en la capa externa, le sale más a cuenta perderlos que ganar los que le faltan." :
+      "Con la capa externa casi llena, le resulta más fácil ganar o compartir electrones que perderlos todos.")) + "</p>";
+}
+
+/* ── 4. Isótopos e iones ───────────────────────────────────────────────── */
+function comparar(){
+  function v(id){ return Number(document.getElementById(id).value); }
+  var pa = v("pa"), na = v("na"), ea = v("ea"), pb = v("pb"), nb = v("nb"), eb = v("eb");
+  var qa = pa - ea, qb = pb - eb, texto = "";
+
+  function signo(q){ return q > 0 ? "+" + q : String(q); }
+
+  texto += "<p><strong>Especie A:</strong> número másico " + (pa+na) + ", carga " + signo(qa) + ".</p>";
+  texto += "<p><strong>Especie B:</strong> número másico " + (pb+nb) + ", carga " + signo(qb) + ".</p>";
+
+  if (pa === pb && na !== nb){
+    texto += "<p>Son <strong>isótopos</strong>: tienen los mismos " + pa +
+      " protones, así que son el mismo elemento, pero difieren en los neutrones y por eso su masa no coincide.</p>";
+  } else if (pa !== pb){
+    texto += "<p>No son isótopos: al tener distinto número de protones (" + pa + " frente a " + pb +
+      "), <strong>son elementos distintos</strong>. El número de protones es lo único que define al elemento.</p>";
+  } else {
+    texto += "<p>Tienen los mismos protones y los mismos neutrones: son <strong>el mismo isótopo</strong> del mismo elemento.</p>";
+  }
+
+  if (qa !== 0 || qb !== 0){
+    var cuales = [];
+    if (qa !== 0) cuales.push("A es un " + (qa > 0 ? "catión" : "anión"));
+    if (qb !== 0) cuales.push("B es un " + (qb > 0 ? "catión" : "anión"));
+    texto += "<p>Hay <strong>iones</strong> de por medio: " + cuales.join(" y ") +
+      ", porque el número de protones no coincide con el de electrones.</p>";
+  } else {
+    texto += "<p>Las dos especies son <strong>neutras</strong>: en cada una, los protones igualan a los electrones.</p>";
+  }
+  document.getElementById("salida-comparar").innerHTML = texto;
+}
+
+/* ── 5. Predicción de enlaces ──────────────────────────────────────────── */
+function esMetal(e){ return e.t === "alcalino" || e.t === "alcalinoterreo" || e.t === "metal"; }
+function esNoMetal(e){ return e.t === "nometal" || e.t === "halogeno"; }
+
+function predecirEnlace(){
+  var a = porSimbolo(document.getElementById("enlace-a").value);
+  var b = porSimbolo(document.getElementById("enlace-b").value);
+  var texto = "<p><strong>" + a.n + " (" + a.s + ") con " + b.n + " (" + b.s + ")</strong></p>";
+
+  if (a.t === "noble" || b.t === "noble"){
+    texto += "<p>Lo más probable es que <strong>no formen enlace</strong>. Uno de los dos es un gas noble y ya tiene la capa externa completa: no gana nada cediendo ni compartiendo electrones.</p>";
+  } else if ((esMetal(a) && esNoMetal(b)) || (esMetal(b) && esNoMetal(a))){
+    texto += "<p>Formarían un <strong>enlace iónico</strong>.</p><p>El metal cede electrones y se queda con carga positiva; el no metal los acepta y queda con carga negativa. Las dos cargas opuestas se atraen, y esa atracción es el enlace.</p>";
+  } else if (esNoMetal(a) && esNoMetal(b)){
+    texto += "<p>Formarían un <strong>enlace covalente</strong>.</p><p>Ninguno de los dos cede electrones con facilidad, así que la salida es compartirlos.</p>";
+  } else if (esMetal(a) && esMetal(b)){
+    texto += "<p>Formarían un <strong>enlace metálico</strong>.</p><p>Los electrones externos quedan sueltos entre todos los núcleos, y eso es lo que hace que los metales conduzcan la electricidad.</p>";
+  } else {
+    texto += "<p>El resultado <strong>depende de las condiciones</strong>, porque interviene un metaloide. Los metaloides se comportan a veces como metales y a veces como no metales.</p>";
+  }
+  document.getElementById("salida-enlace").innerHTML = texto;
+}
+
+/* ── 6. Reto tipo GED ──────────────────────────────────────────────────── */
+var PREGUNTAS = [
+  { q:"Un átomo tiene 11 protones, 12 neutrones y 11 electrones. ¿Cuál es su número másico?",
+    o:["11","12","22","23"], r:3,
+    e:"El número másico es la suma de protones y neutrones: 11 + 12 = 23. Los electrones no cuentan, porque su masa es despreciable." },
+  { q:"¿Qué determina de qué elemento se trata?",
+    o:["El número de neutrones","El número de protones","Los electrones de valencia","La masa atómica promedio"], r:1,
+    e:"El número de protones, o número atómico, es la identidad del elemento. Cambia y ya es otro elemento." },
+  { q:"Dos átomos tienen 6 protones cada uno. Uno tiene 6 neutrones y el otro, 8. ¿Qué son entre sí?",
+    o:["Iones","Isótopos","Metales","Gases nobles"], r:1,
+    e:"Mismos protones y distintos neutrones: eso es la definición de isótopo. Los dos son carbono." },
+  { q:"Un átomo neutro de cloro gana un electrón. ¿En qué se convierte?",
+    o:["Catión de carga +1","Anión de carga −1","Isótopo del cloro","Metal alcalino"], r:1,
+    e:"Ganar un electrón añade una carga negativa. El resultado es un anión, que se escribe Cl⁻." },
+  { q:"El sodio y el cloro formarían con toda probabilidad un enlace:",
+    o:["Covalente","Iónico","Metálico","Nuclear"], r:1,
+    e:"El sodio es un metal y el cloro, un no metal. Metal más no metal da enlace iónico: así se forma la sal común." },
+  { q:"El carbono y el oxígeno formarían con toda probabilidad un enlace:",
+    o:["Iónico","Covalente","Metálico","Ninguno"], r:1,
+    e:"Los dos son no metales, de modo que comparten electrones. Ese es el enlace covalente del dióxido de carbono." },
+  { q:"En la tabla periódica, ¿qué indica el periodo, es decir, la fila?",
+    o:["Los niveles de energía ocupados","Que siempre hay 8 protones","El tipo de isótopo","La carga del núcleo"], r:0,
+    e:"El número de fila coincide con el número de capas de electrones que tiene el átomo." },
+  { q:"¿Cómo se llaman los elementos del grupo 18?",
+    o:["Halógenos","Gases nobles","Metales alcalinos","Metaloides"], r:1,
+    e:"Son los gases nobles. Tienen la capa externa completa y por eso apenas reaccionan." },
+  { q:"Un ion tiene 12 protones y 10 electrones. ¿Cuál es su carga?",
+    o:["−2","+2","+22","0"], r:1,
+    e:"Le faltan dos electrones respecto de sus protones, así que la carga es +2. Es el ion magnesio, Mg²⁺." },
+  { q:"¿Qué partícula se gana o se pierde cuando se forma un ion?",
+    o:["Protones","Neutrones","Electrones","Núcleos"], r:2,
+    e:"Solo los electrones se mueven. Si cambiaran los protones cambiaría el elemento, y si cambiaran los neutrones tendríamos un isótopo." }
+];
+
+var actual = 0, aciertos = 0, respondidas = 0, yaRespondida = false;
+
+function cargarPregunta(){
+  var p = PREGUNTAS[actual], i, html = "";
+  yaRespondida = false;
+  document.getElementById("enunciado").textContent = (actual+1) + ". " + p.q;
+  for (i = 0; i < p.o.length; i++){
+    html += '<button type="button" class="secundario" data-op="' + i + '">' + p.o[i] + "</button>";
+  }
+  document.getElementById("opciones").innerHTML = html;
+  document.getElementById("retro-quiz").innerHTML = "";
+  var b = document.querySelectorAll("#opciones button");
+  for (i = 0; i < b.length; i++){ b[i].addEventListener("click", responder); }
+}
+
+function responder(){
+  if (yaRespondida) return;
+  yaRespondida = true;
+  var p = PREGUNTAS[actual], op = Number(this.getAttribute("data-op"));
+  respondidas++;
+  if (op === p.r){
+    aciertos++;
+    document.getElementById("retro-quiz").innerHTML =
+      '<div class="caja-ok"><p><strong>Correcto.</strong> ' + p.e + "</p></div>";
+  } else {
+    document.getElementById("retro-quiz").innerHTML =
+      '<div class="caja-mal"><p><strong>Todavía no.</strong> La respuesta correcta es «' + p.o[p.r] + "». " + p.e + "</p></div>";
+  }
+  var b = document.querySelectorAll("#opciones button"), i;
+  for (i = 0; i < b.length; i++){ b[i].disabled = true; }
+  document.getElementById("marcador").textContent =
+    "Aciertos: " + aciertos + " de " + respondidas + " respondidas.";
+}
+
+/* ── Arranque ──────────────────────────────────────────────────────────── */
+document.getElementById("btn-calcular").addEventListener("click", calcularAtomo);
+document.getElementById("elemento-a").addEventListener("change", function(){
+  document.getElementById("masico").value = porSimbolo(this.value).a;
+  calcularAtomo();
+});
+document.getElementById("elemento-b").addEventListener("change", dibujarBohr);
+document.getElementById("btn-comparar").addEventListener("click", comparar);
+document.getElementById("btn-enlace").addEventListener("click", predecirEnlace);
+document.getElementById("btn-siguiente").addEventListener("click", function(){
+  actual = (actual + 1) % PREGUNTAS.length; cargarPregunta();
+});
+document.getElementById("btn-reiniciar").addEventListener("click", function(){
+  actual = 0; aciertos = 0; respondidas = 0;
+  document.getElementById("marcador").textContent = "Aciertos: 0 de 0 respondidas.";
+  cargarPregunta();
+});
+document.getElementById("btn-abrir").addEventListener("click", function(){
+  var d = document.querySelectorAll("details.bloque"), i;
+  for (i = 0; i < d.length; i++){ d[i].open = true; }
+});
+document.getElementById("btn-cerrar").addEventListener("click", function(){
+  var d = document.querySelectorAll("details.bloque"), i;
+  for (i = 0; i < d.length; i++){ d[i].open = false; }
+});
+
+llenarSelectores();
+construirTabla();
+calcularAtomo();
+dibujarBohr();
+comparar();
+predecirEnlace();
+cargarPregunta();
+</script>
+</body>
+</html>
