@@ -1,1822 +1,652 @@
-<!DOCTYPE html>
+<!doctype html>
+<!--
+  El ciclo del carbono (Lección 7.2) · Spanish ASE Science
+  © 2026 José M. Fernández, ABE/ASE Math Master Teacher,
+  Harry S. Truman College — City Colleges of Chicago.
+  Licencia: Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0
+  Internacional (CC BY-NC-SA 4.0) — https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+-->
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ciclo del Carbono — Simulación 3D</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      overflow: hidden;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #050505;
-      color: white;
-    }
-    canvas { display: block; }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El ciclo del carbono</title>
+<meta name="description" content="Recorrido por los seis procesos del ciclo del carbono en SVG, con los reservorios del planeta, el balance de flujos y seis preguntas de comprobación.">
+<meta name="author" content="José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago">
+<meta name="license" content="CC BY-NC-SA 4.0">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
+<style>
+@charset "utf-8";
+/* ============================================================================
+   Estilos unificados de los interactivos · Spanish ASE Science
+   José M. Fernández, ABE/ASE Math Master Teacher,
+   Harry S. Truman College — City Colleges of Chicago
+   © 2026 · CC BY-NC-SA 4.0
+   https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+   ----------------------------------------------------------------------------
+   CÓMO SE USA
+   Este bloque se copia completo dentro de <style> en cada interactivo, para que
+   el archivo siga siendo autónomo. La clase de unidad va en el <body>:
+       <body class="u4">   → Unidad 4, verde oliva
+   Unidades: u1 verde azulado · u2 gris pizarra · u3 verde · u4 verde oliva
+             u5 rojo anaranjado · u6 azul índigo · u7 violeta · u8 azul
+   Todos los colores de acento cumplen 4,5:1 sobre blanco y admiten texto
+   blanco encima. El ámbar de los avisos usa #5c3900 (10,29:1).
+   ========================================================================== */
 
-    /* ===== Panel de etapa ===== */
-    #panel-etapa {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      max-width: 400px;
-      padding: 18px 22px;
-      background: rgba(8, 18, 35, 0.78);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border-radius: 14px;
-      border-left: 5px solid #84cc16;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-      transition: border-color 0.6s ease;
-      pointer-events: none;
-    }
-    #etapa-numero {
-      font-size: 12px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      color: #bef264;
-      opacity: 0.85;
-      margin: 0 0 4px 0;
-    }
-    #etapa-titulo {
-      font-size: 22px;
-      font-weight: 700;
-      color: #ffffff;
-      margin: 0 0 8px 0;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.6);
-    }
-    #etapa-desc {
-      font-size: 14px;
-      line-height: 1.5;
-      opacity: 0.92;
-      margin: 0 0 12px 0;
-    }
-    .barra-progreso {
-      width: 100%;
-      height: 5px;
-      background: rgba(255,255,255,0.15);
-      border-radius: 3px;
-      overflow: hidden;
-    }
-    #barra-relleno {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #84cc16, #bef264);
-      border-radius: 3px;
-      transition: width 0.1s linear;
-    }
+/* ── 1. PALETA POR UNIDAD ──────────────────────────────────────────────── */
+:root{
+  --u:#37474f; --u2:#263238; --u-bg:#eceff1;   /* valor por defecto */
+  --texto:#222; --texto-sec:#555; --linea:#e0e0e0;
+  --pagina:#f5f7fa; --papel:#ffffff;
+  --amb:#5c3900; --amb-bg:#fff8e1; --amb-borde:#b45309;
+  --ok:#1b5e20; --ok-bg:#e8f5e9; --mal:#7f1d1d; --mal-bg:#fbe9e7;
+  --radio:12px; --sombra:0 2px 8px rgba(0,0,0,.07);
+}
+body.u1{--u:#00695c;--u2:#004d40;--u-bg:#e0f2f1;}
+body.u2{--u:#37474f;--u2:#263238;--u-bg:#eceff1;}
+body.u3{--u:#1b5e20;--u2:#0f3d13;--u-bg:#e8f5e9;}
+body.u4{--u:#33691e;--u2:#1f4211;--u-bg:#f1f8e9;}
+body.u5{--u:#bf360c;--u2:#8c2708;--u-bg:#fbe9e7;}
+body.u6{--u:#1e3a8a;--u2:#142a63;--u-bg:#e8eaf6;}
+body.u7{--u:#5b21b6;--u2:#40157f;--u-bg:#ede7f6;}
+body.u8{--u:#0d47a1;--u2:#093271;--u-bg:#e3f2fd;}
 
-    /* ===== Indicadores (6 etapas) ===== */
-    #indicadores {
-      position: absolute;
-      bottom: 22px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 8px;
-      padding: 10px 14px;
-      background: rgba(8, 18, 35, 0.7);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border-radius: 30px;
-      pointer-events: auto;
-    }
-    .punto {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 6px 12px;
-      border-radius: 20px;
-      background: rgba(255,255,255,0.08);
-      transition: all 0.4s ease;
-      font-size: 12px;
-      opacity: 0.6;
-      cursor: pointer;
-    }
-    .punto:hover {
-      background: rgba(132, 204, 22, 0.2);
-      opacity: 0.95;
-    }
-    .punto.activo {
-      background: rgba(132, 204, 22, 0.3);
-      opacity: 1;
-      transform: scale(1.05);
-      box-shadow: 0 0 12px rgba(132, 204, 22, 0.4);
-    }
-    .punto-icono { font-size: 16px; }
+/* ── 2. BASE ───────────────────────────────────────────────────────────── */
+*{box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;margin:0;background:var(--pagina);
+  color:var(--texto);line-height:1.55;font-size:16px;}
+.contenedor{max-width:1100px;margin:0 auto;padding:24px;}
+a{color:#0b3d91;}
+h1,h2,h3{line-height:1.3;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+:focus-visible{outline:3px solid var(--u);outline-offset:2px;}
 
-    /* ===== Ayuda y botones ===== */
-    #ayuda {
-      position: absolute;
-      bottom: 22px;
-      right: 22px;
-      color: rgba(255,255,255,0.55);
-      font-size: 11px;
-      text-align: right;
-      line-height: 1.5;
-      pointer-events: none;
-    }
-    #btn-pausa, #btn-educativo {
-      position: absolute;
-      right: 22px;
-      padding: 10px 16px;
-      background: rgba(8, 18, 35, 0.75);
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      border: 1px solid rgba(255,255,255,0.15);
-      color: white;
-      font-size: 13px;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    #btn-pausa { top: 22px; }
-    #btn-educativo { top: 70px; }
-    #btn-pausa:hover {
-      background: rgba(132, 204, 22, 0.25);
-      border-color: rgba(132, 204, 22, 0.5);
-    }
-    #btn-educativo:hover {
-      background: rgba(132, 204, 22, 0.25);
-      border-color: rgba(132, 204, 22, 0.5);
-    }
-    #btn-educativo.activo {
-      background: rgba(132, 204, 22, 0.3);
-      border-color: rgba(132, 204, 22, 0.6);
-    }
+/* ── 3. ENCABEZADO DEL INTERACTIVO ─────────────────────────────────────── */
+header.principal{background:var(--u);background:linear-gradient(135deg,var(--u) 0%,var(--u2) 100%);
+  color:#fff;padding:28px 32px;border-radius:14px;margin-bottom:22px;box-shadow:var(--sombra);}
+header.principal h1{margin:0 0 6px;font-size:26px;font-weight:700;color:#fff;}
+header.principal .meta{font-size:14px;margin:4px 0 0;color:#fff;}
 
-    /* ===== Panel educativo (modal) ===== */
-    #panel-educativo {
-      display: none;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      max-width: 600px;
-      width: calc(100% - 60px);
-      max-height: 82vh;
-      overflow-y: auto;
-      padding: 28px 32px;
-      background: rgba(8, 18, 35, 0.96);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-radius: 18px;
-      border: 2px solid rgba(132, 204, 22, 0.4);
-      box-shadow: 0 12px 48px rgba(0, 0, 0, 0.6);
-      z-index: 100;
-      pointer-events: auto;
-    }
-    #panel-educativo.visible { display: block; }
-    #panel-educativo h2 {
-      margin: 0 0 14px 0;
-      font-size: 22px;
-      color: #84cc16;
-      border-bottom: 2px solid rgba(132, 204, 22, 0.3);
-      padding-bottom: 10px;
-    }
-    #panel-educativo p { margin: 10px 0; line-height: 1.6; font-size: 15px; }
-    #panel-educativo ul { margin: 10px 0; padding-left: 22px; line-height: 1.7; }
-    #panel-educativo li { margin: 4px 0; font-size: 14px; }
-    #panel-educativo b { color: #bef264; }
-    #btn-continuar {
-      display: block;
-      margin: 20px auto 0;
-      padding: 12px 26px;
-      background: linear-gradient(135deg, #65a30d, #84cc16);
-      color: white;
-      font-size: 15px;
-      font-weight: 600;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    #btn-continuar:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(132, 204, 22, 0.4);
-    }
+/* ── 4. BLOQUES DE TEXTO ───────────────────────────────────────────────── */
+.tarjeta{background:var(--papel);padding:20px 24px;border-radius:10px;
+  border-left:5px solid var(--u);margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.tarjeta h2{margin-top:0;color:var(--u);font-size:20px;}
+.tarjeta h3{font-size:16px;color:#263238;margin:16px 0 6px;}
+.caja-tip{background:var(--amb-bg);border-left:4px solid var(--amb-borde);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;font-size:15px;}
+.caja-tip strong{color:var(--amb);}
+.caja-ok{background:var(--ok-bg);border-left:5px solid var(--ok);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;}
+.caja-ok strong{color:var(--ok);}
+.caja-mal{background:var(--mal-bg);border-left:5px solid var(--mal);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;}
+.caja-mal strong{color:var(--mal);}
 
-    /* Colores por etapa */
-    .stage-0 { border-left-color: #84cc16 !important; }
-    .stage-0 #etapa-numero { color: #bef264 !important; }
-    .stage-1 { border-left-color: #22c55e !important; }
-    .stage-1 #etapa-numero { color: #86efac !important; }
-    .stage-2 { border-left-color: #ca8a04 !important; }
-    .stage-2 #etapa-numero { color: #fde68a !important; }
-    .stage-3 { border-left-color: #ef4444 !important; }
-    .stage-3 #etapa-numero { color: #fca5a5 !important; }
-    .stage-4 { border-left-color: #0ea5e9 !important; }
-    .stage-4 #etapa-numero { color: #7dd3fc !important; }
-    .stage-5 { border-left-color: #475569 !important; }
-    .stage-5 #etapa-numero { color: #cbd5e1 !important; }
-  </style>
+/* ── 5. PANEL DE CONTROLES ─────────────────────────────────────────────── */
+.panel{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:18px 22px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.panel h2{margin:0 0 12px;font-size:18px;color:var(--u);}
+.control{margin-bottom:16px;}
+.control > label{display:block;font-weight:600;font-size:15px;color:#263238;margin-bottom:6px;}
+.control .valor{float:right;font-weight:700;color:var(--u);font-variant-numeric:tabular-nums;}
+.control input[type=range]{width:100%;accent-color:var(--u);height:26px;}
+.control select,.control input[type=number],.control input[type=text]{
+  font-family:inherit;font-size:16px;padding:9px 14px;border-radius:8px;
+  border:1px solid #90a4ae;background:#fff;color:var(--texto);width:100%;max-width:420px;}
+.fila-botones{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;}
+button{font-family:inherit;font-size:15px;font-weight:600;padding:10px 18px;border-radius:8px;
+  border:1px solid transparent;background:var(--u);color:#fff;cursor:pointer;}
+button:hover{background:var(--u2);}
+button.secundario{background:#fff;color:var(--u);border-color:var(--u);}
+button.secundario:hover{background:var(--u-bg);}
+
+/* ── 6. LIENZO / ESCENA ────────────────────────────────────────────────── */
+.escena{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:16px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);overflow-x:auto;}
+
+/* ── 7. LECTURA DEL ESTADO (alternativa textual, siempre visible) ──────── */
+.lectura{background:var(--u-bg);border-left:5px solid var(--u);border-radius:0 8px 8px 0;
+  padding:14px 18px;margin-bottom:22px;font-size:15px;}
+.lectura h2{margin:0 0 8px;font-size:17px;color:var(--u);}
+.lectura p{margin:6px 0;}
+.lectura .dato{font-weight:700;color:var(--u2);font-variant-numeric:tabular-nums;}
+
+/* ── 8. TABLAS (Ally: caption obligatorio y scope en todo th) ──────────── */
+.tabla-wrap{overflow-x:auto;margin-bottom:22px;}
+table.datos{width:100%;border-collapse:collapse;background:var(--papel);border-radius:10px;
+  overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);font-size:15px;}
+table.datos caption{caption-side:top;text-align:left;font-size:14px;color:var(--texto-sec);
+  padding:0 0 8px;font-style:italic;}
+table.datos th,table.datos td{padding:10px 12px;text-align:left;border-bottom:1px solid #eee;}
+table.datos thead th{background:#37474f;color:#fff;font-weight:600;font-size:13px;
+  text-transform:uppercase;letter-spacing:.4px;}
+table.datos tbody th{background:var(--u-bg);color:var(--u2);font-weight:700;}
+table.datos tr:last-child td{border-bottom:none;}
+
+/* ── 9. ACORDEÓN NATIVO ────────────────────────────────────────────────── */
+details.bloque{background:var(--papel);border-radius:var(--radio);margin-bottom:14px;
+  box-shadow:var(--sombra);border-left:5px solid var(--u);overflow:hidden;}
+details.bloque > summary{padding:14px 18px;cursor:pointer;list-style:none;display:flex;
+  gap:10px;align-items:center;background:var(--u-bg);font-weight:600;color:var(--u2);}
+details.bloque > summary::-webkit-details-marker{display:none;}
+details.bloque > summary .chevron{transition:transform .2s;flex-shrink:0;}
+details.bloque[open] > summary .chevron{transform:rotate(90deg);}
+details.bloque .cuerpo{padding:14px 20px 18px;}
+
+/* ── 10. PIE CON LICENCIA ──────────────────────────────────────────────── */
+footer.pie{padding:22px 4px;color:var(--texto-sec);font-size:13px;margin-top:20px;
+  border-top:1px solid #ddd;text-align:center;}
+footer.pie p{margin:5px 0;}
+
+/* ── 11. MOVIMIENTO REDUCIDO ───────────────────────────────────────────── */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;scroll-behavior:auto !important;}
+}
+
+/* ── 12. IMPRESIÓN ─────────────────────────────────────────────────────── */
+@media print{
+  body{background:#fff;}
+  .panel,.escena{page-break-inside:avoid;}
+  details[open] .cuerpo{display:block;}
+}
+
+/* ── 13. NOMBRES RESERVADOS ────────────────────────────────────────────── */
+/* Estas clases pertenecen a la hoja unificada. No las reutilices como
+   clase local en un interactivo: el selector local se sumaría al de aquí y
+   descuadraría el componente. Reservadas:
+   contenedor · sr-only · principal · meta · tarjeta · caja-tip · caja-ok ·
+   caja-mal · panel · control · valor · fila-botones · secundario · escena ·
+   lectura · dato · tabla-wrap · datos · bloque · cuerpo · chevron · pie
+   Para rejillas de cifras usa .cifras, no .datos. */
+
+/* ── PROPIO DE ESTE INTERACTIVO ────────────────────────────────────────── */
+.etiquetas{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+.etiqueta{font-size:13px;font-weight:600;padding:4px 12px;border-radius:999px;
+  background:var(--u-bg);color:var(--u2);border:1px solid var(--u);}
+.etiqueta.suave{background:#fff;color:var(--texto-sec);border-color:#b0bec5;}
+.etiqueta.rapido{background:var(--ok-bg);color:var(--ok);border-color:var(--ok);}
+.etiqueta.lento{background:#efebe9;color:#3e2723;border-color:#6d4c41;}
+.etiqueta.humano{background:var(--mal-bg);color:var(--mal);border-color:var(--mal);}
+.progreso{font-size:15px;font-weight:600;color:var(--u2);margin:0 0 14px;}
+
+/* Botonera de procesos */
+.etapas{display:flex;flex-wrap:wrap;gap:10px;}
+button.etapa{flex:1 1 150px;background:#fff;color:var(--u2);border:2px solid var(--u);
+  font-size:15px;font-weight:600;padding:10px 12px;}
+button.etapa:hover{background:var(--u-bg);}
+button.etapa[aria-pressed="true"]{background:var(--u);color:#fff;}
+button.etapa .num{display:block;font-size:12px;font-weight:700;opacity:.85;}
+
+/* Escena */
+.marco-svg{overflow-x:auto;}
+.marco-svg svg{display:block;margin:0 auto;width:100%;height:auto;max-height:58vh;}
+.paso{opacity:.20;transition:opacity .35s;}
+.paso.vivo{opacity:1;}
+.rotulo-paso{font-size:15px;font-weight:700;fill:var(--u2);}
+.flujo{stroke-dasharray:12 7;animation:fluir 1.8s linear infinite;}
+@keyframes fluir{to{stroke-dashoffset:-38;}}
+.ficha-etapa{background:var(--u-bg);border-left:5px solid var(--u);border-radius:0 8px 8px 0;
+  padding:14px 18px;margin-top:12px;}
+.ficha-etapa h3{margin:0 0 6px;font-size:18px;color:var(--u);}
+.ficha-etapa p{margin:0 0 8px;font-size:15px;}
+.cifras{display:flex;flex-wrap:wrap;gap:12px;margin:10px 0 0;}
+.cifras div{background:var(--papel);border-radius:8px;padding:8px 14px;font-size:14px;flex:1 1 200px;}
+.cifras .rot{display:block;font-size:13px;color:var(--texto-sec);}
+.cifras b{color:var(--u2);}
+.nota-modelo{font-size:13px;color:var(--texto-sec);font-style:italic;margin:10px 0 0;}
+
+/* Preguntas */
+.caso{background:var(--papel);border:1px solid var(--linea);border-left:5px solid var(--u);
+  border-radius:0 10px 10px 0;padding:16px 20px;margin-bottom:18px;font-size:17px;}
+.opciones{display:flex;flex-direction:column;gap:10px;max-width:820px;}
+button.opcion{display:flex;gap:12px;align-items:flex-start;text-align:left;font-weight:500;
+  font-size:16px;background:#fff;color:var(--texto);border:2px solid #90a4ae;padding:12px 16px;
+  white-space:normal;}
+button.opcion:hover{background:var(--u-bg);border-color:var(--u);}
+button.opcion[aria-pressed="true"]{background:var(--u-bg);border-color:var(--u);
+  box-shadow:inset 0 0 0 1px var(--u);}
+button.opcion.acierto{border-color:var(--ok);background:var(--ok-bg);}
+button.opcion.fallo{border-color:var(--mal);background:var(--mal-bg);}
+button.opcion .letra{font-weight:700;color:var(--u2);flex-shrink:0;}
+sub{font-size:.75em;}
+</style>
 </head>
-<body>
+<body class="u7">
+<div class="contenedor">
 
-  <div id="panel-etapa" class="stage-0">
-    <p id="etapa-numero">Etapa 1 de 6</p>
-    <h1 id="etapa-titulo">Iniciando…</h1>
-    <p id="etapa-desc">Cargando la simulación.</p>
-    <div class="barra-progreso"><div id="barra-relleno"></div></div>
+<header class="principal">
+  <h1>El ciclo del carbono</h1>
+  <p class="meta">Lección 7.2 · Atmósfera, ciclo del agua, tiempo y clima</p>
+  <p class="meta">Unidad 7 · Ciencias de la Tierra y del espacio · Spanish ASE Science</p>
+</header>
+
+<div class="tarjeta">
+  <h2>Qué vas a hacer</h2>
+  <p>El carbono de tu cuerpo estuvo en el aire, y antes en una planta, y antes en el aire otra vez. Circula sin descanso entre la atmósfera, los seres vivos, el océano y la roca, y ese recorrido es lo que mantiene el clima estable. Aquí vas a recorrer sus seis procesos y a ver cuáles son rápidos, cuáles tardan millones de años y cuál lo hemos alterado nosotros.</p>
+  <div class="caja-tip">
+    <p><strong>La clave del tema:</strong> el ciclo del carbono tiene dos velocidades. El ciclo rápido —fotosíntesis, respiración, descomposición, intercambio con el océano— mueve carbono en cuestión de días o años, y está equilibrado: lo que sale, vuelve a entrar. El ciclo lento tarda millones de años en enterrar carbono como roca o como combustible fósil. Quemar en dos siglos lo que tardó millones de años en enterrarse es lo que desequilibra la balanza.</p>
   </div>
+</div>
 
-  <div id="indicadores">
-    <div class="punto activo" data-i="0"><span class="punto-icono">🌱</span><span>Fotosíntesis</span></div>
-    <div class="punto" data-i="1"><span class="punto-icono">🐄</span><span>Respiración</span></div>
-    <div class="punto" data-i="2"><span class="punto-icono">🍂</span><span>Descomposición</span></div>
-    <div class="punto" data-i="3"><span class="punto-icono">🏭</span><span>Combustión</span></div>
-    <div class="punto" data-i="4"><span class="punto-icono">🌊</span><span>Océano</span></div>
-    <div class="punto" data-i="5"><span class="punto-icono">🪨</span><span>Geológico</span></div>
+<div class="panel">
+  <h2>Controles</h2>
+  <div class="control">
+    <label for="ejercicio">Qué quieres hacer</label>
+    <select id="ejercicio">
+      <option value="ciclo">1. Recorrer los seis procesos</option>
+      <option value="preguntas">2. Comprobar lo que entendiste</option>
+    </select>
   </div>
-
-  <button id="btn-pausa">⏸ Pausar</button>
-  <button id="btn-educativo">📚 Modo educativo: OFF</button>
-
-  <div id="panel-educativo">
-    <h2 id="edu-titulo">Título</h2>
-    <div id="edu-cuerpo"></div>
-    <button id="btn-continuar">Siguiente etapa →</button>
+  <div id="mando-ciclo">
+    <div class="etapas" id="botonera"></div>
+    <div class="fila-botones" style="margin-top:12px;">
+      <button type="button" id="btn-anterior" class="secundario">Proceso anterior</button>
+      <button type="button" id="btn-siguiente">Proceso siguiente</button>
+      <button type="button" id="btn-auto" class="secundario">Recorrer el ciclo solo</button>
+    </div>
   </div>
-
-  <div id="ayuda">
-    Cámara automática siguiendo el ciclo<br>
-    Cada etapa dura ~5 segundos · clic en una etapa para saltar
+  <div class="fila-botones" id="mando-preguntas" hidden>
+    <button type="button" id="btn-comprobar">Comprobar la respuesta</button>
+    <button type="button" class="secundario" id="btn-otra">Siguiente pregunta</button>
+    <button type="button" class="secundario" id="btn-reiniciar">Empezar de nuevo</button>
   </div>
+</div>
 
-  <script>
-  /* =========================================================
-     CICLO DEL CARBONO — Simulación 3D
-     6 etapas: Fotosíntesis · Respiración · Descomposición ·
-     Combustión · Intercambio océano · Almacenamiento geológico
-     ========================================================= */
+<div class="escena">
+  <p class="progreso" id="progreso"></p>
+  <div class="etiquetas" id="etiquetas"></div>
+  <div id="zona-item"></div>
+  <div id="veredicto"></div>
+</div>
 
-  // ---------- Variables globales ----------
-  let scene, camera, renderer, clock;
-  let terrain, ocean, sun, sunGlow, sunLight;
-  let arboles = [];
-  let parchesHierba = [];
-  let vaca, humano, casa, fabrica, coche, arbolCaido;
-  let depositosFosiles = [];
-  let nubeAmbiente;            // CO₂ siempre flotando en la atmósfera
-  let nubes = [];              // grupos de nubes que dan sombra al paisaje
-  let flujos = [];             // todos los streams de partículas
-  let etiquetas3D = [];
+<div class="lectura" id="lectura" aria-live="polite">
+  <h2>Lectura del proceso</h2>
+  <p id="lectura-texto">Cargando el ciclo.</p>
+</div>
 
-  // Caché de texturas de partícula (debe declararse aquí, antes de init(),
-  // porque texturaPart() las consulta desde crearFlujos durante init).
-  const TEX_CACHE = {};
+<div class="tabla-wrap" id="caja-procesos">
+  <table class="datos">
+    <caption>Los seis procesos del ciclo del carbono, con la dirección en que mueven el carbono y la velocidad a la que lo hacen. Los cuatro primeros pertenecen al ciclo rápido.</caption>
+    <thead>
+      <tr>
+        <th scope="col">Proceso</th><th scope="col">De dónde sale el carbono</th>
+        <th scope="col">A dónde va</th><th scope="col">Velocidad</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><th scope="row">Fotosíntesis</th><td>De la atmósfera</td><td>A las plantas, como glucosa</td><td>Rápida: días</td></tr>
+      <tr><th scope="row">Respiración</th><td>De los seres vivos</td><td>A la atmósfera, como CO₂</td><td>Rápida: continua</td></tr>
+      <tr><th scope="row">Descomposición</th><td>De la materia muerta</td><td>A la atmósfera y al suelo</td><td>Rápida: meses o años</td></tr>
+      <tr><th scope="row">Intercambio con el océano</th><td>De la atmósfera</td><td>Al agua del mar, disuelto</td><td>Rápida, y en los dos sentidos</td></tr>
+      <tr><th scope="row">Almacenamiento geológico</th><td>De la materia enterrada</td><td>A la roca y al combustible fósil</td><td>Lenta: millones de años</td></tr>
+      <tr><th scope="row">Combustión</th><td>Del combustible fósil</td><td>A la atmósfera, como CO₂</td><td>Muy rápida, y solo en un sentido</td></tr>
+    </tbody>
+  </table>
+</div>
 
-  let pausado = false;
-  let tiempoSimulado = 0;
-  let etapaActual = -1;
-  let modoEducativo = false;
-  let pausaEducativaActiva = false;
-  let ultimaEtapaPausada = -1;
+<div class="tabla-wrap" id="caja-reservorios">
+  <table class="datos">
+    <caption>Dónde está el carbono del planeta, en gigatoneladas. Una gigatonelada equivale a mil millones de toneladas. Las cifras son aproximadas y de orden de magnitud.</caption>
+    <thead>
+      <tr><th scope="col">Reservorio</th><th scope="col">Carbono almacenado</th><th scope="col">Parte del ciclo</th></tr>
+    </thead>
+    <tbody>
+      <tr><th scope="row">Rocas y sedimentos</th><td>Más de 60 000 000 Gt</td><td>Lento</td></tr>
+      <tr><th scope="row">Océano profundo</th><td>Unas 37 000 Gt</td><td>Lento</td></tr>
+      <tr><th scope="row">Combustibles fósiles</th><td>Unas 4 000 Gt</td><td>Lento, hasta que se queman</td></tr>
+      <tr><th scope="row">Suelo y materia muerta</th><td>Unas 2 000 Gt</td><td>Rápido</td></tr>
+      <tr><th scope="row">Atmósfera</th><td>Unas 875 Gt</td><td>Rápido</td></tr>
+      <tr><th scope="row">Seres vivos terrestres</th><td>Unas 550 Gt</td><td>Rápido</td></tr>
+    </tbody>
+  </table>
+</div>
 
-  const DURACION_ETAPA = 5.0;
-  const TOTAL_ETAPAS = 6;
-  const CICLO_TOTAL = DURACION_ETAPA * TOTAL_ETAPAS;
+<div class="tabla-wrap" id="caja-marcador" hidden>
+  <table class="datos">
+    <caption>Desempeño en las preguntas de comprobación.</caption>
+    <thead>
+      <tr><th scope="col">Bloque</th><th scope="col">Contestadas</th><th scope="col">Aciertos</th><th scope="col">Porcentaje</th></tr>
+    </thead>
+    <tbody id="marcador"></tbody>
+  </table>
+</div>
 
-  const ETAPAS = [
-    {
-      num: "Etapa 1 de 6",
-      titulo: "Fotosíntesis",
-      desc: "Las plantas absorben CO₂ del aire y, con la energía del sol, producen oxígeno y materia orgánica.",
-      clase: "stage-0",
-      colorNiebla: 0x9bc4d8,
-      foco: { x: -22, y: 4, z: 0, radio: 32 }
-    },
-    {
-      num: "Etapa 2 de 6",
-      titulo: "Respiración y cadena alimenticia",
-      desc: "Animales y humanos consumen plantas, las metabolizan y devuelven CO₂ al aire al respirar.",
-      clase: "stage-1",
-      colorNiebla: 0x9bbc9a,
-      foco: { x: -8, y: 4, z: 0, radio: 28 }
-    },
-    {
-      num: "Etapa 3 de 6",
-      titulo: "Descomposición",
-      desc: "Hongos y bacterias descomponen materia orgánica muerta, liberando CO₂ al aire y carbono al suelo.",
-      clase: "stage-2",
-      colorNiebla: 0x9c8e6a,
-      foco: { x: -12, y: 3, z: -10, radio: 28 }
-    },
-    {
-      num: "Etapa 4 de 6",
-      titulo: "Combustión industrial",
-      desc: "Fábricas y vehículos queman combustibles fósiles, liberando enormes cantidades de CO₂ a la atmósfera.",
-      clase: "stage-3",
-      colorNiebla: 0x9c7a5a,
-      foco: { x: 8, y: 5, z: -3, radio: 30 }
-    },
-    {
-      num: "Etapa 5 de 6",
-      titulo: "Intercambio océano-atmósfera",
-      desc: "El océano absorbe CO₂ de la atmósfera y libera parte de él, regulando el clima global del planeta.",
-      clase: "stage-4",
-      colorNiebla: 0x6a9ab8,
-      foco: { x: 25, y: 5, z: 4, radio: 38 }
-    },
-    {
-      num: "Etapa 6 de 6",
-      titulo: "Almacenamiento geológico",
-      desc: "Durante millones de años, parte del carbono queda enterrado bajo tierra, formando carbón, petróleo y gas natural.",
-      clase: "stage-5",
-      colorNiebla: 0x484850,
-      foco: { x: 0, y: -2, z: 0, radio: 34 }
-    }
-  ];
+<details class="bloque">
+  <summary><span class="chevron" aria-hidden="true">▶</span>Por qué el ciclo rápido no basta para absorber lo que emitimos</summary>
+  <div class="cuerpo">
+    <p>Durante milenios el ciclo rápido estuvo equilibrado: la fotosíntesis retiraba de la atmósfera aproximadamente el mismo carbono que devolvían la respiración y la descomposición. Un balance así puede durar indefinidamente, porque cada salida tiene su entrada.</p>
+    <p>La combustión de carbón, petróleo y gas rompe ese equilibrio, y la razón es la velocidad, no la cantidad. Ese carbono llevaba enterrado desde hace millones de años, apartado del ciclo rápido; al quemarlo se devuelve a la atmósfera en unas horas. Las plantas y el océano absorben una parte —algo más de la mitad—, pero no dan abasto con el resto, y ese resto se acumula. Por eso la concentración de dióxido de carbono sube año tras año.</p>
+    <div class="caja-tip">
+      <p><strong>Repara en la tabla de reservorios:</strong> la atmósfera contiene unas 875 gigatoneladas de carbono y los combustibles fósiles, unas 4000. No hace falta quemarlos todos para cambiar la composición del aire de manera notable: basta con una fracción, porque el depósito del que se saca es mucho mayor que aquel al que se echa.</p>
+    </div>
+  </div>
+</details>
 
-  // ---------- Etiquetas 3D por etapa ----------
-  const ETIQUETAS_POR_ETAPA = [
-    [ // 0 - Fotosíntesis
-      { texto: '☀  Luz solar',          pos: [-25, 22, -8], color: '#fde047' },
-      { texto: 'CO₂ ↓ entra a la hoja', pos: [-15, 12, 6],  color: '#9ca3af' },
-      { texto: 'O₂ ↑ sale al aire',      pos: [-32, 14, 6], color: '#7dd3fc' }
-    ],
-    [ // 1 - Respiración / Cadena
-      { texto: '🌿 → 🐄  Alimento',     pos: [-13, 6, 6],  color: '#86efac' },
-      { texto: 'CO₂ ↑ respiración',     pos: [-3, 9, 6],   color: '#9ca3af' }
-    ],
-    [ // 2 - Descomposición
-      { texto: '🍂 → CO₂ + suelo',      pos: [-12, 7, -8], color: '#fde68a' }
-    ],
-    [ // 3 - Combustión
-      { texto: '🔥 Quema de fósiles',   pos: [10, 14, -3], color: '#fca5a5' },
-      { texto: 'CO₂ ↑↑↑',                pos: [16, 22, 0],  color: '#fda4af' }
-    ],
-    [ // 4 - Océano
-      { texto: 'CO₂ ↓ se disuelve',     pos: [25, 14, -5], color: '#7dd3fc' },
-      { texto: 'CO₂ ↑ se libera',       pos: [38, 10, 8],  color: '#bae6fd' }
-    ],
-    [ // 5 - Geológico
-      { texto: '🪨 Carbón y petróleo',  pos: [0, 12, -5],  color: '#cbd5e1' },
-      { texto: 'Millones de años ⏳',    pos: [10, 6, -10], color: '#94a3b8' }
-    ]
-  ];
+<details class="bloque">
+  <summary><span class="chevron" aria-hidden="true">▶</span>El océano: sumidero y víctima a la vez</summary>
+  <div class="cuerpo">
+    <p>El océano absorbe alrededor de una cuarta parte del dióxido de carbono que emitimos, y por eso el calentamiento sería mucho mayor sin él. Pero ese servicio tiene un precio. Al disolverse, el dióxido de carbono forma ácido carbónico y el agua del mar se vuelve algo más ácida: es la acidificación oceánica, que dificulta a los corales, los moluscos y el plancton la fabricación de sus conchas de carbonato de calcio.</p>
+    <p>Y hay un detalle que el examen suele preguntar: el agua fría disuelve más gas que el agua caliente, igual que un refresco frío retiene mejor sus burbujas. A medida que el océano se calienta, absorbe menos dióxido de carbono, de modo que el propio calentamiento debilita al sumidero que lo estaba frenando. Ese es un lazo de retroalimentación positiva, el mismo mecanismo que estudiaste en la homeostasis, aplicado aquí al clima.</p>
+  </div>
+</details>
 
-  // ---------- Explicaciones extendidas (modo educativo) ----------
-  const EXPLICACIONES = [
-    {
-      titulo: '🌱 Más sobre la Fotosíntesis',
-      cuerpo: `
-        <p><b>La ecuación maestra:</b> 6 CO₂ + 6 H₂O + luz solar → C₆H₁₂O₆ (glucosa) + 6 O₂.</p>
-        <p>Las hojas captan CO₂ del aire por sus <b>estomas</b> (microporos) y agua del suelo por las raíces.
-        Con la energía del sol absorbida por la <b>clorofila</b>, transforman estas materias primas en glucosa,
-        que el árbol usa para crecer y construir madera, hojas y frutos.</p>
-        <ul>
-          <li>Las plantas terrestres absorben unos <b>120 GtC al año</b> (gigatoneladas de carbono).</li>
-          <li>El <b>fitoplancton</b> oceánico hace lo mismo y absorbe otros <b>~50 GtC al año</b>.</li>
-          <li>Casi <b>todo el oxígeno que respiramos</b> proviene de la fotosíntesis.</li>
-          <li>La clorofila refleja el verde — por eso vemos las hojas de ese color.</li>
-        </ul>
-        <p><b>Pregunta de repaso:</b> ¿Por qué los bosques y océanos sanos son tan importantes contra el cambio climático?</p>
-      `
-    },
-    {
-      titulo: '🐄 Más sobre la Respiración y la Cadena Alimenticia',
-      cuerpo: `
-        <p><b>La fotosíntesis al revés:</b> C₆H₁₂O₆ + 6 O₂ → 6 CO₂ + 6 H₂O + energía.
-        Cuando un animal come una planta, su organismo descompone la glucosa para extraer
-        energía. Como subproducto, exhala <b>CO₂ y vapor de agua</b>.</p>
-        <ul>
-          <li>La respiración de los seres vivos devuelve a la atmósfera unos <b>60 GtC al año</b>.</li>
-          <li>La <b>cadena alimenticia</b> transfiere carbono: plantas → herbívoros → carnívoros.</li>
-          <li>Cada eslabón de la cadena <b>pierde ~90 % de la energía</b> en calor — por eso hay menos depredadores que presas.</li>
-          <li>Tú mismo respiras unos <b>500 g de CO₂ al día</b>.</li>
-        </ul>
-        <p><b>Pregunta de repaso:</b> Si la fotosíntesis y la respiración son inversas, ¿de dónde sale el carbono que las plantas usan para crecer?</p>
-      `
-    },
-    {
-      titulo: '🍂 Más sobre la Descomposición',
-      cuerpo: `
-        <p><b>El gran reciclador:</b> Cuando un ser vivo muere, hongos, bacterias y otros
-        descomponedores rompen sus tejidos. La mayor parte del carbono regresa a la
-        atmósfera como CO₂; otra parte se queda en el suelo como <b>materia orgánica</b>
-        (humus) que enriquece la tierra.</p>
-        <ul>
-          <li>La descomposición devuelve a la atmósfera unos <b>60 GtC al año</b>.</li>
-          <li>El suelo del planeta almacena <b>~1 500 GtC</b> — más que toda la atmósfera (~870 GtC).</li>
-          <li>Sin descomponedores, los nutrientes <b>no se reciclarían</b> y la vida sería imposible.</li>
-          <li>El permafrost ártico guarda <b>cantidades enormes</b> de carbono congelado.</li>
-        </ul>
-        <p><b>Conciencia ambiental:</b> Si el permafrost se derrite por el calentamiento, libera CO₂ y metano —
-        un peligroso bucle de retroalimentación.</p>
-      `
-    },
-    {
-      titulo: '🏭 Más sobre la Combustión Industrial',
-      cuerpo: `
-        <p><b>El gran desequilibrio moderno:</b> Al quemar carbón, petróleo y gas natural,
-        liberamos en décadas el carbono que la naturaleza tardó <b>millones de años</b>
-        en enterrar. Esto rompe el equilibrio del ciclo natural.</p>
-        <ul>
-          <li>La quema de combustibles fósiles emite unos <b>10 GtC al año</b> (~37 Gt CO₂).</li>
-          <li>Antes de la era industrial (1750), había <b>~280 ppm</b> de CO₂ en la atmósfera.</li>
-          <li>Hoy estamos en <b>~420 ppm</b> — el nivel más alto en al menos 800 000 años.</li>
-          <li>El sector <b>energía y transporte</b> representa ~70 % de las emisiones globales.</li>
-        </ul>
-        <p><b>Pregunta de repaso:</b> ¿Por qué quemar combustibles fósiles "rompe" el ciclo del carbono pero quemar leña no tanto?</p>
-      `
-    },
-    {
-      titulo: '🌊 Más sobre el Intercambio Océano-Atmósfera',
-      cuerpo: `
-        <p><b>El "pulmón azul" del planeta:</b> El océano absorbe CO₂ atmosférico (se disuelve
-        en el agua) y al mismo tiempo libera parte. La diferencia neta es absorción —
-        actualmente el océano <b>captura ~25 % del CO₂ que emitimos</b>.</p>
-        <ul>
-          <li>Flujo entrante: <b>~90 GtC al año</b> hacia el océano.</li>
-          <li>Flujo saliente: <b>~88 GtC al año</b> hacia la atmósfera.</li>
-          <li>Absorción neta: ~2 GtC al año (gracias al exceso humano).</li>
-          <li>El agua fría absorbe más CO₂ que el agua caliente — los océanos polares son sumideros más eficientes.</li>
-        </ul>
-        <p><b>Problema:</b> Cuando el CO₂ se disuelve en el mar forma ácido carbónico,
-        causando <b>acidificación oceánica</b> que daña corales y conchas.</p>
-      `
-    },
-    {
-      titulo: '🪨 Más sobre el Almacenamiento Geológico',
-      cuerpo: `
-        <p><b>El carbono fósil:</b> A lo largo de cientos de millones de años, restos de
-        plantas y plancton enterrados sin oxígeno se transformaron por presión y calor en
-        <b>carbón, petróleo y gas natural</b>. Estos depósitos son carbono sacado del ciclo
-        rápido y guardado en el "ciclo lento".</p>
-        <ul>
-          <li>Las reservas de combustibles fósiles contienen <b>~5 000 GtC</b>.</li>
-          <li>Las rocas sedimentarias del planeta guardan <b>millones de GtC</b> (mayor reservorio).</li>
-          <li>El carbón se formó principalmente hace <b>300 millones de años</b> (período Carbonífero).</li>
-          <li>El ciclo geológico devuelve carbono a la atmósfera por <b>volcanes y meteorización</b>, pero muy lentamente.</li>
-        </ul>
-        <p><b>Y el ciclo se reinicia:</b> El carbono que las plantas absorberán mañana puede haber sido
-        respirado por un animal hace una semana, por un volcán hace mil años, o liberado de un combustible
-        fósil enterrado hace 300 millones de años. <b>Todo está conectado a través del tiempo.</b></p>
-      `
-    }
-  ];
+<footer class="pie">
+  <p>El ciclo del carbono · Lección 7.2 · Spanish ASE Science · 96 horas</p>
+  <p>José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago</p>
+  <p>© 2026. Esta obra está licenciada bajo <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" rel="license">Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0 Internacional (CC BY-NC-SA 4.0)</a>.</p>
+</footer>
 
-  // =========================================================
-  // INICIALIZACIÓN
-  // =========================================================
-  init();
-  animate();
+</div>
+<script>
+"use strict";
 
-  function init() {
-    scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x9bc4d8);
-    scene.fog = new THREE.Fog(0x9bc4d8, 50, 160);
+/* ══════════════════════════════════════════════════════════════════════════
+   EL CICLO DEL CARBONO · Lección 7.2
+   Escena en SVG, sin bibliotecas externas. Separador decimal: punto.
+   Marcadores siempre con markerUnits="userSpaceOnUse".
+   ═══════════════════════════════════════════════════════════════════════ */
 
-    camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.1, 500);
-    camera.position.set(40, 28, 40);
-    camera.lookAt(0, 4, 0);
+var PROCESOS = [
+{
+  n:"Fotosíntesis", clase:"rapido", ritmo:"Ciclo rápido",
+  de:"De la atmósfera", a:"A las plantas", dato:"Las plantas terrestres retiran unas 120 Gt de carbono al año.",
+  texto:"Las plantas toman dióxido de carbono del aire por los estomas y, con la energía del Sol, incorporan sus átomos de carbono a moléculas de glucosa. Ese carbono deja de ser gas y pasa a ser materia viva: hoja, tallo, raíz, fruto. Es la única puerta de entrada del carbono atmosférico al mundo de los seres vivos, y de ahí pasa a todos los demás niveles tróficos.",
+  ojo:"Fíjate en que el carbono no se transforma en otro elemento: el mismo átomo que estaba en el CO₂ está ahora en la glucosa. Solo ha cambiado de molécula."
+},
+{
+  n:"Respiración", clase:"rapido", ritmo:"Ciclo rápido",
+  de:"De los seres vivos", a:"A la atmósfera", dato:"Devuelve al aire una cantidad parecida a la que retira la fotosíntesis.",
+  texto:"Todos los seres vivos rompen la glucosa en sus mitocondrias para obtener energía, y en ese proceso devuelven el carbono al aire en forma de dióxido de carbono. Lo hacen los animales, los hongos y también las plantas, de día y de noche. Cuando una vaca come hierba, el carbono pasa de la planta al animal, y buena parte vuelve a la atmósfera con cada exhalación.",
+  ojo:"La respiración y la fotosíntesis son las dos mitades del ciclo rápido: una guarda carbono en materia viva y la otra lo devuelve al aire."
+},
+{
+  n:"Descomposición", clase:"rapido", ritmo:"Ciclo rápido",
+  de:"De la materia muerta", a:"A la atmósfera y al suelo", dato:"El suelo guarda unas 2000 Gt de carbono, más del doble que la atmósfera.",
+  texto:"Cuando un ser vivo muere, hongos y bacterias descomponen su materia y aprovechan el carbono como alimento. Al respirar, esos descomponedores devuelven al aire la mayor parte, y otra parte queda retenida en el suelo como materia orgánica. Sin ellos el carbono se quedaría atrapado en la materia muerta y el ciclo se detendría.",
+  ojo:"El papel de los descomponedores no es limpiar: es cerrar el ciclo. Esa es la respuesta que busca el examen."
+},
+{
+  n:"Intercambio con el océano", clase:"rapido", ritmo:"Ciclo rápido, en los dos sentidos",
+  de:"De la atmósfera", a:"Al agua del mar", dato:"El océano absorbe alrededor de una cuarta parte del CO₂ que emitimos.",
+  texto:"El dióxido de carbono se disuelve en el agua del mar, y el mar también lo devuelve al aire: el intercambio funciona en ambas direcciones y depende de la temperatura. El agua fría disuelve más gas que la caliente, igual que un refresco frío retiene mejor las burbujas. El fitoplancton usa además ese carbono disuelto para hacer fotosíntesis, y al morir arrastra parte de él hacia el fondo.",
+  ojo:"Al disolverse, el CO₂ forma ácido carbónico y acidifica el agua, lo que dificulta a corales y moluscos fabricar sus conchas."
+},
+{
+  n:"Almacenamiento geológico", clase:"lento", ritmo:"Ciclo lento",
+  de:"De la materia enterrada", a:"A la roca y al combustible fósil", dato:"Las rocas guardan más de 60 millones de Gt de carbono.",
+  texto:"Una fracción pequeñísima de la materia muerta no llega a descomponerse: queda enterrada bajo sedimentos, sin oxígeno, y la presión y el tiempo la transforman a lo largo de millones de años en carbón, petróleo o gas natural. Otra parte del carbono acaba en la roca caliza, formada con las conchas de organismos marinos. Así queda apartado del ciclo rápido durante eras enteras.",
+  ojo:"Cada litro de gasolina es luz del Sol capturada por seres vivos hace decenas de millones de años y guardada bajo tierra desde entonces."
+},
+{
+  n:"Combustión", clase:"humano", ritmo:"Alteración humana",
+  de:"Del combustible fósil", a:"A la atmósfera", dato:"Devolvemos al aire unas 10 Gt de carbono al año que estaban fuera del ciclo.",
+  texto:"Al quemar carbón, petróleo o gas devolvemos a la atmósfera, en unas horas, el carbono que el ciclo lento tardó millones de años en enterrar. Las plantas y el océano absorben algo más de la mitad, pero el resto se acumula en el aire, y por eso la concentración de dióxido de carbono sube año tras año. Este proceso no tiene un camino de vuelta a la misma velocidad: es el único del ciclo que funciona en un solo sentido.",
+  ojo:"El problema no es que el carbono sea malo ni que la combustión sea antinatural. El problema es la velocidad: sacamos en dos siglos lo que se guardó en millones de años."
+}
+];
 
-    renderer = new THREE.WebGLRenderer({ antialias: true });
-    renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    document.body.appendChild(renderer.domElement);
+var PREGUNTAS = [
+{ q:"¿Cuál es la única entrada del carbono atmosférico al mundo de los seres vivos?",
+  ops:["La respiración","La fotosíntesis","La descomposición","La combustión"], ok:1,
+  exp:"Solo la fotosíntesis toma dióxido de carbono del aire y lo incorpora a materia orgánica. Los demás procesos mueven carbono que ya estaba en algún ser vivo, o lo devuelven al aire." },
+{ q:"Un estudiante afirma que los descomponedores destruyen el carbono de la materia muerta. ¿Qué error comete?",
+  ops:["Ninguno: el carbono se destruye al descomponerse","Confunde descomposición con combustión","No hay destrucción: los descomponedores devuelven el carbono al aire y al suelo","Olvida que la materia muerta no contiene carbono"], ok:2,
+  exp:"La materia no se destruye. Los descomponedores respiran igual que cualquier otro ser vivo, así que el carbono que consumen vuelve al aire como dióxido de carbono, y otra parte queda en el suelo. Lo que sí se pierde en cada paso es energía aprovechable, en forma de calor." },
+{ q:"Durante milenios, la fotosíntesis retiró de la atmósfera aproximadamente tanto carbono como devolvían la respiración y la descomposición. ¿Qué significa eso?",
+  ops:["Que el ciclo rápido estaba equilibrado: cada salida tenía su entrada","Que la atmósfera se quedaba sin carbono","Que la fotosíntesis no funcionaba bien","Que el carbono desaparecía poco a poco"], ok:0,
+  exp:"Cuando lo que entra iguala a lo que sale, la cantidad almacenada se mantiene estable. Un balance así puede sostenerse indefinidamente, y es exactamente lo que la combustión de combustibles fósiles rompe." },
+{ q:"¿Por qué quemar combustibles fósiles desequilibra el ciclo, si al fin y al cabo ese carbono también es natural?",
+  ops:["Porque el carbono de los fósiles es de otro tipo","Porque devuelve en poco tiempo un carbono que el ciclo lento había apartado durante millones de años","Porque las plantas no pueden absorber ese carbono","Porque la combustión crea carbono nuevo"], ok:1,
+  exp:"No es una cuestión de cantidad total ni de naturaleza del átomo, sino de velocidad. Ese carbono llevaba millones de años fuera del ciclo rápido, y se devuelve al aire en unas horas. Los sumideros absorben parte, pero no al ritmo al que se emite." },
+{ q:"Si el océano se calienta, ¿qué se espera que ocurra con su capacidad de absorber dióxido de carbono?",
+  ops:["Aumentará, porque el agua caliente disuelve más gas","Disminuirá, porque el agua caliente disuelve menos gas","No cambiará, porque solo depende de la salinidad","Se detendrá por completo"], ok:1,
+  exp:"El agua fría disuelve más gas que la caliente. Al calentarse el océano absorbe menos dióxido de carbono, de modo que el calentamiento debilita al sumidero que lo estaba frenando: es un lazo de retroalimentación positiva." },
+{ q:"Según la tabla de reservorios, ¿dónde hay más carbono almacenado?",
+  ops:["En la atmósfera","En los seres vivos terrestres","En las rocas y los sedimentos","En los combustibles fósiles"], ok:2,
+  exp:"Las rocas guardan más de 60 millones de gigatoneladas, muchísimo más que todos los demás reservorios juntos. Pero está casi todo en el ciclo lento, así que ese carbono no participa en los intercambios del día a día." }
+];
 
-    clock = new THREE.Clock();
+/* ── Escena en SVG ─────────────────────────────────────────────────────── */
+var ESCENA =
+'<svg viewBox="0 0 820 470" role="img" aria-labelledby="tit-esc des-esc">' +
+'<title id="tit-esc">Paisaje con los seis procesos del ciclo del carbono</title>' +
+'<desc id="des-esc">Un bosque y una fábrica a la izquierda, un océano a la derecha y, bajo tierra, una capa de roca con combustibles fósiles. Seis grupos de flechas señalan los procesos: la fotosíntesis que baja de la atmósfera al árbol, la respiración que sube del animal al aire, la descomposición de la hojarasca, el intercambio en los dos sentidos entre el aire y el mar, el enterramiento lento hacia la roca y la combustión que sube de la fábrica al aire. El proceso seleccionado se resalta y los demás quedan atenuados. Todo el contenido se repite en texto en la lectura del proceso.</desc>' +
+'<defs>' +
+'<marker id="p-verde" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#1b5e20"></path></marker>' +
+'<marker id="p-azul" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#0d47a1"></path></marker>' +
+'<marker id="p-marron" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#4e342e"></path></marker>' +
+'<marker id="p-rojo" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#7f1d1d"></path></marker>' +
+'</defs>' +
 
-    crearLuces();
-    crearTerreno();
-    crearOceano();
-    crearSol();
-    crearAtmosferaAmbiente();
-    crearNubes();
-    crearBosque();
-    crearHierba();
-    crearVaca();
-    crearHumanoYCasa();
-    crearFabricaYCoche();
-    crearArbolCaido();
-    crearDepositosFosiles();
-    crearFlujos();
-    crearEtiquetas3D();
+/* Fondo, atmósfera, suelo y mar */
+'<rect x="0" y="0" width="820" height="470" fill="#eaf3fb"></rect>' +
+'<rect x="0" y="0" width="820" height="104" fill="#d6e8f7"></rect>' +
+'<text x="24" y="40" font-size="16" font-weight="700" fill="#0d3a72">Atmósfera</text>' +
+'<text x="24" y="62" font-size="13" fill="#0d3a72">unas 875 Gt de carbono</text>' +
+'<path d="M0,470 L0,300 L520,300 L520,470 Z" fill="#8d6e63"></path>' +
+'<rect x="0" y="300" width="520" height="22" fill="#7cb342"></rect>' +
+'<rect x="520" y="300" width="300" height="170" fill="#1565c0"></rect>' +
+'<text x="676" y="336" font-size="16" font-weight="700" text-anchor="middle" fill="#fff">Océano</text>' +
+'<text x="676" y="356" font-size="13" text-anchor="middle" fill="#e3f2fd">unas 37 000 Gt</text>' +
+/* Roca con fósiles */
+'<rect x="0" y="404" width="520" height="66" fill="#4e342e"></rect>' +
+'<g fill="#212121">' +
+'<ellipse cx="88" cy="432" rx="30" ry="12"></ellipse><ellipse cx="240" cy="444" rx="34" ry="13"></ellipse>' +
+'<ellipse cx="404" cy="430" rx="30" ry="12"></ellipse></g>' +
+'<text x="250" y="466" font-size="13" font-weight="700" text-anchor="middle" fill="#ffe0b2">Roca y combustibles fósiles · más de 60 000 000 Gt</text>' +
+/* Árbol, animal, hojarasca y fábrica */
+'<g>' +
+'<rect x="126" y="234" width="16" height="66" fill="#5d4037"></rect>' +
+'<circle cx="134" cy="212" r="42" fill="#2e7d32"></circle>' +
+'<circle cx="100" cy="234" r="26" fill="#388e3c"></circle>' +
+'<circle cx="170" cy="234" r="26" fill="#388e3c"></circle></g>' +
+'<g>' +
+'<ellipse cx="290" cy="278" rx="30" ry="17" fill="#6d4c41"></ellipse>' +
+'<circle cx="318" cy="266" r="11" fill="#6d4c41"></circle>' +
+'<rect x="272" y="290" width="6" height="12" fill="#4e342e"></rect>' +
+'<rect x="302" y="290" width="6" height="12" fill="#4e342e"></rect></g>' +
+'<g fill="#a1887f">' +
+'<ellipse cx="392" cy="296" rx="12" ry="5"></ellipse><ellipse cx="416" cy="299" rx="10" ry="4"></ellipse>' +
+'<ellipse cx="438" cy="295" rx="11" ry="5"></ellipse></g>' +
+'<g>' +
+'<rect x="22" y="252" width="70" height="48" fill="#546e7a"></rect>' +
+'<rect x="36" y="214" width="16" height="40" fill="#455a64"></rect>' +
+'<rect x="64" y="226" width="14" height="28" fill="#455a64"></rect></g>' +
 
-    // Eventos
-    window.addEventListener('resize', onResize, false);
+/* 1 · Fotosíntesis */
+'<g class="paso" id="paso-0">' +
+'<path class="flujo" d="M170,104 C176,140 160,160 146,176" fill="none" stroke="#1b5e20" stroke-width="6" marker-end="url(#p-verde)"></path>' +
+'<text x="226" y="140" class="rotulo-paso" text-anchor="middle" style="fill:#1b5e20">Fotosíntesis</text>' +
+'<text x="226" y="160" font-size="13" text-anchor="middle" fill="#1b5e20">el CO₂ entra en la planta</text>' +
+'</g>' +
 
-    document.getElementById('btn-pausa').addEventListener('click', () => {
-      pausado = !pausado;
-      document.getElementById('btn-pausa').innerHTML = pausado ? '▶ Reanudar' : '⏸ Pausar';
-    });
+/* 2 · Respiración */
+'<g class="paso" id="paso-1">' +
+'<path class="flujo" d="M300,252 C304,200 300,150 300,110" fill="none" stroke="#5b21b6" stroke-width="6" marker-end="url(#p-azul)"></path>' +
+'<text x="374" y="196" class="rotulo-paso" text-anchor="middle">Respiración</text>' +
+'<text x="374" y="216" font-size="13" text-anchor="middle" fill="#40157f">el CO₂ vuelve al aire</text>' +
+'</g>' +
 
-    document.getElementById('btn-educativo').addEventListener('click', () => {
-      modoEducativo = !modoEducativo;
-      const btn = document.getElementById('btn-educativo');
-      btn.textContent = modoEducativo ? '📚 Modo educativo: ON' : '📚 Modo educativo: OFF';
-      btn.classList.toggle('activo', modoEducativo);
-      if (!modoEducativo) cerrarPanelEducativo();
-    });
+/* 3 · Descomposición */
+'<g class="paso" id="paso-2">' +
+'<path class="flujo" d="M416,288 C420,220 416,160 416,110" fill="none" stroke="#6d4c41" stroke-width="5" marker-end="url(#p-marron)"></path>' +
+'<path class="flujo" d="M448,292 L468,340" fill="none" stroke="#6d4c41" stroke-width="5" marker-end="url(#p-marron)"></path>' +
+'<text x="470" y="252" class="rotulo-paso" text-anchor="middle" style="fill:#3e2723">Descomposición</text>' +
+'<text x="470" y="272" font-size="13" text-anchor="middle" fill="#3e2723">al aire y al suelo</text>' +
+'</g>' +
 
-    document.getElementById('btn-continuar').addEventListener('click', () => {
-      cerrarPanelEducativo();
-      const ciclos = Math.floor(tiempoSimulado / CICLO_TOTAL);
-      const etapaLocal = Math.floor((tiempoSimulado % CICLO_TOTAL) / DURACION_ETAPA);
-      const sigEtapa = (etapaLocal + 1) % TOTAL_ETAPAS;
-      const ciclosNuevos = sigEtapa === 0 ? ciclos + 1 : ciclos;
-      tiempoSimulado = ciclosNuevos * CICLO_TOTAL + sigEtapa * DURACION_ETAPA + 0.05;
-      etapaActual = -1;
-    });
+/* 4 · Intercambio con el océano */
+'<g class="paso" id="paso-3">' +
+'<path class="flujo" d="M624,108 L624,286" fill="none" stroke="#0d47a1" stroke-width="6" marker-end="url(#p-azul)"></path>' +
+'<path class="flujo" d="M726,286 L726,108" fill="none" stroke="#0d47a1" stroke-width="6" marker-end="url(#p-azul)"></path>' +
+'<text x="676" y="176" class="rotulo-paso" text-anchor="middle" style="fill:#0d3a72">Intercambio</text>' +
+'<text x="676" y="196" font-size="13" text-anchor="middle" fill="#0d3a72">en los dos sentidos</text>' +
+'</g>' +
 
-    document.querySelectorAll('.punto').forEach((p, idx) => {
-      p.addEventListener('click', () => saltarAEtapa(idx));
-    });
+/* 5 · Almacenamiento geológico */
+'<g class="paso" id="paso-4">' +
+'<path class="flujo" d="M200,330 L200,398" fill="none" stroke="#4e342e" stroke-width="6" marker-end="url(#p-marron)"></path>' +
+'<path class="flujo" d="M560,400 C520,412 480,410 440,404" fill="none" stroke="#4e342e" stroke-width="5" marker-end="url(#p-marron)"></path>' +
+'<text x="248" y="366" class="rotulo-paso" text-anchor="start" style="fill:#3e2723">Almacenamiento geológico</text>' +
+'<text x="248" y="386" font-size="13" text-anchor="start" fill="#3e2723">millones de años</text>' +
+'</g>' +
+
+/* 6 · Combustión */
+'<g class="paso" id="paso-5">' +
+'<path class="flujo" d="M44,208 C44,170 46,140 46,112" fill="none" stroke="#7f1d1d" stroke-width="7" marker-end="url(#p-rojo)"></path>' +
+'<path class="flujo" d="M110,420 C96,360 70,300 56,252" fill="none" stroke="#7f1d1d" stroke-width="5" marker-end="url(#p-rojo)"></path>' +
+'<text x="150" y="120" class="rotulo-paso" text-anchor="start" style="fill:#7f1d1d">Combustión</text>' +
+'<text x="150" y="140" font-size="13" text-anchor="start" fill="#7f1d1d">del fósil al aire, en un solo sentido</text>' +
+'</g>' +
+'</svg>';
+
+/* ── Estado ────────────────────────────────────────────────────────────── */
+var modo = "ciclo", etapa = 0, auto = null;
+var idx = 0, comprobado = false, seleccion = -1, marcador = {n:0, ok:0};
+
+var $ = function(id){ return document.getElementById(id); };
+function leer(t){ $("lectura-texto").textContent = t; }
+
+/* ── Recorrido del ciclo ───────────────────────────────────────────────── */
+function montarCiclo(){
+  $("zona-item").innerHTML = '<div class="marco-svg">' + ESCENA + '</div>' +
+    '<div class="ficha-etapa" id="ficha"></div>' +
+    '<p class="nota-modelo">Corte esquemático. Las proporciones no son reales: ni el tamaño de los reservorios ni el espesor de la atmósfera están a escala.</p>';
+  $("botonera").innerHTML = PROCESOS.map(function(e, i){
+    return '<button type="button" class="etapa" data-i="' + i + '" aria-pressed="false">' +
+      '<span class="num">Proceso ' + (i + 1) + '</span>' + e.n + '</button>';
+  }).join("");
+  $("botonera").querySelectorAll("button.etapa").forEach(function(b){
+    b.addEventListener("click", function(){ detener(); ir(parseInt(b.dataset.i, 10)); });
+  });
+  ir(etapa);
+}
+
+function ir(i){
+  etapa = (i + PROCESOS.length) % PROCESOS.length;
+  var e = PROCESOS[etapa];
+  $("progreso").textContent = "Proceso " + (etapa + 1) + " de 6 · " + e.n;
+  $("etiquetas").innerHTML = '<span class="etiqueta">' + e.n + '</span>' +
+    '<span class="etiqueta ' + e.clase + '">' + e.ritmo + '</span>' +
+    '<span class="etiqueta suave">Prácticas SP.2 y SP.6</span>';
+  for (var k = 0; k < PROCESOS.length; k++){
+    $("paso-" + k).setAttribute("class", "paso" + (k === etapa ? " vivo" : ""));
   }
+  $("botonera").querySelectorAll("button.etapa").forEach(function(b, k){
+    b.setAttribute("aria-pressed", k === etapa ? "true" : "false");
+  });
+  $("ficha").innerHTML = '<h3>' + (etapa + 1) + ". " + e.n + '</h3><p>' + e.texto + '</p>' +
+    '<div class="cifras">' +
+      '<div><span class="rot">De dónde sale</span><b>' + e.de + '</b></div>' +
+      '<div><span class="rot">A dónde va</span><b>' + e.a + '</b></div>' +
+      '<div><span class="rot">Dato</span><b>' + e.dato + '</b></div>' +
+    '</div>' +
+    '<p style="margin:12px 0 0;"><strong>Fíjate:</strong> ' + e.ojo + '</p>';
+  leer("Proceso " + (etapa + 1) + " de 6: " + e.n + ". " + e.ritmo + ". " + e.texto +
+       " " + e.de + ", " + e.a.toLowerCase() + ". " + e.ojo);
+}
 
-  function saltarAEtapa(idx) {
-    cerrarPanelEducativo();
-    const ciclos = Math.floor(tiempoSimulado / CICLO_TOTAL);
-    tiempoSimulado = ciclos * CICLO_TOTAL + idx * DURACION_ETAPA + 0.05;
-    etapaActual = -1;
-    ultimaEtapaPausada = -1;
-  }
+function detener(){
+  if (auto){ clearInterval(auto); auto = null; }
+  $("btn-auto").textContent = "Recorrer el ciclo solo";
+  $("lectura").setAttribute("aria-live", "polite");
+}
 
-  // =========================================================
-  // CREACIÓN DE ESCENA
-  // =========================================================
-
-  function crearLuces() {
-    const ambient = new THREE.AmbientLight(0xc0d8e8, 0.55);
-    scene.add(ambient);
-
-    sunLight = new THREE.DirectionalLight(0xfff4d6, 1.3);
-    sunLight.position.set(40, 60, 30);
-    sunLight.castShadow = true;
-    sunLight.shadow.mapSize.set(2048, 2048);
-    sunLight.shadow.camera.near = 0.5;
-    sunLight.shadow.camera.far = 200;
-    sunLight.shadow.camera.left = -60;
-    sunLight.shadow.camera.right = 60;
-    sunLight.shadow.camera.top = 60;
-    sunLight.shadow.camera.bottom = -60;
-    scene.add(sunLight);
-
-    const hemi = new THREE.HemisphereLight(0xa0d8ff, 0x4a3020, 0.4);
-    scene.add(hemi);
-  }
-
-  function crearTerreno() {
-    const seg = 80;
-    const geo = new THREE.PlaneGeometry(120, 120, seg, seg);
-    const pos = geo.attributes.position;
-    const colores = [];
-    const color = new THREE.Color();
-
-    for (let i = 0; i < pos.count; i++) {
-      const x = pos.getX(i);
-      const y = pos.getY(i);
-
-      // Terreno suave con leve relieve
-      let h = Math.sin(x * 0.08) * 0.6 + Math.cos(y * 0.1) * 0.5
-            + Math.sin(x * 0.25 + y * 0.2) * 0.4;
-
-      // Una colina suave en la zona del bosque (x ~ -25)
-      const distBosque = Math.sqrt((x + 25) * (x + 25) + (y + 5) * (y + 5));
-      h += 4 * Math.exp(-distBosque * 0.05);
-
-      // Bajada al océano (x > 16)
-      if (x > 16) {
-        const factor = Math.min(1, (x - 16) / 14);
-        h = h * (1 - factor) + (-3 - factor * 2) * factor;
-      }
-
-      pos.setZ(i, h);
-
-      // Color por zona y altura
-      if (h < -0.5) {
-        // Fondo arenoso
-        color.setRGB(0.78, 0.7, 0.45);
-      } else if (h < 0.5 && x > 14) {
-        // Playa
-        color.setRGB(0.85, 0.78, 0.55);
-      } else if (x < -10) {
-        // Zona de bosque
-        color.setRGB(0.22, 0.4, 0.18);
-      } else if (x > 4 && y < -2) {
-        // Zona industrial (más marrón)
-        color.setRGB(0.42, 0.36, 0.24);
-      } else {
-        // Pradera
-        color.setRGB(0.32, 0.55, 0.22);
-      }
-      colores.push(color.r, color.g, color.b);
-    }
-
-    geo.setAttribute('color', new THREE.Float32BufferAttribute(colores, 3));
-    geo.computeVertexNormals();
-
-    const mat = new THREE.MeshStandardMaterial({
-      vertexColors: true,
-      flatShading: false,
-      roughness: 0.95,
-      metalness: 0.0,
-      transparent: true,        // necesario para etapa geológica
-      opacity: 1.0
+/* ── Preguntas ─────────────────────────────────────────────────────────── */
+function montarPregunta(){
+  var p = PREGUNTAS[idx];
+  comprobado = false; seleccion = -1;
+  $("veredicto").innerHTML = "";
+  $("btn-comprobar").disabled = false;
+  $("progreso").textContent = "Pregunta " + (idx + 1) + " de " + PREGUNTAS.length;
+  $("etiquetas").innerHTML = '<span class="etiqueta">Comprobación</span>' +
+    '<span class="etiqueta suave">Ciencias de la Tierra y del espacio</span>';
+  $("zona-item").innerHTML = '<p class="caso">' + p.q + '</p><div class="opciones" id="opciones"></div>';
+  var letras = "ABCD";
+  p.ops.forEach(function(t, i){
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "opcion";
+    b.setAttribute("aria-pressed", "false");
+    b.innerHTML = '<span class="letra" aria-hidden="true">' + letras[i] + '.</span><span>' + t + '</span>';
+    b.addEventListener("click", function(){
+      if (comprobado) return;
+      $("opciones").querySelectorAll("button").forEach(function(o){ o.setAttribute("aria-pressed", "false"); });
+      b.setAttribute("aria-pressed", "true");
+      seleccion = i;
+      leer("Has elegido la opción " + letras[i] + ": " + t);
     });
-
-    terrain = new THREE.Mesh(geo, mat);
-    terrain.rotation.x = -Math.PI / 2;
-    terrain.receiveShadow = true;
-    scene.add(terrain);
-  }
-
-  function crearOceano() {
-    const geo = new THREE.PlaneGeometry(180, 180, 48, 48);
-    const mat = new THREE.MeshStandardMaterial({
-      color: 0x1e6091,
-      transparent: true,
-      opacity: 0.85,
-      roughness: 0.15,
-      metalness: 0.6
-    });
-    ocean = new THREE.Mesh(geo, mat);
-    ocean.rotation.x = -Math.PI / 2;
-    ocean.position.y = 0;
-    ocean.receiveShadow = true;
-    scene.add(ocean);
-    ocean.userData.posOrig = ocean.geometry.attributes.position.array.slice();
-  }
-
-  function animarOleaje(t) {
-    const pos = ocean.geometry.attributes.position;
-    const orig = ocean.userData.posOrig;
-    for (let i = 0; i < pos.count; i++) {
-      const ix = i * 3;
-      const x = orig[ix];
-      const y = orig[ix + 1];
-      const ola = Math.sin(x * 0.18 + t * 1.0) * 0.22
-                + Math.cos(y * 0.2 + t * 0.8) * 0.22;
-      pos.setZ(i, ola);
-    }
-    pos.needsUpdate = true;
-    ocean.geometry.computeVertexNormals();
-  }
-
-  function crearSol() {
-    const geo = new THREE.SphereGeometry(3.5, 32, 32);
-    const mat = new THREE.MeshBasicMaterial({ color: 0xffe066 });
-    sun = new THREE.Mesh(geo, mat);
-    sun.position.set(40, 50, 30);
-    scene.add(sun);
-
-    const haloTex = generarTexturaHalo();
-    const haloMat = new THREE.SpriteMaterial({
-      map: haloTex,
-      color: 0xfff4b8,
-      transparent: true,
-      opacity: 0.85,
-      blending: THREE.AdditiveBlending,
-      depthWrite: false
-    });
-    sunGlow = new THREE.Sprite(haloMat);
-    sunGlow.scale.set(16, 16, 1);
-    sun.add(sunGlow);
-  }
-
-  function generarTexturaHalo() {
-    const canvas = document.createElement('canvas');
-    canvas.width = canvas.height = 128;
-    const ctx = canvas.getContext('2d');
-    const grad = ctx.createRadialGradient(64, 64, 0, 64, 64, 64);
-    grad.addColorStop(0,    'rgba(255, 240, 180, 1)');
-    grad.addColorStop(0.25, 'rgba(255, 220, 130, 0.7)');
-    grad.addColorStop(0.6,  'rgba(255, 200, 100, 0.18)');
-    grad.addColorStop(1,    'rgba(255, 200, 100, 0)');
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, 128, 128);
-    return new THREE.CanvasTexture(canvas);
-  }
-
-  function crearAtmosferaAmbiente() {
-    // CO₂ ambiente: siempre flotando lento por toda la atmósfera
-    const num = 280;
-    const geo = new THREE.BufferGeometry();
-    const pos = new Float32Array(num * 3);
-    const fase = new Float32Array(num);
-
-    for (let i = 0; i < num; i++) {
-      pos[i * 3]     = (Math.random() - 0.5) * 110;
-      pos[i * 3 + 1] = 8 + Math.random() * 22;
-      pos[i * 3 + 2] = (Math.random() - 0.5) * 110;
-      fase[i] = Math.random() * Math.PI * 2;
-    }
-    geo.setAttribute('position', new THREE.BufferAttribute(pos, 3));
-    geo.userData = { fase };
-
-    const mat = new THREE.PointsMaterial({
-      size: 0.25,
-      color: 0x999999,
-      transparent: true,
-      opacity: 0.35,
-      depthWrite: false,
-      sizeAttenuation: true
-    });
-    nubeAmbiente = new THREE.Points(geo, mat);
-    scene.add(nubeAmbiente);
-  }
-
-  function animarAtmosferaAmbiente(t) {
-    const pos = nubeAmbiente.geometry.attributes.position;
-    const fase = nubeAmbiente.geometry.userData.fase;
-    for (let i = 0; i < pos.count; i++) {
-      const ix = i * 3;
-      pos.array[ix]     += Math.sin(t * 0.3 + fase[i]) * 0.015;
-      pos.array[ix + 2] += Math.cos(t * 0.25 + fase[i]) * 0.015;
-    }
-    pos.needsUpdate = true;
-  }
-
-  // ---------- Nubes (con proyección de sombras) ----------
-  function crearNubes() {
-    // Distribución sobre el paisaje. Altura 25-26 — justo encima del techo
-    // de cámara (~22), bajas para ser visibles en el frame, pero pequeñas
-    // por si la cámara las roza en alguna órbita.
-    const posiciones = [
-      { x: -28, y: 25, z:  10 },
-      { x: -18, y: 26, z:  -3 },
-      { x:  -3, y: 25, z:  12 },
-      { x:   8, y: 26, z:  -7 },
-      { x:  22, y: 25, z:   3 },
-      { x:  32, y: 26, z: -10 },
-      { x: -32, y: 25, z: -14 },
-      { x:   0, y: 26, z: -22 }
-    ];
-
-    posiciones.forEach((p, idx) => {
-      const grupo = new THREE.Group();
-      const numEsferas = 3 + Math.floor(Math.random() * 2); // 3-4 esferas
-      for (let j = 0; j < numEsferas; j++) {
-        const r = 0.7 + Math.random() * 0.45;               // radio 0.7-1.15 (mucho menor)
-        const g = new THREE.SphereGeometry(r, 10, 8);
-        const m = new THREE.MeshStandardMaterial({
-          color: 0xffffff,
-          transparent: true,
-          opacity: 0.82,
-          roughness: 1.0,
-          metalness: 0.0,
-          depthWrite: false      // si la cámara las atraviesa, no taponan tan duro
-        });
-        const esfera = new THREE.Mesh(g, m);
-        esfera.position.set(
-          (Math.random() - 0.5) * 2.5,
-          (Math.random() - 0.5) * 0.5,
-          (Math.random() - 0.5) * 1.8
-        );
-        esfera.castShadow = true;
-        grupo.add(esfera);
-      }
-      grupo.position.set(p.x, p.y, p.z);
-      grupo.userData.driftX = (Math.random() - 0.5) * 0.3;
-      grupo.userData.driftZ = (Math.random() - 0.5) * 0.3;
-      grupo.userData.posOrig = { x: p.x, z: p.z };
-      grupo.userData.fase = idx * 1.3;
-      nubes.push(grupo);
-      scene.add(grupo);
-    });
-  }
-
-  function animarNubes(t) {
-    nubes.forEach(n => {
-      // Deriva lenta en X y Z, con ondulación senoidal para naturalidad
-      const orig = n.userData.posOrig;
-      n.position.x = orig.x + Math.sin(t * 0.05 + n.userData.fase) * 4
-                            + n.userData.driftX * t;
-      n.position.z = orig.z + Math.cos(t * 0.04 + n.userData.fase) * 3
-                            + n.userData.driftZ * t;
-      // Reset cuando se alejan demasiado
-      if (Math.abs(n.position.x - orig.x) > 30) {
-        n.userData.driftX *= -1;
-      }
-      if (Math.abs(n.position.z - orig.z) > 30) {
-        n.userData.driftZ *= -1;
-      }
-    });
-  }
-
-  // ---------- Bosque ----------
-  function crearArbol(x, z, escala) {
-    const grupo = new THREE.Group();
-
-    const tronco = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.25, 0.4, 2.4, 8),
-      new THREE.MeshStandardMaterial({ color: 0x5a3a22, roughness: 0.95 })
-    );
-    tronco.position.y = 1.2;
-    tronco.castShadow = true;
-    grupo.add(tronco);
-
-    // Copa: sphere irregular con leve ruido
-    const copaGeo = new THREE.SphereGeometry(1.5, 12, 10);
-    const cpos = copaGeo.attributes.position;
-    for (let i = 0; i < cpos.count; i++) {
-      const x0 = cpos.getX(i), y0 = cpos.getY(i), z0 = cpos.getZ(i);
-      const r = Math.sin(x0 * 3 + z0 * 2) * 0.15;
-      cpos.setXYZ(i, x0 + r, y0 + r * 0.7, z0 + r);
-    }
-    copaGeo.computeVertexNormals();
-    const copaMat = new THREE.MeshStandardMaterial({
-      color: 0x3d8b3d,
-      roughness: 0.85,
-      flatShading: false
-    });
-    const copa = new THREE.Mesh(copaGeo, copaMat);
-    copa.position.y = 3.2;
-    copa.scale.set(1.1, 1.3, 1.1);
-    copa.castShadow = true;
-    grupo.add(copa);
-
-    grupo.position.set(x, 0, z);
-    grupo.scale.set(escala, escala, escala);
-    grupo.userData.copa = copa;
-    grupo.userData.escalaBase = escala;
-    return grupo;
-  }
-
-  function crearBosque() {
-    // 14 árboles distribuidos
-    const posiciones = [
-      [-30, -2], [-26, 5], [-22, -8], [-18, 2], [-15, -6], [-28, 9],
-      [-32, 0], [-20, 8], [-24, -3], [-29, -10], [-17, -2], [-21, 12],
-      [-33, -6], [-26, -12]
-    ];
-    posiciones.forEach(([x, z]) => {
-      const escala = 0.8 + Math.random() * 0.4;
-      const arbol = crearArbol(x, z, escala);
-      arboles.push(arbol);
-      scene.add(arbol);
-    });
-  }
-
-  // ---------- Hierba (parches) ----------
-  function crearHierba() {
-    // Pequeños matojos verdes en la pradera
-    for (let i = 0; i < 30; i++) {
-      const x = -14 + Math.random() * 14;
-      const z = -8 + Math.random() * 16;
-      // Evitar que aparezcan dentro de la fábrica/casa
-      if (x > 4 && x < 12 && z > -8 && z < 0) continue;
-
-      const geo = new THREE.ConeGeometry(0.3, 0.7, 5);
-      const mat = new THREE.MeshStandardMaterial({ color: 0x4ca64c, roughness: 0.95 });
-      const matojo = new THREE.Mesh(geo, mat);
-      matojo.position.set(x, 0.35, z);
-      matojo.rotation.y = Math.random() * Math.PI;
-      matojo.castShadow = true;
-      parchesHierba.push(matojo);
-      scene.add(matojo);
-    }
-  }
-
-  // ---------- Vaca ----------
-  function crearVaca() {
-    vaca = new THREE.Group();
-    const blanco = new THREE.MeshStandardMaterial({ color: 0xf2f2f2, roughness: 0.85 });
-    const negro  = new THREE.MeshStandardMaterial({ color: 0x222222, roughness: 0.9 });
-
-    // Cuerpo
-    const cuerpo = new THREE.Mesh(new THREE.BoxGeometry(2.2, 1.2, 1.0), blanco);
-    cuerpo.position.y = 1.3;
-    cuerpo.castShadow = true;
-    vaca.add(cuerpo);
-
-    // Manchas (planos en el cuerpo)
-    const manchaGeo = new THREE.PlaneGeometry(0.5, 0.4);
-    [
-      [0.3, 1.5,  0.51], [-0.4, 1.4, 0.51],
-      [0.0, 1.6, -0.51], [0.5, 1.2, -0.51]
-    ].forEach(([x, y, z]) => {
-      const m = new THREE.Mesh(manchaGeo, negro);
-      m.position.set(x, y, z);
-      if (z < 0) m.rotation.y = Math.PI;
-      vaca.add(m);
-    });
-
-    // Cabeza
-    const cabeza = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.7, 0.8), blanco);
-    cabeza.position.set(1.3, 1.5, 0);
-    cabeza.castShadow = true;
-    vaca.add(cabeza);
-
-    // Hocico
-    const hocico = new THREE.Mesh(new THREE.BoxGeometry(0.35, 0.35, 0.35), new THREE.MeshStandardMaterial({ color: 0xe5beb8 }));
-    hocico.position.set(1.65, 1.35, 0);
-    vaca.add(hocico);
-
-    // Patas
-    const pataGeo = new THREE.CylinderGeometry(0.13, 0.13, 1.0, 8);
-    [[0.7, 0.5, 0.4], [0.7, 0.5, -0.4], [-0.7, 0.5, 0.4], [-0.7, 0.5, -0.4]].forEach(p => {
-      const pata = new THREE.Mesh(pataGeo, blanco);
-      pata.position.set(p[0], p[1], p[2]);
-      pata.castShadow = true;
-      vaca.add(pata);
-    });
-
-    // Cola
-    const cola = new THREE.Mesh(new THREE.CylinderGeometry(0.05, 0.05, 0.8, 6), blanco);
-    cola.position.set(-1.2, 1.5, 0);
-    cola.rotation.z = Math.PI / 6;
-    vaca.add(cola);
-
-    vaca.position.set(-7, 0, 3);
-    vaca.rotation.y = -Math.PI / 6;
-    // Guardamos posición de la boca para los flujos
-    vaca.userData.boca = new THREE.Vector3(
-      vaca.position.x + 1.65 * Math.cos(vaca.rotation.y),
-      1.4,
-      vaca.position.z + 1.65 * Math.sin(vaca.rotation.y) * -1
-    );
-    scene.add(vaca);
-  }
-
-  // ---------- Humano y Casa ----------
-  function crearHumanoYCasa() {
-    // Casa
-    casa = new THREE.Group();
-    const paredes = new THREE.Mesh(
-      new THREE.BoxGeometry(3.2, 2.4, 2.8),
-      new THREE.MeshStandardMaterial({ color: 0xddc8a0, roughness: 0.9 })
-    );
-    paredes.position.y = 1.2;
-    paredes.castShadow = true;
-    casa.add(paredes);
-
-    // Tejado (cono o pirámide)
-    const tejado = new THREE.Mesh(
-      new THREE.ConeGeometry(2.4, 1.2, 4),
-      new THREE.MeshStandardMaterial({ color: 0x8b3a2a, roughness: 0.85 })
-    );
-    tejado.position.y = 3.0;
-    tejado.rotation.y = Math.PI / 4;
-    tejado.castShadow = true;
-    casa.add(tejado);
-
-    // Puerta
-    const puerta = new THREE.Mesh(
-      new THREE.BoxGeometry(0.6, 1.1, 0.05),
-      new THREE.MeshStandardMaterial({ color: 0x5a2a18 })
-    );
-    puerta.position.set(0, 0.55, 1.41);
-    casa.add(puerta);
-
-    // Ventana
-    const ventana = new THREE.Mesh(
-      new THREE.BoxGeometry(0.7, 0.6, 0.05),
-      new THREE.MeshStandardMaterial({ color: 0x88c8e8, emissive: 0x223a4e, emissiveIntensity: 0.3 })
-    );
-    ventana.position.set(1, 1.5, 1.41);
-    casa.add(ventana);
-
-    casa.position.set(-2, 0, 6);
-    scene.add(casa);
-
-    // Humano (al lado de la casa)
-    humano = new THREE.Group();
-    const piel = new THREE.MeshStandardMaterial({ color: 0xd9a878, roughness: 0.9 });
-    const ropa = new THREE.MeshStandardMaterial({ color: 0x3a5fb3, roughness: 0.9 });
-    const pant = new THREE.MeshStandardMaterial({ color: 0x303a4a, roughness: 0.9 });
-
-    const torso = new THREE.Mesh(new THREE.BoxGeometry(0.6, 0.9, 0.35), ropa);
-    torso.position.y = 1.45;
-    torso.castShadow = true;
-    humano.add(torso);
-
-    const cabeza = new THREE.Mesh(new THREE.SphereGeometry(0.28, 12, 10), piel);
-    cabeza.position.y = 2.1;
-    cabeza.castShadow = true;
-    humano.add(cabeza);
-
-    [[-0.2, 0.5, 0], [0.2, 0.5, 0]].forEach(p => {
-      const pierna = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 1.0, 8), pant);
-      pierna.position.set(p[0], p[1], p[2]);
-      pierna.castShadow = true;
-      humano.add(pierna);
-    });
-    [[-0.4, 1.45, 0], [0.4, 1.45, 0]].forEach(p => {
-      const brazo = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 0.9, 8), ropa);
-      brazo.position.set(p[0], p[1], p[2]);
-      humano.add(brazo);
-    });
-
-    humano.position.set(1, 0, 6);
-    humano.userData.boca = new THREE.Vector3(humano.position.x, 2.1, humano.position.z);
-    scene.add(humano);
-  }
-
-  // ---------- Fábrica + Coche + Carretera ----------
-  function crearFabricaYCoche() {
-    fabrica = new THREE.Group();
-
-    // Cuerpo principal
-    const cuerpo = new THREE.Mesh(
-      new THREE.BoxGeometry(5.5, 3.5, 4.5),
-      new THREE.MeshStandardMaterial({ color: 0x8a8e94, roughness: 0.85 })
-    );
-    cuerpo.position.y = 1.75;
-    cuerpo.castShadow = true;
-    fabrica.add(cuerpo);
-
-    // Tejado a dos aguas (prismas)
-    const tejadoGeo = new THREE.BufferGeometry();
-    const techoVertices = new Float32Array([
-      -2.75, 0,  2.25,  2.75, 0,  2.25,  0, 1.5, 2.25,
-      -2.75, 0, -2.25,  2.75, 0, -2.25,  0, 1.5, -2.25
-    ]);
-    const techoIdx = [
-      0, 1, 2,
-      3, 5, 4,
-      0, 2, 5, 0, 5, 3,
-      1, 4, 5, 1, 5, 2,
-      0, 3, 4, 0, 4, 1
-    ];
-    tejadoGeo.setAttribute('position', new THREE.BufferAttribute(techoVertices, 3));
-    tejadoGeo.setIndex(techoIdx);
-    tejadoGeo.computeVertexNormals();
-    const tejado = new THREE.Mesh(tejadoGeo, new THREE.MeshStandardMaterial({ color: 0x5a5a60, roughness: 0.9 }));
-    tejado.position.y = 3.5;
-    tejado.castShadow = true;
-    fabrica.add(tejado);
-
-    // Chimenea
-    const chimenea = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.55, 0.7, 5.5, 12),
-      new THREE.MeshStandardMaterial({ color: 0x6a6a72, roughness: 0.9 })
-    );
-    chimenea.position.set(1.6, 4.2, 0);
-    chimenea.castShadow = true;
-    fabrica.add(chimenea);
-
-    // Banda roja en la chimenea
-    const banda = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.58, 0.58, 0.5, 12),
-      new THREE.MeshStandardMaterial({ color: 0xc24040 })
-    );
-    banda.position.set(1.6, 6.4, 0);
-    fabrica.add(banda);
-
-    // Ventanas que brillan
-    const luzVent = new THREE.MeshStandardMaterial({
-      color: 0xffd070, emissive: 0xa67510, emissiveIntensity: 0.6
-    });
-    [[-1.5, 1.5, 2.26], [-0.4, 1.5, 2.26], [0.7, 1.5, 2.26]].forEach(p => {
-      const v = new THREE.Mesh(new THREE.BoxGeometry(0.7, 0.7, 0.05), luzVent);
-      v.position.set(p[0], p[1], p[2]);
-      fabrica.add(v);
-    });
-
-    fabrica.position.set(8, 0, -4);
-    fabrica.userData.salidaChimenea = new THREE.Vector3(
-      fabrica.position.x + 1.6,
-      fabrica.position.y + 7.0,
-      fabrica.position.z
-    );
-    scene.add(fabrica);
-
-    // Carretera (rectángulo gris oscuro)
-    const carretera = new THREE.Mesh(
-      new THREE.PlaneGeometry(20, 2.2),
-      new THREE.MeshStandardMaterial({ color: 0x2a2a30, roughness: 0.95 })
-    );
-    carretera.rotation.x = -Math.PI / 2;
-    carretera.position.set(2, 0.05, -8);
-    carretera.receiveShadow = true;
-    scene.add(carretera);
-
-    // Líneas blancas discontinuas
-    for (let i = -8; i <= 12; i += 2.5) {
-      const linea = new THREE.Mesh(
-        new THREE.PlaneGeometry(1.2, 0.18),
-        new THREE.MeshStandardMaterial({ color: 0xeeeeee })
-      );
-      linea.rotation.x = -Math.PI / 2;
-      linea.position.set(i, 0.06, -8);
-      scene.add(linea);
-    }
-
-    // Coche
-    coche = new THREE.Group();
-    const carroceria = new THREE.Mesh(
-      new THREE.BoxGeometry(2.2, 0.7, 1.0),
-      new THREE.MeshStandardMaterial({ color: 0xc02828, roughness: 0.4, metalness: 0.5 })
-    );
-    carroceria.position.y = 0.55;
-    carroceria.castShadow = true;
-    coche.add(carroceria);
-
-    const cabina = new THREE.Mesh(
-      new THREE.BoxGeometry(1.3, 0.6, 0.85),
-      new THREE.MeshStandardMaterial({ color: 0x88a8c8, roughness: 0.3, transparent: true, opacity: 0.7 })
-    );
-    cabina.position.y = 1.1;
-    cabina.position.x = -0.1;
-    coche.add(cabina);
-
-    // Ruedas
-    const ruedaGeo = new THREE.CylinderGeometry(0.32, 0.32, 0.25, 12);
-    const ruedaMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.8 });
-    [[-0.7, 0.32, 0.5], [0.7, 0.32, 0.5], [-0.7, 0.32, -0.5], [0.7, 0.32, -0.5]].forEach(p => {
-      const r = new THREE.Mesh(ruedaGeo, ruedaMat);
-      r.position.set(p[0], p[1], p[2]);
-      r.rotation.x = Math.PI / 2;
-      r.castShadow = true;
-      coche.add(r);
-    });
-
-    coche.position.set(-2, 0, -8);
-    coche.userData.tubo = new THREE.Vector3(coche.position.x - 1.1, 0.5, coche.position.z);
-    scene.add(coche);
-  }
-
-  function animarCoche(t) {
-    // El coche se desplaza por la carretera (idea + vuelta)
-    const recorrido = 12;
-    const x = -8 + ((t * 3) % recorrido);
-    coche.position.x = x;
-    coche.userData.tubo.x = x - 1.1;
-    coche.userData.tubo.z = -8;
-  }
-
-  // ---------- Árbol caído (descomposición) ----------
-  function crearArbolCaido() {
-    arbolCaido = new THREE.Group();
-
-    const tronco = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.4, 0.5, 3.2, 10),
-      new THREE.MeshStandardMaterial({ color: 0x6a4a30, roughness: 0.95 })
-    );
-    tronco.rotation.z = Math.PI / 2;
-    tronco.position.y = 0.4;
-    tronco.castShadow = true;
-    arbolCaido.add(tronco);
-
-    // Pila de hojas marchitas alrededor
-    for (let i = 0; i < 8; i++) {
-      const ang = Math.random() * Math.PI * 2;
-      const r = 1 + Math.random() * 1.5;
-      const hoja = new THREE.Mesh(
-        new THREE.SphereGeometry(0.25 + Math.random() * 0.15, 8, 6),
-        new THREE.MeshStandardMaterial({ color: 0x8a6a3a, roughness: 0.95 })
-      );
-      hoja.position.set(Math.cos(ang) * r, 0.15, Math.sin(ang) * r);
-      hoja.scale.y = 0.5;
-      hoja.castShadow = true;
-      arbolCaido.add(hoja);
-    }
-
-    // Hongos pequeños sobre el tronco
-    for (let i = 0; i < 4; i++) {
-      const hongo = new THREE.Group();
-      const tallo = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.05, 0.05, 0.2, 6),
-        new THREE.MeshStandardMaterial({ color: 0xeae0c4 })
-      );
-      tallo.position.y = 0.1;
-      hongo.add(tallo);
-      const sombrero = new THREE.Mesh(
-        new THREE.SphereGeometry(0.15, 8, 6, 0, Math.PI * 2, 0, Math.PI / 2),
-        new THREE.MeshStandardMaterial({ color: 0xc25a4a, roughness: 0.9 })
-      );
-      sombrero.position.y = 0.2;
-      hongo.add(sombrero);
-      hongo.position.set(-1.2 + i * 0.8, 0.85, (Math.random() - 0.5) * 0.4);
-      arbolCaido.add(hongo);
-    }
-
-    arbolCaido.position.set(-13, 0, -10);
-    scene.add(arbolCaido);
-  }
-
-  // ---------- Depósitos fósiles (subsuelo) ----------
-  function crearDepositosFosiles() {
-    // Capa visual de roca/sedimento en el subsuelo (ligeramente debajo del terreno)
-    const capaGeo = new THREE.PlaneGeometry(80, 80);
-    const capaMat = new THREE.MeshStandardMaterial({
-      color: 0x4a3a2a,
-      roughness: 0.95
-    });
-    const capa = new THREE.Mesh(capaGeo, capaMat);
-    capa.rotation.x = -Math.PI / 2;
-    capa.position.set(-5, -3.5, 0);
-    scene.add(capa);
-
-    // Bolsas de carbón/petróleo
-    const posiciones = [
-      [-15, -2.5,  4, 'carbon'],
-      [ -8, -2.0, -5, 'carbon'],
-      [  2, -2.8,  3, 'petroleo'],
-      [  8, -3.2, -2, 'petroleo'],
-      [-22, -2.4, -2, 'carbon'],
-      [ -3, -2.2, -8, 'petroleo']
-    ];
-    posiciones.forEach(([x, y, z, tipo]) => {
-      const r = 1.0 + Math.random() * 0.6;
-      const geo = new THREE.SphereGeometry(r, 14, 10);
-      // Deformar para que parezca bolsa irregular
-      const pos = geo.attributes.position;
-      for (let i = 0; i < pos.count; i++) {
-        const x0 = pos.getX(i), y0 = pos.getY(i), z0 = pos.getZ(i);
-        const f = 1 + Math.sin(x0 * 3 + z0 * 2) * 0.15;
-        pos.setXYZ(i, x0 * f, y0 * 0.55, z0 * f);
-      }
-      geo.computeVertexNormals();
-
-      const color = tipo === 'carbon' ? 0x101010 : 0x382418;
-      const mat = new THREE.MeshStandardMaterial({
-        color,
-        roughness: tipo === 'carbon' ? 0.7 : 0.3,
-        metalness: tipo === 'carbon' ? 0.2 : 0.5,
-        emissive: tipo === 'carbon' ? 0x000000 : 0x100804,
-        emissiveIntensity: 0.3
-      });
-      const mesh = new THREE.Mesh(geo, mat);
-      mesh.position.set(x, y, z);
-      mesh.userData = { tipo };
-      depositosFosiles.push(mesh);
-      scene.add(mesh);
-    });
-  }
-
-  // =========================================================
-  // SISTEMA DE FLUJOS (partículas dirigidas)
-  // =========================================================
-
-  // Texturas reutilizables para distintos tipos de partícula
-  function texturaPart(tipo) {
-    if (TEX_CACHE[tipo]) return TEX_CACHE[tipo];
-    const canvas = document.createElement('canvas');
-    canvas.width = canvas.height = 32;
-    const ctx = canvas.getContext('2d');
-    const grad = ctx.createRadialGradient(16, 16, 0, 16, 16, 16);
-    if (tipo === 'humo') {
-      grad.addColorStop(0,   'rgba(80, 80, 80, 0.95)');
-      grad.addColorStop(0.5, 'rgba(60, 60, 60, 0.55)');
-      grad.addColorStop(1,   'rgba(40, 40, 40, 0)');
-    } else if (tipo === 'oxigeno') {
-      grad.addColorStop(0,   'rgba(220, 240, 255, 1)');
-      grad.addColorStop(0.4, 'rgba(150, 210, 255, 0.7)');
-      grad.addColorStop(1,   'rgba(120, 180, 230, 0)');
-    } else if (tipo === 'burbuja') {
-      grad.addColorStop(0,   'rgba(255, 255, 255, 0.95)');
-      grad.addColorStop(0.5, 'rgba(200, 230, 255, 0.55)');
-      grad.addColorStop(1,   'rgba(180, 220, 255, 0)');
-    } else if (tipo === 'organico') {
-      grad.addColorStop(0,   'rgba(140, 100, 60, 1)');
-      grad.addColorStop(0.5, 'rgba(110, 80, 50, 0.6)');
-      grad.addColorStop(1,   'rgba(80, 60, 40, 0)');
-    } else if (tipo === 'comida') {
-      grad.addColorStop(0,   'rgba(220, 255, 180, 1)');
-      grad.addColorStop(0.5, 'rgba(150, 230, 100, 0.7)');
-      grad.addColorStop(1,   'rgba(100, 200, 60, 0)');
-    } else { // co2 default
-      grad.addColorStop(0,   'rgba(170, 170, 170, 0.95)');
-      grad.addColorStop(0.5, 'rgba(120, 120, 120, 0.55)');
-      grad.addColorStop(1,   'rgba(80, 80, 80, 0)');
-    }
-    ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, 32, 32);
-    const tex = new THREE.CanvasTexture(canvas);
-    TEX_CACHE[tipo] = tex;
-    return tex;
-  }
-
-  /**
-   * Crea un flujo de partículas dirigido (origen → destino).
-   * cfg: {
-   *   numParticulas, tipo, size, etapasOpacidad: { idx: opMax },
-   *   getSrc, getDst (funciones que devuelven Vector3),
-   *   velocidad (rango ~0.05–1.0; menor = más lento),
-   *   bamboleo, arc, blending ('add' o 'normal'),
-   *   regenerarAlReiniciar (true/false)
-   * }
-   */
-  function crearFlujo(cfg) {
-    const num = cfg.numParticulas;
-    const geo = new THREE.BufferGeometry();
-    const positions = new Float32Array(num * 3);
-    const ts = new Float32Array(num);
-    const fases = new Float32Array(num);
-    const sources = [];
-    const targets = [];
-
-    for (let i = 0; i < num; i++) {
-      ts[i] = Math.random();
-      fases[i] = Math.random() * Math.PI * 2;
-      const s = cfg.getSrc();
-      const d = cfg.getDst();
-      sources.push(s);
-      targets.push(d);
-      const p = s.clone().lerp(d, ts[i]);
-      positions[i * 3]     = p.x;
-      positions[i * 3 + 1] = p.y;
-      positions[i * 3 + 2] = p.z;
-    }
-    geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-    geo.userData = { ts, fases, sources, targets };
-
-    const mat = new THREE.PointsMaterial({
-      size: cfg.size || 0.4,
-      map: texturaPart(cfg.tipo),
-      color: cfg.color || 0xffffff,
-      transparent: true,
-      opacity: 0,
-      blending: cfg.blending === 'add' ? THREE.AdditiveBlending : THREE.NormalBlending,
-      depthWrite: false,
-      sizeAttenuation: true
-    });
-
-    const points = new THREE.Points(geo, mat);
-    points.userData = { cfg };
-    flujos.push(points);
-    scene.add(points);
-    return points;
-  }
-
-  function animarFlujo(flujo, idx, prog, deltaT) {
-    const cfg = flujo.userData.cfg;
-    const mat = flujo.material;
-
-    // Calcular opacidad objetivo según etapa actual
-    let opObjetivo = cfg.etapasOpacidad[idx] || 0;
-    // Envoltura para suavizar entrada y salida dentro de la etapa
-    if (opObjetivo > 0) {
-      let env = 1;
-      if (prog < 0.12)      env = prog / 0.12;
-      else if (prog > 0.88) env = (1 - prog) / 0.12;
-      opObjetivo *= env;
-    }
-    mat.opacity += (opObjetivo - mat.opacity) * 0.10;
-
-    if (mat.opacity < 0.015) return;
-
-    const pos = flujo.geometry.attributes.position;
-    const ts = flujo.geometry.userData.ts;
-    const fases = flujo.geometry.userData.fases;
-    const sources = flujo.geometry.userData.sources;
-    const targets = flujo.geometry.userData.targets;
-    const dt = Math.min(deltaT, 0.05);
-    const vel = cfg.velocidad || 0.4;
-
-    for (let i = 0; i < ts.length; i++) {
-      ts[i] += dt * vel * (1 + Math.sin(fases[i]) * 0.15);
-      if (ts[i] > 1) {
-        ts[i] = 0;
-        if (cfg.regenerarAlReiniciar !== false) {
-          sources[i] = cfg.getSrc();
-          targets[i] = cfg.getDst();
-        }
-      }
-
-      const t = ts[i];
-      const sx = sources[i].x, sy = sources[i].y, sz = sources[i].z;
-      const dx = targets[i].x, dy = targets[i].y, dz = targets[i].z;
-
-      let x = sx + (dx - sx) * t;
-      let y = sy + (dy - sy) * t;
-      let z = sz + (dz - sz) * t;
-
-      // Bamboleo lateral suave
-      if (cfg.bamboleo) {
-        x += Math.sin(t * 6 + fases[i]) * cfg.bamboleo;
-        z += Math.cos(t * 5 + fases[i] * 1.3) * cfg.bamboleo;
-      }
-      // Arco vertical (parábola)
-      if (cfg.arc) {
-        y += Math.sin(t * Math.PI) * cfg.arc;
-      }
-
-      pos.array[i * 3]     = x;
-      pos.array[i * 3 + 1] = y;
-      pos.array[i * 3 + 2] = z;
-    }
-    pos.needsUpdate = true;
-  }
-
-  // ---------- Definición de los 10 flujos del ciclo ----------
-  function crearFlujos() {
-    // Helper: posición aleatoria en una zona del cielo
-    const cieloSobre = (cx, cz, rango = 18, yMin = 16, yMax = 22) =>
-      new THREE.Vector3(
-        cx + (Math.random() - 0.5) * rango,
-        yMin + Math.random() * (yMax - yMin),
-        cz + (Math.random() - 0.5) * rango
-      );
-
-    // Helper: posición de una hoja aleatoria del bosque
-    const hojaBosque = () => {
-      const a = arboles[Math.floor(Math.random() * arboles.length)];
-      return new THREE.Vector3(
-        a.position.x + (Math.random() - 0.5) * 1.6,
-        2.8 + Math.random() * 1.6,
-        a.position.z + (Math.random() - 0.5) * 1.6
-      );
-    };
-
-    // 0 — Fotosíntesis: CO₂ del aire entra a las hojas
-    crearFlujo({
-      numParticulas: 90, tipo: 'co2', color: 0xa8a8a8, size: 0.5,
-      etapasOpacidad: { 0: 0.85 },
-      velocidad: 0.55, bamboleo: 0.35,
-      getSrc: () => cieloSobre(-25, 0, 18, 16, 22),
-      getDst: () => hojaBosque()
-    });
-
-    // 1 — Fotosíntesis: O₂ sale de las hojas hacia el aire
-    crearFlujo({
-      numParticulas: 70, tipo: 'oxigeno', color: 0x9ad8ff, size: 0.5,
-      etapasOpacidad: { 0: 0.8 },
-      velocidad: 0.6, bamboleo: 0.25, blending: 'add',
-      getSrc: () => hojaBosque(),
-      getDst: () => cieloSobre(-30, 0, 22, 18, 24)
-    });
-
-    // 2 — Cadena alimenticia: hierba → vaca
-    crearFlujo({
-      numParticulas: 28, tipo: 'comida', color: 0xa8e060, size: 0.55,
-      etapasOpacidad: { 1: 0.95 },
-      velocidad: 0.7, arc: 0.6,
-      getSrc: () => {
-        const m = parchesHierba[Math.floor(Math.random() * parchesHierba.length)];
-        return new THREE.Vector3(m.position.x, 0.6, m.position.z);
-      },
-      getDst: () => vaca.userData.boca.clone()
-    });
-
-    // 3 — Respiración: vaca + humano → CO₂ al aire
-    crearFlujo({
-      numParticulas: 60, tipo: 'co2', color: 0xa0a0a0, size: 0.42,
-      etapasOpacidad: { 1: 0.85 },
-      velocidad: 0.55, bamboleo: 0.3,
-      getSrc: () => {
-        return Math.random() < 0.55
-          ? vaca.userData.boca.clone()
-          : humano.userData.boca.clone();
-      },
-      getDst: () => cieloSobre(-5, 4, 20, 18, 22)
-    });
-
-    // 4 — Descomposición: árbol caído → CO₂ atmosférico
-    crearFlujo({
-      numParticulas: 60, tipo: 'co2', color: 0xb0a888, size: 0.45,
-      etapasOpacidad: { 2: 0.9 },
-      velocidad: 0.4, bamboleo: 0.4,
-      getSrc: () => new THREE.Vector3(
-        arbolCaido.position.x + (Math.random() - 0.5) * 3.2,
-        0.4,
-        arbolCaido.position.z + (Math.random() - 0.5) * 1.4
-      ),
-      getDst: () => cieloSobre(arbolCaido.position.x, arbolCaido.position.z, 14, 16, 22)
-    });
-
-    // 5 — Descomposición: árbol caído → suelo (carbono orgánico)
-    crearFlujo({
-      numParticulas: 35, tipo: 'organico', color: 0x8a5e36, size: 0.4,
-      etapasOpacidad: { 2: 0.85, 5: 0.4 },
-      velocidad: 0.25,
-      getSrc: () => new THREE.Vector3(
-        arbolCaido.position.x + (Math.random() - 0.5) * 3.0,
-        0.4,
-        arbolCaido.position.z + (Math.random() - 0.5) * 1.4
-      ),
-      getDst: () => new THREE.Vector3(
-        arbolCaido.position.x + (Math.random() - 0.5) * 5,
-        -2.5 - Math.random() * 0.5,
-        arbolCaido.position.z + (Math.random() - 0.5) * 5
-      )
-    });
-
-    // 6 — Combustión: chimenea de fábrica → atmósfera
-    crearFlujo({
-      numParticulas: 90, tipo: 'humo', color: 0x666666, size: 0.7,
-      etapasOpacidad: { 3: 0.95 },
-      velocidad: 0.6, bamboleo: 0.5,
-      getSrc: () => fabrica.userData.salidaChimenea.clone().add(
-        new THREE.Vector3((Math.random() - 0.5) * 0.4, 0, (Math.random() - 0.5) * 0.4)
-      ),
-      getDst: () => cieloSobre(fabrica.position.x + 3, fabrica.position.z, 16, 22, 28)
-    });
-
-    // 7 — Combustión: tubo de escape del coche → atmósfera (más bajo, más cercano)
-    crearFlujo({
-      numParticulas: 50, tipo: 'humo', color: 0x7a7a7a, size: 0.5,
-      etapasOpacidad: { 3: 0.85 },
-      velocidad: 0.7, bamboleo: 0.4,
-      getSrc: () => coche.userData.tubo.clone(),
-      getDst: () => cieloSobre(coche.position.x, coche.position.z, 12, 14, 18)
-    });
-
-    // 8 — Océano: atmósfera → océano (absorción de CO₂)
-    crearFlujo({
-      numParticulas: 70, tipo: 'co2', color: 0xa0a0a0, size: 0.45,
-      etapasOpacidad: { 4: 0.85 },
-      velocidad: 0.5, bamboleo: 0.3,
-      getSrc: () => cieloSobre(28, 4, 30, 16, 20),
-      getDst: () => new THREE.Vector3(20 + Math.random() * 28, 0.3, (Math.random() - 0.5) * 32)
-    });
-
-    // 9 — Océano: océano → atmósfera (burbujas que liberan CO₂)
-    crearFlujo({
-      numParticulas: 50, tipo: 'burbuja', color: 0xddeeff, size: 0.4,
-      etapasOpacidad: { 4: 0.7 },
-      velocidad: 0.45, bamboleo: 0.2, blending: 'add',
-      getSrc: () => new THREE.Vector3(20 + Math.random() * 28, 0.3, (Math.random() - 0.5) * 32),
-      getDst: () => cieloSobre(28, 4, 28, 12, 16)
-    });
-
-    // 10 — Geológico: suelo → depósitos fósiles (extremadamente lento)
-    crearFlujo({
-      numParticulas: 50, tipo: 'organico', color: 0x4a3520, size: 0.5,
-      etapasOpacidad: { 5: 0.92 },
-      velocidad: 0.12, bamboleo: 0.1,
-      getSrc: () => new THREE.Vector3(
-        (Math.random() - 0.5) * 36,
-        0.2 + Math.random() * 0.3,
-        (Math.random() - 0.5) * 26
-      ),
-      getDst: () => {
-        const dep = depositosFosiles[Math.floor(Math.random() * depositosFosiles.length)];
-        return dep.position.clone().add(new THREE.Vector3(
-          (Math.random() - 0.5) * 0.6,
-          (Math.random() - 0.5) * 0.3,
-          (Math.random() - 0.5) * 0.6
-        ));
-      }
-    });
-  }
-
-  // =========================================================
-  // ETIQUETAS 3D
-  // =========================================================
-  function crearTexturaEtiqueta(texto, color) {
-    // ----- Paso 1: medir el ancho del texto con un canvas temporal -----
-    const tmpCtx = document.createElement('canvas').getContext('2d');
-    tmpCtx.font = 'bold 52px "Segoe UI", Arial, sans-serif';
-    const anchoTexto = tmpCtx.measureText(texto).width;
-
-    // ----- Paso 2: dimensionar el canvas real con padding adecuado -----
-    const padding = 90;                                      // 45 px a cada lado
-    const ch = 128;
-    const cw = Math.max(512, Math.ceil((anchoTexto + padding) / 4) * 4);
-
-    const canvas = document.createElement('canvas');
-    canvas.width = cw;
-    canvas.height = ch;
-    const ctx = canvas.getContext('2d');
-
-    function rectRedondeado(x, y, w, h, r) {
-      ctx.beginPath();
-      ctx.moveTo(x + r, y);
-      ctx.lineTo(x + w - r, y);
-      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
-      ctx.lineTo(x + w, y + h - r);
-      ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
-      ctx.lineTo(x + r, y + h);
-      ctx.quadraticCurveTo(x, y + h, x, y + h - r);
-      ctx.lineTo(x, y + r);
-      ctx.quadraticCurveTo(x, y, x + r, y);
-      ctx.closePath();
-    }
-
-    ctx.fillStyle = 'rgba(8, 18, 35, 0.92)';
-    rectRedondeado(8, 8, cw - 16, ch - 16, 22);
-    ctx.fill();
-    ctx.strokeStyle = color;
-    ctx.lineWidth = 5;
-    ctx.stroke();
-
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 52px "Segoe UI", Arial, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(texto, cw / 2, ch / 2);
-
-    const tex = new THREE.CanvasTexture(canvas);
-    tex.userData = { aspect: cw / ch };                      // guardamos la proporción
-    return tex;
-  }
-
-  function crearEtiquetas3D() {
-    ETIQUETAS_POR_ETAPA.forEach((lista, idx) => {
-      lista.forEach(info => {
-        const tex = crearTexturaEtiqueta(info.texto, info.color);
-        tex.minFilter = THREE.LinearFilter;
-        const mat = new THREE.SpriteMaterial({
-          map: tex,
-          transparent: true,
-          depthTest: false,
-          depthWrite: false,
-          opacity: 0
-        });
-        const sprite = new THREE.Sprite(mat);
-        sprite.position.set(info.pos[0], info.pos[1], info.pos[2]);
-        // Escala proporcional al ancho del canvas: alto fijo, ancho según el texto
-        const altoSprite = 3.25;
-        const aspect = tex.userData.aspect;                  // 4 para textos cortos, 6+ para largos
-        sprite.scale.set(altoSprite * aspect, altoSprite, 1);
-        sprite.userData = { idxEtapa: idx, yBase: info.pos[1] };
-        sprite.renderOrder = 999;
-        scene.add(sprite);
-        etiquetas3D.push(sprite);
-      });
-    });
-  }
-
-  function animarEtiquetas(idx, prog) {
-    etiquetas3D.forEach(eti => {
-      const propia = eti.userData.idxEtapa === idx;
-      let opObjetivo = 0;
-      if (propia) {
-        if (prog < 0.15)      opObjetivo = (prog / 0.15);
-        else if (prog < 0.85) opObjetivo = 1;
-        else                  opObjetivo = (1 - prog) / 0.15;
-      }
-      eti.material.opacity += (opObjetivo - eti.material.opacity) * 0.12;
-      if (eti.material.opacity > 0.05) {
-        eti.position.y = eti.userData.yBase + Math.sin(tiempoSimulado * 1.3 + eti.userData.idxEtapa) * 0.4;
-      }
-    });
-  }
-
-  // =========================================================
-  // PANEL EDUCATIVO
-  // =========================================================
-  function abrirPanelEducativo(idx) {
-    const exp = EXPLICACIONES[idx];
-    document.getElementById('edu-titulo').textContent = exp.titulo;
-    document.getElementById('edu-cuerpo').innerHTML = exp.cuerpo;
-    document.getElementById('panel-educativo').classList.add('visible');
-    pausado = true;
-    pausaEducativaActiva = true;
-  }
-
-  function cerrarPanelEducativo() {
-    document.getElementById('panel-educativo').classList.remove('visible');
-    if (pausaEducativaActiva) {
-      pausado = false;
-      pausaEducativaActiva = false;
-      document.getElementById('btn-pausa').innerHTML = '⏸ Pausar';
-    }
-  }
-
-  // =========================================================
-  // ANIMACIÓN PRINCIPAL
-  // =========================================================
-  function animate() {
-    requestAnimationFrame(animate);
-    const delta = clock.getDelta();
-    if (!pausado) tiempoSimulado += delta;
-
-    actualizarEtapa(delta);
-    animarOleaje(tiempoSimulado);
-    animarSol(tiempoSimulado);
-    animarAtmosferaAmbiente(tiempoSimulado);
-    animarNubes(tiempoSimulado);
-    animarCoche(tiempoSimulado);
-    animarCamara(tiempoSimulado);
-
-    renderer.render(scene, camera);
-  }
-
-  function actualizarEtapa(deltaT) {
-    const t = tiempoSimulado % CICLO_TOTAL;
-    const idx = Math.floor(t / DURACION_ETAPA);
-    const progreso = (t % DURACION_ETAPA) / DURACION_ETAPA;
-
-    if (idx !== etapaActual) {
-      etapaActual = idx;
-      const e = ETAPAS[idx];
-      const panel = document.getElementById('panel-etapa');
-      panel.className = e.clase;
-      document.getElementById('etapa-numero').textContent = e.num;
-      document.getElementById('etapa-titulo').textContent = e.titulo;
-      document.getElementById('etapa-desc').textContent = e.desc;
-      document.querySelectorAll('.punto').forEach((p, i) => {
-        p.classList.toggle('activo', i === idx);
-      });
-    }
-    document.getElementById('barra-relleno').style.width = (progreso * 100) + '%';
-
-    // Niebla y fondo (transición suave)
-    const idxSig = (idx + 1) % TOTAL_ETAPAS;
-    const colA = new THREE.Color(ETAPAS[idx].colorNiebla);
-    const colB = new THREE.Color(ETAPAS[idxSig].colorNiebla);
-    const colMix = colA.clone().lerp(colB, progreso);
-    scene.background.copy(colMix);
-    scene.fog.color.copy(colMix);
-
-    // Animar todos los flujos
-    flujos.forEach(f => animarFlujo(f, idx, progreso, deltaT));
-
-    // Reacciones visuales por etapa
-    animarReaccionesEscena(idx, progreso);
-
-    // Etiquetas 3D
-    animarEtiquetas(idx, progreso);
-
-    // Modo educativo: pausa al final de cada etapa
-    if (modoEducativo && !pausaEducativaActiva && progreso > 0.92 && idx !== ultimaEtapaPausada) {
-      ultimaEtapaPausada = idx;
-      abrirPanelEducativo(idx);
-    }
-    if (idx === 0 && progreso < 0.05 && ultimaEtapaPausada === TOTAL_ETAPAS - 1) {
-      ultimaEtapaPausada = -1;
-    }
-  }
-
-  // ---------- Reacciones visuales de objetos por etapa ----------
-  function animarReaccionesEscena(idx, prog) {
-    // Fotosíntesis: árboles "respiran" — ligero pulso de escala y brillo
-    const factorBosque = (idx === 0) ? (1 + Math.sin(prog * Math.PI * 4) * 0.04) : 1;
-    arboles.forEach(a => {
-      const objetivo = a.userData.escalaBase * factorBosque;
-      const actual = a.scale.x;
-      const nuevo = actual + (objetivo - actual) * 0.15;
-      a.scale.set(nuevo, nuevo, nuevo);
-      // Brillo emisivo durante fotosíntesis
-      const emObjetivo = (idx === 0) ? 0.15 : 0.0;
-      const cur = a.userData.copa.material.emissiveIntensity || 0;
-      a.userData.copa.material.emissive = new THREE.Color(0x4caf50);
-      a.userData.copa.material.emissiveIntensity = cur + (emObjetivo - cur) * 0.08;
-    });
-
-    // Combustión: ventanas y banda de chimenea pulsan en rojo/naranja
-    if (idx === 3) {
-      const pulso = 0.8 + Math.sin(tiempoSimulado * 6) * 0.2;
-      // Ventanas
-      fabrica.children.forEach(c => {
-        if (c.material && c.material.emissive && c.geometry.type === 'BoxGeometry') {
-          if (c.material.color.r > 0.9 && c.material.color.g > 0.7) {
-            c.material.emissiveIntensity = 0.6 * pulso;
-          }
-        }
-      });
-    }
-
-    // Geológico: el terreno se vuelve semitransparente para mostrar los depósitos enterrados
-    let opTerrObjetivo = 1.0;
-    if (idx === 5) {
-      // Disminuye hacia el principio, aumenta hacia el final
-      if (prog < 0.2)      opTerrObjetivo = 1.0 - prog * 2.5;          // 1.0 → 0.5
-      else if (prog < 0.8) opTerrObjetivo = 0.5;
-      else                 opTerrObjetivo = 0.5 + (prog - 0.8) * 2.5;  // 0.5 → 1.0
-    }
-    terrain.material.opacity += (opTerrObjetivo - terrain.material.opacity) * 0.06;
-
-    // Geológico: depósitos fósiles brillan suavemente
-    depositosFosiles.forEach(d => {
-      const pulsoIntensidad = (idx === 5) ? (0.3 + Math.sin(tiempoSimulado * 1.5) * 0.15) : 0.1;
-      d.material.emissiveIntensity += (pulsoIntensidad - d.material.emissiveIntensity) * 0.05;
-      // Color emisivo suave dorado para hacerlos visibles
-      d.material.emissive = new THREE.Color(d.userData.tipo === 'carbon' ? 0x401818 : 0x402810);
-    });
-  }
-
-  // ---------- Sol y cámara ----------
-  function animarSol(t) {
-    const pulso = 1 + Math.sin(t * 1.4) * 0.04;
-    sun.scale.set(pulso, pulso, pulso);
-    if (sunGlow) sunGlow.material.opacity = 0.7 + Math.sin(t * 1.2) * 0.15;
-  }
-
-  function animarCamara(t) {
-    // Foco objetivo según etapa (lerp suave)
-    const idx = Math.floor((t % CICLO_TOTAL) / DURACION_ETAPA);
-    const idxSig = (idx + 1) % TOTAL_ETAPAS;
-    const prog = (t % DURACION_ETAPA) / DURACION_ETAPA;
-
-    const f1 = ETAPAS[idx].foco;
-    const f2 = ETAPAS[idxSig].foco;
-    // Mezcla suave en transiciones (último 15% de la etapa hacia la siguiente)
-    const mezcla = prog > 0.85 ? (prog - 0.85) / 0.15 : 0;
-    const fx = f1.x * (1 - mezcla) + f2.x * mezcla;
-    const fy = f1.y * (1 - mezcla) + f2.y * mezcla;
-    const fz = f1.z * (1 - mezcla) + f2.z * mezcla;
-    const radio = f1.radio * (1 - mezcla) + f2.radio * mezcla;
-
-    // Órbita lenta alrededor del foco
-    const ang = t * 0.08;
-    // Cámara orbita con altura 17-22 (techo a 22), por debajo de las nubes (~y=25)
-    const altura = 19.5 + Math.sin(t * 0.13) * 2.5;
-
-    camera.position.x = fx + Math.cos(ang) * radio;
-    camera.position.z = fz + Math.sin(ang) * radio;
-    camera.position.y = (idx === 5)
-      ? altura - 8     // Más bajo en etapa geológica para ver el subsuelo
-      : altura;
-
-    camera.lookAt(fx, fy, fz);
-  }
-
-  function onResize() {
-    camera.aspect = window.innerWidth / window.innerHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize(window.innerWidth, window.innerHeight);
-  }
-  </script>
+    $("opciones").appendChild(b);
+  });
+  leer("Pregunta " + (idx + 1) + " de " + PREGUNTAS.length + ". " + p.q);
+}
+
+function comprobar(){
+  if (comprobado) return;
+  var p = PREGUNTAS[idx], ok = (seleccion === p.ok);
+  $("opciones").querySelectorAll("button").forEach(function(b, i){
+    if (i === p.ok) b.classList.add("acierto");
+    else if (i === seleccion) b.classList.add("fallo");
+    b.disabled = true;
+  });
+  comprobado = true;
+  $("btn-comprobar").disabled = true;
+  marcador.n++; if (ok) marcador.ok++;
+  pintarMarcador();
+  var cab = (seleccion === -1) ? "No has marcado ninguna opción."
+                               : (ok ? "Respuesta correcta." : "Respuesta incorrecta.");
+  $("veredicto").innerHTML = '<div class="' + (ok ? "caja-ok" : "caja-mal") + '"><p><strong>' +
+    cab + '</strong></p><p>' + p.exp + '</p></div>';
+  leer(cab + " " + p.exp +
+       (idx + 1 < PREGUNTAS.length ? " Pulsa «Siguiente pregunta» para continuar." : " Era la última pregunta."));
+}
+
+function pintarMarcador(){
+  var pct = marcador.n ? (Math.round(marcador.ok / marcador.n * 1000) / 10).toFixed(1) + " %" : "—";
+  $("marcador").innerHTML = '<tr><th scope="row">Comprobación del ciclo del carbono</th><td>' +
+    marcador.n + '</td><td>' + marcador.ok + '</td><td>' + pct + '</td></tr>';
+}
+
+/* ── Cambio de modo ────────────────────────────────────────────────────── */
+function render(){
+  detener();
+  modo = $("ejercicio").value;
+  var esCiclo = (modo === "ciclo");
+  $("mando-ciclo").hidden = !esCiclo;
+  $("mando-preguntas").hidden = esCiclo;
+  $("caja-procesos").hidden = !esCiclo;
+  $("caja-reservorios").hidden = !esCiclo;
+  $("caja-marcador").hidden = esCiclo;
+  $("veredicto").innerHTML = "";
+  if (esCiclo) montarCiclo();
+  else { idx = 0; montarPregunta(); }
+}
+
+$("ejercicio").addEventListener("change", render);
+$("btn-siguiente").addEventListener("click", function(){ detener(); ir(etapa + 1); });
+$("btn-anterior").addEventListener("click", function(){ detener(); ir(etapa - 1); });
+$("btn-auto").addEventListener("click", function(){
+  if (auto){ detener(); return; }
+  $("lectura").setAttribute("aria-live", "off");
+  $("btn-auto").textContent = "Detener el recorrido";
+  auto = setInterval(function(){ ir(etapa + 1); }, 5000);
+});
+$("btn-comprobar").addEventListener("click", comprobar);
+$("btn-otra").addEventListener("click", function(){
+  if (!comprobado){ comprobar(); return; }
+  if (idx + 1 < PREGUNTAS.length){ idx++; montarPregunta(); }
+  else { $("progreso").textContent = "Preguntas terminadas";
+         leer("Has terminado las seis preguntas. Puedes repetirlas desde «Empezar de nuevo» " +
+              "o volver al recorrido del ciclo."); }
+});
+$("btn-reiniciar").addEventListener("click", function(){
+  marcador = {n:0, ok:0}; idx = 0; pintarMarcador(); montarPregunta();
+});
+
+pintarMarcador();
+render();
+</script>
 </body>
 </html>
