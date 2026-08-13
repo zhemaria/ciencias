@@ -1,6 +1,6 @@
 <!doctype html>
 <!--
-  Balanceador de ecuaciones químicas (Lección 5.3) · Spanish ASE Science
+  El ciclo del agua (Lección 7.2) · Spanish ASE Science
   © 2026 José M. Fernández, ABE/ASE Math Master Teacher,
   Harry S. Truman College — City Colleges of Chicago.
   Licencia: Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0
@@ -10,8 +10,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Balanceador de ecuaciones químicas</title>
-<meta name="description" content="Balanceador interactivo de ecuaciones químicas con coeficientes arrastrables, contador de átomos y representación de las moléculas para comprobar la conservación de la materia.">
+<title>El ciclo del agua</title>
+<meta name="description" content="Recorrido por las cinco etapas del ciclo del agua en SVG, con los reservorios del planeta, los tiempos de residencia y seis preguntas de comprobación.">
 <meta name="author" content="José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago">
 <meta name="license" content="CC BY-NC-SA 4.0">
 <link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
@@ -163,192 +163,176 @@ footer.pie p{margin:5px 0;}
    Para rejillas de cifras usa .cifras, no .datos. */
 
 /* ── PROPIO DE ESTE INTERACTIVO ────────────────────────────────────────── */
-.ecuacion{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;
-  gap:10px 6px;font-size:28px;font-weight:700;padding:10px 0;}
-.especie{display:flex;align-items:center;gap:4px;}
-.formula{font-family:Georgia,'Times New Roman',serif;color:#102027;white-space:nowrap;}
-.formula sub{font-size:.62em;}
-button.caja{width:52px;height:52px;font-size:24px;font-weight:700;padding:0;
-  border:3px dashed #78909c;background:#fff;color:var(--u2);border-radius:8px;}
-button.caja:hover{background:var(--u-bg);border-color:var(--u);}
-button.caja.puesta{border-style:solid;border-color:var(--u);background:var(--u-bg);}
-button.caja.encima{background:var(--u-bg);border-style:solid;border-color:var(--u);}
-.signo{font-size:26px;color:var(--texto-sec);font-weight:700;}
-.banco{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin:6px 0 10px;}
-button.ficha{width:50px;height:50px;font-size:22px;font-weight:700;padding:0;border-radius:8px;cursor:grab;}
-button.ficha[aria-pressed="true"]{background:var(--amb);outline:3px solid var(--amb-borde);outline-offset:2px;}
-.lados{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
-@media (max-width:760px){ .lados{grid-template-columns:1fr;} }
-.lado{background:var(--papel);border:1px solid var(--linea);border-radius:10px;padding:12px;}
-.lado h3{margin:0 0 10px;font-size:15px;color:var(--u2);text-transform:uppercase;letter-spacing:.3px;}
-.moleculas{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;min-height:96px;align-items:center;}
-.moleculas svg{background:#fafafa;border:1px solid #eceff1;border-radius:8px;}
-.vacio-nota{color:var(--texto-sec);font-size:14px;font-style:italic;}
-table.conteo{width:100%;border-collapse:collapse;font-size:15px;}
-table.conteo caption{caption-side:top;text-align:left;font-size:14px;color:var(--texto-sec);
-  padding:0 0 8px;font-style:italic;}
-table.conteo th,table.conteo td{padding:8px 10px;border-bottom:1px solid #eee;text-align:left;}
-table.conteo thead th{background:#37474f;color:#fff;font-size:12px;text-transform:uppercase;letter-spacing:.4px;}
-table.conteo td.n{text-align:center;font-weight:700;font-variant-numeric:tabular-nums;width:56px;}
-table.conteo td.igual{text-align:center;font-weight:700;width:48px;}
-td.igual.si{color:var(--ok);} td.igual.no{color:var(--mal);}
-.barra-doble{display:flex;align-items:center;gap:6px;min-width:130px;}
-.barra-doble span{height:12px;border-radius:3px;display:block;}
-.barra-doble .izq{background:var(--u);} .barra-doble .der{background:#5b21b6;}
-.bolita{display:inline-block;width:14px;height:14px;border-radius:50%;border:1px solid #607d8b;
-  vertical-align:-2px;margin-right:6px;}
-.leyenda-atomos{display:flex;flex-wrap:wrap;gap:14px;font-size:14px;margin-top:10px;justify-content:center;}
-.ayuda{font-size:14px;color:var(--texto-sec);margin:4px 0 0;}
-.pregunta{border-top:1px solid var(--linea);padding-top:16px;margin-top:16px;}
-.pregunta:first-of-type{border-top:0;padding-top:0;margin-top:0;}
-.pregunta p.enunciado{font-weight:600;margin:0 0 10px;}
-.retro:empty{display:none;}
+.etiquetas{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+.etiqueta{font-size:13px;font-weight:600;padding:4px 12px;border-radius:999px;
+  background:var(--u-bg);color:var(--u2);border:1px solid var(--u);}
+.etiqueta.suave{background:#fff;color:var(--texto-sec);border-color:#b0bec5;}
+.enunciado{font-size:17px;margin:0 0 16px;}
+.progreso{font-size:15px;font-weight:600;color:var(--u2);margin:0 0 14px;}
+
+/* Botonera de etapas */
+.etapas{display:flex;flex-wrap:wrap;gap:10px;}
+button.etapa{flex:1 1 130px;background:#fff;color:var(--u2);border:2px solid var(--u);
+  font-size:15px;font-weight:600;padding:10px 12px;}
+button.etapa:hover{background:var(--u-bg);}
+button.etapa[aria-pressed="true"]{background:var(--u);color:#fff;}
+button.etapa .num{display:block;font-size:12px;font-weight:700;opacity:.85;}
+
+/* Escena */
+.marco-svg{overflow-x:auto;}
+.marco-svg svg{display:block;margin:0 auto;width:100%;height:auto;max-height:58vh;}
+.paso{opacity:.22;transition:opacity .35s;}
+.paso.vivo{opacity:1;}
+.rotulo-paso{font-size:15px;font-weight:700;fill:var(--u2);}
+.flujo{stroke-dasharray:12 7;animation:fluir 1.8s linear infinite;}
+@keyframes fluir{to{stroke-dashoffset:-38;}}
+.ficha-etapa{background:var(--u-bg);border-left:5px solid var(--u);border-radius:0 8px 8px 0;
+  padding:14px 18px;margin-top:12px;}
+.ficha-etapa h3{margin:0 0 6px;font-size:18px;color:var(--u);}
+.ficha-etapa p{margin:0 0 8px;font-size:15px;}
+.cifras{display:flex;flex-wrap:wrap;gap:12px;margin:10px 0 0;}
+.cifras div{background:var(--papel);border-radius:8px;padding:8px 14px;font-size:14px;flex:1 1 200px;}
+.cifras .rot{display:block;font-size:13px;color:var(--texto-sec);}
+.cifras b{color:var(--u2);}
+.nota-modelo{font-size:13px;color:var(--texto-sec);font-style:italic;margin:10px 0 0;}
+
+/* Preguntas */
+.caso{background:var(--papel);border:1px solid var(--linea);border-left:5px solid var(--u);
+  border-radius:0 10px 10px 0;padding:16px 20px;margin-bottom:18px;font-size:17px;}
+.opciones{display:flex;flex-direction:column;gap:10px;max-width:820px;}
+button.opcion{display:flex;gap:12px;align-items:flex-start;text-align:left;font-weight:500;
+  font-size:16px;background:#fff;color:var(--texto);border:2px solid #90a4ae;padding:12px 16px;
+  white-space:normal;}
+button.opcion:hover{background:var(--u-bg);border-color:var(--u);}
+button.opcion[aria-pressed="true"]{background:var(--u-bg);border-color:var(--u);
+  box-shadow:inset 0 0 0 1px var(--u);}
+button.opcion.acierto{border-color:var(--ok);background:var(--ok-bg);}
+button.opcion.fallo{border-color:var(--mal);background:var(--mal-bg);}
+button.opcion .letra{font-weight:700;color:var(--u2);flex-shrink:0;}
 </style>
 </head>
-<body class="u5">
+<body class="u7">
 <div class="contenedor">
 
 <header class="principal">
-  <h1>Balanceador de ecuaciones químicas</h1>
-  <p class="meta">Lección 5.3 · Ecuaciones químicas, conservación de la materia y termoquímica</p>
-  <p class="meta">Unidad 5 · Ciencias físicas I · Spanish ASE Science</p>
+  <h1>El ciclo del agua</h1>
+  <p class="meta">Lección 7.2 · Atmósfera, ciclo del agua, tiempo y clima</p>
+  <p class="meta">Unidad 7 · Ciencias de la Tierra y del espacio · Spanish ASE Science</p>
 </header>
 
 <div class="tarjeta">
   <h2>Qué vas a hacer</h2>
-  <p>Vas a colocar los <strong>coeficientes</strong> que igualan el número de átomos de cada elemento a los dos lados de la flecha. Cada vez que muevas un coeficiente verás cambiar las moléculas dibujadas y el contador de átomos, de modo que puedas comprobar por ti mismo la ley que hay detrás: en una reacción química no se crea ni se destruye materia, solo se reorganiza.</p>
-  <h3>Cómo colocar un coeficiente</h3>
-  <p>Arrastra un número del banco hasta una caja; o pulsa el número para seleccionarlo y después pulsa la caja; o pulsa directamente una caja para ir recorriendo los valores. Con el teclado, la tecla de tabulación llega a todos los botones y la barra espaciadora los acciona.</p>
+  <p>El agua que bebes hoy es la misma que existía cuando se formó el planeta. No se fabrica ni se gasta: cambia de estado y cambia de sitio, una y otra vez, y a ese recorrido cerrado lo llamamos ciclo del agua. Aquí vas a recorrer sus cinco etapas una por una y a ver qué fuerza mueve cada una.</p>
   <div class="caja-tip">
-    <p><strong>La regla de oro:</strong> solo puedes cambiar los coeficientes, nunca los subíndices. El subíndice pequeño forma parte del nombre de la sustancia: si escribes H<sub>2</sub>O<sub>2</sub> en lugar de H<sub>2</sub>O ya no tienes agua, tienes agua oxigenada, que es otra sustancia distinta. El coeficiente, en cambio, solo dice cuántas moléculas de esa sustancia intervienen.</p>
+    <p><strong>La pregunta que el examen repite:</strong> ¿de dónde sale la energía que mantiene el ciclo en marcha? De dos sitios, no de uno. El Sol levanta el agua al evaporarla, y la gravedad la devuelve al bajar en forma de lluvia, de río y de infiltración. Sin el Sol el ciclo se pararía; sin la gravedad, el agua no volvería nunca.</p>
   </div>
 </div>
 
 <div class="panel">
-  <h2>Elige la reacción</h2>
+  <h2>Controles</h2>
   <div class="control">
-    <label for="reaccion">Reacción</label>
-    <select id="reaccion">
-      <option value="agua">Síntesis del agua</option>
-      <option value="metano" selected>Combustión del metano</option>
-      <option value="amoniaco">Síntesis del amoníaco</option>
+    <label for="ejercicio">Qué quieres hacer</label>
+    <select id="ejercicio">
+      <option value="ciclo">1. Recorrer las cinco etapas</option>
+      <option value="preguntas">2. Comprobar lo que entendiste</option>
     </select>
   </div>
-  <p class="ayuda" id="descripcion-reaccion"></p>
+  <div id="mando-ciclo">
+    <div class="etapas" id="botonera"></div>
+    <div class="fila-botones" style="margin-top:12px;">
+      <button type="button" id="btn-anterior" class="secundario">Etapa anterior</button>
+      <button type="button" id="btn-siguiente">Etapa siguiente</button>
+      <button type="button" id="btn-auto" class="secundario">Recorrer el ciclo solo</button>
+    </div>
+  </div>
+  <div class="fila-botones" id="mando-preguntas" hidden>
+    <button type="button" id="btn-comprobar">Comprobar la respuesta</button>
+    <button type="button" class="secundario" id="btn-otra">Siguiente pregunta</button>
+    <button type="button" class="secundario" id="btn-reiniciar">Empezar de nuevo</button>
+  </div>
 </div>
 
 <div class="escena">
-  <h2 style="margin:0 0 10px;font-size:18px;color:var(--u2);">Iguala la ecuación</h2>
-  <div class="ecuacion" id="ecuacion"></div>
-
-  <h3 style="font-size:15px;color:var(--u2);margin:16px 0 4px;text-align:center;">Banco de coeficientes</h3>
-  <div class="banco" id="banco"></div>
-  <div class="fila-botones" style="justify-content:center;">
-    <button type="button" class="secundario" id="btn-vaciar">Vaciar las cajas</button>
-    <button type="button" class="secundario" id="btn-pista">Dame una pista</button>
-  </div>
-  <div id="caja-pista" aria-live="polite"></div>
+  <p class="progreso" id="progreso"></p>
+  <div class="etiquetas" id="etiquetas"></div>
+  <div id="zona-item"></div>
+  <div id="veredicto"></div>
 </div>
 
-<div class="lectura" aria-live="polite">
-  <h2>Estado de la ecuación</h2>
-  <p id="lectura-texto">Coloca un coeficiente en cada caja para empezar a comparar los dos lados.</p>
+<div class="lectura" id="lectura" aria-live="polite">
+  <h2>Lectura de la etapa</h2>
+  <p id="lectura-texto">Cargando el ciclo.</p>
 </div>
 
-<div class="escena">
-  <h2 style="margin:0 0 12px;font-size:18px;color:var(--u2);">Las moléculas que tienes a cada lado</h2>
-  <div class="lados">
-    <div class="lado">
-      <h3>Reactivos, a la izquierda</h3>
-      <div class="moleculas" id="mol-izq"></div>
-    </div>
-    <div class="lado">
-      <h3>Productos, a la derecha</h3>
-      <div class="moleculas" id="mol-der"></div>
-    </div>
-  </div>
-  <div class="leyenda-atomos" id="leyenda"></div>
-</div>
-
-<div class="tarjeta">
-  <h2>Contador de átomos</h2>
-  <table class="conteo">
-    <caption id="cap-conteo">Número de átomos de cada elemento a la izquierda y a la derecha de la flecha, con los coeficientes que has colocado.</caption>
+<div class="tabla-wrap" id="caja-etapas">
+  <table class="datos">
+    <caption>Las cinco etapas del ciclo del agua, con el cambio de estado que ocurre en cada una y la fuerza que la impulsa. Nótese que solo la primera depende del Sol.</caption>
     <thead>
-      <tr><th scope="col">Elemento</th><th scope="col">Izquierda</th><th scope="col">Derecha</th><th scope="col">Comparación</th><th scope="col">¿Igual?</th></tr>
+      <tr>
+        <th scope="col">Etapa</th><th scope="col">Qué le pasa al agua</th>
+        <th scope="col">Cambio de estado</th><th scope="col">Qué la impulsa</th>
+      </tr>
     </thead>
-    <tbody id="tabla-conteo"></tbody>
+    <tbody>
+      <tr><th scope="row">Evaporación</th><td>Sube del océano y del suelo a la atmósfera</td><td>De líquido a gas</td><td>La energía del Sol</td></tr>
+      <tr><th scope="row">Condensación</th><td>El vapor se enfría y forma gotitas de nube</td><td>De gas a líquido</td><td>El enfriamiento con la altura</td></tr>
+      <tr><th scope="row">Precipitación</th><td>Las gotas crecen y caen como lluvia o nieve</td><td>Sigue líquido, o pasa a sólido</td><td>La gravedad</td></tr>
+      <tr><th scope="row">Escorrentía</th><td>Corre por la superficie hacia el mar</td><td>Ninguno</td><td>La gravedad</td></tr>
+      <tr><th scope="row">Infiltración</th><td>Penetra en el suelo y recarga el acuífero</td><td>Ninguno</td><td>La gravedad</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="tabla-wrap" id="caja-reservorios">
+  <table class="datos">
+    <caption>Dónde está el agua del planeta y cuánto tiempo permanece en cada sitio antes de seguir el ciclo. Los porcentajes se refieren al agua total de la Tierra.</caption>
+    <thead>
+      <tr>
+        <th scope="col">Reservorio</th><th scope="col">Porcentaje del agua total</th>
+        <th scope="col">Tiempo medio de permanencia</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><th scope="row">Océanos</th><td>96.5 %</td><td>Unos 3200 años</td></tr>
+      <tr><th scope="row">Casquetes polares y glaciares</th><td>1.74 %</td><td>De siglos a milenios</td></tr>
+      <tr><th scope="row">Agua subterránea</th><td>1.69 %</td><td>De décadas a milenios</td></tr>
+      <tr><th scope="row">Lagos y ríos</th><td>0.013 %</td><td>De semanas a años</td></tr>
+      <tr><th scope="row">Atmósfera</th><td>0.001 %</td><td>Unos 9 días</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="tabla-wrap" id="caja-marcador" hidden>
+  <table class="datos">
+    <caption>Desempeño en las preguntas de comprobación.</caption>
+    <thead>
+      <tr><th scope="col">Bloque</th><th scope="col">Contestadas</th><th scope="col">Aciertos</th><th scope="col">Porcentaje</th></tr>
+    </thead>
+    <tbody id="marcador"></tbody>
   </table>
 </div>
 
 <details class="bloque">
-  <summary><span class="chevron" aria-hidden="true">▶</span>Cómo se balancea una ecuación, paso a paso</summary>
+  <summary><span class="chevron" aria-hidden="true">▶</span>El agua ni se crea ni se destruye</summary>
   <div class="cuerpo">
-    <ol>
-      <li><strong>Cuenta los átomos de cada elemento</strong> a los dos lados, con los coeficientes que haya. Un coeficiente multiplica a todos los átomos de su molécula: 2 H<sub>2</sub>O son cuatro hidrógenos y dos oxígenos.</li>
-      <li><strong>Empieza por el elemento que aparece en menos sitios.</strong> Si un elemento está en una sola sustancia de cada lado, ajustarlo no descuadra nada más.</li>
-      <li><strong>Deja para el final el oxígeno y el hidrógeno</strong>, que suelen aparecer en varias sustancias a la vez. Ajustarlos primero obliga a rehacer el trabajo.</li>
-      <li><strong>Vuelve a contar</strong> después de cada cambio. Un coeficiente nuevo casi siempre descoloca un elemento que ya tenías igualado.</li>
-      <li><strong>Comprueba que los coeficientes son los más pequeños posibles.</strong> Escribir 2 CH<sub>4</sub> + 4 O<sub>2</sub> → 2 CO<sub>2</sub> + 4 H<sub>2</sub>O está igualado, pero no es la forma correcta: todos los números se pueden dividir entre dos.</li>
-    </ol>
+    <p>La cantidad total de agua de la Tierra es prácticamente la misma desde hace miles de millones de años. Cuando una nube «produce» lluvia no fabrica agua nueva: devuelve la que se evaporó días antes. Cuando un charco «desaparece» al sol, tampoco se destruye: se ha convertido en vapor y sigue ahí, invisible, en el aire. Confundir el cambio de estado con la creación o la desaparición de materia es el error más repetido de este tema.</p>
+    <p>La consecuencia práctica es importante y el examen la pregunta: una sequía no significa que haya menos agua en el planeta, sino que el agua está en otro sitio o en otro estado. Y contaminar un acuífero no reduce la cantidad de agua, pero sí la cantidad de agua utilizable, que es una fracción minúscula del total.</p>
+    <div class="caja-tip">
+      <p><strong>Repara en la tabla de reservorios:</strong> el 96.5 % del agua es salada, y de la dulce, la mayor parte está congelada o bajo tierra. Los lagos y los ríos, de donde bebe casi toda la humanidad, son el 0.013 % del total. Sobre esa cifra tan pequeña descansa todo.</p>
+    </div>
   </div>
 </details>
 
 <details class="bloque">
-  <summary><span class="chevron" aria-hidden="true">▶</span>El error que más se repite en el examen</summary>
+  <summary><span class="chevron" aria-hidden="true">▶</span>Por qué el tiempo de permanencia importa</summary>
   <div class="cuerpo">
-    <p>Ante una ecuación que no cuadra, la tentación es tocar el subíndice, porque parece que arregla el recuento de golpe. Pero cambiar el subíndice cambia la sustancia, y entonces la ecuación describe una reacción que no es la que se pedía.</p>
-    <p>Piénsalo así: el coeficiente es el número de cajas de huevos que compras; el subíndice es cuántos huevos trae cada caja. Puedes comprar más cajas, pero no puedes decidir que una caja de doce traiga veinticuatro.</p>
-    <p>Por eso, cuando el examen te pida balancear, la respuesta correcta siempre modifica solo los números grandes que van delante de las fórmulas.</p>
+    <p>El agua permanece unos nueve días en la atmósfera y unos 3200 años en el océano. Esa diferencia explica cosas que parecen inconexas. Explica que el tiempo meteorológico cambie de un día para otro, porque la parte rápida del ciclo se renueva en poco más de una semana. Y explica que el océano actúe como un amortiguador enorme del clima, porque su agua tarda milenios en dar la vuelta completa.</p>
+    <p>También explica por qué contaminar un acuífero es tan grave. Un río se limpia solo en semanas, ya que su agua se renueva; un acuífero puede tardar siglos, porque el agua que hay dentro se mueve unos pocos metros al año.</p>
   </div>
 </details>
 
-<div class="tarjeta">
-  <h2>Preguntas rápidas</h2>
-
-  <div class="pregunta" data-p="1" data-ok="b">
-    <p class="enunciado">1. ¿Cuántos átomos de hidrógeno hay en 3 H<sub>2</sub>O?</p>
-    <div class="fila-botones">
-      <button type="button" class="secundario" data-op="a">3</button>
-      <button type="button" class="secundario" data-op="b">6</button>
-      <button type="button" class="secundario" data-op="c">2</button>
-    </div>
-    <div class="retro" id="r1"></div>
-  </div>
-
-  <div class="pregunta" data-p="2" data-ok="c">
-    <p class="enunciado">2. Para balancear una ecuación, ¿qué está permitido cambiar?</p>
-    <div class="fila-botones">
-      <button type="button" class="secundario" data-op="a">Los subíndices</button>
-      <button type="button" class="secundario" data-op="b">Las dos cosas</button>
-      <button type="button" class="secundario" data-op="c">Solo los coeficientes</button>
-    </div>
-    <div class="retro" id="r2"></div>
-  </div>
-
-  <div class="pregunta" data-p="3" data-ok="a">
-    <p class="enunciado">3. ¿Por qué una ecuación química tiene que estar balanceada?</p>
-    <div class="fila-botones">
-      <button type="button" class="secundario" data-op="a">Porque la materia no se crea ni se destruye</button>
-      <button type="button" class="secundario" data-op="b">Porque queda más ordenada</button>
-      <button type="button" class="secundario" data-op="c">Porque así los números son más pequeños</button>
-    </div>
-    <div class="retro" id="r3"></div>
-  </div>
-
-  <div class="pregunta" data-p="4" data-ok="b">
-    <p class="enunciado">4. En la ecuación balanceada 2 H<sub>2</sub> + O<sub>2</sub> → 2 H<sub>2</sub>O, ¿cuántos átomos de oxígeno hay a cada lado?</p>
-    <div class="fila-botones">
-      <button type="button" class="secundario" data-op="a">Uno a la izquierda y dos a la derecha</button>
-      <button type="button" class="secundario" data-op="b">Dos a cada lado</button>
-      <button type="button" class="secundario" data-op="c">Cuatro a cada lado</button>
-    </div>
-    <div class="retro" id="r4"></div>
-  </div>
-</div>
-
 <footer class="pie">
-  <p>Balanceador de ecuaciones químicas · Lección 5.3 · Spanish ASE Science · 96 horas</p>
+  <p>El ciclo del agua · Lección 7.2 · Spanish ASE Science · 96 horas</p>
   <p>José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago</p>
   <p>© 2026. Esta obra está licenciada bajo <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" rel="license">Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0 Internacional (CC BY-NC-SA 4.0)</a>.</p>
 </footer>
@@ -357,326 +341,294 @@ td.igual.si{color:var(--ok);} td.igual.no{color:var(--mal);}
 <script>
 "use strict";
 
-/* ── Átomos y moléculas ────────────────────────────────────────────────── */
-var ATOMOS = {
-  C:{ nombre:"carbono",    color:"#37474f", borde:"#102027", texto:"#ffffff" },
-  H:{ nombre:"hidrógeno",  color:"#eceff1", borde:"#607d8b", texto:"#102027" },
-  O:{ nombre:"oxígeno",    color:"#c62828", borde:"#7f1d1d", texto:"#ffffff" },
-  N:{ nombre:"nitrógeno",  color:"#1565c0", borde:"#0d47a1", texto:"#ffffff" }
-};
+/* ══════════════════════════════════════════════════════════════════════════
+   EL CICLO DEL AGUA · Lección 7.2
+   Escena en SVG, sin bibliotecas externas. Separador decimal: punto.
+   Todos los marcadores llevan markerUnits="userSpaceOnUse": sin él, el tamaño
+   de la punta se multiplica por el stroke-width de la línea que la usa.
+   ═══════════════════════════════════════════════════════════════════════ */
 
-var REACCIONES = {
-  agua: {
-    nombre:"síntesis del agua",
-    descripcion:"El hidrógeno arde en oxígeno y forma agua. Es la reacción que impulsa los cohetes de combustible líquido.",
-    izq:[ {id:"H2", html:"H<sub>2</sub>", txt:"hache dos", at:{H:2}, forma:"diatomica", centro:"H", sat:["H"], sol:2},
-          {id:"O2", html:"O<sub>2</sub>", txt:"o dos",   at:{O:2}, forma:"diatomica", centro:"O", sat:["O"], sol:1} ],
-    der:[ {id:"H2O", html:"H<sub>2</sub>O", txt:"hache dos o", at:{H:2,O:1}, forma:"uve", centro:"O", sat:["H","H"], sol:2} ]
-  },
-  metano: {
-    nombre:"combustión del metano",
-    descripcion:"El metano del gas natural arde con oxígeno y produce dióxido de carbono y agua. Es lo que ocurre en una hornilla de gas.",
-    izq:[ {id:"CH4", html:"CH<sub>4</sub>", txt:"ce hache cuatro", at:{C:1,H:4}, forma:"tetra", centro:"C", sat:["H","H","H","H"], sol:1},
-          {id:"O2", html:"O<sub>2</sub>", txt:"o dos", at:{O:2}, forma:"diatomica", centro:"O", sat:["O"], sol:2} ],
-    der:[ {id:"CO2", html:"CO<sub>2</sub>", txt:"ce o dos", at:{C:1,O:2}, forma:"lineal", centro:"C", sat:["O","O"], sol:1},
-          {id:"H2O", html:"H<sub>2</sub>O", txt:"hache dos o", at:{H:2,O:1}, forma:"uve", centro:"O", sat:["H","H"], sol:2} ]
-  },
-  amoniaco: {
-    nombre:"síntesis del amoníaco",
-    descripcion:"El nitrógeno del aire se combina con hidrógeno para formar amoníaco, la base de casi todos los fertilizantes.",
-    izq:[ {id:"N2", html:"N<sub>2</sub>", txt:"ene dos", at:{N:2}, forma:"diatomica", centro:"N", sat:["N"], sol:1},
-          {id:"H2", html:"H<sub>2</sub>", txt:"hache dos", at:{H:2}, forma:"diatomica", centro:"H", sat:["H"], sol:3} ],
-    der:[ {id:"NH3", html:"NH<sub>3</sub>", txt:"ene hache tres", at:{N:1,H:3}, forma:"piramide", centro:"N", sat:["H","H","H"], sol:2} ]
-  }
-};
+var ETAPAS = [
+{
+  n:"Evaporación", motor:"La energía del Sol", estado:"De líquido a gas",
+  dato:"El 86 % del vapor de la atmósfera procede del océano.",
+  texto:"El Sol calienta la superficie del océano y las moléculas de agua que reciben suficiente energía escapan del líquido y pasan al aire en forma de vapor. El vapor es invisible: lo que se ve salir de una olla no es vapor, sino gotitas ya condensadas. A este proceso se suma la transpiración de las plantas, que devuelven al aire el agua que absorbieron por la raíz; cuando se cuentan los dos juntos se habla de evapotranspiración.",
+  ojo:"Es la única etapa del ciclo que necesita al Sol. Las cuatro restantes las mueve la gravedad."
+},
+{
+  n:"Condensación", motor:"El enfriamiento con la altura", estado:"De gas a líquido",
+  dato:"Cada gota de nube necesita una partícula de polvo o de sal donde formarse.",
+  texto:"El aire cargado de vapor asciende y, al subir, se enfría. El aire frío admite menos vapor que el caliente, de modo que el sobrante se condensa en gotitas microscópicas alrededor de partículas de polvo, humo o sal marina. Millones de esas gotitas juntas son una nube. Al condensarse, el agua libera el calor que había absorbido al evaporarse, y ese calor liberado es lo que alimenta las tormentas.",
+  ojo:"Una nube no es vapor: es agua líquida ya condensada. Por eso se ve, y el vapor no."
+},
+{
+  n:"Precipitación", motor:"La gravedad", estado:"Sigue líquido, o pasa a sólido",
+  dato:"Una gota de lluvia reúne el agua de alrededor de un millón de gotitas de nube.",
+  texto:"Las gotitas chocan entre sí y se van uniendo. Cuando una gota alcanza el tamaño suficiente, su peso vence a las corrientes de aire que la sostenían y cae. Según la temperatura que encuentre en el camino, llega al suelo como lluvia, como nieve o como granizo. Aquí el agua regresa a la superficie, y ya no vuelve el Sol a intervenir: manda la gravedad.",
+  ojo:"La precipitación no reparte el agua por igual: cae donde el aire asciende, y por eso hay desiertos y selvas."
+},
+{
+  n:"Escorrentía", motor:"La gravedad", estado:"Ninguno",
+  dato:"Los ríos devuelven al océano unos 40 000 kilómetros cúbicos de agua al año.",
+  texto:"El agua que no se infiltra corre por la superficie, siempre cuesta abajo. Los hilos se juntan en arroyos, los arroyos en ríos y los ríos desembocan en el mar, donde el ciclo vuelve a empezar. Por el camino el agua arrastra sedimento, esculpe valles y transporta a los lagos y al océano las sustancias que encuentra, incluidos los fertilizantes y los contaminantes del terreno que atraviesa.",
+  ojo:"La escorrentía es la que conecta lo que ocurre en tierra con lo que llega al agua que se bebe."
+},
+{
+  n:"Infiltración", motor:"La gravedad", estado:"Ninguno",
+  dato:"El agua subterránea avanza unos pocos metros al año.",
+  texto:"Otra parte del agua penetra entre las partículas del suelo y desciende hasta saturar la roca porosa: es el acuífero. Ahí el agua se mueve despacísimo, y puede permanecer siglos antes de salir por un manantial o de ser bombeada desde un pozo. Cuando el suelo se cubre de asfalto o de cemento, esa agua ya no se infiltra y engrosa la escorrentía, que es la razón de que las ciudades se inunden con lluvias que el campo absorbe sin problema.",
+  ojo:"Es la etapa más lenta del ciclo, y por eso un acuífero contaminado tarda generaciones en recuperarse."
+}
+];
 
-var VALORES = [1,2,3,4,5,6];
-var clave = "metano";
-var coef = {};
-var fichaSel = null;
+var PREGUNTAS = [
+{ q:"¿De dónde procede la energía que evapora el agua del océano?",
+  ops:["De la energía del Sol","Del calor interno de la Tierra","De la gravedad de la Luna","Del movimiento de las olas"], ok:0,
+  exp:"La radiación solar es la que aporta a las moléculas de agua la energía necesaria para escapar del líquido. Es la única etapa del ciclo que depende del Sol." },
+{ q:"¿Qué fuerza mueve el agua durante la precipitación, la escorrentía y la infiltración?",
+  ops:["El Sol, que empuja el agua hacia abajo","La gravedad","El viento","La presión del aire"], ok:1,
+  exp:"El Sol levanta el agua evaporándola; la gravedad la devuelve. Reconocer que el ciclo necesita las dos cosas es lo que el examen busca en esta pregunta." },
+{ q:"A lo largo de un ciclo completo, ¿qué ocurre con la cantidad total de agua del planeta?",
+  ops:["Aumenta, porque las nubes producen agua nueva","Disminuye, porque parte se pierde en el espacio","Se mantiene prácticamente constante: solo cambia de lugar y de estado","Depende de la cantidad de lluvia de ese año"], ok:2,
+  exp:"El agua no se crea ni se destruye en el ciclo. La misma agua se reparte de otra manera entre el océano, el hielo, el suelo y el aire, y cambia de estado, pero la cantidad total no varía." },
+{ q:"Un estudiante afirma que un charco que se seca al sol demuestra que el agua desaparece. ¿Qué error comete?",
+  ops:["Ninguno: el agua se destruye al calentarse","Confunde el cambio de estado con la desaparición de la materia: el agua sigue ahí, en forma de vapor","Confunde la evaporación con la condensación","Olvida que el agua del charco se infiltró toda en el suelo"], ok:1,
+  exp:"El agua pasó de líquido a gas y se incorporó al aire, donde no se ve. Que algo deje de verse no significa que haya dejado de existir, y esa distinción es justamente lo que el examen evalúa." },
+{ q:"Según la tabla de reservorios, ¿dónde está la mayor parte del agua dulce en estado líquido?",
+  ops:["En los lagos y los ríos","En la atmósfera","Bajo tierra, en los acuíferos","En los casquetes polares"], ok:2,
+  exp:"El agua subterránea es el 1.69 % del agua del planeta, frente al 0.013 % de lagos y ríos: más de cien veces más. Los casquetes tienen más agua todavía, pero está congelada, no líquida." },
+{ q:"Si la temperatura media del planeta aumenta, ¿qué se espera que le ocurra al ciclo del agua?",
+  ops:["Se detiene, porque el agua se evapora del todo","Se acelera: hay más evaporación y más precipitación, repartidas de forma desigual","No cambia, porque la cantidad de agua es la misma","Se invierte: el agua sube de los ríos a las nubes"], ok:1,
+  exp:"Más energía disponible significa más evaporación, y todo lo que se evapora acaba precipitando. El total de agua no cambia, pero el ciclo gira más deprisa y el reparto se vuelve más extremo: más sequía donde ya era seco y lluvias más intensas donde ya llovía." }
+];
 
-function reaccion(){ return REACCIONES[clave]; }
-function especies(){ return reaccion().izq.concat(reaccion().der); }
+/* ── Escena en SVG ─────────────────────────────────────────────────────── */
+var ESCENA =
+'<svg viewBox="0 0 820 470" role="img" aria-labelledby="tit-esc des-esc">' +
+'<title id="tit-esc">Paisaje con las cinco etapas del ciclo del agua</title>' +
+'<desc id="des-esc">Un océano a la derecha, una cordillera a la izquierda y nubes en lo alto. Cinco grupos de flechas señalan las etapas: el vapor que asciende del océano, la formación de la nube, la lluvia que cae sobre la montaña, el río que baja hasta el mar y el agua que se infiltra en el suelo hasta el acuífero. La etapa seleccionada se resalta y las demás quedan atenuadas. Todo el contenido se repite en texto en la lectura de la etapa.</desc>' +
+'<defs>' +
+'<marker id="p-sol" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#b45309"></path></marker>' +
+'<marker id="p-agua" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#0d47a1"></path></marker>' +
+'<marker id="p-tierra" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#4e342e"></path></marker>' +
+'</defs>' +
 
-/* ── Dibujo de una molécula en SVG ─────────────────────────────────────── */
-function posiciones(forma){
-  if (forma === "diatomica") return [[46,32]];
-  if (forma === "uve")       return [[16,20],[52,20]];
-  if (forma === "lineal")    return [[10,32],[54,32]];
-  if (forma === "piramide")  return [[12,20],[52,20],[32,56]];
-  return [[12,16],[52,16],[12,50],[52,50]];
+/* Cielo, sol, mar y tierra */
+'<rect x="0" y="0" width="820" height="470" fill="#e8f4fd"></rect>' +
+'<circle cx="86" cy="62" r="30" fill="#f9a825"></circle>' +
+'<g stroke="#f9a825" stroke-width="4">' +
+'<line x1="86" y1="16" x2="86" y2="4"></line><line x1="132" y1="62" x2="146" y2="62"></line>' +
+'<line x1="119" y1="29" x2="128" y2="20"></line><line x1="119" y1="95" x2="128" y2="104"></line>' +
+'<line x1="53" y1="29" x2="44" y2="20"></line></g>' +
+'<path d="M0,470 L0,300 L120,236 L215,300 L300,258 L400,320 L520,330 L520,470 Z" fill="#8d6e63" stroke="#4e342e" stroke-width="2"></path>' +
+'<path d="M0,300 L120,236 L215,300 L300,258 L400,320 L520,330 L520,352 L0,342 Z" fill="#7cb342"></path>' +
+'<path d="M76,268 L120,236 L164,268 Z" fill="#eceff1"></path>' +
+'<rect x="520" y="330" width="300" height="140" fill="#1565c0"></rect>' +
+'<path d="M520,470 L520,352 L820,352 L820,470 Z" fill="#0d47a1" opacity="0.25"></path>' +
+'<text x="670" y="392" font-size="17" font-weight="700" text-anchor="middle" fill="#fff">Océano</text>' +
+'<text x="670" y="414" font-size="14" text-anchor="middle" fill="#e3f2fd">96.5 % del agua del planeta</text>' +
+/* Acuífero */
+'<rect x="0" y="400" width="520" height="70" fill="#5d4037"></rect>' +
+'<g fill="#4fc3f7">' +
+'<circle cx="60" cy="424" r="6"></circle><circle cx="130" cy="438" r="6"></circle>' +
+'<circle cx="205" cy="422" r="6"></circle><circle cx="280" cy="440" r="6"></circle>' +
+'<circle cx="355" cy="426" r="6"></circle><circle cx="430" cy="438" r="6"></circle></g>' +
+'<text x="250" y="462" font-size="14" font-weight="700" text-anchor="middle" fill="#ffe0b2">Acuífero</text>' +
+
+/* 1 · Evaporación */
+'<g class="paso" id="paso-0">' +
+'<path class="flujo" d="M600,340 C596,270 610,210 620,150" fill="none" stroke="#b45309" stroke-width="5" marker-end="url(#p-sol)"></path>' +
+'<path class="flujo" d="M700,340 C700,280 690,220 684,164" fill="none" stroke="#b45309" stroke-width="5" marker-end="url(#p-sol)"></path>' +
+'<path class="flujo" d="M330,318 C336,278 344,240 350,206" fill="none" stroke="#b45309" stroke-width="4" marker-end="url(#p-sol)"></path>' +
+'<text x="742" y="236" class="rotulo-paso" text-anchor="middle">Evaporación</text>' +
+'<text x="742" y="256" font-size="13" text-anchor="middle" fill="#5c3900">del océano</text>' +
+'<text x="352" y="192" font-size="13" font-weight="700" text-anchor="middle" fill="#5c3900">transpiración</text>' +
+'</g>' +
+
+/* 2 · Condensación */
+'<g class="paso" id="paso-1">' +
+'<g fill="#cfd8dc" stroke="#78909c" stroke-width="2">' +
+'<ellipse cx="300" cy="120" rx="58" ry="30"></ellipse>' +
+'<ellipse cx="360" cy="106" rx="46" ry="26"></ellipse>' +
+'<ellipse cx="252" cy="106" rx="38" ry="22"></ellipse></g>' +
+'<g fill="#cfd8dc" stroke="#78909c" stroke-width="2">' +
+'<ellipse cx="612" cy="118" rx="46" ry="24"></ellipse>' +
+'<ellipse cx="660" cy="106" rx="36" ry="20"></ellipse></g>' +
+'<text x="300" y="66" class="rotulo-paso" text-anchor="middle">Condensación</text>' +
+'<text x="300" y="86" font-size="13" text-anchor="middle" fill="#37474f">el vapor se enfría y forma gotitas</text>' +
+'</g>' +
+
+/* 3 · Precipitación */
+'<g class="paso" id="paso-2">' +
+'<g stroke="#0d47a1" stroke-width="4" stroke-linecap="round" class="flujo">' +
+'<line x1="256" y1="150" x2="248" y2="196"></line><line x1="290" y1="150" x2="282" y2="200"></line>' +
+'<line x1="324" y1="150" x2="316" y2="192"></line><line x1="358" y1="140" x2="350" y2="188"></line>' +
+'<line x1="222" y1="140" x2="214" y2="182"></line></g>' +
+'<path d="M300,206 L300,238" stroke="#0d47a1" stroke-width="5" marker-end="url(#p-agua)"></path>' +
+'<text x="150" y="164" class="rotulo-paso" text-anchor="middle">Precipitación</text>' +
+'<text x="150" y="184" font-size="13" text-anchor="middle" fill="#0d3a72">lluvia, nieve o granizo</text>' +
+'</g>' +
+
+/* 4 · Escorrentía */
+'<g class="paso" id="paso-3">' +
+'<path class="flujo" d="M150,262 C200,300 260,300 320,318 C390,338 450,342 512,340" fill="none" stroke="#0d47a1" stroke-width="7" marker-end="url(#p-agua)"></path>' +
+'<text x="330" y="298" class="rotulo-paso" text-anchor="middle">Escorrentía</text>' +
+'<text x="330" y="278" font-size="13" text-anchor="middle" fill="#0d3a72">el río baja al mar</text>' +
+'</g>' +
+
+/* 5 · Infiltración */
+'<g class="paso" id="paso-4">' +
+'<path class="flujo" d="M110,320 L110,392" fill="none" stroke="#4e342e" stroke-width="5" marker-end="url(#p-tierra)"></path>' +
+'<path class="flujo" d="M230,332 L230,392" fill="none" stroke="#4e342e" stroke-width="5" marker-end="url(#p-tierra)"></path>' +
+'<path class="flujo" d="M400,344 L400,392" fill="none" stroke="#4e342e" stroke-width="5" marker-end="url(#p-tierra)"></path>' +
+'<text x="150" y="374" class="rotulo-paso" text-anchor="middle" style="fill:#3e2723">Infiltración</text>' +
+'</g>' +
+'</svg>';
+
+/* ── Estado ────────────────────────────────────────────────────────────── */
+var modo = "ciclo", etapa = 0, auto = null;
+var idx = 0, comprobado = false, seleccion = -1, marcador = {n:0, ok:0};
+
+var $ = function(id){ return document.getElementById(id); };
+function leer(t){ $("lectura-texto").textContent = t; }
+
+/* ── Recorrido del ciclo ───────────────────────────────────────────────── */
+function montarCiclo(){
+  $("zona-item").innerHTML = '<div class="marco-svg">' + ESCENA + '</div>' +
+    '<div class="ficha-etapa" id="ficha"></div>' +
+    '<p class="nota-modelo">Corte esquemático. Las proporciones no son reales: el espesor de la atmósfera y la profundidad del acuífero están muy exagerados para que se vean.</p>';
+  $("botonera").innerHTML = ETAPAS.map(function(e, i){
+    return '<button type="button" class="etapa" data-i="' + i + '" aria-pressed="false">' +
+      '<span class="num">Etapa ' + (i + 1) + '</span>' + e.n + '</button>';
+  }).join("");
+  $("botonera").querySelectorAll("button.etapa").forEach(function(b){
+    b.addEventListener("click", function(){ detener(); ir(parseInt(b.dataset.i, 10)); });
+  });
+  ir(etapa);
 }
 
-function svgMolecula(esp){
-  var cx = esp.forma === "diatomica" ? 24 : 32, cy = 32;
-  var pos = posiciones(esp.forma), i, s = "";
-  var a = ATOMOS[esp.centro];
-  s += '<svg width="76" height="66" viewBox="0 0 76 66" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">';
-  for (i = 0; i < pos.length; i++){
-    s += '<line x1="' + cx + '" y1="' + cy + '" x2="' + pos[i][0] + '" y2="' + pos[i][1] +
-         '" stroke="#90a4ae" stroke-width="3"></line>';
+function ir(i){
+  etapa = (i + ETAPAS.length) % ETAPAS.length;
+  var e = ETAPAS[etapa];
+  $("progreso").textContent = "Etapa " + (etapa + 1) + " de 5 · " + e.n;
+  $("etiquetas").innerHTML = '<span class="etiqueta">' + e.n + '</span>' +
+    '<span class="etiqueta suave">' + e.motor + '</span>' +
+    '<span class="etiqueta suave">Prácticas SP.2 y SP.6</span>';
+  for (var k = 0; k < ETAPAS.length; k++){
+    $("paso-" + k).setAttribute("class", "paso" + (k === etapa ? " vivo" : ""));
   }
-  for (i = 0; i < pos.length; i++){
-    var b = ATOMOS[esp.sat[i]];
-    s += '<circle cx="' + pos[i][0] + '" cy="' + pos[i][1] + '" r="11" fill="' + b.color +
-         '" stroke="' + b.borde + '" stroke-width="2"></circle>';
-    s += '<text x="' + pos[i][0] + '" y="' + (pos[i][1]+4) + '" text-anchor="middle" font-size="11" font-weight="700" fill="' + b.texto + '">' + esp.sat[i] + "</text>";
-  }
-  s += '<circle cx="' + cx + '" cy="' + cy + '" r="15" fill="' + a.color + '" stroke="' + a.borde + '" stroke-width="2"></circle>';
-  s += '<text x="' + cx + '" y="' + (cy+5) + '" text-anchor="middle" font-size="13" font-weight="700" fill="' + a.texto + '">' + esp.centro + "</text>";
-  s += "</svg>";
-  return s;
+  $("botonera").querySelectorAll("button.etapa").forEach(function(b, k){
+    b.setAttribute("aria-pressed", k === etapa ? "true" : "false");
+  });
+  $("ficha").innerHTML = '<h3>' + (etapa + 1) + ". " + e.n + '</h3><p>' + e.texto + '</p>' +
+    '<div class="cifras">' +
+      '<div><span class="rot">Qué la impulsa</span><b>' + e.motor + '</b></div>' +
+      '<div><span class="rot">Cambio de estado</span><b>' + e.estado + '</b></div>' +
+      '<div><span class="rot">Dato</span><b>' + e.dato + '</b></div>' +
+    '</div>' +
+    '<p style="margin:12px 0 0;"><strong>Fíjate:</strong> ' + e.ojo + '</p>';
+  leer("Etapa " + (etapa + 1) + " de 5: " + e.n + ". " + e.texto + " Qué la impulsa: " +
+       e.motor + ". Cambio de estado: " + e.estado + ". " + e.ojo);
 }
 
-/* ── Construcción de la ecuación ───────────────────────────────────────── */
-function bloqueEspecie(esp){
-  var v = coef[esp.id];
-  var puesta = v ? " puesta" : "";
-  return '<span class="especie">' +
-    '<button type="button" class="caja' + puesta + '" data-id="' + esp.id + '" ' +
-    'aria-label="Coeficiente de ' + esp.txt + ', ' + (v ? "ahora vale " + v : "vacío") + '. Púlsalo para cambiarlo.">' +
-    (v ? v : "") + "</button>" +
-    '<span class="formula">' + esp.html + "</span></span>";
+function detener(){
+  if (auto){ clearInterval(auto); auto = null; }
+  $("btn-auto").textContent = "Recorrer el ciclo solo";
+  $("lectura").setAttribute("aria-live", "polite");
 }
 
-function construir(){
-  var r = reaccion(), html = "", i;
-  for (i = 0; i < r.izq.length; i++){
-    if (i) html += '<span class="signo" aria-hidden="true">+</span>';
-    html += bloqueEspecie(r.izq[i]);
-  }
-  html += '<span class="signo">→<span class="sr-only"> produce </span></span>';
-  for (i = 0; i < r.der.length; i++){
-    if (i) html += '<span class="signo" aria-hidden="true">+</span>';
-    html += bloqueEspecie(r.der[i]);
-  }
-  document.getElementById("ecuacion").innerHTML = html;
-
-  var cajas = document.querySelectorAll("button.caja");
-  for (i = 0; i < cajas.length; i++){
-    cajas[i].addEventListener("click", alPulsarCaja);
-    cajas[i].addEventListener("dragover", function(e){ e.preventDefault(); this.classList.add("encima"); });
-    cajas[i].addEventListener("dragleave", function(){ this.classList.remove("encima"); });
-    cajas[i].addEventListener("drop", alSoltar);
-  }
-  document.getElementById("descripcion-reaccion").textContent = r.descripcion;
-}
-
-function construirBanco(){
-  var cont = document.getElementById("banco"), i, b;
-  cont.innerHTML = "";
-  for (i = 0; i < VALORES.length; i++){
-    b = document.createElement("button");
-    b.type = "button"; b.className = "ficha"; b.draggable = true;
-    b.textContent = VALORES[i];
-    b.setAttribute("data-valor", VALORES[i]);
+/* ── Preguntas ─────────────────────────────────────────────────────────── */
+function montarPregunta(){
+  var p = PREGUNTAS[idx];
+  comprobado = false; seleccion = -1;
+  $("veredicto").innerHTML = "";
+  $("btn-comprobar").disabled = false;
+  $("progreso").textContent = "Pregunta " + (idx + 1) + " de " + PREGUNTAS.length;
+  $("etiquetas").innerHTML = '<span class="etiqueta">Comprobación</span>' +
+    '<span class="etiqueta suave">Ciencias de la Tierra y del espacio</span>';
+  $("zona-item").innerHTML = '<p class="caso">' + p.q + '</p><div class="opciones" id="opciones"></div>';
+  var letras = "ABCD";
+  p.ops.forEach(function(t, i){
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "opcion";
     b.setAttribute("aria-pressed", "false");
-    b.setAttribute("aria-label", "Coeficiente " + VALORES[i] + ". Selecciónalo y después elige una caja.");
-    b.addEventListener("dragstart", function(e){ e.dataTransfer.setData("text/plain", this.getAttribute("data-valor")); });
-    b.addEventListener("click", alPulsarFicha);
-    cont.appendChild(b);
-  }
+    b.innerHTML = '<span class="letra" aria-hidden="true">' + letras[i] + '.</span><span>' + t + '</span>';
+    b.addEventListener("click", function(){
+      if (comprobado) return;
+      $("opciones").querySelectorAll("button").forEach(function(o){ o.setAttribute("aria-pressed", "false"); });
+      b.setAttribute("aria-pressed", "true");
+      seleccion = i;
+      leer("Has elegido la opción " + letras[i] + ": " + t);
+    });
+    $("opciones").appendChild(b);
+  });
+  leer("Pregunta " + (idx + 1) + " de " + PREGUNTAS.length + ". " + p.q);
 }
 
-/* ── Interacción ───────────────────────────────────────────────────────── */
-function alPulsarFicha(){
-  var v = this.getAttribute("data-valor"), todas = document.querySelectorAll("button.ficha"), i;
-  for (i = 0; i < todas.length; i++){ todas[i].setAttribute("aria-pressed","false"); }
-  if (fichaSel === v){ fichaSel = null; }
-  else { fichaSel = v; this.setAttribute("aria-pressed","true"); }
+function comprobar(){
+  if (comprobado) return;
+  var p = PREGUNTAS[idx], ok = (seleccion === p.ok);
+  $("opciones").querySelectorAll("button").forEach(function(b, i){
+    if (i === p.ok) b.classList.add("acierto");
+    else if (i === seleccion) b.classList.add("fallo");
+    b.disabled = true;
+  });
+  comprobado = true;
+  $("btn-comprobar").disabled = true;
+  marcador.n++; if (ok) marcador.ok++;
+  pintarMarcador();
+  var cab = (seleccion === -1) ? "No has marcado ninguna opción."
+                               : (ok ? "Respuesta correcta." : "Respuesta incorrecta.");
+  $("veredicto").innerHTML = '<div class="' + (ok ? "caja-ok" : "caja-mal") + '"><p><strong>' +
+    cab + '</strong></p><p>' + p.exp + '</p></div>';
+  leer(cab + " " + p.exp +
+       (idx + 1 < PREGUNTAS.length ? " Pulsa «Siguiente pregunta» para continuar." : " Era la última pregunta."));
 }
 
-function alPulsarCaja(){
-  var id = this.getAttribute("data-id");
-  if (fichaSel){ coef[id] = Number(fichaSel); }
-  else {
-    var actual = coef[id] || 0;
-    coef[id] = actual >= VALORES.length ? 0 : actual + 1;
-    if (coef[id] === 0) delete coef[id];
-  }
-  construir(); calcular();
+function pintarMarcador(){
+  var pct = marcador.n ? (Math.round(marcador.ok / marcador.n * 1000) / 10).toFixed(1) + " %" : "—";
+  $("marcador").innerHTML = '<tr><th scope="row">Comprobación del ciclo del agua</th><td>' +
+    marcador.n + '</td><td>' + marcador.ok + '</td><td>' + pct + '</td></tr>';
 }
 
-function alSoltar(e){
-  e.preventDefault(); this.classList.remove("encima");
-  var v = Number(e.dataTransfer.getData("text/plain"));
-  if (v > 0){ coef[this.getAttribute("data-id")] = v; construir(); calcular(); }
+/* ── Cambio de modo ────────────────────────────────────────────────────── */
+function render(){
+  detener();
+  modo = $("ejercicio").value;
+  var esCiclo = (modo === "ciclo");
+  $("mando-ciclo").hidden = !esCiclo;
+  $("mando-preguntas").hidden = esCiclo;
+  $("caja-etapas").hidden = !esCiclo;
+  $("caja-reservorios").hidden = !esCiclo;
+  $("caja-marcador").hidden = esCiclo;
+  $("veredicto").innerHTML = "";
+  if (esCiclo) montarCiclo();
+  else { idx = 0; montarPregunta(); }
 }
 
-/* ── Recuento y salida ─────────────────────────────────────────────────── */
-function contar(lista){
-  var total = {}, i, e, k;
-  for (i = 0; i < lista.length; i++){
-    e = lista[i];
-    var c = coef[e.id] || 0;
-    for (k in e.at){
-      if (e.at.hasOwnProperty(k)) total[k] = (total[k] || 0) + e.at[k]*c;
-    }
-  }
-  return total;
-}
-
-function elementos(){
-  var r = reaccion(), lista = r.izq.concat(r.der), orden = [], i, k;
-  for (i = 0; i < lista.length; i++){
-    for (k in lista[i].at){
-      if (lista[i].at.hasOwnProperty(k) && orden.indexOf(k) < 0) orden.push(k);
-    }
-  }
-  return orden;
-}
-
-function pintarMoleculas(){
-  var r = reaccion(), lados = [["mol-izq", r.izq], ["mol-der", r.der]], j, i, k, html;
-  for (j = 0; j < lados.length; j++){
-    html = "";
-    for (i = 0; i < lados[j][1].length; i++){
-      var e = lados[j][1][i], n = coef[e.id] || 0;
-      for (k = 0; k < n; k++){ html += svgMolecula(e); }
-    }
-    document.getElementById(lados[j][0]).innerHTML =
-      html || '<p class="vacio-nota">Sin coeficientes todavía en este lado.</p>';
-  }
-
-  var leyenda = "", els = elementos();
-  for (i = 0; i < els.length; i++){
-    var a = ATOMOS[els[i]];
-    leyenda += '<span><span class="bolita" style="background:' + a.color + ';border-color:' + a.borde +
-      '" aria-hidden="true"></span>' + a.nombre.charAt(0).toUpperCase() + a.nombre.slice(1) + " (" + els[i] + ")</span>";
-  }
-  document.getElementById("leyenda").innerHTML = leyenda;
-}
-
-function calcular(){
-  var r = reaccion(), izq = contar(r.izq), der = contar(r.der), els = elementos();
-  var i, html = "", todosIguales = true, faltan = [], completa = true, e;
-
-  for (i = 0; i < r.izq.length + r.der.length; i++){
-    e = i < r.izq.length ? r.izq[i] : r.der[i - r.izq.length];
-    if (!coef[e.id]) completa = false;
-  }
-
-  var maximo = 1;
-  for (i = 0; i < els.length; i++){
-    maximo = Math.max(maximo, izq[els[i]] || 0, der[els[i]] || 0);
-  }
-
-  for (i = 0; i < els.length; i++){
-    var k = els[i], a = izq[k] || 0, b = der[k] || 0, ok = (a === b && a > 0);
-    if (!ok) todosIguales = false;
-    if (a !== b) faltan.push({ el:k, izq:a, der:b });
-    html += "<tr><th scope=\"row\">" + ATOMOS[k].nombre.charAt(0).toUpperCase() + ATOMOS[k].nombre.slice(1) +
-      " (" + k + ")</th>" +
-      '<td class="n">' + a + "</td><td class=\"n\">" + b + "</td>" +
-      '<td><span class="barra-doble"><span class="izq" style="width:' + Math.round(a/maximo*60) + 'px"></span>' +
-      '<span class="der" style="width:' + Math.round(b/maximo*60) + 'px"></span></span></td>' +
-      '<td class="igual ' + (ok ? "si" : "no") + '">' + (ok ? "Sí" : "No") + "</td></tr>";
-  }
-  document.getElementById("tabla-conteo").innerHTML = html;
-
-  pintarMoleculas();
-
-  var texto;
-  if (!completa){
-    texto = "Todavía faltan cajas por rellenar. Coloca un coeficiente en cada sustancia para poder comparar los dos lados.";
-  } else if (todosIguales){
-    var minimo = true, vals = [], j;
-    for (j = 0; j < r.izq.length; j++){ vals.push(coef[r.izq[j].id]); }
-    for (j = 0; j < r.der.length; j++){ vals.push(coef[r.der[j].id]); }
-    var d = 2;
-    while (d <= 6){
-      var divisible = true;
-      for (j = 0; j < vals.length; j++){ if (vals[j] % d !== 0) divisible = false; }
-      if (divisible) minimo = false;
-      d++;
-    }
-    if (minimo){
-      texto = "Ecuación balanceada. Hay el mismo número de átomos de cada elemento a los dos lados, y los coeficientes son los más pequeños posibles. La materia se ha conservado: los mismos átomos, reorganizados en sustancias distintas.";
-    } else {
-      texto = "Los dos lados tienen el mismo número de átomos, pero todos tus coeficientes se pueden dividir por un mismo número. La ecuación aún no está en su forma más simple: prueba con la mitad de cada uno.";
-    }
-  } else {
-    var partes = [], j2;
-    for (j2 = 0; j2 < faltan.length; j2++){
-      var f = faltan[j2];
-      partes.push(ATOMOS[f.el].nombre + ", con " + f.izq + " a la izquierda y " + f.der + " a la derecha");
-    }
-    texto = "Todavía no está balanceada. No coinciden: " + partes.join("; ") + ".";
-  }
-  document.getElementById("lectura-texto").textContent = texto;
-}
-
-/* ── Pista ─────────────────────────────────────────────────────────────── */
-function pista(){
-  var r = reaccion(), izq = contar(r.izq), der = contar(r.der), els = elementos(), i, caja;
-  caja = document.getElementById("caja-pista");
-  for (i = 0; i < r.izq.length + r.der.length; i++){
-    var e = i < r.izq.length ? r.izq[i] : r.der[i - r.izq.length];
-    if (!coef[e.id]){
-      caja.innerHTML = '<div class="caja-tip"><p>Empieza por poner un coeficiente en todas las cajas, aunque sea un 1. Sin eso no se puede contar nada.</p></div>';
-      return;
-    }
-  }
-  for (i = 0; i < els.length; i++){
-    var k = els[i], a = izq[k] || 0, b = der[k] || 0;
-    if (a !== b){
-      caja.innerHTML = '<div class="caja-tip"><p>Fíjate en el ' + ATOMOS[k].nombre + ": tienes " + a +
-        " a la izquierda y " + b + " a la derecha. Sube el coeficiente de la sustancia que lleva " +
-        ATOMOS[k].nombre + " en el lado que va escaso, y vuelve a contar.</p></div>";
-      return;
-    }
-  }
-  caja.innerHTML = '<div class="caja-ok"><p>No hace falta pista: ya tienes los dos lados igualados.</p></div>';
-}
-
-/* ── Preguntas rápidas ─────────────────────────────────────────────────── */
-var RETRO = {
-  "1a":"Todavía no. El 3 multiplica a toda la molécula, y cada H₂O ya trae dos hidrógenos.",
-  "1b":"Correcto. Tres moléculas por dos hidrógenos cada una son seis hidrógenos.",
-  "1c":"Todavía no. Ese sería el número de hidrógenos de una sola molécula; aquí hay tres.",
-  "2a":"Todavía no. Cambiar un subíndice cambia la sustancia: dejarías de hablar de la misma reacción.",
-  "2b":"Todavía no. Los subíndices son intocables; solo los coeficientes se ajustan.",
-  "2c":"Correcto. El coeficiente dice cuántas moléculas hay; el subíndice, de qué está hecha cada una.",
-  "3a":"Correcto. Es la ley de conservación de la materia: los átomos que entran son los mismos que salen, solo que recombinados.",
-  "3b":"Todavía no. No es cuestión de orden, sino de que la materia no puede aparecer ni desaparecer.",
-  "3c":"Todavía no. Los números pequeños son una convención de escritura, no el motivo de fondo.",
-  "4a":"Todavía no. Vuelve a contar: el O₂ de la izquierda ya trae dos oxígenos por sí solo.",
-  "4b":"Correcto. A la izquierda, un O₂ son dos oxígenos; a la derecha, 2 H₂O son dos oxígenos también.",
-  "4c":"Todavía no. Cuatro serían los hidrógenos, no los oxígenos."
-};
-
-(function(){
-  var preguntas = document.querySelectorAll(".pregunta"), i, j;
-  for (i = 0; i < preguntas.length; i++){
-    (function(bloque){
-      var n = bloque.getAttribute("data-p"), ok = bloque.getAttribute("data-ok");
-      var ops = bloque.querySelectorAll("button[data-op]");
-      for (j = 0; j < ops.length; j++){
-        ops[j].addEventListener("click", function(){
-          var op = this.getAttribute("data-op");
-          document.getElementById("r" + n).innerHTML =
-            '<div class="' + (op === ok ? "caja-ok" : "caja-mal") + '"><p>' + RETRO[n + op] + "</p></div>";
-        });
-      }
-    })(preguntas[i]);
-  }
-})();
-
-/* ── Arranque ──────────────────────────────────────────────────────────── */
-document.getElementById("reaccion").addEventListener("change", function(){
-  clave = this.value; coef = {}; fichaSel = null;
-  document.getElementById("caja-pista").innerHTML = "";
-  construirBanco(); construir(); calcular();
+$("ejercicio").addEventListener("change", render);
+$("btn-siguiente").addEventListener("click", function(){ detener(); ir(etapa + 1); });
+$("btn-anterior").addEventListener("click", function(){ detener(); ir(etapa - 1); });
+$("btn-auto").addEventListener("click", function(){
+  if (auto){ detener(); return; }
+  $("lectura").setAttribute("aria-live", "off");   /* no cantar una etapa cada cinco segundos */
+  $("btn-auto").textContent = "Detener el recorrido";
+  auto = setInterval(function(){ ir(etapa + 1); }, 5000);
 });
-document.getElementById("btn-vaciar").addEventListener("click", function(){
-  coef = {}; document.getElementById("caja-pista").innerHTML = "";
-  construir(); calcular();
+$("btn-comprobar").addEventListener("click", comprobar);
+$("btn-otra").addEventListener("click", function(){
+  if (!comprobado){ comprobar(); return; }
+  if (idx + 1 < PREGUNTAS.length){ idx++; montarPregunta(); }
+  else { $("progreso").textContent = "Preguntas terminadas";
+         leer("Has terminado las seis preguntas. Puedes repetirlas desde «Empezar de nuevo» " +
+              "o volver al recorrido del ciclo."); }
 });
-document.getElementById("btn-pista").addEventListener("click", pista);
+$("btn-reiniciar").addEventListener("click", function(){
+  marcador = {n:0, ok:0}; idx = 0; pintarMarcador(); montarPregunta();
+});
 
-construirBanco();
-construir();
-calcular();
+pintarMarcador();
+render();
 </script>
 </body>
 </html>
