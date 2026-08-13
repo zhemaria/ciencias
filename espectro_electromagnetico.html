@@ -1,0 +1,1216 @@
+<!doctype html>
+<!--
+  Espectro electromagnético interactivo — Lección 6.3
+  Ciencias ASE en español · Preparación para el GED
+  Autor: José M. Fernández, ABE/ASE Math Master Teacher,
+         Harry S. Truman College — City Colleges of Chicago
+  Licencia: CC BY-NC-SA 4.0 — https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+-->
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Espectro electromagnético interactivo</title>
+
+    <meta name="description" content="Interactivo de la lección 6.3: relaciona longitud de onda, frecuencia y energía, y sitúa las regiones del espectro electromagnético en una escala logarítmica real." />
+    <meta name="author" content="José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago" />
+    <meta name="license" content="CC BY-NC-SA 4.0" />
+    <link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" />
+
+    <!-- Hoja de estilos DUA v4.0 unificada. Ajusta la ruta si el archivo está en otra carpeta. -->
+    <link rel="stylesheet" href="estilos-dua-unificado.css" />
+
+    <style>
+      /* ------------------------------------------------------------------
+         Estilos propios del interactivo. Todos los selectores llevan el
+         prefijo .ee- para no chocar con la hoja DUA v4.0.
+         ------------------------------------------------------------------ */
+      :root {
+        --ee-tinta: #1f2937;
+        --ee-tinta-suave: #4b5563;
+        --ee-linea: #cbd5e1;
+        --ee-panel: #ffffff;
+        --ee-fondo-suave: #f1f5f9;
+        --ee-foco: #1d4ed8;
+
+        /* Colores vivos: solo decorativos, para la barra y la onda. */
+        --ee-radio: #16a34a;
+        --ee-micro: #65a30d;
+        --ee-infra: #ea580c;
+        --ee-uv: #9333ea;
+        --ee-xray: #2563eb;
+        --ee-gamma: #dc2626;
+
+        /* Colores oscuros: para botones con texto blanco (contraste AA). */
+        --ee-radio-txt: #166534;
+        --ee-micro-txt: #3f6212;
+        --ee-infra-txt: #9a3412;
+        --ee-visible-txt: #1f2937;
+        --ee-uv-txt: #6b21a8;
+        --ee-xray-txt: #1e40af;
+        --ee-gamma-txt: #991b1b;
+      }
+
+      .ee-app {
+        max-width: 1120px;
+        margin: 0 auto;
+        color: var(--ee-tinta);
+        line-height: 1.6;
+      }
+
+      .ee-app *,
+      .ee-app *::before,
+      .ee-app *::after {
+        box-sizing: border-box;
+      }
+
+      .ee-app :focus-visible {
+        outline: 3px solid var(--ee-foco);
+        outline-offset: 2px;
+      }
+
+      .ee-regla {
+        margin: 1rem 0 1.5rem;
+        padding: 0.9rem 1.1rem;
+        border: 2px solid var(--ee-foco);
+        border-left-width: 8px;
+        border-radius: 0.5rem;
+        background: #eff6ff;
+        font-weight: 700;
+        color: #1e3a8a;
+      }
+
+      .ee-tarjeta {
+        background: var(--ee-panel);
+        border: 1px solid var(--ee-linea);
+        border-radius: 0.75rem;
+        padding: 1.1rem;
+        margin-bottom: 1.25rem;
+      }
+
+      .ee-tarjeta > h2 {
+        margin-top: 0;
+        font-size: 1.35rem;
+      }
+
+      .ee-columnas {
+        display: grid;
+        grid-template-columns: 1.25fr 0.75fr;
+        gap: 1.25rem;
+        align-items: start;
+      }
+
+      @media (max-width: 900px) {
+        .ee-columnas {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .ee-nota {
+        font-size: 0.9rem;
+        color: var(--ee-tinta-suave);
+        margin: 0.5rem 0 0;
+      }
+
+      /* ---------- Diagrama de la onda ---------- */
+      .ee-onda-caja {
+        border: 1px solid var(--ee-linea);
+        border-radius: 0.5rem;
+        background: var(--ee-fondo-suave);
+        padding: 0.5rem;
+      }
+
+      .ee-onda-caja svg {
+        display: block;
+        width: 100%;
+        height: auto;
+      }
+
+      .ee-onda-barra {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.6rem;
+        align-items: center;
+        margin-top: 0.7rem;
+      }
+
+      .ee-boton-simple {
+        border: 2px solid var(--ee-tinta);
+        background: #ffffff;
+        color: var(--ee-tinta);
+        font-weight: 700;
+        padding: 0.45rem 0.9rem;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        font-size: 0.95rem;
+      }
+
+      .ee-boton-simple:hover {
+        background: var(--ee-fondo-suave);
+      }
+
+      /* ---------- Control deslizante ---------- */
+      .ee-etiqueta {
+        font-weight: 700;
+        display: block;
+        margin-bottom: 0.4rem;
+      }
+
+      .ee-slider {
+        width: 100%;
+        accent-color: var(--ee-foco);
+        height: 2rem;
+      }
+
+      .ee-extremos {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.85rem;
+        color: var(--ee-tinta-suave);
+        font-weight: 600;
+      }
+
+      /* ---------- Barra del espectro: escala logarítmica real ---------- */
+      .ee-escala {
+        margin-top: 1.4rem;
+      }
+
+      .ee-rotulos {
+        position: relative;
+        height: 2.6rem;
+      }
+
+      .ee-rotulos span {
+        position: absolute;
+        top: 0;
+        transform: translateX(-50%);
+        font-size: 0.8rem;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      @media (max-width: 760px) {
+        .ee-rotulos {
+          display: none;
+        }
+      }
+
+      .ee-barra-marco {
+        position: relative;
+      }
+
+      .ee-barra {
+        height: 46px;
+        border-radius: 6px;
+        border: 1px solid #94a3b8;
+        overflow: hidden;
+        background: linear-gradient(
+          90deg,
+          var(--ee-radio) 0%,
+          var(--ee-radio) 26.32%,
+          var(--ee-micro) 26.32%,
+          var(--ee-micro) 36.84%,
+          var(--ee-infra) 36.84%,
+          var(--ee-infra) 53.45%,
+          #e11d48 53.45%,
+          #f97316 53.66%,
+          #eab308 53.88%,
+          #22c55e 54.09%,
+          #06b6d4 54.3%,
+          #2563eb 54.52%,
+          #7c3aed 54.73%,
+          var(--ee-uv) 54.73%,
+          var(--ee-uv) 63.16%,
+          var(--ee-xray) 63.16%,
+          var(--ee-xray) 78.95%,
+          var(--ee-gamma) 78.95%,
+          var(--ee-gamma) 100%
+        );
+      }
+
+      .ee-marcador {
+        position: absolute;
+        top: -12px;
+        bottom: -12px;
+        width: 3px;
+        background: #0f172a;
+        transform: translateX(-50%);
+        pointer-events: none;
+        transition: left 0.2s ease;
+      }
+
+      .ee-marcador::before {
+        content: '';
+        position: absolute;
+        top: -9px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-left: 8px solid transparent;
+        border-right: 8px solid transparent;
+        border-top: 10px solid #0f172a;
+      }
+
+      .ee-ticks {
+        position: relative;
+        height: 2.4rem;
+        margin-top: 14px;
+      }
+
+      .ee-tick {
+        position: absolute;
+        top: 0;
+        width: 1px;
+        height: 6px;
+        background: #94a3b8;
+      }
+
+      .ee-tick.ee-tick-mayor {
+        height: 10px;
+        background: #475569;
+      }
+
+      .ee-tick-num {
+        position: absolute;
+        top: 13px;
+        transform: translateX(-50%);
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: var(--ee-tinta-suave);
+        white-space: nowrap;
+      }
+
+      @media (max-width: 760px) {
+        .ee-tick-num-alt {
+          display: none;
+        }
+      }
+
+      /* ---------- Lupa de la franja visible ---------- */
+      .ee-lupa-union {
+        display: block;
+        width: 100%;
+        height: 34px;
+      }
+
+      .ee-lupa {
+        height: 40px;
+        border-radius: 6px;
+        border: 1px solid #94a3b8;
+        position: relative;
+        background: linear-gradient(90deg, #e11d48, #f97316, #eab308, #22c55e, #06b6d4, #2563eb, #7c3aed);
+      }
+
+      .ee-lupa-marcador {
+        position: absolute;
+        top: -8px;
+        bottom: -8px;
+        width: 3px;
+        background: #0f172a;
+        transform: translateX(-50%);
+        transition: left 0.2s ease;
+      }
+
+      .ee-lupa-marcador[hidden] {
+        display: none;
+      }
+
+      .ee-lupa-escala {
+        position: relative;
+        height: 1.3rem;
+        font-size: 0.78rem;
+        color: var(--ee-tinta-suave);
+        font-weight: 600;
+        margin-top: 4px;
+      }
+
+      .ee-lupa-escala span {
+        position: absolute;
+        top: 0;
+        transform: translateX(-50%);
+        white-space: nowrap;
+      }
+
+      /* ---------- Botones de región ---------- */
+      .ee-regiones {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr);
+        gap: 0.45rem;
+        margin-top: 1.4rem;
+      }
+
+      @media (max-width: 760px) {
+        .ee-regiones {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      .ee-region {
+        border: 2px solid transparent;
+        border-radius: 0.5rem;
+        padding: 0.6rem 0.3rem;
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 0.9rem;
+        cursor: pointer;
+        line-height: 1.25;
+      }
+
+      .ee-region[aria-pressed='true'] {
+        box-shadow: 0 0 0 3px #0f172a;
+      }
+
+      .ee-region-radio { background-color: var(--ee-radio-txt); }
+      .ee-region-micro { background-color: var(--ee-micro-txt); }
+      .ee-region-infra { background-color: var(--ee-infra-txt); }
+      .ee-region-uv    { background-color: var(--ee-uv-txt); }
+      .ee-region-xray  { background-color: var(--ee-xray-txt); }
+      .ee-region-gamma { background-color: var(--ee-gamma-txt); }
+
+      .ee-region-visible {
+        background-color: var(--ee-visible-txt);
+        background-image: linear-gradient(90deg, #e11d48, #f97316, #eab308, #22c55e, #06b6d4, #2563eb, #7c3aed);
+        background-repeat: no-repeat;
+        background-position: bottom;
+        background-size: 100% 6px;
+      }
+
+      /* ---------- Panel de datos ---------- */
+      .ee-banda-titulo {
+        display: inline-block;
+        padding: 0.3rem 0.8rem;
+        border-radius: 999px;
+        color: #ffffff;
+        font-weight: 700;
+        font-size: 1.05rem;
+      }
+
+      .ee-datos {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.6rem;
+        margin: 1rem 0;
+      }
+
+      @media (max-width: 520px) {
+        .ee-datos {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .ee-dato {
+        border: 1px solid var(--ee-linea);
+        border-radius: 0.5rem;
+        padding: 0.6rem 0.7rem;
+        background: var(--ee-fondo-suave);
+      }
+
+      .ee-dato span {
+        display: block;
+        font-size: 0.82rem;
+        color: var(--ee-tinta-suave);
+        font-weight: 600;
+      }
+
+      .ee-dato strong {
+        font-size: 1.02rem;
+      }
+
+      .ee-calculo {
+        border: 1px solid var(--ee-linea);
+        border-left: 6px solid var(--ee-foco);
+        border-radius: 0.5rem;
+        padding: 0.8rem;
+        background: #f8fafc;
+        margin: 1rem 0;
+      }
+
+      .ee-calculo h3 {
+        margin: 0 0 0.5rem;
+        font-size: 1rem;
+      }
+
+      .ee-calculo p {
+        margin: 0.35rem 0;
+        font-family: 'Cambria Math', Cambria, Georgia, serif;
+        font-size: 1.02rem;
+      }
+
+      .ee-aviso,
+      .ee-ok {
+        border-radius: 0.5rem;
+        padding: 0.75rem 0.9rem;
+        margin-top: 0.9rem;
+        border: 1px solid;
+      }
+
+      .ee-aviso {
+        background: #fef3c7;
+        border-color: #92400e;
+        color: #5c3900;
+      }
+
+      .ee-ok {
+        background: #dcfce7;
+        border-color: #166534;
+        color: #14532d;
+      }
+
+      /* ---------- Cuestionario ---------- */
+      .ee-pregunta {
+        border-top: 1px solid var(--ee-linea);
+        padding-top: 0.9rem;
+        margin-top: 0.9rem;
+      }
+
+      .ee-enunciado {
+        font-weight: 700;
+        margin: 0 0 0.5rem;
+      }
+
+      .ee-opcion {
+        display: block;
+        width: 100%;
+        text-align: left;
+        margin-top: 0.4rem;
+        padding: 0.6rem 0.8rem;
+        border: 2px solid var(--ee-linea);
+        border-radius: 0.5rem;
+        background: #ffffff;
+        color: var(--ee-tinta);
+        font-size: 1rem;
+        cursor: pointer;
+      }
+
+      .ee-opcion:hover:not(:disabled) {
+        background: var(--ee-fondo-suave);
+      }
+
+      .ee-opcion:disabled {
+        cursor: default;
+        opacity: 1;
+      }
+
+      .ee-opcion.ee-bien {
+        border-color: #166534;
+        background: #dcfce7;
+        font-weight: 700;
+      }
+
+      .ee-opcion.ee-mal {
+        border-color: #991b1b;
+        background: #fee2e2;
+      }
+
+      .ee-retro {
+        margin-top: 0.5rem;
+        font-size: 0.95rem;
+      }
+
+      .ee-puntos {
+        font-weight: 700;
+        margin-top: 1rem;
+        padding: 0.7rem 0.9rem;
+        border-radius: 0.5rem;
+        background: var(--ee-fondo-suave);
+        border: 1px solid var(--ee-linea);
+      }
+
+      .ee-licencia {
+        margin-top: 2rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--ee-linea);
+        font-size: 0.85rem;
+        color: var(--ee-tinta-suave);
+      }
+
+      @media print {
+        .ee-regiones,
+        .ee-onda-barra,
+        .ee-slider,
+        .ee-opcion {
+          display: none;
+        }
+        .ee-tarjeta {
+          break-inside: avoid;
+          border-color: #000000;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .ee-marcador,
+        .ee-lupa-marcador {
+          transition: none;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="ee-app">
+      <header>
+        <h1>Espectro electromagnético</h1>
+        <p>
+          La luz que vemos es solo una franja estrechísima de una familia mucho más amplia de ondas.
+          Todas viajan a la misma velocidad en el vacío; lo que cambia entre ellas es la longitud de onda.
+        </p>
+      </header>
+
+      <section class="caja-objetivos">
+        <h2>Qué vas a aprender</h2>
+        <ul>
+          <li>Reconocer las partes de una onda: longitud de onda, amplitud y frecuencia.</li>
+          <li>Relacionar longitud de onda, frecuencia y energía con las fórmulas <em>f</em> = <em>c</em> / λ y <em>E</em> = <em>h</em> · <em>f</em>.</li>
+          <li>Situar las siete regiones del espectro según su longitud de onda y su energía.</li>
+          <li>Leer y escribir estas magnitudes en notación científica.</li>
+        </ul>
+      </section>
+
+      <p class="ee-regla">Regla clave: a menor longitud de onda, mayor frecuencia y mayor energía.</p>
+
+      <!-- ================= 1. La onda ================= -->
+      <section class="ee-tarjeta">
+        <h2>Primero: qué es la longitud de onda</h2>
+        <p>
+          La longitud de onda, λ, es la distancia entre dos crestas seguidas. La amplitud, A, es la altura de
+          la cresta sobre la línea central. Mueve el control de la sección siguiente y observa cómo se comprime la onda.
+        </p>
+
+        <div class="ee-onda-caja">
+          <svg id="eeOnda" viewBox="0 0 900 212" role="img" aria-labelledby="eeOndaTitulo">
+            <title id="eeOndaTitulo">Diagrama de una onda con la longitud de onda y la amplitud rotuladas.</title>
+            <defs>
+              <marker id="eeFlechaD" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M0,0 L10,5 L0,10 z" fill="#1f2937" />
+              </marker>
+              <marker id="eeFlechaI" viewBox="0 0 10 10" refX="1" refY="5" markerWidth="7" markerHeight="7" orient="auto">
+                <path d="M10,0 L0,5 L10,10 z" fill="#1f2937" />
+              </marker>
+            </defs>
+
+            <line x1="0" y1="115" x2="900" y2="115" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6 6" />
+            <path id="eeOndaPath" fill="none" stroke="#1f2937" stroke-width="4" stroke-linejoin="round" d="" />
+
+            <g id="eeRotulosOnda" fill="#1f2937" font-size="18" font-weight="700">
+              <line id="eeGuia1" stroke="#1f2937" stroke-width="1.5" stroke-dasharray="4 4" />
+              <line id="eeGuia2" stroke="#1f2937" stroke-width="1.5" stroke-dasharray="4 4" />
+              <line id="eeFlechaLambda" stroke="#1f2937" stroke-width="2" marker-start="url(#eeFlechaI)" marker-end="url(#eeFlechaD)" />
+              <text id="eeTextoLambda" text-anchor="middle">λ</text>
+              <line id="eeFlechaAmpl" stroke="#1f2937" stroke-width="2" marker-start="url(#eeFlechaI)" marker-end="url(#eeFlechaD)" />
+              <text id="eeTextoAmpl">A</text>
+            </g>
+
+            <line x1="640" y1="197" x2="694" y2="197" stroke="#4b5563" stroke-width="2" marker-end="url(#eeFlechaD)" />
+            <text x="702" y="202" fill="#4b5563" font-size="15">avance de la onda</text>
+          </svg>
+        </div>
+
+        <div class="ee-onda-barra">
+          <button type="button" id="eePausa" class="ee-boton-simple" aria-pressed="false">Pausar la animación</button>
+          <p class="ee-nota" style="margin: 0; flex: 1 1 320px">
+            Esquema, no está a escala. La onda siempre avanza a la misma velocidad: <em>c</em> ≈ 3 × 10⁸ m/s.
+            Por eso, cuando λ se acorta, pasan más crestas por segundo y la frecuencia sube.
+          </p>
+        </div>
+      </section>
+
+      <div class="ee-columnas">
+        <!-- ================= 2. La escala ================= -->
+        <section class="ee-tarjeta">
+          <h2>Dónde cae tu onda en el espectro</h2>
+
+          <div id="eeSliderTitulo" class="ee-etiqueta">Explora la longitud de onda, λ</div>
+          <input
+            type="range"
+            id="eeSlider"
+            class="ee-slider"
+            min="-4"
+            max="15"
+            step="0.05"
+            value="6.3"
+            aria-labelledby="eeSliderTitulo"
+            aria-valuetext="Cargando"
+          />
+          <div class="ee-extremos">
+            <span>10⁴ m · onda larga</span>
+            <span>10⁻¹⁵ m · onda corta</span>
+          </div>
+
+          <div class="ee-escala">
+            <div class="ee-rotulos" id="eeRotulos" aria-hidden="true"></div>
+
+            <div class="ee-barra-marco" id="eeBarraMarco" role="img" aria-label="Escala del espectro electromagnético">
+              <div class="ee-barra"></div>
+              <div class="ee-marcador" id="eeMarcador"></div>
+            </div>
+
+            <div class="ee-ticks" id="eeTicks" aria-hidden="true"></div>
+
+            <h3 style="font-size: 1rem; margin: 0.8rem 0 0">Lupa: la franja visible ampliada</h3>
+            <p class="ee-nota">
+              En la barra de arriba, todo lo que ve el ojo humano cabe en el 1,3 % de su ancho. Aquí está ese trocito ampliado.
+            </p>
+
+            <svg class="ee-lupa-union" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+              <polygon points="53.45,0 54.73,0 100,100 0,100" fill="#e2e8f0" stroke="#94a3b8" stroke-width="1" vector-effect="non-scaling-stroke" />
+            </svg>
+
+            <div class="ee-lupa">
+              <div class="ee-lupa-marcador" id="eeLupaMarcador" hidden></div>
+            </div>
+            <div class="ee-lupa-escala">
+              <span style="left: 0; transform: none">700 nm</span>
+              <span style="left: 33.33%">600 nm</span>
+              <span style="left: 66.67%">500 nm</span>
+              <span style="right: 0; left: auto; transform: none">400 nm</span>
+            </div>
+          </div>
+
+          <div class="ee-regiones" role="group" aria-label="Ir a una región del espectro">
+            <button type="button" class="ee-region ee-region-radio" data-exp="2" aria-pressed="false">Radio</button>
+            <button type="button" class="ee-region ee-region-micro" data-exp="-2" aria-pressed="false">Microondas</button>
+            <button type="button" class="ee-region ee-region-infra" data-exp="-5" aria-pressed="false">Infrarrojo</button>
+            <button type="button" class="ee-region ee-region-visible" data-exp="-6.3" aria-pressed="false">Visible</button>
+            <button type="button" class="ee-region ee-region-uv" data-exp="-7" aria-pressed="false">Ultravioleta</button>
+            <button type="button" class="ee-region ee-region-xray" data-exp="-9.5" aria-pressed="false">Rayos X</button>
+            <button type="button" class="ee-region ee-region-gamma" data-exp="-13" aria-pressed="false">Gamma</button>
+          </div>
+        </section>
+
+        <!-- ================= 3. Los datos ================= -->
+        <section class="ee-tarjeta" aria-labelledby="eeDatosTitulo">
+          <h2 id="eeDatosTitulo">Datos de la onda seleccionada</h2>
+
+          <div aria-live="polite">
+            <p style="margin: 0 0 0.6rem"><span class="ee-banda-titulo" id="eeBanda">—</span></p>
+
+            <div class="ee-datos">
+              <div class="ee-dato">
+                <span>Longitud de onda (λ)</span>
+                <strong id="eeLambda">—</strong>
+              </div>
+              <div class="ee-dato">
+                <span>Frecuencia (f)</span>
+                <strong id="eeFrec">—</strong>
+              </div>
+              <div class="ee-dato">
+                <span>Energía de un fotón (E)</span>
+                <strong id="eeEnergia">—</strong>
+              </div>
+              <div class="ee-dato">
+                <span>Tamaño comparable</span>
+                <strong id="eeTamano">—</strong>
+              </div>
+            </div>
+
+            <div class="ee-calculo">
+              <h3>Cálculo paso a paso</h3>
+              <p id="eeCalcF">—</p>
+              <p id="eeCalcE">—</p>
+            </div>
+
+            <p><strong>Uso o efecto típico:</strong> <span id="eeUso">—</span></p>
+            <p id="eeTexto"></p>
+            <div id="eeRiesgo"></div>
+          </div>
+        </section>
+      </div>
+
+      <!-- ================= 4. Cuestionario ================= -->
+      <section class="ee-tarjeta">
+        <h2>Comprueba lo que aprendiste</h2>
+        <p class="ee-nota">Siete preguntas. Elige una respuesta en cada una; recibirás la explicación al instante.</p>
+        <div id="eeQuiz"></div>
+        <p class="ee-puntos" id="eePuntos" role="status">Respuestas correctas: 0 de 7</p>
+        <button type="button" id="eeReiniciar" class="ee-boton-simple">Empezar de nuevo</button>
+      </section>
+
+      <footer class="ee-licencia">
+        <p>
+          <strong>Espectro electromagnético interactivo</strong> · Lección 6.3 · Ciencias ASE en español.<br />
+          José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago.
+        </p>
+        <p>
+          Obra bajo licencia
+          <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" rel="license">
+            Creative Commons Atribución-NoComercial-CompartirIgual 4.0 Internacional (CC BY-NC-SA 4.0)</a>.
+        </p>
+      </footer>
+    </div>
+
+    <script>
+      (function () {
+        'use strict';
+
+        /* ================= Constantes ================= */
+        var C = 3e8;
+        var H = 6.626e-34;
+        var J_POR_EV = 1.602e-19;
+
+        /* El deslizador guarda p = -exponente. Así la izquierda es la onda
+           larga (radio) y la derecha la onda corta (gamma), igual que en los
+           libros de texto y en la barra de colores. */
+        var EXP_MAX = 4;
+        var EXP_MIN = -15;
+        var DECADAS = EXP_MAX - EXP_MIN; /* 19 */
+
+        function porcentaje(exp) {
+          return ((EXP_MAX - exp) / DECADAS) * 100;
+        }
+
+        /* ================= Regiones del espectro ================= */
+        var BANDAS = [
+          {
+            desde: -1,
+            nombre: 'Ondas de radio',
+            color: '#166534',
+            uso: 'Radio, televisión, telefonía',
+            ionizante: 'no',
+            riesgo: 'No ionizante. La energía de cada fotón es demasiado baja para arrancar electrones.',
+            texto: 'Las ondas de radio son las más largas del espectro: van desde unos diez centímetros hasta kilómetros. Por eso su frecuencia y su energía son las más bajas de todas. Se usan para transmitir información a gran distancia.'
+          },
+          {
+            desde: -3,
+            nombre: 'Microondas',
+            color: '#3f6212',
+            uso: 'Radar, wifi, horno de microondas',
+            ionizante: 'no',
+            riesgo: 'No ionizante, aunque con intensidad alta calienta el agua de los alimentos.',
+            texto: 'Las microondas miden entre un milímetro y diez centímetros. Son más cortas que las de radio, así que su frecuencia y su energía resultan algo mayores. El horno aprovecha que hacen vibrar las moléculas de agua.'
+          },
+          {
+            desde: -6.155,
+            nombre: 'Infrarrojo',
+            color: '#9a3412',
+            uso: 'Calor, mandos a distancia, cámaras térmicas',
+            ionizante: 'no',
+            riesgo: 'No ionizante. Lo percibimos sobre todo como calor.',
+            texto: 'El infrarrojo está justo al lado del rojo visible, con longitud de onda algo mayor. Todo cuerpo caliente lo emite: por eso una estufa calienta sin tocarte y una cámara térmica ve en la oscuridad.'
+          },
+          {
+            desde: -6.398,
+            nombre: 'Luz visible',
+            color: '#1f2937',
+            uso: 'Visión humana',
+            ionizante: 'no',
+            riesgo: 'No ionizante. Es la única franja que detecta el ojo humano.',
+            texto: 'La luz visible ocupa solo de 4 × 10⁻⁷ m a 7 × 10⁻⁷ m. Todos los colores que has visto en tu vida caben en esa rendija diminuta: el rojo en el extremo largo y el violeta en el corto.'
+          },
+          {
+            desde: -8,
+            nombre: 'Ultravioleta',
+            color: '#6b21a8',
+            uso: 'Bronceado, esterilización, luz negra',
+            ionizante: 'parcial',
+            riesgo: 'La parte más energética ya es ionizante: quema la piel y daña los ojos. Conviene protección solar.',
+            texto: 'El ultravioleta tiene longitud de onda menor que el violeta, así que su frecuencia y su energía son mayores. Esa energía adicional basta para romper enlaces en las células de la piel.'
+          },
+          {
+            desde: -11,
+            nombre: 'Rayos X',
+            color: '#1e40af',
+            uso: 'Radiografías, análisis de materiales',
+            ionizante: 'si',
+            riesgo: 'Radiación ionizante. Exige delantal de plomo, dosis controladas y personal capacitado.',
+            texto: 'Los rayos X miden entre una centésima de nanómetro y diez nanómetros. Su energía les permite atravesar el tejido blando y detenerse en el hueso: por eso el hueso aparece blanco en la radiografía.'
+          },
+          {
+            desde: -Infinity,
+            nombre: 'Rayos gamma',
+            color: '#991b1b',
+            uso: 'Procesos nucleares, radioterapia, astrofísica',
+            ionizante: 'si',
+            riesgo: 'Muy ionizantes. Requieren blindaje grueso y protocolos estrictos.',
+            texto: 'Los rayos gamma están en el extremo de menor longitud de onda y mayor energía de todo el espectro. Nacen en el núcleo del átomo y en fenómenos del universo como las supernovas.'
+          }
+        ];
+
+        function bandaDe(exp) {
+          for (var i = 0; i < BANDAS.length; i++) {
+            if (exp >= BANDAS[i].desde) return BANDAS[i];
+          }
+          return BANDAS[BANDAS.length - 1];
+        }
+
+        /* ================= Notación científica ================= */
+        var SUPER = { '-': '⁻', '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹' };
+
+        function superindice(n) {
+          return String(n)
+            .split('')
+            .map(function (ch) {
+              return SUPER[ch] || ch;
+            })
+            .join('');
+        }
+
+        function partes(v) {
+          var e = Math.floor(Math.log10(Math.abs(v)));
+          var m = v / Math.pow(10, e);
+          if (Number(m.toFixed(2)) >= 10) {
+            m = m / 10;
+            e = e + 1;
+          }
+          return { m: m.toFixed(2).replace('.', ','), e: e };
+        }
+
+        function cientifica(v, unidad) {
+          var p = partes(v);
+          return p.m + ' × 10' + superindice(p.e) + (unidad ? ' ' + unidad : '');
+        }
+
+        function cientificaHablada(v, unidad) {
+          var p = partes(v);
+          var e = p.e < 0 ? 'menos ' + Math.abs(p.e) : String(p.e);
+          return p.m + ' por diez elevado a ' + e + ' ' + unidad;
+        }
+
+        function legible(v, unidad) {
+          if (v >= 0.01 && v < 1e5) {
+            return Number(v.toPrecision(3)).toString().replace('.', ',') + ' ' + unidad;
+          }
+          return cientifica(v, unidad);
+        }
+
+        /* ================= Tamaño comparable ================= */
+        function tamanoComparable(l) {
+          if (l >= 1e3) return 'una montaña pequeña';
+          if (l >= 1e2) return 'un campo de fútbol';
+          if (l >= 1e1) return 'una casa de dos pisos';
+          if (l >= 1) return 'una persona de pie';
+          if (l >= 1e-1) return 'un plato de comida';
+          if (l >= 1e-2) return 'una uña';
+          if (l >= 1e-3) return 'la punta de un lápiz';
+          if (l >= 1e-4) return 'el grosor de un cabello';
+          if (l >= 1e-5) return 'una célula de la piel';
+          if (l >= 1e-6) return 'una bacteria';
+          if (l >= 1e-7) return 'un virus';
+          if (l >= 1e-9) return 'una molécula';
+          if (l >= 1e-11) return 'un átomo';
+          if (l >= 1e-14) return 'el núcleo de un átomo';
+          return 'menos que un núcleo atómico';
+        }
+
+        /* ================= DOM ================= */
+        var slider = document.getElementById('eeSlider');
+        var marcador = document.getElementById('eeMarcador');
+        var barraMarco = document.getElementById('eeBarraMarco');
+        var lupaMarcador = document.getElementById('eeLupaMarcador');
+        var elBanda = document.getElementById('eeBanda');
+        var elLambda = document.getElementById('eeLambda');
+        var elFrec = document.getElementById('eeFrec');
+        var elEnergia = document.getElementById('eeEnergia');
+        var elTamano = document.getElementById('eeTamano');
+        var elUso = document.getElementById('eeUso');
+        var elTexto = document.getElementById('eeTexto');
+        var elRiesgo = document.getElementById('eeRiesgo');
+        var elCalcF = document.getElementById('eeCalcF');
+        var elCalcE = document.getElementById('eeCalcE');
+        var ondaPath = document.getElementById('eeOndaPath');
+        var gRotulos = document.getElementById('eeRotulosOnda');
+        var guia1 = document.getElementById('eeGuia1');
+        var guia2 = document.getElementById('eeGuia2');
+        var flechaLambda = document.getElementById('eeFlechaLambda');
+        var textoLambda = document.getElementById('eeTextoLambda');
+        var flechaAmpl = document.getElementById('eeFlechaAmpl');
+        var textoAmpl = document.getElementById('eeTextoAmpl');
+        var botones = Array.prototype.slice.call(document.querySelectorAll('.ee-region'));
+
+        /* ================= Marcas de la escala ================= */
+        (function dibujarEscala() {
+          var ticks = document.getElementById('eeTicks');
+          var rotulos = document.getElementById('eeRotulos');
+          var i, t, n;
+
+          for (i = EXP_MAX; i >= EXP_MIN; i--) {
+            t = document.createElement('span');
+            t.className = 'ee-tick' + (i % 2 === 0 ? ' ee-tick-mayor' : '');
+            t.style.left = porcentaje(i) + '%';
+            ticks.appendChild(t);
+
+            if (i % 2 === 0) {
+              n = document.createElement('span');
+              n.className = 'ee-tick-num' + (i % 4 === 0 ? '' : ' ee-tick-num-alt');
+              n.style.left = porcentaje(i) + '%';
+              n.textContent = '10' + superindice(i);
+              ticks.appendChild(n);
+            }
+          }
+
+          [
+            { txt: 'Radio', pos: 13.2 },
+            { txt: 'Micro', pos: 31.6 },
+            { txt: 'Infrarrojo', pos: 45.1 },
+            { txt: 'UV', pos: 58.9 },
+            { txt: 'Rayos X', pos: 71.1 },
+            { txt: 'Gamma', pos: 89.5 }
+          ].forEach(function (e) {
+            var s = document.createElement('span');
+            s.style.left = e.pos + '%';
+            s.textContent = e.txt;
+            rotulos.appendChild(s);
+          });
+        })();
+
+        /* ================= Actualización ================= */
+        var expActual = -6.3;
+
+        function actualizar() {
+          var exp = -parseFloat(slider.value);
+          expActual = exp;
+
+          var lambda = Math.pow(10, exp);
+          var frec = C / lambda;
+          var energia = H * frec;
+          var banda = bandaDe(exp);
+
+          marcador.style.left = porcentaje(exp) + '%';
+
+          var nm = lambda * 1e9;
+          if (nm >= 400 && nm <= 700) {
+            lupaMarcador.hidden = false;
+            lupaMarcador.style.left = ((700 - nm) / 300) * 100 + '%';
+          } else {
+            lupaMarcador.hidden = true;
+          }
+
+          elBanda.textContent = banda.nombre;
+          elBanda.style.backgroundColor = banda.color;
+
+          elLambda.textContent = cientifica(lambda, 'm');
+          elFrec.textContent = cientifica(frec, 'Hz');
+          elEnergia.textContent = cientifica(energia, 'J') + '  ·  ' + legible(energia / J_POR_EV, 'eV');
+          elTamano.textContent = tamanoComparable(lambda);
+          elUso.textContent = banda.uso;
+          elTexto.textContent = banda.texto;
+
+          elCalcF.textContent = 'f = c / λ = (3 × 10⁸) ÷ (' + cientifica(lambda) + ') = ' + cientifica(frec, 'Hz');
+          elCalcE.textContent = 'E = h · f = (6,626 × 10⁻³⁴) × (' + cientifica(frec) + ') = ' + cientifica(energia, 'J');
+
+          if (banda.ionizante === 'si') {
+            elRiesgo.innerHTML = '<div class="ee-aviso"><strong>Atención:</strong> ' + banda.riesgo + '</div>';
+          } else if (banda.ionizante === 'parcial') {
+            elRiesgo.innerHTML = '<div class="ee-aviso"><strong>Cuidado:</strong> ' + banda.riesgo + '</div>';
+          } else {
+            elRiesgo.innerHTML = '<div class="ee-ok"><strong>Nota:</strong> ' + banda.riesgo + '</div>';
+          }
+
+          slider.setAttribute(
+            'aria-valuetext',
+            'Longitud de onda ' + cientificaHablada(lambda, 'metros') + '. Región: ' + banda.nombre + '.'
+          );
+          barraMarco.setAttribute('aria-label', 'Escala del espectro electromagnético. Posición actual: ' + banda.nombre + '.');
+
+          botones.forEach(function (b) {
+            var mismo = bandaDe(parseFloat(b.getAttribute('data-exp'))).nombre === banda.nombre;
+            b.setAttribute('aria-pressed', mismo ? 'true' : 'false');
+          });
+
+          ondaPath.setAttribute('stroke', banda.color);
+        }
+
+        slider.addEventListener('input', actualizar);
+
+        botones.forEach(function (b) {
+          b.addEventListener('click', function () {
+            slider.value = String(-parseFloat(b.getAttribute('data-exp')));
+            actualizar();
+          });
+        });
+
+        /* ================= Animación de la onda ================= */
+        var ANCHO = 900;
+        var BASE = 115;
+        var AMPL = 55;
+        var L_MAX = 300;
+        var L_MIN = 16;
+        var VELOCIDAD = 90; /* píxeles por segundo: representa c, siempre constante */
+
+        var fase = 0;
+        var ultimo = null;
+        var reducir = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+        var animando = !reducir;
+
+        function longitudEnPixeles() {
+          var t = (EXP_MAX - expActual) / DECADAS; /* 0 en radio, 1 en gamma */
+          return L_MAX * Math.pow(L_MIN / L_MAX, t);
+        }
+
+        function dibujarOnda() {
+          var L = longitudEnPixeles();
+          var paso = L < 60 ? 1 : 2;
+          var d = '';
+          for (var x = 0; x <= ANCHO; x += paso) {
+            var y = BASE - AMPL * Math.sin((2 * Math.PI * (x + fase)) / L);
+            d += (x === 0 ? 'M ' : ' L ') + x + ' ' + y.toFixed(2);
+          }
+          ondaPath.setAttribute('d', d);
+
+          /* Cresta de referencia cercana al 12 % del ancho. */
+          var k = Math.round((ANCHO * 0.12 + fase) / L - 0.25);
+          var x1 = L * (0.25 + k) - fase;
+          var vueltas = 0;
+          while (x1 < 14 && vueltas < 80) { k++; x1 = L * (0.25 + k) - fase; vueltas++; }
+          while (x1 + L > ANCHO - 14 && vueltas < 160) { k--; x1 = L * (0.25 + k) - fase; vueltas++; }
+
+          if (x1 < 14 || x1 + L > ANCHO - 14) {
+            gRotulos.setAttribute('visibility', 'hidden');
+            return;
+          }
+          gRotulos.setAttribute('visibility', 'visible');
+
+          var x2 = x1 + L;
+          var yc = BASE - AMPL;
+          var yl = yc - 36;
+
+          guia1.setAttribute('x1', x1); guia1.setAttribute('y1', yc);
+          guia1.setAttribute('x2', x1); guia1.setAttribute('y2', yl);
+          guia2.setAttribute('x1', x2); guia2.setAttribute('y1', yc);
+          guia2.setAttribute('x2', x2); guia2.setAttribute('y2', yl);
+
+          flechaLambda.setAttribute('x1', x1); flechaLambda.setAttribute('y1', yl);
+          flechaLambda.setAttribute('x2', x2); flechaLambda.setAttribute('y2', yl);
+          textoLambda.setAttribute('x', x1 + L / 2);
+          textoLambda.setAttribute('y', yl - 9);
+
+          flechaAmpl.setAttribute('x1', x1); flechaAmpl.setAttribute('y1', BASE);
+          flechaAmpl.setAttribute('x2', x1); flechaAmpl.setAttribute('y2', yc);
+          textoAmpl.setAttribute('x', x1 + 11);
+          textoAmpl.setAttribute('y', BASE - AMPL / 2);
+        }
+
+        function bucle(ts) {
+          if (ultimo === null) ultimo = ts;
+          var dt = (ts - ultimo) / 1000;
+          ultimo = ts;
+          if (animando && dt < 0.5) fase += VELOCIDAD * dt;
+          dibujarOnda();
+          window.requestAnimationFrame(bucle);
+        }
+
+        var botonPausa = document.getElementById('eePausa');
+        botonPausa.addEventListener('click', function () {
+          animando = !animando;
+          botonPausa.setAttribute('aria-pressed', animando ? 'false' : 'true');
+          botonPausa.textContent = animando ? 'Pausar la animación' : 'Reanudar la animación';
+        });
+        if (reducir) {
+          botonPausa.setAttribute('aria-pressed', 'true');
+          botonPausa.textContent = 'Reanudar la animación';
+        }
+
+        /* ================= Cuestionario ================= */
+        var PREGUNTAS = [
+          {
+            q: 'Si la longitud de onda de una onda disminuye, ¿qué ocurre con su frecuencia y con su energía?',
+            op: ['Las dos disminuyen.', 'Las dos aumentan.', 'La frecuencia aumenta, pero la energía no cambia.'],
+            ok: 1,
+            exp: 'Como f = c / λ, al achicar λ la frecuencia sube; y como E = h · f, la energía sube con ella.'
+          },
+          {
+            q: '¿Cuál de estas regiones tiene la longitud de onda más larga?',
+            op: ['Rayos X', 'Ondas de radio', 'Ultravioleta'],
+            ok: 1,
+            exp: 'Las ondas de radio ocupan el extremo largo del espectro, con λ desde diez centímetros hasta kilómetros.'
+          },
+          {
+            q: 'La luz visible ocupa aproximadamente el intervalo…',
+            op: ['de 4 × 10⁻⁴ m a 7 × 10⁻⁴ m', 'la mitad de todo el espectro', 'de 4 × 10⁻⁷ m a 7 × 10⁻⁷ m'],
+            ok: 2,
+            exp: 'Son unos 300 nanómetros de ancho: apenas el 1,3 % de la escala completa.'
+          },
+          {
+            q: 'Una onda tiene λ = 3 × 10⁻² m. ¿En qué región está?',
+            op: ['Microondas', 'Infrarrojo', 'Ondas de radio'],
+            ok: 0,
+            exp: '3 × 10⁻² m son 3 centímetros, y las microondas van de 10⁻³ m a 10⁻¹ m.'
+          },
+          {
+            q: '¿Cuál de estas radiaciones es ionizante y exige protección?',
+            op: ['Infrarrojo', 'Rayos X', 'Microondas'],
+            ok: 1,
+            exp: 'Los rayos X llevan energía suficiente para arrancar electrones de los átomos. El infrarrojo y las microondas, no.'
+          },
+          {
+            q: 'Si λ = 6 × 10⁻⁷ m, ¿cuál es la frecuencia aproximada?',
+            op: ['5 × 10¹⁴ Hz', '5 × 10⁻¹⁴ Hz', '1,8 × 10² Hz'],
+            ok: 0,
+            exp: 'f = c / λ = (3 × 10⁸) ÷ (6 × 10⁻⁷) = 5 × 10¹⁴ Hz. Al dividir potencias de diez, los exponentes se restan.'
+          },
+          {
+            q: 'Aumentamos la amplitud de una luz verde sin cambiar su longitud de onda. ¿Qué ocurre?',
+            op: ['Cambia de color.', 'Se vuelve ionizante.', 'Se ve más brillante, pero sigue siendo verde.'],
+            ok: 2,
+            exp: 'La amplitud controla la intensidad, es decir, el brillo. El color y la energía de cada fotón dependen solo de λ.'
+          }
+        ];
+
+        var contenedorQuiz = document.getElementById('eeQuiz');
+        var elPuntos = document.getElementById('eePuntos');
+        var aciertos = 0;
+
+        function pintarQuiz() {
+          aciertos = 0;
+          elPuntos.textContent = 'Respuestas correctas: 0 de ' + PREGUNTAS.length;
+          contenedorQuiz.innerHTML = '';
+
+          PREGUNTAS.forEach(function (p, i) {
+            var div = document.createElement('div');
+            div.className = 'ee-pregunta';
+
+            var enun = document.createElement('p');
+            enun.className = 'ee-enunciado';
+            enun.id = 'eeP' + i;
+            enun.textContent = i + 1 + '. ' + p.q;
+            div.appendChild(enun);
+
+            var grupo = document.createElement('div');
+            grupo.setAttribute('role', 'group');
+            grupo.setAttribute('aria-labelledby', 'eeP' + i);
+
+            var retro = document.createElement('p');
+            retro.className = 'ee-retro';
+            retro.setAttribute('role', 'status');
+
+            p.op.forEach(function (texto, j) {
+              var b = document.createElement('button');
+              b.type = 'button';
+              b.className = 'ee-opcion';
+              b.textContent = texto;
+              b.addEventListener('click', function () {
+                var todos = grupo.querySelectorAll('button');
+                Array.prototype.forEach.call(todos, function (x) {
+                  x.disabled = true;
+                });
+                if (j === p.ok) {
+                  b.className += ' ee-bien';
+                  retro.textContent = 'Correcto. ' + p.exp;
+                  aciertos++;
+                } else {
+                  b.className += ' ee-mal';
+                  todos[p.ok].className += ' ee-bien';
+                  retro.textContent = 'No es esa. ' + p.exp;
+                }
+                elPuntos.textContent = 'Respuestas correctas: ' + aciertos + ' de ' + PREGUNTAS.length;
+              });
+              grupo.appendChild(b);
+            });
+
+            div.appendChild(grupo);
+            div.appendChild(retro);
+            contenedorQuiz.appendChild(div);
+          });
+        }
+
+        document.getElementById('eeReiniciar').addEventListener('click', function () {
+          pintarQuiz();
+          contenedorQuiz.querySelector('button').focus();
+        });
+
+        /* ================= Arranque ================= */
+        pintarQuiz();
+        actualizar();
+        window.requestAnimationFrame(bucle);
+      })();
+    </script>
+  </body>
+</html>
