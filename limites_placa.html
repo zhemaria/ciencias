@@ -526,8 +526,13 @@ function dibujar(){
   else if (tipo === "divergente") cuerpo = corteDivergente(d);
   else cuerpo = vistaTransformante(d);
 
-  var defs = '<defs><marker id="flecha" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">' +
-             '<path d="M0,0 L10,5 L0,10 z" fill="#5b21b6"></path></marker></defs>';
+  /* markerUnits="userSpaceOnUse" es imprescindible: sin él, el tamaño del
+     marcador se multiplica por el stroke-width de la línea que lo usa, y estas
+     flechas de movimiento tienen trazo 4, de modo que la punta se dibujaba
+     seis veces mayor de lo declarado. */
+  var defs = '<defs><marker id="flecha" viewBox="0 0 12 12" refX="10" refY="6" ' +
+             'markerWidth="12" markerHeight="12" markerUnits="userSpaceOnUse" orient="auto">' +
+             '<path d="M0,0 L12,6 L0,12 z" fill="#5b21b6"></path></marker></defs>';
 
   document.getElementById("lienzo-corte").innerHTML =
     '<svg class="corte" viewBox="0 0 720 380" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' +
