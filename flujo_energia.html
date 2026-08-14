@@ -1,0 +1,947 @@
+<!doctype html>
+<!--
+  Flujo de energía (Lección 3.2) · Spanish ASE Science
+  © 2026 José M. Fernández, ABE/ASE Math Master Teacher,
+  Harry S. Truman College — City Colleges of Chicago.
+  Licencia: Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0
+  Internacional (CC BY-NC-SA 4.0) — https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flujo de energía</title>
+<meta name="description" content="Simulador de cloroplasto y mitocondria enlazados, con control de luz, dióxido de carbono y agua, más ejercicios de ecuaciones globales, recorrido del carbono e interpretación de gráficas de tasa fotosintética.">
+<meta name="author" content="José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago">
+<meta name="license" content="CC BY-NC-SA 4.0">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
+<style>
+@charset "utf-8";
+/* ============================================================================
+   Estilos unificados de los interactivos · Spanish ASE Science
+   José M. Fernández, ABE/ASE Math Master Teacher,
+   Harry S. Truman College — City Colleges of Chicago
+   © 2026 · CC BY-NC-SA 4.0
+   https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+   ----------------------------------------------------------------------------
+   CÓMO SE USA
+   Este bloque se copia completo dentro de <style> en cada interactivo, para que
+   el archivo siga siendo autónomo. La clase de unidad va en el <body>:
+       <body class="u4">   → Unidad 4, verde oliva
+   Unidades: u1 verde azulado · u2 gris pizarra · u3 verde · u4 verde oliva
+             u5 rojo anaranjado · u6 azul índigo · u7 violeta · u8 azul
+   Todos los colores de acento cumplen 4,5:1 sobre blanco y admiten texto
+   blanco encima. El ámbar de los avisos usa #5c3900 (10,29:1).
+   ========================================================================== */
+
+/* ── 1. PALETA POR UNIDAD ──────────────────────────────────────────────── */
+:root{
+  --u:#37474f; --u2:#263238; --u-bg:#eceff1;   /* valor por defecto */
+  --texto:#222; --texto-sec:#555; --linea:#e0e0e0;
+  --pagina:#f5f7fa; --papel:#ffffff;
+  --amb:#5c3900; --amb-bg:#fff8e1; --amb-borde:#b45309;
+  --ok:#1b5e20; --ok-bg:#e8f5e9; --mal:#7f1d1d; --mal-bg:#fbe9e7;
+  --radio:12px; --sombra:0 2px 8px rgba(0,0,0,.07);
+}
+body.u1{--u:#00695c;--u2:#004d40;--u-bg:#e0f2f1;}
+body.u2{--u:#37474f;--u2:#263238;--u-bg:#eceff1;}
+body.u3{--u:#1b5e20;--u2:#0f3d13;--u-bg:#e8f5e9;}
+body.u4{--u:#33691e;--u2:#1f4211;--u-bg:#f1f8e9;}
+body.u5{--u:#bf360c;--u2:#8c2708;--u-bg:#fbe9e7;}
+body.u6{--u:#1e3a8a;--u2:#142a63;--u-bg:#e8eaf6;}
+body.u7{--u:#5b21b6;--u2:#40157f;--u-bg:#ede7f6;}
+body.u8{--u:#0d47a1;--u2:#093271;--u-bg:#e3f2fd;}
+
+/* ── 2. BASE ───────────────────────────────────────────────────────────── */
+*{box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;margin:0;background:var(--pagina);
+  color:var(--texto);line-height:1.55;font-size:16px;}
+.contenedor{max-width:1100px;margin:0 auto;padding:24px;}
+a{color:#0b3d91;}
+h1,h2,h3{line-height:1.3;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+:focus-visible{outline:3px solid var(--u);outline-offset:2px;}
+
+/* ── 3. ENCABEZADO DEL INTERACTIVO ─────────────────────────────────────── */
+header.principal{background:var(--u);background:linear-gradient(135deg,var(--u) 0%,var(--u2) 100%);
+  color:#fff;padding:28px 32px;border-radius:14px;margin-bottom:22px;box-shadow:var(--sombra);}
+header.principal h1{margin:0 0 6px;font-size:26px;font-weight:700;color:#fff;}
+header.principal .meta{font-size:14px;margin:4px 0 0;color:#fff;}
+
+/* ── 4. BLOQUES DE TEXTO ───────────────────────────────────────────────── */
+.tarjeta{background:var(--papel);padding:20px 24px;border-radius:10px;
+  border-left:5px solid var(--u);margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.tarjeta h2{margin-top:0;color:var(--u);font-size:20px;}
+.tarjeta h3{font-size:16px;color:#263238;margin:16px 0 6px;}
+.caja-tip{background:var(--amb-bg);border-left:4px solid var(--amb-borde);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;font-size:15px;}
+.caja-tip strong{color:var(--amb);}
+.caja-ok{background:var(--ok-bg);border-left:5px solid var(--ok);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;}
+.caja-ok strong{color:var(--ok);}
+.caja-mal{background:var(--mal-bg);border-left:5px solid var(--mal);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;}
+.caja-mal strong{color:var(--mal);}
+
+/* ── 5. PANEL DE CONTROLES ─────────────────────────────────────────────── */
+.panel{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:18px 22px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.panel h2{margin:0 0 12px;font-size:18px;color:var(--u);}
+.control{margin-bottom:16px;}
+.control > label{display:block;font-weight:600;font-size:15px;color:#263238;margin-bottom:6px;}
+.control .valor{float:right;font-weight:700;color:var(--u);font-variant-numeric:tabular-nums;}
+.control input[type=range]{width:100%;accent-color:var(--u);height:26px;}
+.control select,.control input[type=number],.control input[type=text]{
+  font-family:inherit;font-size:16px;padding:9px 14px;border-radius:8px;
+  border:1px solid #90a4ae;background:#fff;color:var(--texto);width:100%;max-width:420px;}
+.fila-botones{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;}
+button{font-family:inherit;font-size:15px;font-weight:600;padding:10px 18px;border-radius:8px;
+  border:1px solid transparent;background:var(--u);color:#fff;cursor:pointer;}
+button:hover{background:var(--u2);}
+button.secundario{background:#fff;color:var(--u);border-color:var(--u);}
+button.secundario:hover{background:var(--u-bg);}
+
+/* ── 6. LIENZO / ESCENA ────────────────────────────────────────────────── */
+.escena{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:16px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);overflow-x:auto;}
+
+/* ── 7. LECTURA DEL ESTADO (alternativa textual, siempre visible) ──────── */
+.lectura{background:var(--u-bg);border-left:5px solid var(--u);border-radius:0 8px 8px 0;
+  padding:14px 18px;margin-bottom:22px;font-size:15px;}
+.lectura h2{margin:0 0 8px;font-size:17px;color:var(--u);}
+.lectura p{margin:6px 0;}
+.lectura .dato{font-weight:700;color:var(--u2);font-variant-numeric:tabular-nums;}
+
+/* ── 8. TABLAS (Ally: caption obligatorio y scope en todo th) ──────────── */
+.tabla-wrap{overflow-x:auto;margin-bottom:22px;}
+table.datos{width:100%;border-collapse:collapse;background:var(--papel);border-radius:10px;
+  overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);font-size:15px;}
+table.datos caption{caption-side:top;text-align:left;font-size:14px;color:var(--texto-sec);
+  padding:0 0 8px;font-style:italic;}
+table.datos th,table.datos td{padding:10px 12px;text-align:left;border-bottom:1px solid #eee;}
+table.datos thead th{background:#37474f;color:#fff;font-weight:600;font-size:13px;
+  text-transform:uppercase;letter-spacing:.4px;}
+table.datos tbody th{background:var(--u-bg);color:var(--u2);font-weight:700;}
+table.datos tr:last-child td{border-bottom:none;}
+
+/* ── 9. ACORDEÓN NATIVO ────────────────────────────────────────────────── */
+details.bloque{background:var(--papel);border-radius:var(--radio);margin-bottom:14px;
+  box-shadow:var(--sombra);border-left:5px solid var(--u);overflow:hidden;}
+details.bloque > summary{padding:14px 18px;cursor:pointer;list-style:none;display:flex;
+  gap:10px;align-items:center;background:var(--u-bg);font-weight:600;color:var(--u2);}
+details.bloque > summary::-webkit-details-marker{display:none;}
+details.bloque > summary .chevron{transition:transform .2s;flex-shrink:0;}
+details.bloque[open] > summary .chevron{transform:rotate(90deg);}
+details.bloque .cuerpo{padding:14px 20px 18px;}
+
+/* ── 10. PIE CON LICENCIA ──────────────────────────────────────────────── */
+footer.pie{padding:22px 4px;color:var(--texto-sec);font-size:13px;margin-top:20px;
+  border-top:1px solid #ddd;text-align:center;}
+footer.pie p{margin:5px 0;}
+
+/* ── 11. MOVIMIENTO REDUCIDO ───────────────────────────────────────────── */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;scroll-behavior:auto !important;}
+}
+
+/* ── 12. IMPRESIÓN ─────────────────────────────────────────────────────── */
+@media print{
+  body{background:#fff;}
+  .panel,.escena{page-break-inside:avoid;}
+  details[open] .cuerpo{display:block;}
+}
+
+/* ── 13. NOMBRES RESERVADOS ────────────────────────────────────────────── */
+/* Estas clases pertenecen a la hoja unificada. No las reutilices como
+   clase local en un interactivo: el selector local se sumaría al de aquí y
+   descuadraría el componente. Reservadas:
+   contenedor · sr-only · principal · meta · tarjeta · caja-tip · caja-ok ·
+   caja-mal · panel · control · valor · fila-botones · secundario · escena ·
+   lectura · dato · tabla-wrap · datos · bloque · cuerpo · chevron · pie
+   Para rejillas de cifras usa .cifras, no .datos. */
+
+/* ── PROPIO DE ESTE INTERACTIVO ────────────────────────────────────────── */
+.etiquetas{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+.etiqueta{font-size:13px;font-weight:600;padding:4px 12px;border-radius:999px;
+  background:var(--u-bg);color:var(--u2);border:1px solid var(--u);}
+.etiqueta.suave{background:#fff;color:var(--texto-sec);border-color:#b0bec5;}
+.enunciado{font-size:17px;margin:0 0 16px;}
+.enunciado p{margin:0 0 12px;}
+.progreso{font-size:15px;font-weight:600;color:var(--u2);margin:0 0 14px;}
+
+/* Laboratorio */
+.marco-svg{overflow-x:auto;}
+.marco-svg svg{display:block;margin:0 auto;max-width:100%;height:auto;}
+.flujo{stroke-dasharray:10 6;animation:fluir 1.6s linear infinite;}
+@keyframes fluir{to{stroke-dashoffset:-32;}}
+.perillas{display:flex;flex-wrap:wrap;gap:18px;margin-bottom:8px;}
+.perillas .control{flex:1 1 260px;margin-bottom:0;}
+.cifras{display:flex;flex-wrap:wrap;gap:12px;margin:0 0 14px;}
+.cifras div{background:var(--u-bg);border-radius:8px;padding:10px 14px;font-size:14px;flex:1 1 170px;}
+.cifras .rot{display:block;font-size:13px;color:var(--texto-sec);margin-bottom:2px;}
+.cifras b{color:var(--u2);font-size:20px;font-variant-numeric:tabular-nums;}
+.cifras div.neto{background:#fff;border:2px solid var(--u);}
+.nota-modelo{font-size:13px;color:var(--texto-sec);font-style:italic;margin:10px 0 0;}
+
+/* Fichas y zonas */
+.taller{display:flex;gap:22px;flex-wrap:wrap;align-items:flex-start;}
+.reserva{flex:1 1 260px;background:var(--u-bg);border:1px solid var(--linea);
+  border-radius:var(--radio);padding:14px 16px;}
+.reserva h3{margin:0 0 10px;font-size:15px;color:var(--u2);}
+.monton{display:flex;flex-wrap:wrap;gap:10px;min-height:48px;}
+.monton.vertical{flex-direction:column;flex-wrap:nowrap;}
+button.ficha{background:#fff;color:var(--u2);border:2px solid var(--u);font-weight:700;
+  font-size:16px;padding:10px 14px;cursor:grab;white-space:normal;text-align:left;}
+button.ficha.larga{font-weight:500;font-size:15px;line-height:1.45;display:block;width:100%;}
+button.ficha:hover{background:var(--u-bg);}
+button.ficha[aria-pressed="true"]{background:var(--amb-bg);border-color:var(--amb-borde);
+  color:var(--amb);outline:3px solid var(--amb-borde);outline-offset:2px;}
+.zonas{flex:2 1 380px;display:flex;flex-direction:column;gap:10px;}
+.zona{background:#fff;border:3px dashed #78909c;border-radius:var(--radio);padding:10px 12px;}
+.zona h3{margin:0 0 6px;font-size:14px;color:var(--u2);text-transform:uppercase;letter-spacing:.4px;}
+.zona h3 .pista{display:block;text-transform:none;letter-spacing:0;font-weight:500;
+  font-size:13px;color:var(--texto-sec);}
+.zona.encima{border-style:solid;border-color:var(--u);background:var(--u-bg);}
+.zona.acierto{border-style:solid;border-color:var(--ok);background:var(--ok-bg);}
+.zona.fallo{border-style:solid;border-color:var(--mal);background:var(--mal-bg);}
+.reserva.acierto{border:3px solid var(--ok);background:var(--ok-bg);}
+.reserva.fallo{border:3px solid var(--mal);background:var(--mal-bg);}
+.flecha-ec{text-align:center;font-size:26px;font-weight:700;color:var(--u);margin:2px 0;}
+
+/* Opciones */
+.opciones{display:flex;flex-direction:column;gap:10px;max-width:820px;}
+button.opcion{display:flex;gap:12px;align-items:flex-start;text-align:left;font-weight:500;
+  font-size:16px;background:#fff;color:var(--texto);border:2px solid #90a4ae;padding:12px 16px;
+  white-space:normal;}
+button.opcion:hover{background:var(--u-bg);border-color:var(--u);}
+button.opcion[aria-pressed="true"]{background:var(--u-bg);border-color:var(--u);
+  box-shadow:inset 0 0 0 1px var(--u);}
+button.opcion.acierto{border-color:var(--ok);background:var(--ok-bg);}
+button.opcion.fallo{border-color:var(--mal);background:var(--mal-bg);}
+button.opcion .letra{font-weight:700;color:var(--u2);flex-shrink:0;}
+.caso{background:var(--papel);border:1px solid var(--linea);border-left:5px solid var(--u);
+  border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:16px;font-size:17px;}
+sub{font-size:.75em;}
+</style>
+</head>
+<body class="u3">
+<div class="contenedor">
+
+<header class="principal">
+  <h1>Flujo de energía</h1>
+  <p class="meta">Lección 3.2 · Fotosíntesis y respiración celular: el flujo de la energía</p>
+  <p class="meta">Unidad 3 · Ciencias de la vida I: célula, energía y cuerpo humano · Spanish ASE Science</p>
+</header>
+
+<div class="tarjeta">
+  <h2>Qué vas a hacer</h2>
+  <p>La fotosíntesis y la respiración celular suelen estudiarse como dos ecuaciones que hay que memorizar, y de ahí sale la idea equivocada de que son procesos opuestos que se cancelan. Son complementarios, que es otra cosa: uno guarda energía en una molécula y el otro la saca de ella, y entre los dos mantienen en movimiento todo el carbono del planeta.</p>
+  <h3>Los cuatro ejercicios</h3>
+  <p>El primero es un laboratorio con dos cámaras enlazadas, un cloroplasto y una mitocondria, donde ajustas la luz, el dióxido de carbono y el agua y ves cómo responden los contadores. El segundo te pide armar las dos ecuaciones globales con sus piezas. El tercero sigue a un átomo de carbono desde el aire hasta que vuelve al aire. El cuarto es de interpretación de gráficas, incluida la pregunta de extrapolación que el examen repite sin descanso.</p>
+  <div class="caja-tip">
+    <p><strong>Ten presente:</strong> una planta no solo hace fotosíntesis. También respira, de día y de noche, igual que tú. Esa es la confusión más extendida de todo el tema, y el laboratorio de esta página está construido justamente para deshacerla: verás a la mitocondria trabajando incluso cuando apagas la luz del todo.</p>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>Controles</h2>
+  <div class="control">
+    <label for="ejercicio">Ejercicio</label>
+    <select id="ejercicio">
+      <option value="lab">1. Laboratorio: las dos cámaras</option>
+      <option value="ecuaciones">2. Arma las dos ecuaciones</option>
+      <option value="carbono">3. Sigue al carbono</option>
+      <option value="grafica">4. Interpreta la gráfica</option>
+    </select>
+  </div>
+  <div class="fila-botones" id="fila-ejercicio" hidden>
+    <button type="button" id="btn-comprobar">Comprobar la respuesta</button>
+    <button type="button" class="secundario" id="btn-siguiente">Siguiente</button>
+    <button type="button" class="secundario" id="btn-reiniciar">Empezar de nuevo</button>
+  </div>
+</div>
+
+<div class="lectura" id="lectura" aria-live="polite">
+  <h2>Lectura del laboratorio</h2>
+  <p id="lectura-texto">Cargando las dos cámaras.</p>
+</div>
+
+<div class="escena">
+  <p class="progreso" id="progreso"></p>
+  <div class="etiquetas" id="etiquetas"></div>
+  <div class="enunciado" id="enunciado"></div>
+  <div id="zona-item"></div>
+  <div id="veredicto"></div>
+  <div id="consejo"></div>
+</div>
+
+<div class="tabla-wrap" id="caja-balance">
+  <table class="datos">
+    <caption>Balance de materia del sistema completo, en moléculas por minuto. Los valores negativos indican que la sustancia se consume del ambiente y los positivos, que se libera a él.</caption>
+    <thead>
+      <tr>
+        <th scope="col">Sustancia</th><th scope="col">Fotosíntesis</th>
+        <th scope="col">Respiración</th><th scope="col">Intercambio neto con el aire</th>
+      </tr>
+    </thead>
+    <tbody id="balance"></tbody>
+  </table>
+</div>
+
+<div class="tabla-wrap" id="caja-marcador" hidden>
+  <table class="datos">
+    <caption>Desempeño en los tres ejercicios de práctica.</caption>
+    <thead>
+      <tr>
+        <th scope="col">Ejercicio</th><th scope="col">Contestados</th>
+        <th scope="col">Aciertos</th><th scope="col">Porcentaje</th>
+      </tr>
+    </thead>
+    <tbody id="marcador"></tbody>
+  </table>
+</div>
+
+<details class="bloque">
+  <summary><span class="chevron" aria-hidden="true">▶</span>Las dos ecuaciones, una al lado de la otra</summary>
+  <div class="cuerpo">
+    <div class="tabla-wrap">
+      <table class="datos">
+        <caption>Comparación entre la fotosíntesis y la respiración celular: dónde ocurre cada una, qué entra, qué sale y qué pasa con la energía.</caption>
+        <thead>
+          <tr><th scope="col">Aspecto</th><th scope="col">Fotosíntesis</th><th scope="col">Respiración celular</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Dónde ocurre</th><td>En el cloroplasto, solo en plantas, algas y algunas bacterias</td><td>En la mitocondria, en plantas y en animales por igual</td></tr>
+          <tr><th scope="row">Reactivos</th><td>6 CO<sub>2</sub> + 6 H<sub>2</sub>O</td><td>C<sub>6</sub>H<sub>12</sub>O<sub>6</sub> + 6 O<sub>2</sub></td></tr>
+          <tr><th scope="row">Productos</th><td>C<sub>6</sub>H<sub>12</sub>O<sub>6</sub> + 6 O<sub>2</sub></td><td>6 CO<sub>2</sub> + 6 H<sub>2</sub>O</td></tr>
+          <tr><th scope="row">Energía</th><td>Absorbe energía luminosa y la guarda en los enlaces de la glucosa</td><td>Libera la energía de esos enlaces y la transfiere al ATP</td></tr>
+          <tr><th scope="row">Cuándo ocurre</th><td>Solo con luz</td><td>De día y de noche, sin interrupción</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="caja-tip">
+      <p><strong>No son procesos opuestos:</strong> aunque los reactivos de una sean los productos de la otra, la energía no vuelve al punto de partida. Entra como luz y sale como calor, y ese calor no se puede volver a usar. La materia circula en un ciclo cerrado; la energía lo atraviesa una sola vez y se va.</p>
+    </div>
+  </div>
+</details>
+
+<details class="bloque">
+  <summary><span class="chevron" aria-hidden="true">▶</span>El factor limitante y el punto de compensación</summary>
+  <div class="cuerpo">
+    <h3>Factor limitante</h3>
+    <p>La fotosíntesis necesita luz, dióxido de carbono y agua a la vez. Cuando uno de los tres escasea, la tasa queda fijada por él y aumentar los otros dos no sirve de nada. Es el mismo principio que un embudo: por muy ancha que sea la boca, pasa lo que deja pasar el cuello. En el laboratorio de esta página puedes comprobarlo subiendo la luz al máximo con el dióxido de carbono bajo, y verificar que la tasa no se mueve.</p>
+    <h3>Punto de compensación</h3>
+    <p>Como la planta respira siempre, hay una intensidad de luz en la que la fotosíntesis produce exactamente la glucosa que la respiración consume. En ese punto la planta no crece ni adelgaza, y no intercambia gas neto con el aire: es el punto de compensación. Por debajo de esa luz, la planta gasta más de lo que fabrica y tira de reservas, exactamente como un animal. Por eso una planta en una habitación demasiado oscura acaba muriéndose aunque se la riegue todos los días.</p>
+  </div>
+</details>
+
+<footer class="pie">
+  <p>Flujo de energía · Lección 3.2 · Spanish ASE Science · 96 horas</p>
+  <p>José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago</p>
+  <p>© 2026. Esta obra está licenciada bajo <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" rel="license">Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0 Internacional (CC BY-NC-SA 4.0)</a>.</p>
+</footer>
+
+</div>
+<script>
+"use strict";
+
+/* ══════════════════════════════════════════════════════════════════════════
+   FLUJO DE ENERGÍA · Lección 3.2
+   Modelo determinista de factor limitante. Sin dependencias externas.
+   Separador decimal: punto.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+var RESPIRACION = 40;   /* moléculas de glucosa por minuto, constante */
+var ATP_POR_GLUCOSA = 32;
+
+var lab = {luz:60, co2:600, agua:80};
+
+function fLuz(L){ return L / (L + 20) * 1.2; }
+function fCO2(C){ return C / (C + 250) * 1.208; }
+function fAgua(W){ return W / (W + 10) * 1.1; }
+
+function tasa(L, C, W){
+  return Math.round(100 * Math.min(fLuz(L), fCO2(C), fAgua(W)));
+}
+function limitante(L, C, W){
+  var v = [{n:"la luz", f:fLuz(L)}, {n:"el dióxido de carbono", f:fCO2(C)}, {n:"el agua", f:fAgua(W)}];
+  v.sort(function(a, b){ return a.f - b.f; });
+  if (v[0].f >= 0.99) return null;   /* los tres factores están al máximo */
+  return (v[1].f - v[0].f < 0.02) ? v[0].n + " junto con " + v[1].n : v[0].n;
+}
+
+/* ── Ejercicio 2 · Ecuaciones ──────────────────────────────────────────── */
+var PIEZAS = [
+  {id:"co2", t:"6 CO₂"}, {id:"h2o", t:"6 H₂O"}, {id:"glu", t:"C₆H₁₂O₆"},
+  {id:"o2",  t:"6 O₂"},  {id:"ch4", t:"6 CH₄"}, {id:"n2",  t:"6 N₂"}
+];
+var ECUACIONES = [
+{
+  titulo:"Ecuación global de la fotosíntesis",
+  intro:"Coloca las piezas a cada lado de la flecha. Sobran dos piezas: no todo lo que aparece en la reserva pertenece a la ecuación.",
+  sobre:"energía luminosa",
+  zonas:[
+    {id:"r", t:"Reactivos", pista:"Lo que entra en el cloroplasto", acepta:["co2","h2o"], cupo:2},
+    {id:"p", t:"Productos", pista:"Lo que sale del cloroplasto",   acepta:["glu","o2"],  cupo:2}
+  ],
+  exp:"6 CO₂ + 6 H₂O, con energía luminosa, dan C₆H₁₂O₆ + 6 O₂. Fíjate en los coeficientes: seis moléculas de dióxido de carbono aportan los seis carbonos que necesita una sola molécula de glucosa. El metano y el nitrógeno sobran porque no intervienen en este proceso.",
+  consejo:"Truco para no confundirse de sentido: la fotosíntesis fabrica alimento, así que la glucosa tiene que estar del lado de los productos. Si la colocas entre los reactivos, estás escribiendo la respiración."
+},
+{
+  titulo:"Ecuación global de la respiración celular",
+  intro:"Ahora la otra. Mismas piezas, orden distinto. Vuelven a sobrar dos.",
+  sobre:"se libera ATP",
+  zonas:[
+    {id:"r", t:"Reactivos", pista:"Lo que entra en la mitocondria", acepta:["glu","o2"],  cupo:2},
+    {id:"p", t:"Productos", pista:"Lo que sale de la mitocondria",  acepta:["co2","h2o"], cupo:2}
+  ],
+  exp:"C₆H₁₂O₆ + 6 O₂ dan 6 CO₂ + 6 H₂O, y se libera energía en forma de ATP. Es la ecuación anterior leída al revés en cuanto a la materia, pero no en cuanto a la energía: allí entraba luz y aquí sale ATP y calor.",
+  consejo:"Lo que va escrito sobre la flecha no es un adorno. En la fotosíntesis se escribe la energía luminosa a la izquierda porque entra; en la respiración se escribe el ATP a la derecha porque sale. Esa asimetría es la respuesta a la pregunta de examen sobre por qué los dos procesos no se cancelan."
+}
+];
+
+/* ── Ejercicio 3 · Sigue al carbono ────────────────────────────────────── */
+var RUTAS = [
+{
+  titulo:"Ruta 1 · Por un herbívoro",
+  intro:"Ordena el recorrido de un átomo de carbono desde el aire hasta que vuelve al aire. <strong>Uno de los siete pasos es falso y debe quedarse en la reserva.</strong>",
+  pasos:[
+    {id:"p1", z:"z1", t:"Una molécula de CO₂ flota en el aire, sobre un campo de maíz."},
+    {id:"p2", z:"z2", t:"La hoja la absorbe por los estomas y el cloroplasto incorpora su carbono a una molécula de glucosa."},
+    {id:"p3", z:"z3", t:"La planta enlaza muchas glucosas y almacena el carbono como almidón en el grano."},
+    {id:"p4", z:"z4", t:"Una vaca come el grano y su aparato digestivo descompone el almidón en glucosa otra vez."},
+    {id:"p5", z:"z5", t:"En la mitocondria de una célula de la vaca, esa glucosa se rompe y libera energía para el ATP."},
+    {id:"p6", z:"z6", t:"La vaca exhala el carbono en forma de CO₂ y la molécula vuelve al aire."},
+    {id:"p7", z:"",   t:"Dentro del músculo de la vaca, parte del carbono se transforma en nitrógeno."}
+  ],
+  exp:"El paso falso contradice la conservación de la materia: un átomo de carbono no se convierte en otro elemento durante una reacción química. Cambia de molécula muchas veces —de dióxido de carbono a glucosa, de glucosa a almidón, de almidón a glucosa otra vez— pero sigue siendo el mismo átomo de carbono en todas ellas.",
+  consejo:"Cada vez que el carbono pasa a un nivel trófico superior, casi toda la energía asociada se ha perdido ya como calor. La materia circula en ciclo; la energía no vuelve."
+},
+{
+  titulo:"Ruta 2 · Por un descomponedor",
+  intro:"El mismo viaje, pero por el camino largo. <strong>Uno de los siete pasos es falso.</strong>",
+  pasos:[
+    {id:"q1", z:"z1", t:"Una molécula de CO₂ del aire entra por los estomas de la hoja de un roble."},
+    {id:"q2", z:"z2", t:"El cloroplasto usa la energía de la luz para incorporar ese carbono a la glucosa."},
+    {id:"q3", z:"z3", t:"El roble encadena esas glucosas y forma la celulosa del tronco, donde el carbono queda retenido durante décadas."},
+    {id:"q4", z:"z4", t:"El roble muere y el tronco cae al suelo del bosque."},
+    {id:"q5", z:"z5", t:"Hongos y bacterias descomponen la celulosa y aprovechan su carbono como alimento."},
+    {id:"q6", z:"z6", t:"Al respirar, esos descomponedores devuelven el carbono al aire en forma de CO₂."},
+    {id:"q7", z:"",   t:"Una parte del carbono desaparece durante la descomposición, porque se consume por completo."}
+  ],
+  exp:"Nada desaparece: los descomponedores no destruyen el carbono, lo devuelven al aire. Lo que sí se pierde en cada paso es energía aprovechable, que se disipa como calor. Repara además en las escalas de tiempo: por esta ruta el carbono puede pasar décadas retenido en la madera, y si el tronco queda enterrado y sometido a presión durante millones de años, puede acabar convertido en carbón, y entonces solo vuelve al aire cuando alguien lo quema.",
+  consejo:"El examen pregunta con frecuencia por el papel de los descomponedores, y la respuesta correcta casi nunca es «limpiar». Son los que cierran el ciclo: sin ellos, el carbono quedaría atrapado en la materia muerta."
+}
+];
+var ZONAS_RUTA = [
+  {id:"z1", t:"Paso 1", pista:"En el aire"},
+  {id:"z2", t:"Paso 2", pista:"Entra en la planta"},
+  {id:"z3", t:"Paso 3", pista:"Se almacena"},
+  {id:"z4", t:"Paso 4", pista:"Cambia de organismo"},
+  {id:"z5", t:"Paso 5", pista:"Se consume la glucosa"},
+  {id:"z6", t:"Paso 6", pista:"Vuelve al aire"}
+];
+
+/* ── Ejercicio 4 · Gráfica ─────────────────────────────────────────────── */
+var GRAFICA_SVG =
+'<svg viewBox="0 0 660 340" role="img" aria-labelledby="tit-gra des-gra">' +
+'<title id="tit-gra">Tasa de fotosíntesis frente a intensidad de luz, con dos concentraciones de dióxido de carbono</title>' +
+'<desc id="des-gra">Dos curvas suben con la intensidad de luz y después se aplanan. La curva de dióxido de carbono alto sube hasta una tasa de 90 unidades y se aplana a partir de una luz de 60. La curva de dióxido de carbono bajo se aplana mucho antes, a partir de una luz de 30, y se queda en una tasa de 45 unidades. Una línea horizontal discontinua marca la tasa de respiración, de 40 unidades.</desc>' +
+'<rect x="0" y="0" width="660" height="340" fill="#f7faf7"></rect>' +
+'<g stroke="#cfd8dc" stroke-width="1">' +
+'<line x1="80" y1="60" x2="620" y2="60"></line><line x1="80" y1="115" x2="620" y2="115"></line>' +
+'<line x1="80" y1="170" x2="620" y2="170"></line><line x1="80" y1="225" x2="620" y2="225"></line></g>' +
+'<line x1="80" y1="40" x2="80" y2="280" stroke="#263238" stroke-width="3"></line>' +
+'<line x1="80" y1="280" x2="620" y2="280" stroke="#263238" stroke-width="3"></line>' +
+'<text x="34" y="64" font-size="13" fill="#263238">100</text>' +
+'<text x="40" y="119" font-size="13" fill="#263238">75</text>' +
+'<text x="40" y="174" font-size="13" fill="#263238">50</text>' +
+'<text x="40" y="229" font-size="13" fill="#263238">25</text>' +
+'<text x="48" y="285" font-size="13" fill="#263238">0</text>' +
+'<text x="185" y="302" font-size="13" fill="#263238">20</text>' +
+'<text x="290" y="302" font-size="13" fill="#263238">40</text>' +
+'<text x="395" y="302" font-size="13" fill="#263238">60</text>' +
+'<text x="500" y="302" font-size="13" fill="#263238">80</text>' +
+'<text x="600" y="302" font-size="13" fill="#263238">100</text>' +
+'<text x="270" y="328" font-size="14" font-weight="700" fill="#1b5e20">Intensidad de luz (unidades)</text>' +
+'<text x="14" y="26" font-size="14" font-weight="700" fill="#1b5e20">Tasa de fotosíntesis</text>' +
+'<line x1="80" y1="192" x2="620" y2="192" stroke="#7f1d1d" stroke-width="2" stroke-dasharray="8 6"></line>' +
+'<text x="500" y="186" font-size="13" font-weight="700" fill="#7f1d1d">Respiración = 40</text>' +
+'<polyline points="80,280 133,214 186,166 239,136 292,116 345,104 398,82 450,80 503,79 556,78 610,78" ' +
+'fill="none" stroke="#1b5e20" stroke-width="4"></polyline>' +
+'<text x="470" y="66" font-size="14" font-weight="700" fill="#1b5e20">CO₂ alto</text>' +
+'<polyline points="80,280 133,232 186,204 239,192 292,181 345,181 398,181 450,181 503,181 556,181 610,181" ' +
+'fill="none" stroke="#0d47a1" stroke-width="4" stroke-dasharray="12 5"></polyline>' +
+'<text x="470" y="174" font-size="14" font-weight="700" fill="#0d47a1">CO₂ bajo</text>' +
+'</svg>';
+
+var PREGUNTAS = [
+{ q:"Entre una luz de 0 y una de 20 unidades, ¿qué le ocurre a la curva de CO₂ alto?",
+  ops:["La tasa sube con rapidez: en esa zona, la luz es el factor limitante.",
+       "La tasa se mantiene plana, porque la luz no influye.",
+       "La tasa baja, porque el exceso de luz daña la hoja.",
+       "La tasa sube solo si también aumenta el agua."], ok:0,
+  exp:"En el tramo inicial la pendiente es máxima. Cada unidad de luz que se añade se traduce casi por completo en más fotosíntesis, y eso es la definición de factor limitante: es el que manda mientras escasea." },
+{ q:"Con la curva de CO₂ alto, la luz está en 60 unidades. Si se duplica hasta 120, ¿qué se espera que ocurra con la tasa?",
+  ops:["Se duplicará también, porque las dos magnitudes son proporcionales.",
+       "Apenas cambiará, porque la curva ya está saturada y el factor limitante pasó a ser otro.",
+       "Bajará a la mitad, porque el exceso de luz quema la planta.",
+       "No se puede predecir nada a partir de la gráfica."], ok:1,
+  exp:"Esta es la pregunta de extrapolación que más repite el examen. A partir de 60 la curva se aplana, y una curva plana significa que añadir más luz no añade nada. Prolongar mentalmente la meseta es una extrapolación legítima, siempre que no se lleve tan lejos como para entrar en el intervalo donde la planta empezaría a sufrir daño." },
+{ q:"¿Por qué la curva de CO₂ bajo se aplana antes y a menor altura que la de CO₂ alto?",
+  ops:["Porque con menos CO₂ la planta necesita más agua.",
+       "Porque la luz deja de llegar a la hoja cuando falta CO₂.",
+       "Porque el CO₂ se convierte en el factor limitante mucho antes, y fija un techo más bajo.",
+       "Porque las dos curvas corresponden a plantas de especies distintas."], ok:2,
+  exp:"Las dos curvas son de la misma planta, y esa es la clave del ejercicio: lo único que cambia entre ellas es la concentración de dióxido de carbono. Cuando el CO₂ escasea, la tasa topa en 45 aunque sobre luz, porque falta la materia prima que aporta los carbonos." },
+{ q:"La planta está en la curva de CO₂ bajo con una luz de 80 unidades. ¿Qué conviene hacer para aumentar la tasa de fotosíntesis?",
+  ops:["Aumentar la intensidad de luz todavía más.",
+       "Aumentar la concentración de dióxido de carbono.",
+       "Reducir la luz para que la planta descanse.",
+       "No se puede aumentar de ninguna manera."], ok:1,
+  exp:"Con 80 unidades de luz esa curva lleva mucho rato plana, de modo que la luz sobra. Subir el factor que sobra no sirve de nada; hay que subir el que falta. Este razonamiento es el que se aplica en un invernadero comercial cuando se inyecta CO₂ en el aire." },
+{ q:"Según la gráfica, ¿qué le ocurre a una planta que vive de forma permanente con una luz de 10 unidades y CO₂ bajo?",
+  ops:["Crece más despacio, pero crece.",
+       "Crece igual, porque compensa fabricando más clorofila.",
+       "No crece: su fotosíntesis queda por debajo de la respiración y consume sus reservas.",
+       "Deja de respirar para ahorrar energía."], ok:2,
+  exp:"Con una luz de 10 la tasa está por debajo de la línea de respiración, que marca 40. La planta gasta más de lo que fabrica, tira de reservas y termina muriéndose, aunque se la riegue con regularidad. El punto donde la curva cruza esa línea discontinua es el punto de compensación." }
+];
+
+/* ── Estado ────────────────────────────────────────────────────────────── */
+var ejercicio = "lab", cola = [], idx = 0, comprobado = false, seleccion = -1;
+var fichaSel = null, colocacion = {};
+var marcador = {ecuaciones:{n:0,ok:0}, carbono:{n:0,ok:0}, grafica:{n:0,ok:0}};
+var NOMBRES = {ecuaciones:"2. Arma las dos ecuaciones", carbono:"3. Sigue al carbono",
+               grafica:"4. Interpreta la gráfica"};
+
+var $ = function(id){ return document.getElementById(id); };
+function leer(t){ $("lectura-texto").textContent = t; }
+
+/* ── Laboratorio ───────────────────────────────────────────────────────── */
+var CAMARAS_SVG =
+'<svg viewBox="0 0 660 320" role="img" aria-labelledby="tit-cam des-cam">' +
+'<title id="tit-cam">Cloroplasto y mitocondria enlazados</title>' +
+'<desc id="des-cam">A la izquierda, un cloroplasto que recibe luz, dióxido de carbono y agua, y produce glucosa y oxígeno. A la derecha, una mitocondria que recibe glucosa y oxígeno y produce dióxido de carbono, agua y ATP. Las flechas entre las dos cámaras muestran el intercambio. Los valores numéricos de cada flujo se repiten en texto debajo de la figura.</desc>' +
+'<rect x="0" y="0" width="660" height="320" fill="#f7faf7"></rect>' +
+'<circle cx="58" cy="46" r="24" fill="#f9a825"></circle>' +
+'<g stroke="#f9a825" stroke-width="3">' +
+'<line x1="58" y1="10" x2="58" y2="0"></line><line x1="94" y1="46" x2="106" y2="46"></line>' +
+'<line x1="84" y1="20" x2="92" y2="12"></line><line x1="84" y1="72" x2="92" y2="80"></line></g>' +
+'<text x="58" y="94" font-size="13" font-weight="700" text-anchor="middle" fill="#8d6e00" id="rot-luz">Luz</text>' +
+'<rect x="120" y="70" width="200" height="180" rx="70" fill="#c8e6c9" stroke="#1b5e20" stroke-width="3"></rect>' +
+'<g fill="#2e7d32">' +
+'<ellipse cx="175" cy="120" rx="26" ry="9"></ellipse><ellipse cx="175" cy="136" rx="26" ry="9"></ellipse>' +
+'<ellipse cx="175" cy="152" rx="26" ry="9"></ellipse>' +
+'<ellipse cx="255" cy="160" rx="26" ry="9"></ellipse><ellipse cx="255" cy="176" rx="26" ry="9"></ellipse>' +
+'<ellipse cx="255" cy="192" rx="26" ry="9"></ellipse></g>' +
+'<text x="220" y="102" font-size="16" font-weight="700" text-anchor="middle" fill="#1b5e20">Cloroplasto</text>' +
+'<text x="220" y="232" font-size="13" text-anchor="middle" fill="#1b5e20">Fotosíntesis</text>' +
+'<path d="M120 300 Q 220 300 220 258" fill="none" stroke="#37474f" stroke-width="3" marker-end="url(#pf)"></path>' +
+'<text x="112" y="304" font-size="13" text-anchor="end" fill="#37474f" id="rot-entrada">CO₂ + H₂O</text>' +
+'<ellipse cx="480" cy="160" rx="105" ry="78" fill="#ffe0b2" stroke="#bf360c" stroke-width="3"></ellipse>' +
+'<path d="M400 130 q 25 18 50 0 q 25 -18 50 0 q 25 18 50 0" fill="none" stroke="#bf360c" stroke-width="3"></path>' +
+'<path d="M400 175 q 25 18 50 0 q 25 -18 50 0 q 25 18 50 0" fill="none" stroke="#bf360c" stroke-width="3"></path>' +
+'<text x="480" y="102" font-size="16" font-weight="700" text-anchor="middle" fill="#8c2708">Mitocondria</text>' +
+'<text x="480" y="222" font-size="13" text-anchor="middle" fill="#8c2708">Respiración celular</text>' +
+'<defs><marker id="pf" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">' +
+'<path d="M0,0 L9,4.5 L0,9 z" fill="#37474f"></path></marker>' +
+'<marker id="pv" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">' +
+'<path d="M0,0 L9,4.5 L0,9 z" fill="#1b5e20"></path></marker>' +
+'<marker id="pr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">' +
+'<path d="M0,0 L9,4.5 L0,9 z" fill="#bf360c"></path></marker></defs>' +
+'<line class="flujo" x1="325" y1="122" x2="368" y2="122" stroke="#1b5e20" stroke-width="4" marker-end="url(#pv)"></line>' +
+'<text x="346" y="112" font-size="13" font-weight="700" text-anchor="middle" fill="#1b5e20" id="rot-glu">glucosa</text>' +
+'<line class="flujo" x1="325" y1="152" x2="368" y2="152" stroke="#1b5e20" stroke-width="4" marker-end="url(#pv)"></line>' +
+'<text x="346" y="146" font-size="13" font-weight="700" text-anchor="middle" fill="#1b5e20" id="rot-o2">O₂</text>' +
+'<line class="flujo" x1="368" y1="196" x2="325" y2="196" stroke="#bf360c" stroke-width="4" marker-end="url(#pr)"></line>' +
+'<text x="346" y="216" font-size="13" font-weight="700" text-anchor="middle" fill="#8c2708" id="rot-co2">CO₂ + H₂O</text>' +
+'<line x1="586" y1="160" x2="632" y2="160" stroke="#bf360c" stroke-width="4" marker-end="url(#pr)"></line>' +
+'<text x="606" y="148" font-size="13" font-weight="700" text-anchor="middle" fill="#8c2708" id="rot-atp">ATP</text>' +
+'</svg>';
+
+function renderLab(){
+  $("progreso").textContent = "Dos cámaras enlazadas · valores en moléculas por minuto";
+  $("etiquetas").innerHTML = '<span class="etiqueta">Laboratorio</span>' +
+    '<span class="etiqueta suave">Ciencias de la vida</span>' +
+    '<span class="etiqueta suave">Prácticas SP.2 y SP.6</span>';
+  $("enunciado").innerHTML = "<p>Ajusta los tres factores y observa los contadores. " +
+    "La respiración celular funciona siempre al mismo ritmo, con luz y sin ella, " +
+    "así que el balance final depende solo de lo que consiga fabricar el cloroplasto.</p>";
+  $("zona-item").innerHTML =
+    '<div class="marco-svg">' + CAMARAS_SVG + '</div>' +
+    '<div class="perillas">' +
+      perilla("luz", "Intensidad de luz", 0, 100, 10, "unidades") +
+      perilla("co2", "Dióxido de carbono", 0, 1200, 150, "ppm") +
+      perilla("agua", "Disponibilidad de agua", 0, 100, 20, "%") +
+    '</div>' +
+    '<div class="fila-botones" style="margin-bottom:16px;">' +
+      '<button type="button" class="secundario" id="btn-noche">Simular la noche</button>' +
+      '<button type="button" class="secundario" id="btn-optimo">Condiciones óptimas</button>' +
+      '<button type="button" class="secundario" id="btn-compensa">Punto de compensación</button>' +
+    '</div>' +
+    '<div class="cifras" id="contadores"></div>' +
+    '<div id="diagnostico"></div>' +
+    '<p class="nota-modelo">Modelo determinista y simplificado: la tasa de fotosíntesis la fija el factor que más escasea, ' +
+    'y la respiración se mantiene constante en ' + RESPIRACION + ' moléculas de glucosa por minuto. ' +
+    'En una planta real la respiración también varía con la temperatura.</p>';
+
+  ["luz","co2","agua"].forEach(function(k){
+    $("in-" + k).addEventListener("input", function(e){
+      lab[k] = parseInt(e.target.value, 10);
+      actualizar(false);
+    });
+    $("in-" + k).addEventListener("change", function(){ actualizar(true); });
+  });
+  $("btn-noche").addEventListener("click", function(){ fijar({luz:0, co2:600, agua:80}); });
+  $("btn-optimo").addEventListener("click", function(){ fijar({luz:100, co2:1200, agua:100}); });
+  $("btn-compensa").addEventListener("click", function(){ fijar({luz:10, co2:600, agua:80}); });
+  actualizar(true);
+}
+
+function perilla(id, rot, min, max, paso, unidad){
+  return '<div class="control"><label for="in-' + id + '">' + rot +
+    ' <span class="valor" id="val-' + id + '">' + lab[id] + ' ' + unidad + '</span></label>' +
+    '<input type="range" id="in-' + id + '" min="' + min + '" max="' + max + '" step="' + paso +
+    '" value="' + lab[id] + '"></div>';
+}
+
+function fijar(cfg){
+  lab.luz = cfg.luz; lab.co2 = cfg.co2; lab.agua = cfg.agua;
+  ["luz","co2","agua"].forEach(function(k){ $("in-" + k).value = lab[k]; });
+  actualizar(true);
+}
+
+function actualizar(anunciar){
+  var G = tasa(lab.luz, lab.co2, lab.agua);
+  var R = RESPIRACION;
+  var neto = G - R;
+  var lim = limitante(lab.luz, lab.co2, lab.agua);
+
+  $("val-luz").textContent = lab.luz + " unidades";
+  $("val-co2").textContent = lab.co2 + " ppm";
+  $("val-agua").textContent = lab.agua + " %";
+  ["luz","co2","agua"].forEach(function(k){
+    var u = (k === "luz") ? " unidades" : (k === "co2" ? " ppm" : " por ciento");
+    $("in-" + k).setAttribute("aria-valuetext", lab[k] + u);
+  });
+
+  $("rot-glu").textContent = "glucosa " + Math.min(G, R);
+  $("rot-o2").textContent = "O₂ " + Math.min(G, R) * 6;
+  $("rot-co2").textContent = "CO₂ + H₂O " + R * 6;
+  $("rot-atp").textContent = "ATP " + (R * ATP_POR_GLUCOSA);
+  $("rot-luz").textContent = lab.luz === 0 ? "Sin luz" : "Luz " + lab.luz;
+  $("rot-entrada").textContent = "CO₂ " + G * 6 + " + H₂O " + G * 6;
+
+  $("contadores").innerHTML =
+    '<div><span class="rot">Glucosa fabricada</span><b>' + G + '</b></div>' +
+    '<div><span class="rot">Glucosa consumida</span><b>' + R + '</b></div>' +
+    '<div><span class="rot">O₂ liberado por el cloroplasto</span><b>' + G * 6 + '</b></div>' +
+    '<div><span class="rot">ATP producido</span><b>' + R * ATP_POR_GLUCOSA + '</b></div>' +
+    '<div class="neto"><span class="rot">Balance de glucosa</span><b>' + (neto > 0 ? "+" : "") + neto + '</b></div>' +
+    '<div class="neto"><span class="rot">Intercambio neto de O₂</span><b>' + (neto > 0 ? "+" : "") + neto * 6 + '</b></div>';
+
+  var caja, titulo, cuerpo;
+  if (neto > 0){
+    caja = "caja-ok"; titulo = "La planta crece.";
+    cuerpo = "El cloroplasto fabrica " + G + " moléculas de glucosa por minuto y la respiración consume " + R +
+      ", de modo que sobran " + neto + " para construir tejido nuevo. Al aire salen " + neto * 6 +
+      " moléculas de oxígeno netas. " +
+      (lim === null
+        ? "Los tres factores están al máximo, así que ninguno limita: la tasa ha llegado al techo del modelo y no hay nada que subir."
+        : "El factor limitante ahora mismo es " + lim +
+          ": subir cualquiera de los otros dos no cambiará el resultado hasta que subas ese.");
+  } else if (neto === 0){
+    caja = "caja-tip"; titulo = "Punto de compensación.";
+    cuerpo = "La fotosíntesis fabrica exactamente las " + R + " moléculas de glucosa que consume la respiración. " +
+      "La planta no crece ni adelgaza, y no intercambia gas neto con el aire: por cada molécula de oxígeno que " +
+      "produce el cloroplasto, la mitocondria consume otra. Visto desde fuera parecería que no ocurre nada, " +
+      "y por dentro los dos procesos están funcionando a toda marcha.";
+  } else {
+    caja = "caja-mal"; titulo = (lab.luz === 0) ? "Sin luz: la planta se comporta como un animal." : "La planta consume sus reservas.";
+    cuerpo = "El cloroplasto solo fabrica " + G + " moléculas de glucosa por minuto, pero la respiración necesita " + R +
+      ". El déficit de " + Math.abs(neto) + " se cubre con las reservas de almidón, y al aire salen " + Math.abs(neto) * 6 +
+      " moléculas netas de dióxido de carbono. " +
+      (lab.luz === 0
+        ? "Fíjate en que la mitocondria no se ha detenido: sigue produciendo " + (R * ATP_POR_GLUCOSA) +
+          " moléculas de ATP por minuto. Las plantas respiran de noche, y esa es la respuesta a una de las preguntas más frecuentes del examen."
+        : "El factor limitante es " + (lim || "ninguno de los tres") + ". Si esta situación se mantiene, la planta acabará agotando sus reservas.");
+  }
+  $("diagnostico").innerHTML = '<div class="' + caja + '"><p><strong>' + titulo + '</strong></p><p>' + cuerpo + '</p></div>';
+
+  pintarBalance(G, R);
+  if (anunciar) leer(titulo + " " + cuerpo);
+}
+
+function pintarBalance(G, R){
+  var filas = [
+    ["Dióxido de carbono (CO₂)", -G * 6, R * 6],
+    ["Agua (H₂O)",               -G * 6, R * 6],
+    ["Oxígeno (O₂)",              G * 6, -R * 6],
+    ["Glucosa (C₆H₁₂O₆)",         G,     -R]
+  ];
+  $("balance").innerHTML = filas.map(function(f){
+    var n = f[1] + f[2];
+    return '<tr><th scope="row">' + f[0] + '</th><td>' + (f[1] > 0 ? "+" : "") + f[1] +
+      '</td><td>' + (f[2] > 0 ? "+" : "") + f[2] + '</td><td>' + (n > 0 ? "+" : "") + n + '</td></tr>';
+  }).join("");
+}
+
+/* ── Motor de fichas y zonas (ejercicios 2 y 3) ────────────────────────── */
+function montarTaller(fichas, zonas, opciones){
+  var largas = opciones && opciones.largas;
+  var taller = document.createElement("div");
+  taller.className = "taller";
+  taller.innerHTML = '<div class="reserva" id="reserva"><h3>' + (opciones.rotulo || "Piezas disponibles") +
+    '</h3><div class="monton' + (largas ? " vertical" : "") + '" id="monton-reserva"></div></div>' +
+    '<div class="zonas" id="zonas"></div>';
+  $("zona-item").appendChild(taller);
+  fichas.forEach(function(f){ colocacion[f.id] = null; });
+
+  zonas.forEach(function(z, i){
+    if (opciones.flechaAntes === i){
+      var fl = document.createElement("p");
+      fl.className = "flecha-ec";
+      fl.innerHTML = '<span aria-hidden="true">↓</span> ' + opciones.sobre + ' <span aria-hidden="true">↓</span>';
+      $("zonas").appendChild(fl);
+    }
+    var d = document.createElement("div");
+    d.className = "zona"; d.dataset.zona = z.id;
+    d.innerHTML = '<h3>' + z.t + (z.pista ? '<span class="pista">' + z.pista + '</span>' : "") +
+      '</h3><div class="monton' + (largas ? " vertical" : "") + '"></div>';
+    d.addEventListener("dragover", function(e){ e.preventDefault(); d.classList.add("encima"); });
+    d.addEventListener("dragleave", function(){ d.classList.remove("encima"); });
+    d.addEventListener("drop", function(e){
+      e.preventDefault(); d.classList.remove("encima");
+      soltar(e.dataTransfer.getData("text/plain"), z.id, fichas, zonas, opciones);
+    });
+    d.addEventListener("click", function(){
+      if (fichaSel) soltar(fichaSel, z.id, fichas, zonas, opciones);
+    });
+    $("zonas").appendChild(d);
+  });
+
+  var res = $("reserva");
+  res.addEventListener("dragover", function(e){ e.preventDefault(); });
+  res.addEventListener("drop", function(e){
+    e.preventDefault(); soltar(e.dataTransfer.getData("text/plain"), null, fichas, zonas, opciones);
+  });
+  res.addEventListener("click", function(e){
+    if (fichaSel && !e.target.closest("button.ficha")) soltar(fichaSel, null, fichas, zonas, opciones);
+  });
+  repartir(fichas, zonas, opciones);
+}
+
+function repartir(fichas, zonas, opciones){
+  var largas = opciones && opciones.largas;
+  $("monton-reserva").innerHTML = "";
+  document.querySelectorAll(".zona .monton").forEach(function(m){ m.innerHTML = ""; });
+  fichas.forEach(function(f){
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "ficha" + (largas ? " larga" : "");
+    b.textContent = f.t;
+    b.draggable = true; b.dataset.ficha = f.id;
+    b.setAttribute("aria-pressed", fichaSel === f.id ? "true" : "false");
+    b.addEventListener("dragstart", function(e){ e.dataTransfer.setData("text/plain", f.id); });
+    b.addEventListener("click", function(e){
+      e.stopPropagation();
+      if (comprobado) return;
+      if (colocacion[f.id]){ soltar(f.id, null, fichas, zonas, opciones); return; }
+      fichaSel = (fichaSel === f.id) ? null : f.id;
+      repartir(fichas, zonas, opciones);
+      leer(fichaSel ? "Pieza seleccionada. Pulsa ahora la casilla donde quieres colocarla."
+                    : "Ninguna pieza seleccionada.");
+    });
+    var destino = colocacion[f.id]
+      ? document.querySelector('.zona[data-zona="' + colocacion[f.id] + '"] .monton')
+      : $("monton-reserva");
+    destino.appendChild(b);
+  });
+}
+
+function soltar(fid, zid, fichas, zonas, opciones){
+  if (comprobado || !fid) return;
+  if (zid){
+    var z = zonas.filter(function(x){ return x.id === zid; })[0];
+    var dentro = Object.keys(colocacion).filter(function(k){ return colocacion[k] === zid; });
+    if (dentro.indexOf(fid) < 0 && dentro.length >= z.cupo) colocacion[dentro[0]] = null;
+  }
+  colocacion[fid] = zid;
+  fichaSel = null;
+  repartir(fichas, zonas, opciones);
+  var puestas = Object.keys(colocacion).filter(function(k){ return colocacion[k]; }).length;
+  leer((zid ? "Pieza colocada. " : "Pieza devuelta a la reserva. ") +
+       "Llevas " + puestas + " de " + fichas.length + " piezas colocadas.");
+}
+
+function evaluarTaller(fichas, zonas){
+  var ok = true;
+  zonas.forEach(function(z){
+    var dentro = fichas.filter(function(f){ return colocacion[f.id] === z.id; });
+    var acepta = z.acepta || [z.id];
+    var clave = function(f){ return z.acepta ? f.id : f.z; };
+    var bien = dentro.length === z.cupo &&
+               dentro.every(function(f){ return acepta.indexOf(clave(f)) >= 0; });
+    var d = document.querySelector('.zona[data-zona="' + z.id + '"]');
+    d.classList.add(bien ? "acierto" : "fallo");
+    if (!bien) ok = false;
+  });
+  document.querySelectorAll("button.ficha").forEach(function(b){ b.disabled = true; });
+  return ok;
+}
+
+/* ── Ejercicio 2 ───────────────────────────────────────────────────────── */
+function renderEcuaciones(){
+  var e = cola[idx];
+  $("progreso").textContent = "Ecuación " + (idx + 1) + " de " + cola.length;
+  $("etiquetas").innerHTML = '<span class="etiqueta">' + e.titulo + '</span>' +
+    '<span class="etiqueta suave">Práctica SP.6</span>';
+  $("enunciado").innerHTML = "<p>" + e.intro + "</p>";
+  montarTaller(PIEZAS, e.zonas, {rotulo:"Piezas de la ecuación", sobre:e.sobre, flechaAntes:1});
+  leer("Ecuación " + (idx + 1) + " de " + cola.length + ". " + e.titulo +
+       ". Coloca dos piezas entre los reactivos y dos entre los productos. Sobran dos.");
+}
+
+/* ── Ejercicio 3 ───────────────────────────────────────────────────────── */
+function renderCarbono(){
+  var r = cola[idx];
+  $("progreso").textContent = "Ruta " + (idx + 1) + " de " + cola.length;
+  $("etiquetas").innerHTML = '<span class="etiqueta">' + r.titulo + '</span>' +
+    '<span class="etiqueta suave">Práctica SP.2</span>';
+  $("enunciado").innerHTML = "<p>" + r.intro + "</p>";
+  var zonas = ZONAS_RUTA.map(function(z){ return {id:z.id, t:z.t, pista:z.pista, cupo:1}; });
+  montarTaller(r.pasos, zonas, {rotulo:"Pasos del recorrido", largas:true});
+  leer("Ruta " + (idx + 1) + " de " + cola.length + ". " + r.titulo +
+       ". Coloca seis de los siete pasos en orden; el falso debe quedarse en la reserva.");
+}
+
+/* ── Ejercicio 4 ───────────────────────────────────────────────────────── */
+function renderGrafica(){
+  var p = cola[idx];
+  $("progreso").textContent = "Pregunta " + (idx + 1) + " de " + cola.length;
+  $("etiquetas").innerHTML = '<span class="etiqueta">Interpreta la gráfica</span>' +
+    '<span class="etiqueta suave">Prácticas SP.4 y SP.5</span>';
+  $("enunciado").innerHTML = "<p>La gráfica muestra la tasa de fotosíntesis de una misma planta " +
+    "frente a la intensidad de luz, con dos concentraciones distintas de dióxido de carbono.</p>";
+  $("zona-item").innerHTML = '<div class="marco-svg">' + GRAFICA_SVG + '</div>' +
+    '<p class="caso">' + p.q + '</p><div class="opciones" id="opciones"></div>';
+  var letras = "ABCD";
+  p.ops.forEach(function(t, i){
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "opcion";
+    b.setAttribute("aria-pressed", "false");
+    b.innerHTML = '<span class="letra" aria-hidden="true">' + letras[i] + '.</span><span>' + t + '</span>';
+    b.addEventListener("click", function(){
+      if (comprobado) return;
+      $("opciones").querySelectorAll("button").forEach(function(o){ o.setAttribute("aria-pressed", "false"); });
+      b.setAttribute("aria-pressed", "true");
+      seleccion = i;
+      leer("Has elegido la opción " + letras[i] + ": " + t);
+    });
+    $("opciones").appendChild(b);
+  });
+  leer("Pregunta " + (idx + 1) + " de " + cola.length + ". " + p.q);
+}
+
+/* ── Comprobación ──────────────────────────────────────────────────────── */
+function comprobar(){
+  if (comprobado) return;
+  var ok, it = cola[idx];
+  if (ejercicio === "ecuaciones"){
+    ok = evaluarTaller(PIEZAS, it.zonas);
+    cerrar(ok, ok ? "Ecuación correcta." : "La ecuación tiene piezas fuera de sitio.", it.exp, it.consejo);
+  } else if (ejercicio === "carbono"){
+    var zonas = ZONAS_RUTA.map(function(z){ return {id:z.id, cupo:1}; });
+    ok = evaluarTaller(it.pasos, zonas);
+    var enReserva = it.pasos.filter(function(f){ return !colocacion[f.id]; });
+    var reservaBien = (enReserva.length === 1 && enReserva[0].z === "");
+    $("reserva").classList.add(reservaBien ? "acierto" : "fallo");
+    if (!reservaBien) ok = false;
+    cerrar(ok, ok ? "Recorrido correcto." : "El recorrido tiene pasos fuera de sitio.", it.exp, it.consejo);
+  } else {
+    ok = (seleccion === it.ok);
+    $("opciones").querySelectorAll("button").forEach(function(b, i){
+      if (i === it.ok) b.classList.add("acierto");
+      else if (i === seleccion) b.classList.add("fallo");
+      b.disabled = true;
+    });
+    cerrar(ok, ok ? "Respuesta correcta." : "Respuesta incorrecta.", it.exp, "");
+  }
+}
+
+function cerrar(ok, cabecera, cuerpo, consejo){
+  marcador[ejercicio].n++;
+  if (ok) marcador[ejercicio].ok++;
+  pintarMarcador();
+  comprobado = true;
+  $("btn-comprobar").disabled = true;
+  $("veredicto").innerHTML = '<div class="' + (ok ? "caja-ok" : "caja-mal") + '"><p><strong>' +
+    cabecera + '</strong></p><p>' + cuerpo + '</p></div>';
+  $("consejo").innerHTML = consejo ? '<div class="caja-tip"><p>' + consejo + '</p></div>' : "";
+  leer(cabecera + " " + cuerpo + " " + (consejo || "") +
+       (idx + 1 < cola.length ? " Pulsa «Siguiente» para continuar." : " Era el último del ejercicio."));
+}
+
+function pintarMarcador(){
+  var filas = "", tn = 0, tk = 0;
+  ["ecuaciones","carbono","grafica"].forEach(function(k){
+    var m = marcador[k];
+    tn += m.n; tk += m.ok;
+    var pct = m.n ? (Math.round(m.ok / m.n * 1000) / 10).toFixed(1) + " %" : "—";
+    filas += '<tr><th scope="row">' + NOMBRES[k] + '</th><td>' + m.n + '</td><td>' + m.ok +
+             '</td><td>' + pct + '</td></tr>';
+  });
+  var tp = tn ? (Math.round(tk / tn * 1000) / 10).toFixed(1) + " %" : "—";
+  filas += '<tr><th scope="row">Total</th><td>' + tn + '</td><td>' + tk + '</td><td>' + tp + '</td></tr>';
+  $("marcador").innerHTML = filas;
+}
+
+/* ── Navegación ────────────────────────────────────────────────────────── */
+function render(){
+  comprobado = false; seleccion = -1; fichaSel = null; colocacion = {};
+  $("veredicto").innerHTML = ""; $("consejo").innerHTML = "";
+  $("btn-comprobar").disabled = false;
+  $("zona-item").innerHTML = "";
+  var esLab = (ejercicio === "lab");
+  $("fila-ejercicio").hidden = esLab;
+  $("caja-balance").hidden = !esLab;
+  $("caja-marcador").hidden = esLab;
+  if (esLab) renderLab();
+  else if (ejercicio === "ecuaciones") renderEcuaciones();
+  else if (ejercicio === "carbono") renderCarbono();
+  else renderGrafica();
+}
+
+function armarCola(){
+  ejercicio = $("ejercicio").value;
+  if (ejercicio === "ecuaciones") cola = ECUACIONES.slice();
+  else if (ejercicio === "carbono") cola = RUTAS.slice();
+  else if (ejercicio === "grafica") cola = PREGUNTAS.slice();
+  else cola = [];
+  idx = 0;
+}
+
+$("btn-comprobar").addEventListener("click", comprobar);
+$("btn-siguiente").addEventListener("click", function(){
+  if (!comprobado){ comprobar(); return; }
+  if (idx + 1 < cola.length){ idx++; render(); }
+  else {
+    $("progreso").textContent = "Ejercicio terminado";
+    leer("Has terminado este ejercicio. Puedes elegir otro en el control «Ejercicio» " +
+         "o repetirlo desde «Empezar de nuevo».");
+  }
+});
+$("btn-reiniciar").addEventListener("click", function(){
+  marcador = {ecuaciones:{n:0,ok:0}, carbono:{n:0,ok:0}, grafica:{n:0,ok:0}};
+  armarCola(); pintarMarcador(); render();
+});
+$("ejercicio").addEventListener("change", function(){ armarCola(); render(); });
+
+armarCola();
+pintarMarcador();
+render();
+</script>
+</body>
+</html>
