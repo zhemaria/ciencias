@@ -1,0 +1,647 @@
+<!doctype html>
+<!--
+  El termostato del cuerpo: homeostasis (Lección 3.3) · Spanish ASE Science
+  © 2026 José M. Fernández, ABE/ASE Math Master Teacher,
+  Harry S. Truman College — City Colleges of Chicago.
+  Licencia: Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0
+  Internacional (CC BY-NC-SA 4.0) — https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El termostato del cuerpo: homeostasis</title>
+<meta name="description" content="Simulador de lazos de retroalimentación en cuatro sistemas: temperatura corporal y glucosa en sangre (negativa), parto y coagulación de la sangre (positiva).">
+<meta name="author" content="José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago">
+<meta name="license" content="CC BY-NC-SA 4.0">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
+<style>
+@charset "utf-8";
+/* ============================================================================
+   Estilos unificados de los interactivos · Spanish ASE Science
+   José M. Fernández, ABE/ASE Math Master Teacher,
+   Harry S. Truman College — City Colleges of Chicago
+   © 2026 · CC BY-NC-SA 4.0
+   https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+   ----------------------------------------------------------------------------
+   CÓMO SE USA
+   Este bloque se copia completo dentro de <style> en cada interactivo, para que
+   el archivo siga siendo autónomo. La clase de unidad va en el <body>:
+       <body class="u4">   → Unidad 4, verde oliva
+   Unidades: u1 verde azulado · u2 gris pizarra · u3 verde · u4 verde oliva
+             u5 rojo anaranjado · u6 azul índigo · u7 violeta · u8 azul
+   Todos los colores de acento cumplen 4,5:1 sobre blanco y admiten texto
+   blanco encima. El ámbar de los avisos usa #5c3900 (10,29:1).
+   ========================================================================== */
+
+/* ── 1. PALETA POR UNIDAD ──────────────────────────────────────────────── */
+:root{
+  --u:#37474f; --u2:#263238; --u-bg:#eceff1;   /* valor por defecto */
+  --texto:#222; --texto-sec:#555; --linea:#e0e0e0;
+  --pagina:#f5f7fa; --papel:#ffffff;
+  --amb:#5c3900; --amb-bg:#fff8e1; --amb-borde:#b45309;
+  --ok:#1b5e20; --ok-bg:#e8f5e9; --mal:#7f1d1d; --mal-bg:#fbe9e7;
+  --radio:12px; --sombra:0 2px 8px rgba(0,0,0,.07);
+}
+body.u1{--u:#00695c;--u2:#004d40;--u-bg:#e0f2f1;}
+body.u2{--u:#37474f;--u2:#263238;--u-bg:#eceff1;}
+body.u3{--u:#1b5e20;--u2:#0f3d13;--u-bg:#e8f5e9;}
+body.u4{--u:#33691e;--u2:#1f4211;--u-bg:#f1f8e9;}
+body.u5{--u:#bf360c;--u2:#8c2708;--u-bg:#fbe9e7;}
+body.u6{--u:#1e3a8a;--u2:#142a63;--u-bg:#e8eaf6;}
+body.u7{--u:#5b21b6;--u2:#40157f;--u-bg:#ede7f6;}
+body.u8{--u:#0d47a1;--u2:#093271;--u-bg:#e3f2fd;}
+
+/* ── 2. BASE ───────────────────────────────────────────────────────────── */
+*{box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;margin:0;background:var(--pagina);
+  color:var(--texto);line-height:1.55;font-size:16px;}
+.contenedor{max-width:1100px;margin:0 auto;padding:24px;}
+a{color:#0b3d91;}
+h1,h2,h3{line-height:1.3;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+:focus-visible{outline:3px solid var(--u);outline-offset:2px;}
+
+/* ── 3. ENCABEZADO DEL INTERACTIVO ─────────────────────────────────────── */
+header.principal{background:var(--u);background:linear-gradient(135deg,var(--u) 0%,var(--u2) 100%);
+  color:#fff;padding:28px 32px;border-radius:14px;margin-bottom:22px;box-shadow:var(--sombra);}
+header.principal h1{margin:0 0 6px;font-size:26px;font-weight:700;color:#fff;}
+header.principal .meta{font-size:14px;margin:4px 0 0;color:#fff;}
+
+/* ── 4. BLOQUES DE TEXTO ───────────────────────────────────────────────── */
+.tarjeta{background:var(--papel);padding:20px 24px;border-radius:10px;
+  border-left:5px solid var(--u);margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.tarjeta h2{margin-top:0;color:var(--u);font-size:20px;}
+.tarjeta h3{font-size:16px;color:#263238;margin:16px 0 6px;}
+.caja-tip{background:var(--amb-bg);border-left:4px solid var(--amb-borde);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;font-size:15px;}
+.caja-tip strong{color:var(--amb);}
+.caja-ok{background:var(--ok-bg);border-left:5px solid var(--ok);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;}
+.caja-ok strong{color:var(--ok);}
+.caja-mal{background:var(--mal-bg);border-left:5px solid var(--mal);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;}
+.caja-mal strong{color:var(--mal);}
+
+/* ── 5. PANEL DE CONTROLES ─────────────────────────────────────────────── */
+.panel{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:18px 22px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.panel h2{margin:0 0 12px;font-size:18px;color:var(--u);}
+.control{margin-bottom:16px;}
+.control > label{display:block;font-weight:600;font-size:15px;color:#263238;margin-bottom:6px;}
+.control .valor{float:right;font-weight:700;color:var(--u);font-variant-numeric:tabular-nums;}
+.control input[type=range]{width:100%;accent-color:var(--u);height:26px;}
+.control select,.control input[type=number],.control input[type=text]{
+  font-family:inherit;font-size:16px;padding:9px 14px;border-radius:8px;
+  border:1px solid #90a4ae;background:#fff;color:var(--texto);width:100%;max-width:420px;}
+.fila-botones{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;}
+button{font-family:inherit;font-size:15px;font-weight:600;padding:10px 18px;border-radius:8px;
+  border:1px solid transparent;background:var(--u);color:#fff;cursor:pointer;}
+button:hover{background:var(--u2);}
+button.secundario{background:#fff;color:var(--u);border-color:var(--u);}
+button.secundario:hover{background:var(--u-bg);}
+
+/* ── 6. LIENZO / ESCENA ────────────────────────────────────────────────── */
+.escena{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:16px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);overflow-x:auto;}
+
+/* ── 7. LECTURA DEL ESTADO (alternativa textual, siempre visible) ──────── */
+.lectura{background:var(--u-bg);border-left:5px solid var(--u);border-radius:0 8px 8px 0;
+  padding:14px 18px;margin-bottom:22px;font-size:15px;}
+.lectura h2{margin:0 0 8px;font-size:17px;color:var(--u);}
+.lectura p{margin:6px 0;}
+.lectura .dato{font-weight:700;color:var(--u2);font-variant-numeric:tabular-nums;}
+
+/* ── 8. TABLAS (Ally: caption obligatorio y scope en todo th) ──────────── */
+.tabla-wrap{overflow-x:auto;margin-bottom:22px;}
+table.datos{width:100%;border-collapse:collapse;background:var(--papel);border-radius:10px;
+  overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);font-size:15px;}
+table.datos caption{caption-side:top;text-align:left;font-size:14px;color:var(--texto-sec);
+  padding:0 0 8px;font-style:italic;}
+table.datos th,table.datos td{padding:10px 12px;text-align:left;border-bottom:1px solid #eee;}
+table.datos thead th{background:#37474f;color:#fff;font-weight:600;font-size:13px;
+  text-transform:uppercase;letter-spacing:.4px;}
+table.datos tbody th{background:var(--u-bg);color:var(--u2);font-weight:700;}
+table.datos tr:last-child td{border-bottom:none;}
+
+/* ── 9. ACORDEÓN NATIVO ────────────────────────────────────────────────── */
+details.bloque{background:var(--papel);border-radius:var(--radio);margin-bottom:14px;
+  box-shadow:var(--sombra);border-left:5px solid var(--u);overflow:hidden;}
+details.bloque > summary{padding:14px 18px;cursor:pointer;list-style:none;display:flex;
+  gap:10px;align-items:center;background:var(--u-bg);font-weight:600;color:var(--u2);}
+details.bloque > summary::-webkit-details-marker{display:none;}
+details.bloque > summary .chevron{transition:transform .2s;flex-shrink:0;}
+details.bloque[open] > summary .chevron{transform:rotate(90deg);}
+details.bloque .cuerpo{padding:14px 20px 18px;}
+
+/* ── 10. PIE CON LICENCIA ──────────────────────────────────────────────── */
+footer.pie{padding:22px 4px;color:var(--texto-sec);font-size:13px;margin-top:20px;
+  border-top:1px solid #ddd;text-align:center;}
+footer.pie p{margin:5px 0;}
+
+/* ── 11. MOVIMIENTO REDUCIDO ───────────────────────────────────────────── */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;scroll-behavior:auto !important;}
+}
+
+/* ── 12. IMPRESIÓN ─────────────────────────────────────────────────────── */
+@media print{
+  body{background:#fff;}
+  .panel,.escena{page-break-inside:avoid;}
+  details[open] .cuerpo{display:block;}
+}
+
+/* ── 13. NOMBRES RESERVADOS ────────────────────────────────────────────── */
+/* Estas clases pertenecen a la hoja unificada. No las reutilices como
+   clase local en un interactivo: el selector local se sumaría al de aquí y
+   descuadraría el componente. Reservadas:
+   contenedor · sr-only · principal · meta · tarjeta · caja-tip · caja-ok ·
+   caja-mal · panel · control · valor · fila-botones · secundario · escena ·
+   lectura · dato · tabla-wrap · datos · bloque · cuerpo · chevron · pie
+   Para rejillas de cifras usa .cifras, no .datos. */
+
+/* ── PROPIO DE ESTE INTERACTIVO ────────────────────────────────────────── */
+.etiquetas{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+.etiqueta{font-size:13px;font-weight:600;padding:4px 12px;border-radius:999px;
+  background:var(--u-bg);color:var(--u2);border:1px solid var(--u);}
+.etiqueta.negativa{background:var(--amb-bg);color:var(--amb);border-color:var(--amb-borde);}
+.etiqueta.positiva{background:var(--mal-bg);color:var(--mal);border-color:var(--mal);}
+
+/* Rejilla del panel de controles, a todo lo ancho */
+.rejilla-controles{display:flex;flex-wrap:wrap;gap:22px;align-items:flex-start;}
+.rejilla-controles .control{flex:1 1 300px;margin-bottom:0;}
+.rejilla-controles .control.ancho{flex:2 1 420px;}
+
+/* Lectura del estado */
+.lectura dl{margin:10px 0 0;display:flex;flex-wrap:wrap;gap:8px 18px;}
+.lectura dl div{flex:1 1 200px;background:var(--papel);border-radius:8px;padding:8px 12px;}
+.lectura dt{font-size:13px;color:var(--texto-sec);margin:0;}
+.lectura dd{margin:0;font-weight:700;color:var(--u2);font-size:15px;}
+
+/* Diagrama */
+.marco-svg{overflow-x:auto;}
+.marco-svg svg{display:block;margin:0 auto;width:100%;height:auto;max-height:56vh;}
+.caja{fill:#fff;stroke:var(--u);stroke-width:3;}
+.rotulo{font-size:16px;font-weight:700;fill:var(--u2);text-anchor:middle;}
+.detalle{font-size:14px;fill:#555;text-anchor:middle;}
+.accion{font-size:14px;font-weight:700;fill:var(--u2);text-anchor:middle;}
+.flecha{fill:none;stroke:var(--u);stroke-width:4;marker-end:url(#punta);
+  transition:stroke .3s;}
+.lazo.activo.negativa .flecha{stroke:var(--amb-borde);marker-end:url(#punta-amb);}
+.lazo.activo.positiva .flecha{stroke:var(--mal);marker-end:url(#punta-mal);}
+.lazo.positiva #arr-retorno{stroke-dasharray:11 7;}
+.signo circle{fill:#fff;stroke:var(--u);stroke-width:3;}
+.lazo.negativa .signo circle{stroke:var(--amb-borde);}
+.lazo.positiva .signo circle{stroke:var(--mal);}
+.signo text{font-size:26px;font-weight:700;text-anchor:middle;fill:var(--u2);}
+.marca-fondo{fill:#eceff1;}
+.banda{fill:#c8e6c9;}
+.nivel{fill:var(--ok);transition:y .35s,height .35s,fill .35s;}
+.nivel.alta{fill:var(--mal);}
+.nivel.baja{fill:#0d47a1;}
+.nota-modelo{font-size:13px;color:var(--texto-sec);font-style:italic;margin:10px 0 0;}
+</style>
+</head>
+<body class="u3">
+<div class="contenedor">
+
+<header class="principal">
+  <h1>El termostato del cuerpo: homeostasis</h1>
+  <p class="meta">Lección 3.3 · Sistemas del cuerpo humano, homeostasis y salud</p>
+  <p class="meta">Unidad 3 · Ciencias de la vida I: célula, energía y cuerpo humano · Spanish ASE Science</p>
+</header>
+
+<div class="tarjeta">
+  <h2>Qué vas a hacer</h2>
+  <p>El cuerpo mantiene estable su interior aunque el exterior cambie sin parar, y lo hace con lazos de retroalimentación: un sensor detecta el cambio, un centro de control decide y un efector actúa. Aquí vas a manejar cuatro de esos lazos y a comprobar que dos de ellos hacen lo contrario que los otros dos.</p>
+  <h3>Cómo funciona la simulación</h3>
+  <p>Elige un sistema, aplica una perturbación con el deslizador y después avanza el lazo ciclo a ciclo, o déjalo correr solo. Lo importante no es el valor de partida, sino hacia dónde se mueve la variable en cada ciclo: en los lazos negativos vuelve al intervalo normal, y en los positivos se aleja cada vez más deprisa hasta que el proceso se completa.</p>
+  <div class="caja-tip">
+    <p><strong>Ten presente:</strong> «negativo» y «positivo» no significan aquí «malo» y «bueno». Negativo quiere decir que el lazo revierte el cambio y positivo, que lo amplifica. Los dos son necesarios, y los dos son normales: coagular una herida o dar a luz son procesos positivos que salvan la vida.</p>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>Controles de la simulación</h2>
+  <div class="rejilla-controles">
+    <div class="control ancho">
+      <label for="sistema">Sistema que se observa</label>
+      <select id="sistema">
+        <option value="temp">Temperatura corporal · lazo negativo</option>
+        <option value="glucosa">Glucosa en sangre · lazo negativo</option>
+        <option value="parto">Parto · lazo positivo</option>
+        <option value="coagulacion">Coagulación de la sangre · lazo positivo</option>
+      </select>
+    </div>
+    <div class="control ancho">
+      <label for="estimulo">Perturbación inicial <span class="valor" id="valor-estimulo">50</span></label>
+      <input type="range" id="estimulo" min="0" max="100" step="5" value="50">
+    </div>
+  </div>
+  <div class="fila-botones">
+    <button type="button" id="btn-ciclo">Avanzar un ciclo</button>
+    <button type="button" id="btn-auto">Dejar correr el lazo</button>
+    <button type="button" class="secundario" id="btn-reiniciar">Reiniciar la simulación</button>
+  </div>
+</div>
+
+
+<div class="escena">
+  <div class="etiquetas" id="etiquetas"></div>
+  <div class="marco-svg">
+    <svg id="lazo" class="lazo negativa" viewBox="0 0 820 540" aria-hidden="true">
+      <defs>
+        <marker id="punta" viewBox="0 0 14 14" refX="12" refY="7" markerWidth="14" markerHeight="14"
+                markerUnits="userSpaceOnUse" orient="auto">
+          <path d="M0,0 L14,7 L0,14 z" fill="var(--u, #1b5e20)"></path>
+        </marker>
+        <marker id="punta-amb" viewBox="0 0 14 14" refX="12" refY="7" markerWidth="14" markerHeight="14"
+                markerUnits="userSpaceOnUse" orient="auto">
+          <path d="M0,0 L14,7 L0,14 z" fill="var(--amb-borde, #b45309)"></path>
+        </marker>
+        <marker id="punta-mal" viewBox="0 0 14 14" refX="12" refY="7" markerWidth="14" markerHeight="14"
+                markerUnits="userSpaceOnUse" orient="auto">
+          <path d="M0,0 L14,7 L0,14 z" fill="var(--mal, #7f1d1d)"></path>
+        </marker>
+      </defs>
+
+      <!-- Recorrido del lazo -->
+      <path id="arr-var-sensor"      class="flecha" d="M 376 452 C 300 464 135 440 135 331"></path>
+      <path id="arr-sensor-control"  class="flecha" d="M 135 209 C 135 90 215 78 299 78"></path>
+      <path id="arr-control-efector" class="flecha" d="M 541 78 C 620 78 695 92 695 209"></path>
+      <path id="arr-retorno"         class="flecha" d="M 695 331 C 695 424 566 452 448 442"></path>
+
+      <!-- Actores -->
+      <rect x="30" y="215" width="210" height="110" rx="10" class="caja"></rect>
+      <text x="135" y="248" class="rotulo">Sensor</text>
+      <text x="135" y="272" class="detalle" id="t-sensor"></text>
+
+      <rect x="305" y="25" width="230" height="110" rx="10" class="caja"></rect>
+      <text x="420" y="58" class="rotulo">Centro de control</text>
+      <text x="420" y="82" class="detalle" id="t-control"></text>
+
+      <rect x="590" y="215" width="210" height="110" rx="10" class="caja"></rect>
+      <text x="695" y="248" class="rotulo">Efector</text>
+      <text x="695" y="272" class="detalle" id="t-efector"></text>
+      <text x="695" y="352" class="accion" id="t-accion"></text>
+
+      <!-- Indicador de la variable -->
+      <rect x="380" y="190" width="60" height="270" rx="6" class="marca-fondo"></rect>
+      <rect id="banda" x="380" y="298" width="60" height="54" class="banda"></rect>
+      <line id="linea-umbral" x1="380" y1="312" x2="440" y2="312" stroke="#7f1d1d"
+            stroke-width="3" stroke-dasharray="8 5" display="none"></line>
+      <rect id="nivel" x="380" y="325" width="60" height="135" class="nivel"></rect>
+      <rect x="380" y="190" width="60" height="270" rx="6" fill="none" stroke="#90a4ae" stroke-width="2"></rect>
+      <text x="410" y="182" class="rotulo" id="t-variable">Temperatura corporal</text>
+      <text x="370" y="205" class="detalle" style="text-anchor:end" id="t-alto">Alto</text>
+      <text x="370" y="330" class="detalle" id="t-medio" style="text-anchor:end;font-weight:700">Normal</text>
+      <text x="370" y="432" class="detalle" style="text-anchor:end" id="t-bajo">Bajo</text>
+
+      <!-- Signo del lazo y rótulo del retorno -->
+      <g class="signo" id="signo">
+        <circle cx="566" cy="490" r="20"></circle>
+        <text x="566" y="499" id="t-signo">−</text>
+      </g>
+      <text x="596" y="496" class="detalle" style="text-anchor:start" id="t-retorno">revierte el cambio</text>
+      <text x="410" y="158" class="rotulo" id="t-tipo">Lazo de retroalimentación negativa</text>
+    </svg>
+  </div>
+  <p class="nota-modelo" id="nota">Escala didáctica: la variable se expresa de 0 a 100 y cada ciclo representa un paso del lazo, no un tiempo real.</p>
+</div>
+
+<div class="lectura" id="lectura" aria-live="polite">
+  <h2>Lectura del estado actual</h2>
+  <p id="lectura-texto">Cargando la simulación.</p>
+  <dl>
+    <div><dt>Sensor</dt><dd id="d-sensor">—</dd></div>
+    <div><dt>Centro de control</dt><dd id="d-control">—</dd></div>
+    <div><dt>Efector</dt><dd id="d-efector">—</dd></div>
+    <div><dt>Variable regulada</dt><dd id="d-variable">—</dd></div>
+  </dl>
+</div>
+
+<div class="tabla-wrap">
+  <table class="datos">
+    <caption>Registro de los ciclos ejecutados, con el valor de la variable al terminar cada uno y la acción del efector. En un lazo negativo los valores se acercan al intervalo normal; en uno positivo se alejan cada vez más deprisa.</caption>
+    <thead>
+      <tr>
+        <th scope="col">Ciclo</th><th scope="col">Variable</th>
+        <th scope="col">Cambio respecto del ciclo anterior</th><th scope="col">Acción del efector</th>
+      </tr>
+    </thead>
+    <tbody id="historial"></tbody>
+  </table>
+</div>
+
+<details class="bloque" open>
+  <summary><span class="chevron" aria-hidden="true">▶</span>Qué es la homeostasis</summary>
+  <div class="cuerpo">
+    <p>La homeostasis es la capacidad del cuerpo para mantener estable su medio interno aunque el exterior cambie. No significa que nada se mueva: significa que todo se mueve dentro de un intervalo estrecho. La temperatura corporal oscila a lo largo del día, pero siempre alrededor de los 37 °C, y la glucosa sube después de comer y baja al ayunar, sin salirse del margen que las células toleran.</p>
+    <p>El mecanismo tiene siempre las mismas tres piezas, y por eso conviene aprenderlo una sola vez y trasladarlo después a cada sistema. Un <strong>sensor</strong> detecta el valor de la variable, un <strong>centro de control</strong> lo compara con el valor de referencia y decide, y un <strong>efector</strong> ejecuta la respuesta. El resultado de esa respuesta vuelve a llegar al sensor, y ahí se cierra el lazo: eso es la retroalimentación.</p>
+  </div>
+</details>
+
+<details class="bloque">
+  <summary><span class="chevron" aria-hidden="true">▶</span>Los dos tipos de lazo, comparados</summary>
+  <div class="cuerpo">
+    <div class="tabla-wrap">
+      <table class="datos">
+        <caption>Diferencias entre el lazo de retroalimentación negativa y el de retroalimentación positiva, con los ejemplos que evalúa el examen.</caption>
+        <thead>
+          <tr><th scope="col">Aspecto</th><th scope="col">Retroalimentación negativa</th><th scope="col">Retroalimentación positiva</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Qué hace la respuesta</th><td>Revierte el cambio y devuelve la variable al intervalo normal</td><td>Amplifica el cambio y aleja la variable cada vez más</td></tr>
+          <tr><th scope="row">Cómo termina</th><td>Cuando la variable vuelve al intervalo normal y el sensor deja de señalar</td><td>Cuando el proceso se completa y desaparece el estímulo que lo alimentaba</td></tr>
+          <tr><th scope="row">Frecuencia</th><td>Es el mecanismo habitual: regula casi todo el cuerpo</td><td>Es poco frecuente y siempre corresponde a un proceso que debe completarse</td></tr>
+          <tr><th scope="row">Ejemplos</th><td>Temperatura corporal, glucosa en sangre, presión arterial, equilibrio de agua</td><td>Parto, coagulación de la sangre, subida del calcio durante la lactancia</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="caja-tip">
+      <p><strong>La pregunta que más se falla:</strong> un lazo positivo no se detiene porque algo lo revierta, sino porque el estímulo desaparece cuando el proceso termina. En el parto, las contracciones cesan porque nace el bebé y deja de haber presión sobre el cuello uterino. En la coagulación, las plaquetas dejan de acudir cuando el coágulo sella la herida y ya no queda colágeno expuesto. Si el estímulo no desapareciera, el lazo no tendría freno, y eso sí sería peligroso: es lo que ocurre en la fiebre muy alta o en la coagulación descontrolada.</p>
+    </div>
+  </div>
+</details>
+
+<footer class="pie">
+  <p>El termostato del cuerpo: homeostasis · Lección 3.3 · Spanish ASE Science · 96 horas</p>
+  <p>José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago</p>
+  <p>© 2026. Esta obra está licenciada bajo <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" rel="license">Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0 Internacional (CC BY-NC-SA 4.0)</a>.</p>
+</footer>
+
+</div>
+<script>
+"use strict";
+
+/* ══════════════════════════════════════════════════════════════════════════
+   EL TERMOSTATO DEL CUERPO · Lección 3.3
+   Cuatro lazos: dos negativos y dos positivos. Modelo determinista por ciclos.
+   Sin dependencias externas. Separador decimal: punto.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+var SISTEMAS = {
+temp:{
+  tipo:"negativa", variable:"Temperatura corporal",
+  sensor:"Termorreceptores de la piel y del hipotálamo",
+  control:"Hipotálamo",
+  efector:"Glándulas sudoríparas, vasos de la piel y músculos",
+  alto:"Fiebre o calor", bajo:"Hipotermia o frío",
+  rotEstimulo:"Perturbación inicial: frío o calor del ambiente",
+  accionAlta:"Sudar y dilatar los vasos de la piel",
+  accionBaja:"Tiritar y contraer los vasos de la piel",
+  explAlta:"El calor eleva la temperatura por encima del intervalo normal. Los termorreceptores lo detectan, el hipotálamo lo compara con los 37 °C de referencia y ordena sudar: al evaporarse, el sudor se lleva calor y la temperatura baja. La respuesta va en sentido contrario al cambio, y por eso el lazo es negativo.",
+  explBaja:"El frío baja la temperatura por debajo del intervalo normal. El hipotálamo ordena tiritar, y la contracción rápida de los músculos genera calor. Al mismo tiempo se contraen los vasos de la piel para perder menos calor por la superficie.",
+  explNormal:"La temperatura está dentro del intervalo normal, alrededor de los 37 °C. El sensor no señala ninguna desviación y el efector permanece en reposo. Homeostasis no significa quietud: significa oscilar dentro de un margen estrecho."
+},
+glucosa:{
+  tipo:"negativa", variable:"Glucosa en sangre",
+  sensor:"Células del páncreas",
+  control:"Páncreas",
+  efector:"Hígado, músculo y tejido adiposo",
+  alto:"Hiperglucemia", bajo:"Hipoglucemia",
+  rotEstimulo:"Perturbación inicial: una comida o un ayuno",
+  accionAlta:"Liberar insulina: el hígado guarda glucosa",
+  accionBaja:"Liberar glucagón: el hígado suelta glucosa",
+  explAlta:"Después de comer, la glucosa sube por encima del intervalo normal. El páncreas libera insulina, que ordena al hígado y al músculo retirar glucosa de la sangre y almacenarla como glucógeno. La concentración baja y vuelve al margen habitual. Cuando este lazo deja de funcionar bien es cuando aparece la diabetes.",
+  explBaja:"Tras varias horas sin comer, la glucosa cae por debajo del intervalo normal. El páncreas libera glucagón, la hormona contraria a la insulina, y el hígado deshace su glucógeno para devolver glucosa a la sangre.",
+  explNormal:"La glucosa está dentro del intervalo normal. Las dos hormonas del páncreas, insulina y glucagón, se mantienen en equilibrio y el efector no necesita actuar."
+},
+parto:{
+  tipo:"positiva", umbral:55, variable:"Presión sobre el cuello uterino",
+  sensor:"Receptores de estiramiento del cuello uterino",
+  control:"Hipófisis, que libera oxitocina",
+  efector:"Músculo liso del útero",
+  alto:"Contracciones intensas", bajo:"Sin presión",
+  rotEstimulo:"Estímulo inicial: presión del bebé sobre el cuello uterino",
+  accion:"Contraer el útero con más fuerza",
+  explActiva:"La cabeza del bebé presiona el cuello uterino y los receptores de estiramiento lo detectan. La hipófisis libera oxitocina, que provoca una contracción más fuerte, y esa contracción empuja al bebé y aumenta todavía más la presión. El resultado de la respuesta refuerza el estímulo que la provocó: eso es un lazo positivo.",
+  explReposo:"La presión sobre el cuello uterino es todavía demasiado baja para desencadenar el lazo. Sin estímulo suficiente no hay señal, y el útero permanece en reposo.",
+  explFinal:"Nace el bebé y desaparece la presión sobre el cuello uterino. Al desaparecer el estímulo, la hipófisis deja de liberar oxitocina y las contracciones cesan. Repara en que nada revirtió el cambio: el lazo se detuvo porque el proceso llegó a su fin."
+},
+coagulacion:{
+  tipo:"positiva", umbral:55, variable:"Plaquetas acumuladas en la herida",
+  sensor:"Plaquetas que reconocen el colágeno expuesto",
+  control:"Plaquetas activadas, que liberan señales químicas",
+  efector:"Más plaquetas y la red de fibrina",
+  alto:"Coágulo formado", bajo:"Vaso intacto",
+  rotEstimulo:"Estímulo inicial: tamaño de la herida en el vaso",
+  accion:"Atraer y activar más plaquetas",
+  explActiva:"Un corte rompe la pared del vaso y deja el colágeno al descubierto. Las primeras plaquetas se adhieren a él, se activan y liberan sustancias que atraen y activan a más plaquetas, que a su vez liberan más sustancias. Cada vuelta del lazo acelera la siguiente, y por eso un corte pequeño deja de sangrar en pocos minutos.",
+  explReposo:"El vaso está intacto o el daño es demasiado pequeño para exponer colágeno. Sin colágeno expuesto no hay señal, y las plaquetas circulan sin adherirse.",
+  explFinal:"El coágulo sella la herida y deja de haber colágeno expuesto. Sin estímulo, dejan de acudir plaquetas nuevas y el lazo se detiene. Si no se detuviera, el coágulo seguiría creciendo dentro del vaso y podría bloquear la circulación: eso es lo que ocurre en una trombosis."
+}
+};
+
+var Y0 = 460, ALTO = 270;          /* geometría del indicador */
+var actual = "temp", v = 50, ciclo = 0, terminado = false, auto = null;
+var historial = [];
+
+var $ = function(id){ return document.getElementById(id); };
+var NS = "http://www.w3.org/2000/svg";
+
+/* Parte un texto en varias líneas de tspan para que no se salga de su caja.
+   Mide con getComputedTextLength, así que respeta la tipografía real. */
+function envolver(el, texto, maxAncho, x, y, alto){
+  while (el.firstChild) el.removeChild(el.firstChild);
+  var medida = document.createElementNS(NS, "tspan");
+  el.appendChild(medida);
+  var palabras = texto.split(/\s+/), linea = [], lineas = [];
+  palabras.forEach(function(p){
+    linea.push(p);
+    medida.textContent = linea.join(" ");
+    if (medida.getComputedTextLength() > maxAncho && linea.length > 1){
+      linea.pop();
+      lineas.push(linea.join(" "));
+      linea = [p];
+    }
+  });
+  lineas.push(linea.join(" "));
+  el.removeChild(medida);
+  lineas.forEach(function(l, i){
+    var t = document.createElementNS(NS, "tspan");
+    t.setAttribute("x", x);
+    t.setAttribute("y", y + i * (alto || 18));
+    t.textContent = l;
+    el.appendChild(t);
+  });
+}
+function s(){ return SISTEMAS[actual]; }
+function leer(t){ $("lectura-texto").textContent = t; }
+
+/* ── Estado del lazo en el ciclo actual ────────────────────────────────── */
+function estado(){
+  var d = s();
+  if (d.tipo === "negativa"){
+    if (v > 60) return {zona:"alta", activo:true, accion:d.accionAlta, expl:d.explAlta};
+    if (v < 40) return {zona:"baja", activo:true, accion:d.accionBaja, expl:d.explBaja};
+    return {zona:"normal", activo:false, accion:"En reposo", expl:d.explNormal};
+  }
+  if (terminado) return {zona:"final", activo:false, accion:"Ciclo terminado", expl:d.explFinal};
+  if (v >= d.umbral) return {zona:"alta", activo:true, accion:d.accion, expl:d.explActiva};
+  return {zona:"normal", activo:false, accion:"En reposo", expl:d.explReposo};
+}
+
+/* ── Un ciclo del lazo ─────────────────────────────────────────────────── */
+function paso(){
+  var d = s(), previo = v, e = estado();
+  if (!e.activo) return false;
+  if (d.tipo === "negativa"){
+    v = Math.round(v - (v - 50) * 0.35);
+  } else {
+    v = Math.min(100, Math.round(v + 6 + 0.22 * (v - 50)));
+    if (v >= 100) terminado = true;
+  }
+  ciclo++;
+  historial.push({c:ciclo, v:v, dif:v - previo, accion:e.accion});
+  return true;
+}
+
+/* ── Pintado ───────────────────────────────────────────────────────────── */
+function pintar(anunciar){
+  var d = s(), e = estado();
+
+  $("etiquetas").innerHTML = '<span class="etiqueta">' + d.variable + '</span>' +
+    '<span class="etiqueta ' + d.tipo + '">Retroalimentación ' + d.tipo + '</span>' +
+    '<span class="etiqueta">Ciclo ' + ciclo + '</span>';
+
+  /* Diagrama */
+  envolver($("t-sensor"),  d.sensor,  190, 135, 272);
+  envolver($("t-control"), d.control, 210, 420,  82);
+  envolver($("t-efector"), d.efector, 190, 695, 272);
+  $("t-variable").textContent = d.variable;
+  $("t-alto").textContent = d.alto;
+  $("t-bajo").textContent = d.bajo;
+  $("t-tipo").textContent = "Lazo de retroalimentación " + d.tipo;
+  $("t-accion").textContent = e.activo ? e.accion : "";
+  $("t-signo").textContent = (d.tipo === "negativa") ? "−" : "+";
+  $("t-retorno").textContent = (d.tipo === "negativa") ? "revierte el cambio" : "amplifica el cambio";
+
+  var svg = $("lazo");
+  svg.setAttribute("class", "lazo " + d.tipo + (e.activo ? " activo" : ""));
+
+  var altura = Math.round(v / 100 * ALTO);
+  $("nivel").setAttribute("y", Y0 - altura);
+  $("nivel").setAttribute("height", altura);
+
+  if (d.tipo === "negativa"){
+    $("banda").setAttribute("display", "inline");
+    $("linea-umbral").setAttribute("display", "none");
+    $("t-medio").textContent = "Normal";
+    $("t-medio").setAttribute("y", 330);
+    $("nivel").setAttribute("class", "nivel" + (v > 60 ? " alta" : (v < 40 ? " baja" : "")));
+  } else {
+    $("banda").setAttribute("display", "none");
+    $("linea-umbral").setAttribute("display", "inline");
+    $("linea-umbral").setAttribute("y1", Y0 - d.umbral / 100 * ALTO);
+    $("linea-umbral").setAttribute("y2", Y0 - d.umbral / 100 * ALTO);
+    $("t-medio").textContent = "Umbral";
+    $("t-medio").setAttribute("y", Y0 - d.umbral / 100 * ALTO + 5);
+    $("nivel").setAttribute("class", "nivel" + (v >= d.umbral ? " alta" : ""));
+  }
+
+  /* Lectura */
+  $("d-sensor").textContent = d.sensor;
+  $("d-control").textContent = d.control;
+  $("d-efector").textContent = d.efector;
+  $("d-variable").textContent = d.variable + ": " + v + " de 100";
+
+  $("valor-estimulo").textContent = v;
+  $("btn-auto").textContent = auto ? "Detener el lazo" : "Dejar correr el lazo";
+
+  var enc;
+  if (e.zona === "final") enc = "Proceso completado en " + ciclo + " ciclos.";
+  else if (!e.activo) enc = (d.tipo === "negativa")
+      ? "La variable está en el intervalo normal y el efector no actúa."
+      : "El estímulo no llega al umbral y el lazo no se ha disparado.";
+  else enc = "Ciclo " + ciclo + ". La variable marca " + v + " de 100. Respuesta del efector: " +
+             e.accion.toLowerCase() + ".";
+
+  var texto = enc + " " + e.expl;
+  if (e.activo && auto === null){
+    texto += " Pulsa «Avanzar un ciclo» para ver hacia dónde se mueve la variable.";
+  }
+  leer(texto);
+
+  pintarHistorial();
+  if (anunciar) $("lectura").setAttribute("aria-live", "polite");
+}
+
+function pintarHistorial(){
+  if (!historial.length){
+    $("historial").innerHTML = '<tr><td colspan="4">Todavía no has avanzado ningún ciclo.</td></tr>';
+    return;
+  }
+  $("historial").innerHTML = historial.map(function(h){
+    return '<tr><th scope="row">' + h.c + '</th><td>' + h.v + '</td><td>' +
+      (h.dif > 0 ? "+" : "") + h.dif + '</td><td>' + h.accion + '</td></tr>';
+  }).join("");
+}
+
+/* ── Controles ─────────────────────────────────────────────────────────── */
+function detener(){
+  if (auto){ clearInterval(auto); auto = null; }
+  $("lectura").setAttribute("aria-live", "polite");
+}
+
+function reiniciar(){
+  detener();
+  var d = s();
+  v = (d.tipo === "negativa") ? 50 : 30;
+  ciclo = 0; terminado = false; historial = [];
+  $("estimulo").value = v;
+  $("estimulo").setAttribute("aria-valuetext", v + " de 100");
+  pintar(true);
+}
+
+$("sistema").addEventListener("change", function(){
+  actual = $("sistema").value;
+  var d = s();
+  document.querySelector('label[for="estimulo"]').childNodes[0].nodeValue = d.rotEstimulo + " ";
+  reiniciar();
+});
+
+$("estimulo").addEventListener("input", function(e){
+  detener();
+  v = parseInt(e.target.value, 10);
+  ciclo = 0; terminado = false; historial = [];
+  e.target.setAttribute("aria-valuetext", v + " de 100");
+  pintar(false);
+});
+
+$("btn-ciclo").addEventListener("click", function(){
+  detener();
+  if (!paso()){
+    var d = s();
+    leer(terminado
+      ? "El proceso ya se completó y el lazo se detuvo, porque desapareció el estímulo que lo alimentaba. Reinicia la simulación o mueve el deslizador para empezar de nuevo."
+      : (d.tipo === "negativa"
+          ? "La variable ya está dentro del intervalo normal, así que el efector no tiene nada que corregir. Mueve el deslizador para sacarla del intervalo y vuelve a intentarlo."
+          : "El estímulo no alcanza el umbral, de modo que el lazo no se dispara. Sube el deslizador por encima de " + d.umbral + " y vuelve a intentarlo."));
+    return;
+  }
+  pintar(true);
+});
+
+$("btn-auto").addEventListener("click", function(){
+  if (auto){ detener(); pintar(true); return; }
+  if (!estado().activo){ $("btn-ciclo").click(); return; }
+  $("lectura").setAttribute("aria-live", "off");   /* evita anunciar cada ciclo */
+  auto = setInterval(function(){
+    if (!paso()){ detener(); pintar(true); return; }
+    pintar(false);
+    if (!estado().activo){ detener(); pintar(true); }
+  }, 900);
+  $("btn-auto").textContent = "Detener el lazo";
+});
+
+$("btn-reiniciar").addEventListener("click", reiniciar);
+
+/* Arranque */
+document.querySelector('label[for="estimulo"]').childNodes[0].nodeValue = SISTEMAS.temp.rotEstimulo + " ";
+reiniciar();
+</script>
+</body>
+</html>
