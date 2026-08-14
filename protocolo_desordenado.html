@@ -1,0 +1,752 @@
+<!doctype html>
+<!--
+  El protocolo desordenado (Lección 1.3) · Spanish ASE Science
+  © 2026 José M. Fernández, ABE/ASE Math Master Teacher,
+  Harry S. Truman College — City Colleges of Chicago.
+  Licencia: Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0
+  Internacional (CC BY-NC-SA 4.0) — https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>El protocolo desordenado</title>
+<meta name="description" content="Ordenar los pasos de tres protocolos científicos y comprobar qué consecuencia concreta tendría cada inversión, más práctica de palabras de secuencia.">
+<meta name="author" content="José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago">
+<meta name="license" content="CC BY-NC-SA 4.0">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
+<style>
+@charset "utf-8";
+/* ============================================================================
+   Estilos unificados de los interactivos · Spanish ASE Science
+   José M. Fernández, ABE/ASE Math Master Teacher,
+   Harry S. Truman College — City Colleges of Chicago
+   © 2026 · CC BY-NC-SA 4.0
+   https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+   ----------------------------------------------------------------------------
+   CÓMO SE USA
+   Este bloque se copia completo dentro de <style> en cada interactivo, para que
+   el archivo siga siendo autónomo. La clase de unidad va en el <body>:
+       <body class="u4">   → Unidad 4, verde oliva
+   Unidades: u1 verde azulado · u2 gris pizarra · u3 verde · u4 verde oliva
+             u5 rojo anaranjado · u6 azul índigo · u7 violeta · u8 azul
+   Todos los colores de acento cumplen 4,5:1 sobre blanco y admiten texto
+   blanco encima. El ámbar de los avisos usa #5c3900 (10,29:1).
+   ========================================================================== */
+
+/* ── 1. PALETA POR UNIDAD ──────────────────────────────────────────────── */
+:root{
+  --u:#37474f; --u2:#263238; --u-bg:#eceff1;   /* valor por defecto */
+  --texto:#222; --texto-sec:#555; --linea:#e0e0e0;
+  --pagina:#f5f7fa; --papel:#ffffff;
+  --amb:#5c3900; --amb-bg:#fff8e1; --amb-borde:#b45309;
+  --ok:#1b5e20; --ok-bg:#e8f5e9; --mal:#7f1d1d; --mal-bg:#fbe9e7;
+  --radio:12px; --sombra:0 2px 8px rgba(0,0,0,.07);
+}
+body.u1{--u:#00695c;--u2:#004d40;--u-bg:#e0f2f1;}
+body.u2{--u:#37474f;--u2:#263238;--u-bg:#eceff1;}
+body.u3{--u:#1b5e20;--u2:#0f3d13;--u-bg:#e8f5e9;}
+body.u4{--u:#33691e;--u2:#1f4211;--u-bg:#f1f8e9;}
+body.u5{--u:#bf360c;--u2:#8c2708;--u-bg:#fbe9e7;}
+body.u6{--u:#1e3a8a;--u2:#142a63;--u-bg:#e8eaf6;}
+body.u7{--u:#5b21b6;--u2:#40157f;--u-bg:#ede7f6;}
+body.u8{--u:#0d47a1;--u2:#093271;--u-bg:#e3f2fd;}
+
+/* ── 2. BASE ───────────────────────────────────────────────────────────── */
+*{box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;margin:0;background:var(--pagina);
+  color:var(--texto);line-height:1.55;font-size:16px;}
+.contenedor{max-width:1100px;margin:0 auto;padding:24px;}
+a{color:#0b3d91;}
+h1,h2,h3{line-height:1.3;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+:focus-visible{outline:3px solid var(--u);outline-offset:2px;}
+
+/* ── 3. ENCABEZADO DEL INTERACTIVO ─────────────────────────────────────── */
+header.principal{background:var(--u);background:linear-gradient(135deg,var(--u) 0%,var(--u2) 100%);
+  color:#fff;padding:28px 32px;border-radius:14px;margin-bottom:22px;box-shadow:var(--sombra);}
+header.principal h1{margin:0 0 6px;font-size:26px;font-weight:700;color:#fff;}
+header.principal .meta{font-size:14px;margin:4px 0 0;color:#fff;}
+
+/* ── 4. BLOQUES DE TEXTO ───────────────────────────────────────────────── */
+.tarjeta{background:var(--papel);padding:20px 24px;border-radius:10px;
+  border-left:5px solid var(--u);margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.tarjeta h2{margin-top:0;color:var(--u);font-size:20px;}
+.tarjeta h3{font-size:16px;color:#263238;margin:16px 0 6px;}
+.caja-tip{background:var(--amb-bg);border-left:4px solid var(--amb-borde);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;font-size:15px;}
+.caja-tip strong{color:var(--amb);}
+.caja-ok{background:var(--ok-bg);border-left:5px solid var(--ok);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;}
+.caja-ok strong{color:var(--ok);}
+.caja-mal{background:var(--mal-bg);border-left:5px solid var(--mal);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;}
+.caja-mal strong{color:var(--mal);}
+
+/* ── 5. PANEL DE CONTROLES ─────────────────────────────────────────────── */
+.panel{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:18px 22px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.panel h2{margin:0 0 12px;font-size:18px;color:var(--u);}
+.control{margin-bottom:16px;}
+.control > label{display:block;font-weight:600;font-size:15px;color:#263238;margin-bottom:6px;}
+.control .valor{float:right;font-weight:700;color:var(--u);font-variant-numeric:tabular-nums;}
+.control input[type=range]{width:100%;accent-color:var(--u);height:26px;}
+.control select,.control input[type=number],.control input[type=text]{
+  font-family:inherit;font-size:16px;padding:9px 14px;border-radius:8px;
+  border:1px solid #90a4ae;background:#fff;color:var(--texto);width:100%;max-width:420px;}
+.fila-botones{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;}
+button{font-family:inherit;font-size:15px;font-weight:600;padding:10px 18px;border-radius:8px;
+  border:1px solid transparent;background:var(--u);color:#fff;cursor:pointer;}
+button:hover{background:var(--u2);}
+button.secundario{background:#fff;color:var(--u);border-color:var(--u);}
+button.secundario:hover{background:var(--u-bg);}
+
+/* ── 6. LIENZO / ESCENA ────────────────────────────────────────────────── */
+.escena{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:16px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);overflow-x:auto;}
+
+/* ── 7. LECTURA DEL ESTADO (alternativa textual, siempre visible) ──────── */
+.lectura{background:var(--u-bg);border-left:5px solid var(--u);border-radius:0 8px 8px 0;
+  padding:14px 18px;margin-bottom:22px;font-size:15px;}
+.lectura h2{margin:0 0 8px;font-size:17px;color:var(--u);}
+.lectura p{margin:6px 0;}
+.lectura .dato{font-weight:700;color:var(--u2);font-variant-numeric:tabular-nums;}
+
+/* ── 8. TABLAS (Ally: caption obligatorio y scope en todo th) ──────────── */
+.tabla-wrap{overflow-x:auto;margin-bottom:22px;}
+table.datos{width:100%;border-collapse:collapse;background:var(--papel);border-radius:10px;
+  overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);font-size:15px;}
+table.datos caption{caption-side:top;text-align:left;font-size:14px;color:var(--texto-sec);
+  padding:0 0 8px;font-style:italic;}
+table.datos th,table.datos td{padding:10px 12px;text-align:left;border-bottom:1px solid #eee;}
+table.datos thead th{background:#37474f;color:#fff;font-weight:600;font-size:13px;
+  text-transform:uppercase;letter-spacing:.4px;}
+table.datos tbody th{background:var(--u-bg);color:var(--u2);font-weight:700;}
+table.datos tr:last-child td{border-bottom:none;}
+
+/* ── 9. ACORDEÓN NATIVO ────────────────────────────────────────────────── */
+details.bloque{background:var(--papel);border-radius:var(--radio);margin-bottom:14px;
+  box-shadow:var(--sombra);border-left:5px solid var(--u);overflow:hidden;}
+details.bloque > summary{padding:14px 18px;cursor:pointer;list-style:none;display:flex;
+  gap:10px;align-items:center;background:var(--u-bg);font-weight:600;color:var(--u2);}
+details.bloque > summary::-webkit-details-marker{display:none;}
+details.bloque > summary .chevron{transition:transform .2s;flex-shrink:0;}
+details.bloque[open] > summary .chevron{transform:rotate(90deg);}
+details.bloque .cuerpo{padding:14px 20px 18px;}
+
+/* ── 10. PIE CON LICENCIA ──────────────────────────────────────────────── */
+footer.pie{padding:22px 4px;color:var(--texto-sec);font-size:13px;margin-top:20px;
+  border-top:1px solid #ddd;text-align:center;}
+footer.pie p{margin:5px 0;}
+
+/* ── 11. MOVIMIENTO REDUCIDO ───────────────────────────────────────────── */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;scroll-behavior:auto !important;}
+}
+
+/* ── 12. IMPRESIÓN ─────────────────────────────────────────────────────── */
+@media print{
+  body{background:#fff;}
+  .panel,.escena{page-break-inside:avoid;}
+  details[open] .cuerpo{display:block;}
+}
+
+/* ── 13. NOMBRES RESERVADOS ────────────────────────────────────────────── */
+/* Estas clases pertenecen a la hoja unificada. No las reutilices como
+   clase local en un interactivo: el selector local se sumaría al de aquí y
+   descuadraría el componente. Reservadas:
+   contenedor · sr-only · principal · meta · tarjeta · caja-tip · caja-ok ·
+   caja-mal · panel · control · valor · fila-botones · secundario · escena ·
+   lectura · dato · tabla-wrap · datos · bloque · cuerpo · chevron · pie
+   Para rejillas de cifras usa .cifras, no .datos. */
+
+/* ── PROPIO DE ESTE INTERACTIVO ────────────────────────────────────────── */
+.etiquetas{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+.etiqueta{font-size:13px;font-weight:600;padding:4px 12px;border-radius:999px;
+  background:var(--u-bg);color:var(--u2);border:1px solid var(--u);}
+.etiqueta.suave{background:#fff;color:var(--texto-sec);border-color:#b0bec5;}
+.enunciado{font-size:17px;margin:0 0 16px;}
+.enunciado p{margin:0 0 12px;}
+.progreso{font-size:15px;font-weight:600;color:var(--u2);margin:0 0 14px;}
+
+/* Ranuras del protocolo */
+.taller{display:flex;gap:22px;flex-wrap:wrap;align-items:flex-start;}
+.reserva{flex:1 1 320px;background:var(--u-bg);border:1px solid var(--linea);
+  border-radius:var(--radio);padding:14px 16px;}
+.reserva h3{margin:0 0 4px;font-size:15px;color:var(--u2);}
+.reserva .pista{display:block;font-size:13px;color:var(--texto-sec);margin-bottom:10px;}
+.monton{display:flex;flex-direction:column;gap:10px;min-height:54px;}
+button.paso{display:block;width:100%;text-align:left;font-weight:500;font-size:15px;
+  line-height:1.45;background:#fff;color:var(--texto);border:2px solid var(--u);
+  padding:10px 14px;cursor:grab;white-space:normal;}
+button.paso:hover{background:var(--u-bg);}
+button.paso[aria-pressed="true"]{background:var(--amb-bg);border-color:var(--amb-borde);
+  outline:3px solid var(--amb-borde);outline-offset:2px;}
+.ranuras{flex:1 1 380px;display:flex;flex-direction:column;gap:8px;}
+.ranura{display:flex;gap:10px;align-items:stretch;background:#fff;border:3px dashed #78909c;
+  border-radius:var(--radio);padding:8px 10px;}
+.ranura .orden{flex-shrink:0;width:34px;height:34px;border-radius:50%;background:var(--u);
+  color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:15px;}
+.ranura .hueco{flex:1;display:flex;align-items:center;min-height:38px;}
+.ranura.encima{border-style:solid;border-color:var(--u);background:var(--u-bg);}
+.ranura.acierto{border-style:solid;border-color:var(--ok);background:var(--ok-bg);}
+.ranura.fallo{border-style:solid;border-color:var(--mal);background:var(--mal-bg);}
+
+/* Consecuencias de la inversión */
+.consecuencias{margin-top:6px;}
+.consecuencias h3{font-size:16px;color:var(--u);margin:0 0 8px;}
+.consecuencia{background:var(--mal-bg);border-left:5px solid var(--mal);border-radius:0 8px 8px 0;
+  padding:12px 16px;margin-bottom:10px;font-size:15px;}
+.consecuencia strong{color:var(--mal);}
+
+/* Opciones y frases */
+.caso{background:var(--papel);border:1px solid var(--linea);border-left:5px solid var(--u);
+  border-radius:0 10px 10px 0;padding:16px 20px;margin-bottom:18px;font-size:17px;line-height:1.6;}
+.opciones{display:flex;flex-direction:column;gap:10px;max-width:820px;}
+button.opcion{display:flex;gap:12px;align-items:flex-start;text-align:left;font-weight:500;
+  font-size:16px;background:#fff;color:var(--texto);border:2px solid #90a4ae;padding:12px 16px;
+  white-space:normal;}
+button.opcion:hover{background:var(--u-bg);border-color:var(--u);}
+button.opcion[aria-pressed="true"]{background:var(--u-bg);border-color:var(--u);
+  box-shadow:inset 0 0 0 1px var(--u);}
+button.opcion.acierto{border-color:var(--ok);background:var(--ok-bg);}
+button.opcion.fallo{border-color:var(--mal);background:var(--mal-bg);}
+button.opcion .letra{font-weight:700;color:var(--u2);flex-shrink:0;}
+select.hueco-frase{font-family:inherit;font-size:16px;padding:6px 10px;border-radius:8px;
+  border:2px solid var(--u);background:#fff;color:var(--texto);margin:0 4px;}
+select.hueco-frase.acierto{border-color:var(--ok);background:var(--ok-bg);}
+select.hueco-frase.fallo{border-color:var(--mal);background:var(--mal-bg);}
+.frase{font-size:17px;line-height:2.5;max-width:820px;}
+</style>
+</head>
+<body class="u1">
+<div class="contenedor">
+
+<header class="principal">
+  <h1>El protocolo desordenado</h1>
+  <p class="meta">Lección 1.3 · Leer ciencia: vocabulario técnico y procedimientos de pasos múltiples</p>
+  <p class="meta">Unidad 1 · El método científico y el diseño de investigación · Spanish ASE Science</p>
+</header>
+
+<div class="tarjeta">
+  <h2>Qué vas a hacer</h2>
+  <p>Un procedimiento científico no es una lista de tareas que se pueden hacer en cualquier orden. Cada paso prepara al siguiente, y por eso invertir dos echa a perder el resultado. Aquí vas a recibir los pasos mezclados y a colocarlos en su orden; cuando alguno quede fuera de sitio, verás qué habría ocurrido de verdad en el laboratorio.</p>
+  <div class="caja-tip">
+    <p><strong>Por qué importa para el examen:</strong> tres de las diez preguntas del quiz de esta lección piden ordenar o completar un procedimiento, y el examen de Ciencias evalúa lo mismo con ítems de arrastrar y soltar. La destreza no es memorizar este protocolo, sino reconocer en cualquier texto qué paso depende de cuál.</p>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>Controles</h2>
+  <div class="control">
+    <label for="ejercicio">Qué quieres practicar</label>
+    <select id="ejercicio">
+      <option value="protocolo">1. Ordenar el protocolo</option>
+      <option value="secuencia">2. Las palabras que marcan la secuencia</option>
+      <option value="dependencia">3. ¿Qué paso depende de cuál?</option>
+    </select>
+  </div>
+  <div class="fila-botones">
+    <button type="button" id="btn-comprobar">Comprobar el orden</button>
+    <button type="button" class="secundario" id="btn-siguiente">Siguiente</button>
+    <button type="button" class="secundario" id="btn-reiniciar">Empezar de nuevo</button>
+  </div>
+</div>
+
+<div class="lectura" id="lectura" aria-live="polite">
+  <h2>Lectura del ejercicio</h2>
+  <p id="lectura-texto">Cargando el primer protocolo.</p>
+</div>
+
+<div class="escena">
+  <p class="progreso" id="progreso"></p>
+  <div class="etiquetas" id="etiquetas"></div>
+  <div class="enunciado" id="enunciado"></div>
+  <div id="zona-item"></div>
+  <div id="veredicto"></div>
+</div>
+
+<div class="tabla-wrap">
+  <table class="datos">
+    <caption>Desempeño en los tres ejercicios de lectura de procedimientos.</caption>
+    <thead>
+      <tr><th scope="col">Ejercicio</th><th scope="col">Intentos</th><th scope="col">Aciertos</th><th scope="col">Porcentaje</th></tr>
+    </thead>
+    <tbody id="marcador"></tbody>
+  </table>
+</div>
+
+<details class="bloque">
+  <summary><span class="chevron" aria-hidden="true">▶</span>Cómo se lee un procedimiento sin equivocarse de orden</summary>
+  <div class="cuerpo">
+    <h3>Primero, subraya las palabras de secuencia</h3>
+    <p>Primero, a continuación, después, una vez que, antes de, seguidamente, por último, finalmente. Son el esqueleto del orden, y con mucha frecuencia la respuesta de la pregunta está justo en una de ellas. «Una vez que el colorante haya penetrado, cubrir con el cubreobjetos» dice, sin decirlo, que colorear va antes que cubrir.</p>
+    <h3>Después, busca las dependencias</h3>
+    <p>Un paso depende de otro cuando necesita algo que el anterior produce. Si el paso 4 habla de «la muestra ya coloreada», es imposible que vaya antes del paso que la colorea. Estas pistas están casi siempre en los sustantivos, no en los verbos: la palabra que nombra el resultado del paso anterior es la que delata la dependencia.</p>
+    <h3>Y comprueba con la prueba del absurdo</h3>
+    <p>Ante dos pasos que parecen intercambiables, imagina que los inviertes y pregúntate qué pasaría. Si la respuesta es «nada», efectivamente son intercambiables. Si la respuesta es «no se podría hacer» o «se estropearía», ya tienes el orden. Es la misma comprobación que hace este interactivo cuando te equivocas.</p>
+    <div class="caja-tip">
+      <p><strong>Un aviso sobre el examen:</strong> algunos pasos sí son intercambiables, y el examen no te pedirá distinguirlos, porque no tendría una única respuesta correcta. Si dudas entre dos pasos y ninguno depende del otro, es señal de que la pregunta va por otro sitio: vuelve a leer buscando el par que sí tiene dependencia.</p>
+    </div>
+  </div>
+</details>
+
+<footer class="pie">
+  <p>El protocolo desordenado · Lección 1.3 · Spanish ASE Science · 96 horas</p>
+  <p>José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago</p>
+  <p>© 2026. Esta obra está licenciada bajo <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" rel="license">Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0 Internacional (CC BY-NC-SA 4.0)</a>.</p>
+</footer>
+
+</div>
+<script>
+"use strict";
+
+/* ══════════════════════════════════════════════════════════════════════════
+   EL PROTOCOLO DESORDENADO · Lección 1.3
+   Sin dependencias externas. El orden de barajado es fijo y reproducible,
+   para que el docente y el estudiante vean siempre el mismo punto de partida.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+var PROTOCOLOS = [
+{
+  titulo:"Protocolo 1 · Epidermis de cebolla al microscopio",
+  dominio:"Ciencias de la vida",
+  intro:"Preparación de una muestra de epidermis de cebolla para observar sus células al microscopio. Coloca los ocho pasos en su orden correcto.",
+  pasos:[
+    "Cortar un trozo pequeño de cebolla y separar una capa fina y transparente de la cara interna.",
+    "Colocar la capa extendida sobre el portaobjetos, sin dobleces.",
+    "Añadir una gota de colorante sobre la muestra.",
+    "Esperar un minuto para que el colorante penetre.",
+    "Cubrir con el cubreobjetos inclinándolo poco a poco, para evitar burbujas de aire.",
+    "Retirar el exceso de colorante con papel absorbente por el borde.",
+    "Observar primero con el objetivo de menor aumento y enfocar.",
+    "Cambiar al objetivo de mayor aumento y ajustar solamente el enfoque fino."
+  ],
+  /* orden inicial que ve el estudiante, fijo y reproducible */
+  barajado:[7, 2, 0, 4, 1, 6, 5, 3],
+  consecuencias:{
+    "4>2":"Cubriste antes de colorear. El cubreobjetos sella la muestra, así que el colorante ya no llega a las células y estas quedan transparentes: al microscopio no se distingue el núcleo ni la pared.",
+    "7>6":"Empezaste por el objetivo de mayor aumento. Ese objetivo abarca un campo diminuto, de modo que la muestra queda fuera de vista y hay que volver al menor aumento para encontrarla. Se pierde el trabajo de enfoque.",
+    "2>1":"Añadiste el colorante antes de colocar la muestra en el portaobjetos. El colorante se derrama y la capa de cebolla queda sin teñir.",
+    "3>2":"Esperaste a que penetrara un colorante que todavía no habías añadido. El paso de espera solo tiene sentido después de colorear.",
+    "5>4":"Retiraste el exceso de colorante antes de poner el cubreobjetos. Sin el cubreobjetos, el papel absorbente arrastra la propia muestra.",
+    "1>0":"Colocaste sobre el portaobjetos una capa que aún no habías separado de la cebolla."
+  },
+  general:"Este protocolo tiene tres dependencias que mandan sobre todas las demás: hay que colocar antes de colorear, colorear antes de cubrir, y enfocar con el menor aumento antes de pasar al mayor."
+},
+{
+  titulo:"Protocolo 2 · Medir la densidad de un sólido irregular",
+  dominio:"Ciencias físicas",
+  intro:"Determinación de la densidad de una piedra pequeña por el método de desplazamiento de agua. Coloca los siete pasos en su orden.",
+  pasos:[
+    "Poner la balanza a cero con el recipiente vacío encima.",
+    "Medir la masa de la piedra seca y anotarla en gramos.",
+    "Llenar la probeta con agua hasta una marca conocida y anotar ese volumen.",
+    "Introducir la piedra en la probeta con cuidado, sin salpicar.",
+    "Anotar el nuevo volumen que marca el agua con la piedra dentro.",
+    "Restar el volumen inicial del volumen final para obtener el volumen de la piedra.",
+    "Dividir la masa entre el volumen para obtener la densidad."
+  ],
+  barajado:[4, 0, 6, 2, 5, 3, 1],
+  consecuencias:{
+    "3>2":"Metiste la piedra antes de anotar el volumen inicial del agua. Sin ese dato no hay resta posible y hay que empezar de nuevo: es el error más frecuente de esta práctica.",
+    "1>0":"Mediste la masa sin haber puesto la balanza a cero. La lectura incluye la masa del recipiente, así que la densidad saldrá mayor de la real.",
+    "5>4":"Restaste antes de anotar el volumen final. No hay dos números que restar todavía.",
+    "6>5":"Dividiste antes de calcular el volumen desplazado. La cifra que usarías como volumen sería la del agua, no la de la piedra.",
+    "4>3":"Anotaste el volumen final sin haber introducido la piedra, de modo que anotaste dos veces el mismo número y el volumen desplazado saldría cero.",
+    "1>2":"Este par sí es intercambiable: puedes medir la masa antes o después de preparar la probeta, porque ninguno de los dos pasos necesita nada del otro."
+  },
+  general:"Fíjate en que aquí manda una dependencia de datos, no de manipulación: cada cálculo necesita números que solo existen si se anotaron antes. Perder el volumen inicial obliga a repetir la medición entera."
+},
+{
+  titulo:"Protocolo 3 · Cultivo bacteriano en placa",
+  dominio:"Ciencias de la vida",
+  intro:"Siembra de una muestra en una placa con medio de cultivo. Coloca los siete pasos en su orden.",
+  pasos:[
+    "Rotular la placa con la fecha y el número de muestra antes de tocar nada más.",
+    "Esterilizar el asa de siembra a la llama y dejarla enfriar unos segundos.",
+    "Tomar la muestra con el asa ya fría.",
+    "Extender la muestra sobre el medio de cultivo con trazos suaves.",
+    "Cerrar la placa y sellarla por el borde.",
+    "Incubar la placa boca abajo a 37 °C durante 24 horas.",
+    "Contar las colonias visibles y anotar el resultado."
+  ],
+  barajado:[1, 5, 3, 0, 6, 2, 4],
+  consecuencias:{
+    "2>1":"Tomaste la muestra con el asa sin esterilizar. Lo que crezca en la placa puede venir del asa y no de la muestra, así que el resultado no significa nada.",
+    "0>1":"Este par parece intercambiable y no lo es: rotular al final obliga a manipular una placa ya sembrada, y basta con confundir dos placas para invalidar el ensayo completo. Rotular primero es una regla de laboratorio, no una preferencia.",
+    "5>4":"Incubaste la placa sin sellarla. El aire de la estufa entra libremente y contamina el cultivo.",
+    "6>5":"Contaste las colonias antes de incubar. A las cero horas no hay nada que contar: las colonias tardan un día en hacerse visibles.",
+    "3>2":"Extendiste sobre el medio un asa que aún no había tomado la muestra.",
+    "1>2":"Esterilizaste el asa después de tomar la muestra, con lo que la llama destruye justamente lo que ibas a sembrar."
+  },
+  general:"Este protocolo enseña algo que el anterior no: hay pasos cuyo orden no lo impone la física sino la seguridad y la trazabilidad. Rotular primero y esterilizar antes de tocar la muestra son de ese tipo."
+}
+];
+
+/* ── Ejercicio 2 · Palabras de secuencia ───────────────────────────────── */
+var FRASES = [
+{
+  partes:["Se añade el colorante y ",
+    {aria:"palabra de secuencia del primer hueco", ops:["una vez que","antes de que","aunque"], ok:0},
+    " haya penetrado, se cubre la muestra con el cubreobjetos."],
+  exp:"«Una vez que» marca que lo primero tiene que estar terminado para poder seguir. Con «antes de que» la frase diría lo contrario: que se cubre mientras el colorante aún no ha penetrado, que es precisamente el error que arruina la preparación."
+},
+{
+  partes:["Se anota el volumen inicial del agua ",
+    {aria:"palabra de secuencia del primer hueco", ops:["después de","antes de","mientras"], ok:1},
+    " introducir la piedra en la probeta, y ",
+    {aria:"palabra de secuencia del segundo hueco", ops:["seguidamente","previamente","por el contrario"], ok:0},
+    " se anota el volumen final."],
+  exp:"El primer hueco fija la dependencia crítica: el volumen inicial debe anotarse antes de meter la piedra, o el dato se pierde. El segundo solo encadena la acción siguiente, y para eso sirve «seguidamente»."
+},
+{
+  partes:["La placa se rotula ",
+    {aria:"palabra de secuencia del primer hueco", ops:["en primer lugar","por último","al mismo tiempo"], ok:0},
+    ", y solo ",
+    {aria:"palabra de secuencia del segundo hueco", ops:["después","antes"], ok:0},
+    " se procede a la siembra."],
+  exp:"La construcción «solo después» refuerza que no se trata de una recomendación sino de una condición. En los textos técnicos, «solo» delante de una palabra de secuencia casi siempre señala un paso obligatorio."
+},
+{
+  partes:["Se observa con el objetivo de menor aumento y, ",
+    {aria:"palabra de secuencia del hueco", ops:["por último","previamente","simultáneamente"], ok:0},
+    ", se pasa al de mayor aumento ajustando solo el enfoque fino."],
+  exp:"«Por último» cierra la secuencia. Si dijera «previamente», el orden quedaría invertido y la muestra se perdería de vista al empezar por el mayor aumento."
+}
+];
+
+/* ── Ejercicio 3 · Dependencias ────────────────────────────────────────── */
+var DEPENDENCIAS = [
+{ q:"En el protocolo del microscopio, ¿por qué el paso de esperar un minuto tiene que ir después de añadir el colorante y no antes?",
+  ops:["Porque el colorante tarda un minuto en prepararse",
+       "Porque la espera solo tiene sentido si ya hay colorante que penetre en la muestra",
+       "Porque el microscopio necesita calentarse",
+       "Porque así lo indica la norma de seguridad del laboratorio"], ok:1,
+  exp:"La dependencia está en el sustantivo: el paso habla de que «el colorante» penetre, de modo que necesita un colorante ya añadido. Cuando un paso menciona el resultado de otro, ese otro va antes por fuerza." },
+{ q:"En la medición de densidad, ¿qué ocurre si se introduce la piedra antes de anotar el volumen inicial del agua?",
+  ops:["No ocurre nada: el volumen se puede calcular igual",
+       "La piedra se moja y falsea la masa",
+       "Se pierde el dato del volumen inicial y la resta ya no puede hacerse",
+       "El agua se derrama y hay que secar la probeta"], ok:2,
+  exp:"El volumen de la piedra se obtiene restando el volumen inicial del final. Sin el inicial no hay resta posible, y hay que vaciar la probeta y empezar otra vez. Es una dependencia de datos: el paso posterior necesita un número que solo existe si alguien lo anotó antes." },
+{ q:"En el cultivo bacteriano, ¿por qué hay que esterilizar el asa antes de tomar la muestra?",
+  ops:["Para que el asa esté caliente y la muestra se adhiera mejor",
+       "Porque el asa sucia introduciría microorganismos ajenos y lo que creciera no vendría de la muestra",
+       "Porque la llama activa el medio de cultivo",
+       "Para que el asa no se oxide durante la siembra"], ok:1,
+  exp:"Si el asa aporta sus propios microorganismos, el resultado no dice nada sobre la muestra: es el mismo problema de la variable no controlada que estudiaste en la lección 1.2, aplicado aquí a la técnica de laboratorio." },
+{ q:"Un procedimiento dice: «Retirar el exceso de colorante con papel absorbente por el borde». ¿Qué paso tiene que haberse hecho antes, obligatoriamente?",
+  ops:["Cambiar al objetivo de mayor aumento",
+       "Cubrir la muestra con el cubreobjetos",
+       "Poner la balanza a cero",
+       "Rotular el portaobjetos"], ok:1,
+  exp:"El papel absorbe por el borde del cubreobjetos, así que el cubreobjetos tiene que estar puesto. Sin él, el papel arrastraría la propia muestra. La pista está en la expresión «por el borde», que presupone un borde que solo existe una vez cubierta la preparación." },
+{ q:"Dos pasos de un protocolo son «medir la masa de la piedra» y «llenar la probeta con agua». ¿Qué se puede afirmar sobre su orden?",
+  ops:["La masa tiene que medirse siempre primero",
+       "La probeta tiene que llenarse siempre primero",
+       "Son intercambiables: ninguno necesita nada del otro",
+       "Deben hacerse exactamente a la vez"], ok:2,
+  exp:"No hay dependencia entre ellos, así que el orden da igual. Reconocer los pasos intercambiables también es parte de la destreza: si dudas entre dos que no dependen uno del otro, la pregunta del examen va por otro lado." }
+];
+
+/* ── Estado ────────────────────────────────────────────────────────────── */
+var ejercicio = "protocolo", idx = 0, comprobado = false, seleccion = -1;
+var pasoSel = null, colocacion = {};
+var marcador = {protocolo:{n:0,ok:0}, secuencia:{n:0,ok:0}, dependencia:{n:0,ok:0}};
+var NOMBRES = {protocolo:"1. Ordenar el protocolo", secuencia:"2. Palabras de secuencia",
+               dependencia:"3. Dependencias entre pasos"};
+var cola = [];
+
+var $ = function(id){ return document.getElementById(id); };
+function leer(t){ $("lectura-texto").textContent = t; }
+
+/* ── Ejercicio 1 · Ordenar ─────────────────────────────────────────────── */
+function renderProtocolo(){
+  var p = cola[idx];
+  colocacion = {}; pasoSel = null;
+  $("progreso").textContent = "Protocolo " + (idx + 1) + " de " + cola.length + " · " + p.pasos.length + " pasos";
+  $("etiquetas").innerHTML = '<span class="etiqueta">' + p.titulo + '</span>' +
+    '<span class="etiqueta suave">' + p.dominio + '</span>' +
+    '<span class="etiqueta suave">Práctica SP.1</span>';
+  $("enunciado").innerHTML = "<p>" + p.intro + " Arrastra cada paso a su ranura, o púlsalo para seleccionarlo y pulsa después la ranura.</p>";
+
+  var html = '<div class="taller"><div class="reserva" id="reserva"><h3>Pasos mezclados</h3>' +
+    '<span class="pista">Están en desorden. Ninguno sobra.</span>' +
+    '<div class="monton" id="monton-reserva"></div></div><div class="ranuras" id="ranuras"></div></div>';
+  $("zona-item").innerHTML = html;
+
+  p.pasos.forEach(function(t, i){
+    colocacion["p" + i] = null;
+    var d = document.createElement("div");
+    d.className = "ranura"; d.dataset.zona = "r" + i;
+    d.innerHTML = '<span class="orden" aria-hidden="true">' + (i + 1) + '</span><div class="hueco monton"></div>';
+    d.addEventListener("dragover", function(e){ e.preventDefault(); d.classList.add("encima"); });
+    d.addEventListener("dragleave", function(){ d.classList.remove("encima"); });
+    d.addEventListener("drop", function(e){
+      e.preventDefault(); d.classList.remove("encima");
+      soltar(e.dataTransfer.getData("text/plain"), "r" + i);
+    });
+    d.addEventListener("click", function(){ if (pasoSel) soltar(pasoSel, "r" + i); });
+    $("ranuras").appendChild(d);
+  });
+
+  var res = $("reserva");
+  res.addEventListener("dragover", function(e){ e.preventDefault(); });
+  res.addEventListener("drop", function(e){
+    e.preventDefault(); soltar(e.dataTransfer.getData("text/plain"), null);
+  });
+  res.addEventListener("click", function(e){
+    if (pasoSel && !e.target.closest("button.paso")) soltar(pasoSel, null);
+  });
+
+  repartir();
+  leer("Protocolo " + (idx + 1) + " de " + cola.length + ". " + p.titulo + ". " + p.intro +
+       " Hay " + p.pasos.length + " pasos y " + p.pasos.length + " ranuras numeradas.");
+}
+
+function repartir(){
+  var p = cola[idx];
+  $("monton-reserva").innerHTML = "";
+  document.querySelectorAll(".ranura .hueco").forEach(function(m){ m.innerHTML = ""; });
+  /* el orden de la reserva es el barajado fijo del protocolo */
+  p.barajado.forEach(function(i){
+    var id = "p" + i;
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "paso"; b.textContent = p.pasos[i];
+    b.draggable = true; b.dataset.paso = id;
+    b.setAttribute("aria-pressed", pasoSel === id ? "true" : "false");
+    b.addEventListener("dragstart", function(e){ e.dataTransfer.setData("text/plain", id); });
+    b.addEventListener("click", function(e){
+      e.stopPropagation();
+      if (comprobado) return;
+      if (colocacion[id]){ soltar(id, null); return; }
+      pasoSel = (pasoSel === id) ? null : id;
+      repartir();
+      leer(pasoSel ? "Paso seleccionado. Pulsa ahora la ranura donde quieres colocarlo."
+                   : "Ningún paso seleccionado.");
+    });
+    var destino = colocacion[id]
+      ? document.querySelector('.ranura[data-zona="' + colocacion[id] + '"] .hueco')
+      : $("monton-reserva");
+    destino.appendChild(b);
+  });
+}
+
+function soltar(pid, zid){
+  if (comprobado || !pid) return;
+  if (zid){
+    var ocupante = Object.keys(colocacion).filter(function(k){ return colocacion[k] === zid; })[0];
+    if (ocupante && ocupante !== pid) colocacion[ocupante] = null;
+  }
+  colocacion[pid] = zid;
+  pasoSel = null;
+  repartir();
+  var puestos = Object.keys(colocacion).filter(function(k){ return colocacion[k]; }).length;
+  leer((zid ? "Paso colocado en la ranura " + (parseInt(zid.slice(1), 10) + 1) + ". " : "Paso devuelto a la reserva. ") +
+       "Llevas " + puestos + " de " + cola[idx].pasos.length + " ranuras ocupadas.");
+}
+
+function comprobarProtocolo(){
+  var p = cola[idx], ok = true, orden = [];
+  p.pasos.forEach(function(t, i){
+    var dentro = Object.keys(colocacion).filter(function(k){ return colocacion[k] === "r" + i; })[0];
+    orden.push(dentro ? parseInt(dentro.slice(1), 10) : null);
+    var bien = (dentro === "p" + i);
+    document.querySelector('.ranura[data-zona="r' + i + '"]').classList.add(bien ? "acierto" : "fallo");
+    if (!bien) ok = false;
+  });
+  document.querySelectorAll("button.paso").forEach(function(b){ b.disabled = true; });
+
+  /* Buscar las inversiones: pares cuyo orden relativo está al revés */
+  var avisos = [];
+  for (var a = 0; a < orden.length; a++){
+    for (var b = a + 1; b < orden.length; b++){
+      if (orden[a] === null || orden[b] === null) continue;
+      if (orden[a] > orden[b]){
+        var clave = orden[a] + ">" + orden[b];
+        if (p.consecuencias[clave] && avisos.indexOf(p.consecuencias[clave]) < 0){
+          avisos.push(p.consecuencias[clave]);
+        }
+      }
+    }
+  }
+
+  marcar(ok);
+  comprobado = true;
+  $("btn-comprobar").disabled = true;
+  var cab = ok ? "Orden correcto." : "El orden tiene pasos invertidos.";
+  var html = '<div class="' + (ok ? "caja-ok" : "caja-mal") + '"><p><strong>' + cab + '</strong></p><p>' +
+    p.general + '</p></div>';
+  if (avisos.length){
+    html += '<div class="consecuencias"><h3>Qué habría ocurrido en el laboratorio</h3>' +
+      avisos.slice(0, 4).map(function(t){
+        return '<div class="consecuencia"><p>' + t + '</p></div>';
+      }).join("") + '</div>';
+  }
+  $("veredicto").innerHTML = html;
+  leer(cab + " " + p.general + (avisos.length ? " " + avisos.slice(0, 4).join(" ") : "") +
+       (idx + 1 < cola.length ? " Pulsa «Siguiente» para continuar." : " Era el último protocolo."));
+}
+
+/* ── Ejercicio 2 · Palabras de secuencia ───────────────────────────────── */
+function renderSecuencia(){
+  var f = cola[idx];
+  $("progreso").textContent = "Frase " + (idx + 1) + " de " + cola.length;
+  $("etiquetas").innerHTML = '<span class="etiqueta">Palabras de secuencia</span>' +
+    '<span class="etiqueta suave">Práctica SP.1</span>';
+  $("enunciado").innerHTML = "<p>Elige la palabra que coloca cada acción en su sitio. Lee la frase entera con la opción puesta antes de decidir.</p>";
+  var p = document.createElement("p");
+  p.className = "frase";
+  f.partes.forEach(function(parte, i){
+    if (typeof parte === "string"){ p.appendChild(document.createTextNode(parte)); return; }
+    var s = document.createElement("select");
+    s.className = "hueco-frase"; s.id = "sel" + i;
+    s.setAttribute("aria-label", parte.aria);
+    var v = document.createElement("option"); v.value = ""; v.textContent = "Elige…";
+    s.appendChild(v);
+    parte.ops.forEach(function(t, j){
+      var o = document.createElement("option"); o.value = String(j); o.textContent = t;
+      s.appendChild(o);
+    });
+    s.addEventListener("change", function(){
+      if (s.value !== "") leer("Has elegido: " + parte.ops[parseInt(s.value, 10)]);
+    });
+    p.appendChild(s);
+  });
+  $("zona-item").innerHTML = "";
+  $("zona-item").appendChild(p);
+  leer("Frase " + (idx + 1) + " de " + cola.length + ". " +
+       f.partes.map(function(x){ return typeof x === "string" ? x : "…"; }).join(""));
+}
+
+function comprobarSecuencia(){
+  var f = cola[idx], ok = true;
+  f.partes.forEach(function(parte, i){
+    if (typeof parte === "string") return;
+    var s = $("sel" + i);
+    var bien = (s.value !== "" && parseInt(s.value, 10) === parte.ok);
+    s.classList.add(bien ? "acierto" : "fallo");
+    s.disabled = true;
+    if (!bien) ok = false;
+  });
+  marcar(ok);
+  cerrar(ok, ok ? "Respuesta correcta." : "Alguna palabra no encaja.", f.exp);
+}
+
+/* ── Ejercicio 3 · Dependencias ────────────────────────────────────────── */
+function renderDependencia(){
+  var d = cola[idx];
+  seleccion = -1;
+  $("progreso").textContent = "Pregunta " + (idx + 1) + " de " + cola.length;
+  $("etiquetas").innerHTML = '<span class="etiqueta">Dependencias entre pasos</span>' +
+    '<span class="etiqueta suave">Práctica SP.1</span>';
+  $("enunciado").innerHTML = "<p>Un paso depende de otro cuando necesita algo que el otro produce.</p>";
+  $("zona-item").innerHTML = '<p class="caso">' + d.q + '</p><div class="opciones" id="opciones"></div>';
+  var letras = "ABCD";
+  d.ops.forEach(function(t, i){
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "opcion";
+    b.setAttribute("aria-pressed", "false");
+    b.innerHTML = '<span class="letra" aria-hidden="true">' + letras[i] + '.</span><span>' + t + '</span>';
+    b.addEventListener("click", function(){
+      if (comprobado) return;
+      $("opciones").querySelectorAll("button").forEach(function(o){ o.setAttribute("aria-pressed", "false"); });
+      b.setAttribute("aria-pressed", "true");
+      seleccion = i;
+      leer("Has elegido la opción " + letras[i] + ": " + t);
+    });
+    $("opciones").appendChild(b);
+  });
+  leer("Pregunta " + (idx + 1) + " de " + cola.length + ". " + d.q);
+}
+
+function comprobarDependencia(){
+  var d = cola[idx], ok = (seleccion === d.ok);
+  $("opciones").querySelectorAll("button").forEach(function(b, i){
+    if (i === d.ok) b.classList.add("acierto");
+    else if (i === seleccion) b.classList.add("fallo");
+    b.disabled = true;
+  });
+  marcar(ok);
+  cerrar(ok, ok ? "Respuesta correcta." : "Respuesta incorrecta.", d.exp);
+}
+
+/* ── Comunes ───────────────────────────────────────────────────────────── */
+function marcar(ok){
+  marcador[ejercicio].n++;
+  if (ok) marcador[ejercicio].ok++;
+  pintarMarcador();
+}
+
+function cerrar(ok, cabecera, cuerpo){
+  comprobado = true;
+  $("btn-comprobar").disabled = true;
+  $("veredicto").innerHTML = '<div class="' + (ok ? "caja-ok" : "caja-mal") + '"><p><strong>' +
+    cabecera + '</strong></p><p>' + cuerpo + '</p></div>';
+  leer(cabecera + " " + cuerpo +
+       (idx + 1 < cola.length ? " Pulsa «Siguiente» para continuar." : " Era el último del ejercicio."));
+}
+
+function pintarMarcador(){
+  var filas = "", tn = 0, tk = 0;
+  ["protocolo","secuencia","dependencia"].forEach(function(k){
+    var m = marcador[k];
+    tn += m.n; tk += m.ok;
+    var pct = m.n ? (Math.round(m.ok / m.n * 1000) / 10).toFixed(1) + " %" : "—";
+    filas += '<tr><th scope="row">' + NOMBRES[k] + '</th><td>' + m.n + '</td><td>' + m.ok +
+             '</td><td>' + pct + '</td></tr>';
+  });
+  var tp = tn ? (Math.round(tk / tn * 1000) / 10).toFixed(1) + " %" : "—";
+  filas += '<tr><th scope="row">Total</th><td>' + tn + '</td><td>' + tk + '</td><td>' + tp + '</td></tr>';
+  $("marcador").innerHTML = filas;
+}
+
+/* ── Navegación ────────────────────────────────────────────────────────── */
+function render(){
+  comprobado = false; seleccion = -1; pasoSel = null;
+  $("veredicto").innerHTML = "";
+  $("btn-comprobar").disabled = false;
+  $("btn-comprobar").textContent = (ejercicio === "protocolo") ? "Comprobar el orden" : "Comprobar la respuesta";
+  $("zona-item").innerHTML = "";
+  if (ejercicio === "protocolo") renderProtocolo();
+  else if (ejercicio === "secuencia") renderSecuencia();
+  else renderDependencia();
+}
+
+function armarCola(){
+  ejercicio = $("ejercicio").value;
+  cola = (ejercicio === "protocolo") ? PROTOCOLOS.slice()
+       : (ejercicio === "secuencia") ? FRASES.slice() : DEPENDENCIAS.slice();
+  idx = 0;
+}
+
+$("btn-comprobar").addEventListener("click", function(){
+  if (comprobado) return;
+  if (ejercicio === "protocolo") comprobarProtocolo();
+  else if (ejercicio === "secuencia") comprobarSecuencia();
+  else comprobarDependencia();
+});
+$("btn-siguiente").addEventListener("click", function(){
+  if (!comprobado){ $("btn-comprobar").click(); return; }
+  if (idx + 1 < cola.length){ idx++; render(); }
+  else {
+    $("progreso").textContent = "Ejercicio terminado";
+    leer("Has terminado este ejercicio. Puedes elegir otro en el control «Qué quieres practicar» " +
+         "o repetirlo desde «Empezar de nuevo».");
+  }
+});
+$("btn-reiniciar").addEventListener("click", function(){
+  marcador = {protocolo:{n:0,ok:0}, secuencia:{n:0,ok:0}, dependencia:{n:0,ok:0}};
+  armarCola(); pintarMarcador(); render();
+});
+$("ejercicio").addEventListener("change", function(){ armarCola(); render(); });
+
+armarCola();
+pintarMarcador();
+render();
+</script>
+</body>
+</html>
