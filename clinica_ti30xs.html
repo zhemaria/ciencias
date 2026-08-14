@@ -1,0 +1,688 @@
+<!doctype html>
+<!--
+  Clínica de la TI-30XS (Lección 2.1) · Spanish ASE Science
+  © 2026 José M. Fernández, ABE/ASE Math Master Teacher,
+  Harry S. Truman College — City Colleges of Chicago.
+  Licencia: Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0
+  Internacional (CC BY-NC-SA 4.0) — https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clínica de la TI-30XS</title>
+<meta name="description" content="Teclado guiado de la TI-30XS MultiView para notación científica, potencias y raíces, con estimación obligatoria a mano antes de habilitar la calculadora.">
+<meta name="author" content="José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago">
+<meta name="license" content="CC BY-NC-SA 4.0">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
+<style>
+@charset "utf-8";
+/* ============================================================================
+   Estilos unificados de los interactivos · Spanish ASE Science
+   José M. Fernández, ABE/ASE Math Master Teacher,
+   Harry S. Truman College — City Colleges of Chicago
+   © 2026 · CC BY-NC-SA 4.0
+   https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+   ----------------------------------------------------------------------------
+   CÓMO SE USA
+   Este bloque se copia completo dentro de <style> en cada interactivo, para que
+   el archivo siga siendo autónomo. La clase de unidad va en el <body>:
+       <body class="u4">   → Unidad 4, verde oliva
+   Unidades: u1 verde azulado · u2 gris pizarra · u3 verde · u4 verde oliva
+             u5 rojo anaranjado · u6 azul índigo · u7 violeta · u8 azul
+   Todos los colores de acento cumplen 4,5:1 sobre blanco y admiten texto
+   blanco encima. El ámbar de los avisos usa #5c3900 (10,29:1).
+   ========================================================================== */
+
+/* ── 1. PALETA POR UNIDAD ──────────────────────────────────────────────── */
+:root{
+  --u:#37474f; --u2:#263238; --u-bg:#eceff1;   /* valor por defecto */
+  --texto:#222; --texto-sec:#555; --linea:#e0e0e0;
+  --pagina:#f5f7fa; --papel:#ffffff;
+  --amb:#5c3900; --amb-bg:#fff8e1; --amb-borde:#b45309;
+  --ok:#1b5e20; --ok-bg:#e8f5e9; --mal:#7f1d1d; --mal-bg:#fbe9e7;
+  --radio:12px; --sombra:0 2px 8px rgba(0,0,0,.07);
+}
+body.u1{--u:#00695c;--u2:#004d40;--u-bg:#e0f2f1;}
+body.u2{--u:#37474f;--u2:#263238;--u-bg:#eceff1;}
+body.u3{--u:#1b5e20;--u2:#0f3d13;--u-bg:#e8f5e9;}
+body.u4{--u:#33691e;--u2:#1f4211;--u-bg:#f1f8e9;}
+body.u5{--u:#bf360c;--u2:#8c2708;--u-bg:#fbe9e7;}
+body.u6{--u:#1e3a8a;--u2:#142a63;--u-bg:#e8eaf6;}
+body.u7{--u:#5b21b6;--u2:#40157f;--u-bg:#ede7f6;}
+body.u8{--u:#0d47a1;--u2:#093271;--u-bg:#e3f2fd;}
+
+/* ── 2. BASE ───────────────────────────────────────────────────────────── */
+*{box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;margin:0;background:var(--pagina);
+  color:var(--texto);line-height:1.55;font-size:16px;}
+.contenedor{max-width:1100px;margin:0 auto;padding:24px;}
+a{color:#0b3d91;}
+h1,h2,h3{line-height:1.3;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+:focus-visible{outline:3px solid var(--u);outline-offset:2px;}
+
+/* ── 3. ENCABEZADO DEL INTERACTIVO ─────────────────────────────────────── */
+header.principal{background:var(--u);background:linear-gradient(135deg,var(--u) 0%,var(--u2) 100%);
+  color:#fff;padding:28px 32px;border-radius:14px;margin-bottom:22px;box-shadow:var(--sombra);}
+header.principal h1{margin:0 0 6px;font-size:26px;font-weight:700;color:#fff;}
+header.principal .meta{font-size:14px;margin:4px 0 0;color:#fff;}
+
+/* ── 4. BLOQUES DE TEXTO ───────────────────────────────────────────────── */
+.tarjeta{background:var(--papel);padding:20px 24px;border-radius:10px;
+  border-left:5px solid var(--u);margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.tarjeta h2{margin-top:0;color:var(--u);font-size:20px;}
+.tarjeta h3{font-size:16px;color:#263238;margin:16px 0 6px;}
+.caja-tip{background:var(--amb-bg);border-left:4px solid var(--amb-borde);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;font-size:15px;}
+.caja-tip strong{color:var(--amb);}
+.caja-ok{background:var(--ok-bg);border-left:5px solid var(--ok);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;}
+.caja-ok strong{color:var(--ok);}
+.caja-mal{background:var(--mal-bg);border-left:5px solid var(--mal);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;}
+.caja-mal strong{color:var(--mal);}
+
+/* ── 5. PANEL DE CONTROLES ─────────────────────────────────────────────── */
+.panel{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:18px 22px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.panel h2{margin:0 0 12px;font-size:18px;color:var(--u);}
+.control{margin-bottom:16px;}
+.control > label{display:block;font-weight:600;font-size:15px;color:#263238;margin-bottom:6px;}
+.control .valor{float:right;font-weight:700;color:var(--u);font-variant-numeric:tabular-nums;}
+.control input[type=range]{width:100%;accent-color:var(--u);height:26px;}
+.control select,.control input[type=number],.control input[type=text]{
+  font-family:inherit;font-size:16px;padding:9px 14px;border-radius:8px;
+  border:1px solid #90a4ae;background:#fff;color:var(--texto);width:100%;max-width:420px;}
+.fila-botones{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;}
+button{font-family:inherit;font-size:15px;font-weight:600;padding:10px 18px;border-radius:8px;
+  border:1px solid transparent;background:var(--u);color:#fff;cursor:pointer;}
+button:hover{background:var(--u2);}
+button.secundario{background:#fff;color:var(--u);border-color:var(--u);}
+button.secundario:hover{background:var(--u-bg);}
+
+/* ── 6. LIENZO / ESCENA ────────────────────────────────────────────────── */
+.escena{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:16px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);overflow-x:auto;}
+
+/* ── 7. LECTURA DEL ESTADO (alternativa textual, siempre visible) ──────── */
+.lectura{background:var(--u-bg);border-left:5px solid var(--u);border-radius:0 8px 8px 0;
+  padding:14px 18px;margin-bottom:22px;font-size:15px;}
+.lectura h2{margin:0 0 8px;font-size:17px;color:var(--u);}
+.lectura p{margin:6px 0;}
+.lectura .dato{font-weight:700;color:var(--u2);font-variant-numeric:tabular-nums;}
+
+/* ── 8. TABLAS (Ally: caption obligatorio y scope en todo th) ──────────── */
+.tabla-wrap{overflow-x:auto;margin-bottom:22px;}
+table.datos{width:100%;border-collapse:collapse;background:var(--papel);border-radius:10px;
+  overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);font-size:15px;}
+table.datos caption{caption-side:top;text-align:left;font-size:14px;color:var(--texto-sec);
+  padding:0 0 8px;font-style:italic;}
+table.datos th,table.datos td{padding:10px 12px;text-align:left;border-bottom:1px solid #eee;}
+table.datos thead th{background:#37474f;color:#fff;font-weight:600;font-size:13px;
+  text-transform:uppercase;letter-spacing:.4px;}
+table.datos tbody th{background:var(--u-bg);color:var(--u2);font-weight:700;}
+table.datos tr:last-child td{border-bottom:none;}
+
+/* ── 9. ACORDEÓN NATIVO ────────────────────────────────────────────────── */
+details.bloque{background:var(--papel);border-radius:var(--radio);margin-bottom:14px;
+  box-shadow:var(--sombra);border-left:5px solid var(--u);overflow:hidden;}
+details.bloque > summary{padding:14px 18px;cursor:pointer;list-style:none;display:flex;
+  gap:10px;align-items:center;background:var(--u-bg);font-weight:600;color:var(--u2);}
+details.bloque > summary::-webkit-details-marker{display:none;}
+details.bloque > summary .chevron{transition:transform .2s;flex-shrink:0;}
+details.bloque[open] > summary .chevron{transform:rotate(90deg);}
+details.bloque .cuerpo{padding:14px 20px 18px;}
+
+/* ── 10. PIE CON LICENCIA ──────────────────────────────────────────────── */
+footer.pie{padding:22px 4px;color:var(--texto-sec);font-size:13px;margin-top:20px;
+  border-top:1px solid #ddd;text-align:center;}
+footer.pie p{margin:5px 0;}
+
+/* ── 11. MOVIMIENTO REDUCIDO ───────────────────────────────────────────── */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;scroll-behavior:auto !important;}
+}
+
+/* ── 12. IMPRESIÓN ─────────────────────────────────────────────────────── */
+@media print{
+  body{background:#fff;}
+  .panel,.escena{page-break-inside:avoid;}
+  details[open] .cuerpo{display:block;}
+}
+
+/* ── 13. NOMBRES RESERVADOS ────────────────────────────────────────────── */
+/* Estas clases pertenecen a la hoja unificada. No las reutilices como
+   clase local en un interactivo: el selector local se sumaría al de aquí y
+   descuadraría el componente. Reservadas:
+   contenedor · sr-only · principal · meta · tarjeta · caja-tip · caja-ok ·
+   caja-mal · panel · control · valor · fila-botones · secundario · escena ·
+   lectura · dato · tabla-wrap · datos · bloque · cuerpo · chevron · pie
+   Para rejillas de cifras usa .cifras, no .datos. */
+
+/* ── PROPIO DE ESTE INTERACTIVO ────────────────────────────────────────── */
+.etiquetas{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+.etiqueta{font-size:13px;font-weight:600;padding:4px 12px;border-radius:999px;
+  background:var(--u-bg);color:var(--u2);border:1px solid var(--u);}
+.etiqueta.suave{background:#fff;color:var(--texto-sec);border-color:#b0bec5;}
+.etiqueta.fase{background:var(--amb-bg);color:var(--amb);border-color:var(--amb-borde);}
+.progreso{font-size:15px;font-weight:600;color:var(--u2);margin:0 0 14px;}
+.enunciado{font-size:17px;margin:0 0 16px;}
+
+.problema{background:var(--papel);border:1px solid var(--linea);border-left:5px solid var(--u);
+  border-radius:0 10px 10px 0;padding:16px 20px;margin-bottom:18px;font-size:17px;line-height:1.6;}
+.problema .destacado{display:block;font-size:22px;font-weight:700;color:var(--u2);margin-top:8px;
+  font-variant-numeric:tabular-nums;}
+
+/* Dos columnas: mano y máquina */
+.banco{display:flex;gap:20px;flex-wrap:wrap;align-items:stretch;}
+.mitad{flex:1 1 320px;background:var(--papel);border:2px solid var(--linea);
+  border-radius:var(--radio);padding:16px 18px;}
+.mitad.viva{border-color:var(--u);}
+.mitad h3{margin:0 0 4px;font-size:17px;color:var(--u);}
+.mitad .paso{display:block;font-size:13px;color:var(--texto-sec);margin-bottom:12px;}
+.mitad.bloqueada{opacity:.55;}
+.candado{background:var(--amb-bg);border-left:4px solid var(--amb-borde);border-radius:0 8px 8px 0;
+  padding:12px 16px;font-size:14px;color:var(--amb);font-weight:600;}
+
+.linea-resp{display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:19px;}
+input.cifra{font-family:inherit;font-size:19px;font-weight:700;text-align:center;padding:9px 12px;
+  border-radius:8px;border:2px solid var(--u);background:#fff;width:130px;
+  font-variant-numeric:tabular-nums;}
+input.cifra:disabled{background:#eceff1;border-color:#b0bec5;}
+input.cifra.acierto{border-color:var(--ok);background:var(--ok-bg);}
+input.cifra.fallo{border-color:var(--mal);background:var(--mal-bg);}
+
+/* Calculadora */
+.calc{background:#37474f;border-radius:14px;padding:14px;max-width:330px;margin:0 auto;}
+.pantalla{background:#cfd8c8;border-radius:6px;padding:10px 12px;min-height:66px;
+  font-family:'Courier New',monospace;text-align:right;color:#1a1a1a;margin-bottom:12px;
+  border:2px solid #263238;}
+.pantalla .entrada{font-size:17px;word-break:break-all;min-height:22px;}
+.pantalla .salida{font-size:24px;font-weight:700;min-height:30px;}
+.pantalla .modo{float:left;font-size:11px;letter-spacing:.5px;}
+.teclas{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;}
+.teclas button{font-size:15px;font-weight:700;padding:11px 0;border-radius:7px;border:1px solid #263238;
+  background:#eceff1;color:#212121;}
+.teclas button:hover:not(:disabled){background:#fff;}
+.teclas button:disabled{opacity:.4;cursor:not-allowed;}
+.teclas button.op{background:#546e7a;color:#fff;border-color:#37474f;}
+.teclas button.esp{background:#8a4200;color:#fff;border-color:#5c3900;font-size:13px;}
+.teclas button.ent{background:#1b5e20;color:#fff;border-color:#0f3d13;}
+.teclas button.ancha{grid-column:span 2;}
+
+.compara{display:flex;flex-wrap:wrap;gap:12px;margin:14px 0 0;}
+.compara div{flex:1 1 200px;background:var(--u-bg);border-radius:8px;padding:10px 14px;font-size:14px;}
+.compara .rot{display:block;font-size:13px;color:var(--texto-sec);}
+.compara b{color:var(--u2);font-size:19px;font-variant-numeric:tabular-nums;}
+.teclado-guia{font-size:14px;color:var(--texto-sec);margin:10px 0 0;font-style:italic;}
+</style>
+</head>
+<body class="u2">
+<div class="contenedor">
+
+<header class="principal">
+  <h1>Clínica de la TI-30XS</h1>
+  <p class="meta">Lección 2.1 · Notación científica, unidades y la calculadora TI-30XS</p>
+  <p class="meta">Unidad 2 · Razonamiento cuantitativo en ciencias · Spanish ASE Science</p>
+</header>
+
+<div class="tarjeta">
+  <h2>Qué vas a hacer</h2>
+  <p>La TI-30XS MultiView™ es la única calculadora permitida en el examen, y hace la aritmética sin equivocarse jamás. Ese es justamente el peligro: si el exponente se teclea con el signo cambiado, la máquina devuelve un resultado impecablemente calculado y completamente falso, sin ningún mensaje de error que avise.</p>
+  <p>Por eso aquí cada ejercicio tiene dos tiempos. Primero estimas el orden de magnitud a mano, con lápiz y cabeza. Solo cuando has escrito esa estimación se desbloquea el teclado, y entonces compruebas si la pantalla te da la razón.</p>
+  <div class="caja-tip">
+    <p><strong>Por qué en ese orden:</strong> quien estimó primero reconoce de inmediato si la pantalla muestra un disparate. Quien teclea sin estimar acepta cualquier cosa que aparezca. Esa estimación previa es criterio propio en la rúbrica de la lección, y no es una formalidad: es la única defensa que existe contra un error de signo en el exponente.</p>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>Controles</h2>
+  <div class="control">
+    <label for="ejercicio">Qué quieres practicar</label>
+    <select id="ejercicio">
+      <option value="cientifica">1. Notación científica y operaciones</option>
+      <option value="potencias">2. Potencias y raíces</option>
+      <option value="averias">3. Averías: la pantalla miente</option>
+    </select>
+  </div>
+  <div class="fila-botones">
+    <button type="button" id="btn-comprobar">Comprobar</button>
+    <button type="button" class="secundario" id="btn-siguiente">Siguiente</button>
+    <button type="button" class="secundario" id="btn-reiniciar">Empezar de nuevo</button>
+  </div>
+</div>
+
+<div class="lectura" id="lectura" aria-live="polite">
+  <h2>Lectura del ejercicio</h2>
+  <p id="lectura-texto">Cargando la clínica.</p>
+</div>
+
+<div class="escena">
+  <p class="progreso" id="progreso"></p>
+  <div class="etiquetas" id="etiquetas"></div>
+  <div class="enunciado" id="enunciado"></div>
+  <div id="zona-item"></div>
+  <div id="veredicto"></div>
+</div>
+
+<div class="tabla-wrap">
+  <table class="datos">
+    <caption>Desempeño en los tres bloques de la clínica, contando por separado la estimación hecha a mano y la verificación con la calculadora.</caption>
+    <thead>
+      <tr><th scope="col">Bloque</th><th scope="col">Intentos</th><th scope="col">Aciertos</th><th scope="col">Porcentaje</th></tr>
+    </thead>
+    <tbody id="marcador"></tbody>
+  </table>
+</div>
+
+<details class="bloque">
+  <summary><span class="chevron" aria-hidden="true">▶</span>Las cuatro teclas que hay que dominar</summary>
+  <div class="cuerpo">
+    <div class="tabla-wrap">
+      <table class="datos">
+        <caption>Funciones de la TI-30XS MultiView para notación científica y potencias, con su uso y la advertencia asociada a cada una.</caption>
+        <thead>
+          <tr><th scope="col">Función</th><th scope="col">Cómo se usa</th><th scope="col">Advertencia</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Tecla ×10ⁿ</th>
+            <td>Introduce directamente la potencia de diez. Para 3.6 × 10⁸ se teclea el coeficiente, después esta tecla y por último el exponente.</td>
+            <td>No debe teclearse «× 10 ^ 8»: el resultado sería el mismo, pero el procedimiento es más largo y se presta a errores de paréntesis.</td></tr>
+          <tr><th scope="row">Tecla de signo (−)</th>
+            <td>Introduce exponentes negativos, como en 4.7 × 10⁻⁴.</td>
+            <td>Es una tecla distinta de la de restar. Usar la de restar produce un mensaje de error o un resultado equivocado.</td></tr>
+          <tr><th scope="row">Menú mode</th>
+            <td>Permite elegir entre NORM, SCI y ENG. En SCI todos los resultados se muestran en notación científica.</td>
+            <td>Conviene regresar a NORM al terminar. Si se olvida, los resultados de las lecciones siguientes aparecerán en un formato inesperado.</td></tr>
+          <tr><th scope="row">Limpieza previa</th>
+            <td>Antes de empezar se borra la pantalla y se eliminan las variables almacenadas de un ejercicio anterior.</td>
+            <td>Un valor guardado de la sesión anterior es una de las causas más frecuentes de resultados incoherentes.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="caja-tip">
+      <p><strong>Sobre la pantalla:</strong> la calculadora abrevia «por diez elevado a» con una E, de modo que 6.02 × 10²³ aparece como 6.02E23. Esa E es notación de máquina y no se acepta en una respuesta escrita: si el examen pide la respuesta por escrito, hay que ponerla como 6.02 × 10²³.</p>
+    </div>
+  </div>
+</details>
+
+<footer class="pie">
+  <p>Clínica de la TI-30XS · Lección 2.1 · Spanish ASE Science · 96 horas</p>
+  <p>José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago</p>
+  <p>© 2026. Esta obra está licenciada bajo <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" rel="license">Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0 Internacional (CC BY-NC-SA 4.0)</a>.</p>
+</footer>
+
+</div>
+<script>
+"use strict";
+
+/* ══════════════════════════════════════════════════════════════════════════
+   CLÍNICA DE LA TI-30XS · Lección 2.1
+   Dos tiempos por ejercicio: la estimación a mano desbloquea el teclado.
+   Sin dependencias externas. Separador decimal: punto.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+var EJERCICIOS = {
+cientifica:[
+{ texto:"¿Cuántos átomos de hidrógeno, de 1 × 10⁻¹⁰ m de diámetro, caben alineados a lo largo de un milímetro?",
+  expr:"(1 × 10⁻³) ÷ (1 × 10⁻¹⁰)", c:1, e:7,
+  mano:"Coeficientes: 1 ÷ 1 = 1. Exponentes: −3 − (−10) = 7. Restar un exponente negativo lo suma, y ahí es donde se pierde la mitad de los puntos de este tema.",
+  teclas:"Teclea 1, la tecla ×10ⁿ, la tecla de signo, 3, después ÷, y repite con 1, ×10ⁿ, signo, 10.",
+  aviso:"Si usaras la tecla de restar en lugar de la de signo, la calculadora entendería «1 menos 3» y devolvería un resultado sin relación con el problema." },
+{ texto:"La luz recorre 3 × 10⁸ metros cada segundo. ¿Qué distancia recorre en un minuto?",
+  expr:"(3 × 10⁸) × 60", c:1.8, e:10,
+  mano:"60 es 6 × 10¹. Coeficientes: 3 × 6 = 18. Exponentes: 8 + 1 = 9. El resultado inmediato, 18 × 10⁹, no está en notación científica: se corrige a 1.8 × 10¹⁰.",
+  teclas:"Teclea 3, la tecla ×10ⁿ, 8, después ×, y por último 60.",
+  aviso:"La calculadora mostrará 1.8E10 si está en modo SCI, o 18000000000 si está en NORM. Los dos números son el mismo; solo cambia el formato de la pantalla." },
+{ texto:"Próxima Centauri está a 3.9 × 10¹⁶ m. Si la luz recorre 3 × 10⁸ m cada segundo, ¿cuántos segundos tarda su luz en llegar a la Tierra?",
+  expr:"(3.9 × 10¹⁶) ÷ (3 × 10⁸)", c:1.3, e:8,
+  mano:"Coeficientes: 3.9 ÷ 3 = 1.3. Exponentes: 16 − 8 = 8. Son unos 130 millones de segundos, algo más de cuatro años.",
+  teclas:"Teclea 3.9, ×10ⁿ, 16, después ÷, y luego 3, ×10ⁿ, 8.",
+  aviso:"Comprueba el orden de magnitud antes de aceptar la pantalla: si el resultado saliera del orden de 10⁻⁸, habrías invertido la división." },
+{ texto:"Un glóbulo rojo mide 8 × 10⁻⁶ m. ¿Cuántos harían falta, alineados, para cubrir un centímetro (1 × 10⁻² m)?",
+  expr:"(1 × 10⁻²) ÷ (8 × 10⁻⁶)", c:1.25, e:3,
+  mano:"Coeficientes: 1 ÷ 8 = 0.125. Exponentes: −2 − (−6) = 4. El resultado inmediato, 0.125 × 10⁴, tiene el coeficiente por debajo de 1: se corrige moviendo el punto a la derecha y bajando el exponente, 1.25 × 10³.",
+  teclas:"Teclea 1, ×10ⁿ, signo, 2, después ÷, y luego 8, ×10ⁿ, signo, 6.",
+  aviso:"Este es el caso simétrico del coeficiente demasiado grande, y el que más despista: parece que el número se hace más pequeño cuando en realidad no cambia." }
+],
+potencias:[
+{ texto:"El área de un cuadrado de 4.5 cm de lado.",
+  expr:"4.5²", c:20.25, e:null, unidad:"cm²",
+  mano:"4.5 × 4.5. Como 4 × 4 = 16 y 5 × 5 = 25, el resultado tiene que caer entre 16 y 25, más cerca de 20.",
+  teclas:"Teclea 4.5 y después la tecla x².",
+  aviso:"La estimación por acotación —entre 16 y 25— es la que delata al instante un error de tecleo, aunque no dé la cifra exacta." },
+{ texto:"El lado de un cuadrado cuya área es de 196 cm².",
+  expr:"√196", c:14, e:null, unidad:"cm",
+  mano:"Se busca el número que multiplicado por sí mismo da 196. Como 10² = 100 y 15² = 225, el resultado está entre 10 y 15, y como termina en 6, el candidato es 14.",
+  teclas:"Teclea la tecla de raíz cuadrada y después 196.",
+  aviso:"En la TI-30XS la raíz se introduce antes del número, al revés que la tecla x²." },
+{ texto:"Una célula cúbica de 2 × 10⁻⁵ m de arista. ¿Cuál es su volumen?",
+  expr:"(2 × 10⁻⁵)³", c:8, e:-15, unidad:"m³",
+  mano:"El coeficiente se eleva al cubo: 2³ = 8. El exponente se multiplica por 3: −5 × 3 = −15.",
+  teclas:"Teclea 2, ×10ⁿ, signo, 5, después la tecla ^ y por último 3.",
+  aviso:"El error habitual es multiplicar el exponente por sí mismo en lugar de multiplicarlo por 3. Al elevar una potencia a otra potencia, los exponentes se multiplican." },
+{ texto:"La superficie de una placa cuadrada de 3 × 10² m de lado.",
+  expr:"(3 × 10²)²", c:9, e:4, unidad:"m²",
+  mano:"Coeficiente: 3² = 9. Exponente: 2 × 2 = 4. Resultado, 9 × 10⁴ m², es decir, 90 000 m².",
+  teclas:"Teclea 3, ×10ⁿ, 2, y después la tecla x².",
+  aviso:"Cuidado con elevar solo el coeficiente y dejar el exponente intacto: es el fallo más común de este bloque." }
+],
+averias:[
+{ q:"Un estudiante quiere calcular (5 × 10⁻⁴) × 2 y teclea 5, la tecla de <strong>restar</strong>, 4, por 2. ¿Qué muestra la pantalla y por qué está mal?",
+  ops:["Muestra −3, porque leyó «5 menos 4 por 2» y respetó la jerarquía de operaciones",
+       "Muestra 1 × 10⁻³, el resultado correcto",
+       "Muestra un mensaje de error de sintaxis",
+       "Muestra 0.001, porque corrige el error automáticamente"], ok:0,
+  exp:"La tecla de restar y la de signo son distintas. La calculadora leyó «5 − 4 × 2», resolvió primero la multiplicación como manda la jerarquía de operaciones y devolvió −3: un número impecablemente calculado y sin ninguna relación con el problema. No aparece ningún mensaje de error, y esa es la trampa. La única defensa es haber estimado antes que el resultado debía rondar 10⁻³, porque un resultado negativo delata al instante que algo se tecleó mal." },
+{ q:"El resultado de un cálculo aparece en pantalla como 6.02E23. El examen pide la respuesta por escrito. ¿Qué debe escribir el estudiante?",
+  ops:["6.02E23, tal como aparece","6.02 × 10²³","602 × 10²¹","6.02 elevado a 23"], ok:1,
+  exp:"La E es la abreviatura que usa la máquina para «por diez elevado a». Es notación de pantalla, no notación científica escrita. La tercera opción vale lo mismo numéricamente, pero su coeficiente no está entre 1 y 10." },
+{ q:"Un estudiante deja la calculadora en modo SCI y, en la lección siguiente, al dividir 10 entre 4 obtiene 2.5E0 en lugar de 2.5. ¿Qué ha ocurrido?",
+  ops:["La calculadora se ha estropeado",
+       "El resultado es incorrecto y hay que repetirlo",
+       "Es el mismo número: el modo SCI muestra todo en notación científica, y 2.5E0 es 2.5 × 10⁰",
+       "Falta pulsar la tecla igual otra vez"], ok:2,
+  exp:"Diez elevado a cero es 1, así que 2.5 × 10⁰ es exactamente 2.5. El resultado siempre fue correcto; lo que desconcierta es el formato. Por eso conviene volver a NORM al terminar la lección." },
+{ q:"Al calcular (4 × 10⁶) ÷ (2 × 10²), un estudiante obtiene en pantalla 2E8. Había estimado a mano 2 × 10⁴. ¿Qué conviene hacer?",
+  ops:["Aceptar la pantalla: la calculadora no se equivoca en aritmética",
+       "Aceptar la estimación y desconfiar de la pantalla: 6 − 2 = 4, así que probablemente se tecleó una multiplicación en lugar de una división",
+       "Repetir la estimación, porque seguro que está mal",
+       "Cambiar al modo ENG y volver a intentarlo"], ok:1,
+  exp:"La aritmética de la máquina es infalible, pero solo responde a lo que se tecleó. Un exponente 8 en vez de 4 es la firma inconfundible de una suma de exponentes, es decir, de una multiplicación. La estimación previa detectó el error de tecleo: eso es exactamente para lo que sirve." },
+{ q:"¿Cuál de estas afirmaciones sobre el uso de la calculadora en el examen de Ciencias es correcta?",
+  ops:["Conviene teclearlo todo, porque la máquina no se equivoca",
+       "La calculadora avisa cuando el planteamiento del problema es incorrecto",
+       "La calculadora verifica un razonamiento ya hecho, pero no lo sustituye ni detecta errores de planteamiento",
+       "En el examen de Ciencias no se permite ninguna calculadora"], ok:2,
+  exp:"La TI-30XS MultiView sí está permitida, y calcula sin error. Lo que no puede hacer es decidir qué operación corresponde ni advertir de un signo mal puesto: devolverá un resultado perfecto de una operación equivocada. Por eso el orden es siempre estimar primero y comprobar después." }
+]
+};
+
+/* ── Estado ────────────────────────────────────────────────────────────── */
+var ejercicio = "cientifica", cola = [], idx = 0;
+var fase = 1, comprobado = false, seleccion = -1;
+var entrada = "", salida = "", modoSci = false;
+var marcador = {cientifica:{n:0,ok:0}, potencias:{n:0,ok:0}, averias:{n:0,ok:0}};
+var NOMBRES = {cientifica:"1. Notación científica y operaciones", potencias:"2. Potencias y raíces",
+               averias:"3. Averías: la pantalla miente"};
+
+var $ = function(id){ return document.getElementById(id); };
+function leer(t){ $("lectura-texto").textContent = t; }
+function sup(e){
+  var S = {"-":"⁻","0":"⁰","1":"¹","2":"²","3":"³","4":"⁴","5":"⁵","6":"⁶","7":"⁷","8":"⁸","9":"⁹"};
+  return String(e).split("").map(function(c){ return S[c] || c; }).join("");
+}
+function valorEsperado(it){ return (it.e === null) ? it.c : it.c * Math.pow(10, it.e); }
+function respuestaTexto(it){
+  return (it.e === null) ? String(it.c) : it.c + " × 10" + sup(it.e);
+}
+
+/* ── Bloques 1 y 2 · estimación y luego calculadora ────────────────────── */
+function renderCalculo(){
+  var it = cola[idx];
+  fase = 1; comprobado = false; entrada = ""; salida = "";
+  $("progreso").textContent = "Ejercicio " + (idx + 1) + " de " + cola.length;
+  $("etiquetas").innerHTML = '<span class="etiqueta">' + NOMBRES[ejercicio].slice(3) + '</span>' +
+    '<span class="etiqueta fase" id="etq-fase">Primer tiempo: a mano</span>' +
+    '<span class="etiqueta suave">Práctica SP.6</span>';
+  $("enunciado").innerHTML = "<p>Escribe primero tu estimación. El teclado se desbloquea cuando la hayas anotado.</p>";
+
+  var campos = (it.e === null)
+    ? '<div class="linea-resp"><input type="text" inputmode="decimal" class="cifra" id="m-c" ' +
+      'aria-label="resultado estimado a mano">' + (it.unidad ? '<span>' + it.unidad + '</span>' : '') + '</div>'
+    : '<div class="linea-resp"><input type="text" inputmode="decimal" class="cifra" id="m-c" ' +
+      'aria-label="coeficiente estimado a mano"><span>× 10</span>' +
+      '<input type="text" inputmode="numeric" class="cifra" id="m-e" style="width:100px;" ' +
+      'aria-label="exponente estimado a mano">' + (it.unidad ? '<span>' + it.unidad + '</span>' : '') + '</div>';
+
+  $("zona-item").innerHTML =
+    '<p class="problema">' + it.texto + '<span class="destacado">' + it.expr + '</span></p>' +
+    '<div class="banco">' +
+      '<div class="mitad viva" id="lado-mano"><h3>1 · A mano</h3>' +
+        '<span class="paso">Estima el resultado con lápiz y cabeza, sin tocar el teclado.</span>' +
+        campos +
+      '</div>' +
+      '<div class="mitad bloqueada" id="lado-maquina"><h3>2 · Con la calculadora</h3>' +
+        '<span class="paso">Se desbloquea cuando anotes la estimación.</span>' +
+        '<div class="candado" id="candado">🔒 Teclado bloqueado. Primero la estimación.</div>' +
+        '<div id="caja-calc" hidden>' + teclado() + '</div>' +
+      '</div>' +
+    '</div>';
+
+  montarTeclado();
+  bloquearTeclado(true);
+  $("btn-comprobar").textContent = "Comprobar la estimación";
+  leer("Ejercicio " + (idx + 1) + " de " + cola.length + ". " + it.texto + " Operación: " + it.expr +
+       ". Primer tiempo: escribe tu estimación a mano. El teclado está bloqueado.");
+}
+
+function teclado(){
+  return '<div class="calc"><div class="pantalla">' +
+    '<span class="modo" id="p-modo">NORM</span>' +
+    '<div class="entrada" id="p-entrada"></div><div class="salida" id="p-salida"></div></div>' +
+    '<div class="teclas" id="teclas">' +
+    boton("7") + boton("8") + boton("9") + boton("÷","op","/") + boton("borrar","esp","C") +
+    boton("4") + boton("5") + boton("6") + boton("×","op","*") + boton("x²","esp","SQ") +
+    boton("1") + boton("2") + boton("3") + boton("−","op","-") + boton("√","esp","RT") +
+    boton("0") + boton(".") + boton("×10ⁿ","esp","E") + boton("+","op","+") + boton("^","esp","^") +
+    boton("(−)","esp","NEG") + boton("mode","esp","MODE") + boton("(","op","(") + boton(")","op",")") +
+    boton("=","ent","=") +
+    '</div><p class="teclado-guia" id="guia"></p></div>';
+}
+function boton(rot, clase, val){
+  return '<button type="button" class="' + (clase || "") + '" data-t="' +
+    (val || rot) + '">' + rot + '</button>';
+}
+
+function montarTeclado(){
+  var it = cola[idx];
+  $("guia").textContent = it.teclas;
+  $("teclas").querySelectorAll("button").forEach(function(b){
+    b.addEventListener("click", function(){ pulsar(b.dataset.t); });
+  });
+}
+
+function bloquearTeclado(b){
+  $("teclas").querySelectorAll("button").forEach(function(x){ x.disabled = b; });
+}
+
+function pulsar(t){
+  if (t === "C"){ entrada = ""; salida = ""; }
+  else if (t === "MODE"){ modoSci = !modoSci; $("p-modo").textContent = modoSci ? "SCI" : "NORM"; }
+  else if (t === "=") calcular();
+  else if (t === "E") entrada += "E";
+  else if (t === "NEG") entrada += "-";
+  else if (t === "SQ") entrada += "^2";
+  else if (t === "RT") entrada += "sqrt(";
+  else entrada += t;
+  pintarPantalla();
+}
+
+function pintarPantalla(){
+  $("p-entrada").textContent = entrada;
+  $("p-salida").textContent = salida;
+}
+
+/* Evaluador propio: nada de eval, solo los operadores del teclado */
+function calcular(){
+  try{
+    /* Solo se admiten los caracteres que produce el propio teclado */
+    if (!/^[0-9.+\-*/()E^]*$/.test(entrada.replace(/sqrt\(/g, "("))) throw 0;
+    /* La tecla ×10ⁿ se expande envuelta en paréntesis: sin ellos, 1E-3/1E-10
+       se evaluaría como ((1*10**-3)/1)*10**-10 y daría un resultado falso. */
+    var t = entrada.replace(/(\d+(?:\.\d+)?)E(-?)(\d+)/g, "($1*10**($2$3))");
+    t = t.replace(/sqrt\(/g, "Math.sqrt(");
+    t = t.replace(/\^/g, "**");
+    var v = Function('"use strict";return (' + t + ')')();
+    if (typeof v !== "number" || !isFinite(v)) throw 0;
+    salida = formatear(v);
+  } catch(e){ salida = "ERROR"; }
+  pintarPantalla();
+  leer("La pantalla muestra " + salida + ".");
+}
+
+function formatear(v){
+  if (v === 0) return "0";
+  var e = Math.floor(Math.log(Math.abs(v)) / Math.LN10);
+  var c = v / Math.pow(10, e);
+  c = Math.round(c * 1e6) / 1e6;
+  if (modoSci) return c + "E" + e;
+  if (Math.abs(e) >= 10) return c + "E" + e;
+  return String(Math.round(v * 1e6) / 1e6);
+}
+
+function comprobarCalculo(){
+  var it = cola[idx];
+  if (fase === 1){
+    var a = parseFloat(($("m-c").value || "").replace(",", "."));
+    var ok, eok = true;
+    if (it.e === null) ok = !isNaN(a) && Math.abs(a - it.c) <= Math.abs(it.c) * 0.001;
+    else {
+      var b = parseFloat(($("m-e").value || "").replace(",", "."));
+      eok = (b === it.e);
+      ok = !isNaN(a) && Math.abs(a - it.c) <= 0.005 && eok;
+    }
+    $("m-c").classList.add(ok ? "acierto" : "fallo");
+    $("m-c").disabled = true;
+    if ($("m-e")){ $("m-e").classList.add(eok ? "acierto" : "fallo"); $("m-e").disabled = true; }
+    marcar(ok);
+
+    /* Acierte o falle, el teclado se desbloquea: comprobar es parte del método */
+    fase = 2;
+    $("etq-fase").textContent = "Segundo tiempo: con la calculadora";
+    $("lado-mano").classList.remove("viva");
+    $("lado-maquina").classList.remove("bloqueada");
+    $("lado-maquina").classList.add("viva");
+    $("candado").hidden = true;
+    $("caja-calc").hidden = false;
+    bloquearTeclado(false);
+    $("btn-comprobar").textContent = "Ya comprobé en la calculadora";
+
+    var cab = ok ? "Estimación correcta." : "La estimación no coincide.";
+    $("veredicto").innerHTML = '<div class="' + (ok ? "caja-ok" : "caja-mal") + '"><p><strong>' + cab +
+      '</strong></p><p>' + it.mano + " La respuesta es " + respuestaTexto(it) +
+      (it.unidad ? " " + it.unidad : "") + '.</p></div>' +
+      '<div class="caja-tip"><p><strong>Ahora en la máquina:</strong> ' + it.teclas + " " + it.aviso + '</p></div>';
+    leer(cab + " " + it.mano + " Teclado desbloqueado. " + it.teclas + " " + it.aviso);
+    return;
+  }
+  /* fase 2: cierre del ejercicio */
+  comprobado = true;
+  $("btn-comprobar").disabled = true;
+  bloquearTeclado(true);
+  var v = valorEsperado(it);
+  $("veredicto").innerHTML += '<div class="compara">' +
+    '<div><span class="rot">Tu estimación a mano</span><b>' + respuestaTexto(it) + '</b></div>' +
+    '<div><span class="rot">Lo que debe mostrar la pantalla</span><b>' + formatear(v) + '</b></div>' +
+    '</div>';
+  leer("Comprobación cerrada. La pantalla debía mostrar " + formatear(v) +
+       (idx + 1 < cola.length ? ". Pulsa «Siguiente» para continuar." : ". Era el último ejercicio."));
+}
+
+/* ── Bloque 3 · averías ────────────────────────────────────────────────── */
+function renderAveria(){
+  var it = cola[idx];
+  seleccion = -1; comprobado = false;
+  $("progreso").textContent = "Avería " + (idx + 1) + " de " + cola.length;
+  $("etiquetas").innerHTML = '<span class="etiqueta">Averías</span>' +
+    '<span class="etiqueta suave">Práctica SP.6</span>';
+  $("enunciado").innerHTML = "<p>La calculadora nunca se equivoca en la aritmética. Todos estos casos son errores de quien teclea, y ninguno produce mensaje de aviso.</p>";
+  $("zona-item").innerHTML = '<p class="problema">' + it.q + '</p><div class="opciones" id="opciones"></div>';
+  var letras = "ABCD";
+  it.ops.forEach(function(t, i){
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "opcion";
+    b.setAttribute("aria-pressed", "false");
+    b.innerHTML = '<span class="letra" aria-hidden="true">' + letras[i] + '.</span><span>' + t + '</span>';
+    b.addEventListener("click", function(){
+      if (comprobado) return;
+      $("opciones").querySelectorAll("button").forEach(function(o){ o.setAttribute("aria-pressed", "false"); });
+      b.setAttribute("aria-pressed", "true");
+      seleccion = i;
+      leer("Has elegido la opción " + letras[i] + ": " + t);
+    });
+    $("opciones").appendChild(b);
+  });
+  $("btn-comprobar").textContent = "Comprobar";
+  leer("Avería " + (idx + 1) + " de " + cola.length + ". " + it.q.replace(/<[^>]*>/g, ""));
+}
+
+function comprobarAveria(){
+  var it = cola[idx], ok = (seleccion === it.ok);
+  $("opciones").querySelectorAll("button").forEach(function(b, i){
+    if (i === it.ok) b.classList.add("acierto");
+    else if (i === seleccion) b.classList.add("fallo");
+    b.disabled = true;
+  });
+  marcar(ok);
+  comprobado = true;
+  $("btn-comprobar").disabled = true;
+  $("veredicto").innerHTML = '<div class="' + (ok ? "caja-ok" : "caja-mal") + '"><p><strong>' +
+    (ok ? "Respuesta correcta." : "Respuesta incorrecta.") + '</strong></p><p>' + it.exp + '</p></div>';
+  leer((ok ? "Respuesta correcta. " : "Respuesta incorrecta. ") + it.exp +
+       (idx + 1 < cola.length ? " Pulsa «Siguiente» para continuar." : " Era la última avería."));
+}
+
+/* ── Comunes ───────────────────────────────────────────────────────────── */
+function marcar(ok){
+  marcador[ejercicio].n++;
+  if (ok) marcador[ejercicio].ok++;
+  pintarMarcador();
+}
+
+function pintarMarcador(){
+  var filas = "", tn = 0, tk = 0;
+  ["cientifica","potencias","averias"].forEach(function(k){
+    var m = marcador[k];
+    tn += m.n; tk += m.ok;
+    var pct = m.n ? (Math.round(m.ok / m.n * 1000) / 10).toFixed(1) + " %" : "—";
+    filas += '<tr><th scope="row">' + NOMBRES[k] + '</th><td>' + m.n + '</td><td>' + m.ok +
+             '</td><td>' + pct + '</td></tr>';
+  });
+  var tp = tn ? (Math.round(tk / tn * 1000) / 10).toFixed(1) + " %" : "—";
+  filas += '<tr><th scope="row">Total</th><td>' + tn + '</td><td>' + tk + '</td><td>' + tp + '</td></tr>';
+  $("marcador").innerHTML = filas;
+}
+
+function render(){
+  comprobado = false;
+  $("veredicto").innerHTML = "";
+  $("btn-comprobar").disabled = false;
+  $("zona-item").innerHTML = "";
+  if (ejercicio === "averias") renderAveria(); else renderCalculo();
+}
+
+function armarCola(){
+  ejercicio = $("ejercicio").value;
+  cola = EJERCICIOS[ejercicio].slice();
+  idx = 0;
+}
+
+$("btn-comprobar").addEventListener("click", function(){
+  if (comprobado) return;
+  if (ejercicio === "averias") comprobarAveria(); else comprobarCalculo();
+});
+$("btn-siguiente").addEventListener("click", function(){
+  if (!comprobado && ejercicio === "averias"){ comprobarAveria(); return; }
+  if (idx + 1 < cola.length){ idx++; render(); }
+  else {
+    $("progreso").textContent = "Bloque terminado";
+    leer("Has terminado este bloque. Puedes elegir otro en el control «Qué quieres practicar» " +
+         "o repetirlo desde «Empezar de nuevo».");
+  }
+});
+$("btn-reiniciar").addEventListener("click", function(){
+  marcador = {cientifica:{n:0,ok:0}, potencias:{n:0,ok:0}, averias:{n:0,ok:0}};
+  armarCola(); pintarMarcador(); render();
+});
+$("ejercicio").addEventListener("change", function(){ armarCola(); render(); });
+
+armarCola();
+pintarMarcador();
+render();
+</script>
+</body>
+</html>
