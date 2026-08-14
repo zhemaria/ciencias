@@ -1,0 +1,967 @@
+<!doctype html>
+<!--
+  Entrenador de formatos de ítem (Lección 8.3) · Spanish ASE Science
+  © 2026 José M. Fernández, ABE/ASE Math Master Teacher,
+  Harry S. Truman College — City Colleges of Chicago.
+  Licencia: Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0
+  Internacional (CC BY-NC-SA 4.0) — https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Entrenador de formatos de ítem</title>
+<meta name="description" content="Entrenador de los cinco formatos de ítem interactivo del examen de Ciencias: selección múltiple, arrastrar y soltar, menú desplegable, completar espacios y punto crítico de imagen.">
+<meta name="author" content="José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago">
+<meta name="license" content="CC BY-NC-SA 4.0">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
+<style>
+@charset "utf-8";
+/* ============================================================================
+   Estilos unificados de los interactivos · Spanish ASE Science
+   José M. Fernández, ABE/ASE Math Master Teacher,
+   Harry S. Truman College — City Colleges of Chicago
+   © 2026 · CC BY-NC-SA 4.0
+   https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+   ----------------------------------------------------------------------------
+   CÓMO SE USA
+   Este bloque se copia completo dentro de <style> en cada interactivo, para que
+   el archivo siga siendo autónomo. La clase de unidad va en el <body>:
+       <body class="u4">   → Unidad 4, verde oliva
+   Unidades: u1 verde azulado · u2 gris pizarra · u3 verde · u4 verde oliva
+             u5 rojo anaranjado · u6 azul índigo · u7 violeta · u8 azul
+   Todos los colores de acento cumplen 4,5:1 sobre blanco y admiten texto
+   blanco encima. El ámbar de los avisos usa #5c3900 (10,29:1).
+   ========================================================================== */
+
+/* ── 1. PALETA POR UNIDAD ──────────────────────────────────────────────── */
+:root{
+  --u:#37474f; --u2:#263238; --u-bg:#eceff1;   /* valor por defecto */
+  --texto:#222; --texto-sec:#555; --linea:#e0e0e0;
+  --pagina:#f5f7fa; --papel:#ffffff;
+  --amb:#5c3900; --amb-bg:#fff8e1; --amb-borde:#b45309;
+  --ok:#1b5e20; --ok-bg:#e8f5e9; --mal:#7f1d1d; --mal-bg:#fbe9e7;
+  --radio:12px; --sombra:0 2px 8px rgba(0,0,0,.07);
+}
+body.u1{--u:#00695c;--u2:#004d40;--u-bg:#e0f2f1;}
+body.u2{--u:#37474f;--u2:#263238;--u-bg:#eceff1;}
+body.u3{--u:#1b5e20;--u2:#0f3d13;--u-bg:#e8f5e9;}
+body.u4{--u:#33691e;--u2:#1f4211;--u-bg:#f1f8e9;}
+body.u5{--u:#bf360c;--u2:#8c2708;--u-bg:#fbe9e7;}
+body.u6{--u:#1e3a8a;--u2:#142a63;--u-bg:#e8eaf6;}
+body.u7{--u:#5b21b6;--u2:#40157f;--u-bg:#ede7f6;}
+body.u8{--u:#0d47a1;--u2:#093271;--u-bg:#e3f2fd;}
+
+/* ── 2. BASE ───────────────────────────────────────────────────────────── */
+*{box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;margin:0;background:var(--pagina);
+  color:var(--texto);line-height:1.55;font-size:16px;}
+.contenedor{max-width:1100px;margin:0 auto;padding:24px;}
+a{color:#0b3d91;}
+h1,h2,h3{line-height:1.3;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+:focus-visible{outline:3px solid var(--u);outline-offset:2px;}
+
+/* ── 3. ENCABEZADO DEL INTERACTIVO ─────────────────────────────────────── */
+header.principal{background:var(--u);background:linear-gradient(135deg,var(--u) 0%,var(--u2) 100%);
+  color:#fff;padding:28px 32px;border-radius:14px;margin-bottom:22px;box-shadow:var(--sombra);}
+header.principal h1{margin:0 0 6px;font-size:26px;font-weight:700;color:#fff;}
+header.principal .meta{font-size:14px;margin:4px 0 0;color:#fff;}
+
+/* ── 4. BLOQUES DE TEXTO ───────────────────────────────────────────────── */
+.tarjeta{background:var(--papel);padding:20px 24px;border-radius:10px;
+  border-left:5px solid var(--u);margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.tarjeta h2{margin-top:0;color:var(--u);font-size:20px;}
+.tarjeta h3{font-size:16px;color:#263238;margin:16px 0 6px;}
+.caja-tip{background:var(--amb-bg);border-left:4px solid var(--amb-borde);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;font-size:15px;}
+.caja-tip strong{color:var(--amb);}
+.caja-ok{background:var(--ok-bg);border-left:5px solid var(--ok);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;}
+.caja-ok strong{color:var(--ok);}
+.caja-mal{background:var(--mal-bg);border-left:5px solid var(--mal);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;}
+.caja-mal strong{color:var(--mal);}
+
+/* ── 5. PANEL DE CONTROLES ─────────────────────────────────────────────── */
+.panel{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:18px 22px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.panel h2{margin:0 0 12px;font-size:18px;color:var(--u);}
+.control{margin-bottom:16px;}
+.control > label{display:block;font-weight:600;font-size:15px;color:#263238;margin-bottom:6px;}
+.control .valor{float:right;font-weight:700;color:var(--u);font-variant-numeric:tabular-nums;}
+.control input[type=range]{width:100%;accent-color:var(--u);height:26px;}
+.control select,.control input[type=number],.control input[type=text]{
+  font-family:inherit;font-size:16px;padding:9px 14px;border-radius:8px;
+  border:1px solid #90a4ae;background:#fff;color:var(--texto);width:100%;max-width:420px;}
+.fila-botones{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;}
+button{font-family:inherit;font-size:15px;font-weight:600;padding:10px 18px;border-radius:8px;
+  border:1px solid transparent;background:var(--u);color:#fff;cursor:pointer;}
+button:hover{background:var(--u2);}
+button.secundario{background:#fff;color:var(--u);border-color:var(--u);}
+button.secundario:hover{background:var(--u-bg);}
+
+/* ── 6. LIENZO / ESCENA ────────────────────────────────────────────────── */
+.escena{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:16px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);overflow-x:auto;}
+
+/* ── 7. LECTURA DEL ESTADO (alternativa textual, siempre visible) ──────── */
+.lectura{background:var(--u-bg);border-left:5px solid var(--u);border-radius:0 8px 8px 0;
+  padding:14px 18px;margin-bottom:22px;font-size:15px;}
+.lectura h2{margin:0 0 8px;font-size:17px;color:var(--u);}
+.lectura p{margin:6px 0;}
+.lectura .dato{font-weight:700;color:var(--u2);font-variant-numeric:tabular-nums;}
+
+/* ── 8. TABLAS (Ally: caption obligatorio y scope en todo th) ──────────── */
+.tabla-wrap{overflow-x:auto;margin-bottom:22px;}
+table.datos{width:100%;border-collapse:collapse;background:var(--papel);border-radius:10px;
+  overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);font-size:15px;}
+table.datos caption{caption-side:top;text-align:left;font-size:14px;color:var(--texto-sec);
+  padding:0 0 8px;font-style:italic;}
+table.datos th,table.datos td{padding:10px 12px;text-align:left;border-bottom:1px solid #eee;}
+table.datos thead th{background:#37474f;color:#fff;font-weight:600;font-size:13px;
+  text-transform:uppercase;letter-spacing:.4px;}
+table.datos tbody th{background:var(--u-bg);color:var(--u2);font-weight:700;}
+table.datos tr:last-child td{border-bottom:none;}
+
+/* ── 9. ACORDEÓN NATIVO ────────────────────────────────────────────────── */
+details.bloque{background:var(--papel);border-radius:var(--radio);margin-bottom:14px;
+  box-shadow:var(--sombra);border-left:5px solid var(--u);overflow:hidden;}
+details.bloque > summary{padding:14px 18px;cursor:pointer;list-style:none;display:flex;
+  gap:10px;align-items:center;background:var(--u-bg);font-weight:600;color:var(--u2);}
+details.bloque > summary::-webkit-details-marker{display:none;}
+details.bloque > summary .chevron{transition:transform .2s;flex-shrink:0;}
+details.bloque[open] > summary .chevron{transform:rotate(90deg);}
+details.bloque .cuerpo{padding:14px 20px 18px;}
+
+/* ── 10. PIE CON LICENCIA ──────────────────────────────────────────────── */
+footer.pie{padding:22px 4px;color:var(--texto-sec);font-size:13px;margin-top:20px;
+  border-top:1px solid #ddd;text-align:center;}
+footer.pie p{margin:5px 0;}
+
+/* ── 11. MOVIMIENTO REDUCIDO ───────────────────────────────────────────── */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;scroll-behavior:auto !important;}
+}
+
+/* ── 12. IMPRESIÓN ─────────────────────────────────────────────────────── */
+@media print{
+  body{background:#fff;}
+  .panel,.escena{page-break-inside:avoid;}
+  details[open] .cuerpo{display:block;}
+}
+
+/* ── 13. NOMBRES RESERVADOS ────────────────────────────────────────────── */
+/* Estas clases pertenecen a la hoja unificada. No las reutilices como
+   clase local en un interactivo: el selector local se sumaría al de aquí y
+   descuadraría el componente. Reservadas:
+   contenedor · sr-only · principal · meta · tarjeta · caja-tip · caja-ok ·
+   caja-mal · panel · control · valor · fila-botones · secundario · escena ·
+   lectura · dato · tabla-wrap · datos · bloque · cuerpo · chevron · pie
+   Para rejillas de cifras usa .cifras, no .datos. */
+
+/* ── PROPIO DE ESTE INTERACTIVO ────────────────────────────────────────── */
+.etiquetas{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+.etiqueta{font-size:13px;font-weight:600;padding:4px 12px;border-radius:999px;
+  background:var(--u-bg);color:var(--u2);border:1px solid var(--u);}
+.etiqueta.dominio{background:#fff;color:var(--texto-sec);border-color:#b0bec5;}
+.enunciado{font-size:17px;margin:0 0 16px;}
+.enunciado p{margin:0 0 12px;}
+
+.opciones{display:flex;flex-direction:column;gap:10px;max-width:760px;}
+button.opcion{display:flex;gap:12px;align-items:flex-start;text-align:left;font-weight:500;
+  font-size:16px;background:#fff;color:var(--texto);border:2px solid #90a4ae;padding:12px 16px;}
+button.opcion:hover{background:var(--u-bg);border-color:var(--u);}
+button.opcion[aria-pressed="true"]{background:var(--u-bg);border-color:var(--u);
+  box-shadow:inset 0 0 0 1px var(--u);}
+button.opcion .letra{font-weight:700;color:var(--u2);flex-shrink:0;}
+button.opcion.acierto{border-color:var(--ok);background:var(--ok-bg);}
+button.opcion.fallo{border-color:var(--mal);background:var(--mal-bg);}
+
+.taller{display:flex;gap:26px;flex-wrap:wrap;align-items:flex-start;}
+.reserva-fichas{background:var(--u-bg);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:14px 16px;min-width:210px;flex:1 1 210px;}
+.reserva-fichas h3{margin:0 0 10px;font-size:15px;color:var(--u2);}
+.monton{display:flex;flex-wrap:wrap;gap:10px;min-height:48px;}
+button.ficha{background:#fff;color:var(--u2);border:2px solid var(--u);font-weight:700;
+  font-size:15px;padding:9px 14px;cursor:grab;}
+button.ficha:hover{background:var(--u-bg);}
+button.ficha[aria-pressed="true"]{background:var(--amb-bg);border-color:var(--amb-borde);
+  color:var(--amb);outline:3px solid var(--amb-borde);outline-offset:2px;}
+.zonas{display:flex;flex-wrap:wrap;gap:12px;flex:3 1 420px;}
+.zona{flex:1 1 180px;min-height:110px;background:#fff;border:3px dashed #78909c;
+  border-radius:var(--radio);padding:10px 12px;}
+.zona.encima{border-style:solid;border-color:var(--u);background:var(--u-bg);}
+.zona h3{margin:0 0 8px;font-size:14px;color:var(--texto-sec);text-transform:uppercase;
+  letter-spacing:.4px;}
+.zona .monton{min-height:44px;}
+.zona.acierto{border-style:solid;border-color:var(--ok);background:var(--ok-bg);}
+.zona.fallo{border-style:solid;border-color:var(--mal);background:var(--mal-bg);}
+
+.frase{font-size:17px;line-height:2.4;max-width:820px;}
+select.desplegable{font-family:inherit;font-size:16px;padding:6px 10px;border-radius:8px;
+  border:2px solid var(--u);background:#fff;color:var(--texto);margin:0 4px;max-width:100%;}
+select.desplegable.acierto{border-color:var(--ok);background:var(--ok-bg);}
+select.desplegable.fallo{border-color:var(--mal);background:var(--mal-bg);}
+
+.linea-hueco{display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:17px;}
+input.hueco-num{font-family:inherit;font-size:17px;font-weight:700;text-align:center;
+  padding:9px 12px;border-radius:8px;border:2px solid var(--u);background:#fff;width:130px;
+  font-variant-numeric:tabular-nums;}
+input.hueco-num.acierto{border-color:var(--ok);background:var(--ok-bg);}
+input.hueco-num.fallo{border-color:var(--mal);background:var(--mal-bg);}
+.unidad{font-weight:600;color:var(--texto-sec);}
+
+.marco-svg{overflow-x:auto;}
+.marco-svg svg{display:block;margin:0 auto;max-width:100%;height:auto;}
+.punto{cursor:pointer;}
+.punto .diana{fill:#ffffff;fill-opacity:.30;stroke:#0d47a1;stroke-width:3;stroke-dasharray:7 5;}
+.punto:hover .diana{fill-opacity:.55;}
+.punto .rotulo{font-size:15px;font-weight:700;fill:#0d3a72;}
+.punto[aria-pressed="true"] .diana{fill:#0d47a1;fill-opacity:.28;stroke-dasharray:none;stroke-width:4;}
+.punto:focus-visible{outline:none;}
+.punto:focus-visible .diana{stroke:#5c3900;stroke-width:5;}
+.punto.acierto .diana{stroke:#1b5e20;fill:#1b5e20;fill-opacity:.25;stroke-dasharray:none;stroke-width:4;}
+.punto.fallo .diana{stroke:#7f1d1d;fill:#7f1d1d;fill-opacity:.25;stroke-dasharray:none;stroke-width:4;}
+
+.barra-estado{display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;
+  margin-bottom:14px;}
+.progreso{font-size:15px;font-weight:600;color:var(--u2);}
+.crono{font-size:20px;font-weight:700;color:var(--u);font-variant-numeric:tabular-nums;
+  background:var(--u-bg);border-radius:8px;padding:4px 14px;}
+.crono.apremio{color:#7f1d1d;background:var(--mal-bg);}
+.consejo{margin-top:14px;}
+.cifras{display:flex;flex-wrap:wrap;gap:14px;margin:6px 0 0;}
+.cifras div{background:var(--u-bg);border-radius:8px;padding:8px 14px;font-size:15px;}
+.cifras b{color:var(--u2);font-variant-numeric:tabular-nums;}
+.nota-escala{font-size:13px;color:var(--texto-sec);font-style:italic;margin:8px 0 0;}
+</style>
+</head>
+<body class="u8">
+<div class="contenedor">
+
+<header class="principal">
+  <h1>Entrenador de formatos de ítem</h1>
+  <p class="meta">Lección 8.3 · Simulacro cronometrado, tipos de ítem y Constitución de Illinois</p>
+  <p class="meta">Unidad 8 · Preparación final y simulacro · Spanish ASE Science</p>
+</header>
+
+<div class="tarjeta">
+  <h2>Qué vas a hacer</h2>
+  <p>El examen de Ciencias no se responde solo con lo que sabes de ciencia: también hay que manejar la pantalla. Cinco formatos distintos de pregunta aparecen mezclados a lo largo de la prueba, y cada uno se contesta de una manera. Este entrenador te hace practicar los cinco con contenido de ciencias, para que el día del examen no gastes ni un minuto averiguando cómo se mueve una ficha o dónde se escribe el número.</p>
+  <h3>Los cinco formatos</h3>
+  <p>Selección múltiple, arrastrar y soltar, menú desplegable, completar espacios y punto crítico de imagen. Puedes practicarlos todos seguidos o elegir uno solo para insistir en el que más se te resista.</p>
+  <div class="caja-tip">
+    <p><strong>Ten presente:</strong> los ítems de este entrenador cubren los tres dominios del examen, pero su reparto no reproduce el del examen real. Aquí lo que se entrena es la interfaz, no el contenido. Para practicar el contenido con la distribución oficial —40 % ciencias de la vida, 40 % ciencias físicas y 20 % Tierra y espacio— usa el simulacro completo de Brightspace.</p>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>Controles</h2>
+  <div class="control">
+    <label for="filtro-formato">Qué practicar</label>
+    <select id="filtro-formato">
+      <option value="todos">Todos los formatos, en orden</option>
+      <option value="multiple">Solo selección múltiple</option>
+      <option value="desplegable">Solo menú desplegable</option>
+      <option value="arrastrar">Solo arrastrar y soltar</option>
+      <option value="completar">Solo completar espacios</option>
+      <option value="punto">Solo punto crítico de imagen</option>
+    </select>
+  </div>
+  <div class="control">
+    <label for="modo-crono">Cronómetro</label>
+    <select id="modo-crono">
+      <option value="0">Sin cronómetro, a tu ritmo</option>
+      <option value="135">Con cronómetro, 135 segundos por ítem</option>
+    </select>
+  </div>
+  <div class="fila-botones">
+    <button type="button" id="btn-comprobar">Comprobar la respuesta</button>
+    <button type="button" class="secundario" id="btn-siguiente">Ítem siguiente</button>
+    <button type="button" class="secundario" id="btn-reiniciar">Empezar de nuevo</button>
+  </div>
+</div>
+
+<div class="lectura" id="lectura" aria-live="polite">
+  <h2>Lectura del entrenador</h2>
+  <p id="lectura-texto">Cargando el primer ítem.</p>
+</div>
+
+<div class="escena">
+  <div class="barra-estado">
+    <p class="progreso" id="progreso">Ítem 1</p>
+    <p class="crono" id="crono" hidden>2:15</p>
+  </div>
+  <div class="etiquetas" id="etiquetas"></div>
+  <div class="enunciado" id="enunciado"></div>
+  <div id="zona-item"></div>
+  <div id="veredicto"></div>
+  <div id="consejo" class="consejo"></div>
+</div>
+
+<div class="tabla-wrap">
+  <table class="datos">
+    <caption>Desempeño por formato de ítem: cuántos has contestado, cuántos has acertado y en qué proporción. Sirve para identificar qué formato conviene repasar antes del simulacro.</caption>
+    <thead>
+      <tr>
+        <th scope="col">Formato</th><th scope="col">Contestados</th>
+        <th scope="col">Aciertos</th><th scope="col">Porcentaje</th>
+      </tr>
+    </thead>
+    <tbody id="marcador"></tbody>
+  </table>
+</div>
+
+<details class="bloque">
+  <summary><span class="chevron" aria-hidden="true">▶</span>Cómo se maneja cada formato en el examen</summary>
+  <div class="cuerpo">
+    <h3>Selección múltiple</h3>
+    <p>Una sola respuesta correcta entre cuatro. Puedes cambiar de opción tantas veces como quieras: al pulsar otra, la anterior queda deseleccionada. No hay penalización por responder mal, de modo que nunca dejes un ítem en blanco.</p>
+    <h3>Arrastrar y soltar</h3>
+    <p>Se arrastra una ficha desde la reserva hasta una casilla. Si te equivocas, arrastra la ficha fuera de la casilla o vuelve a arrastrarla a otra: no hace falta reiniciar la pregunta. Algunas fichas sobran a propósito y otras se usan más de una vez, así que no supongas que todas tienen sitio. En este entrenador también puedes pulsar una ficha para seleccionarla y luego pulsar la casilla, que es la vía del teclado.</p>
+    <h3>Menú desplegable</h3>
+    <p>La respuesta está dentro de la frase. Lee la oración completa con la opción elegida antes de decidir: una opción puede ser verdadera por su cuenta y aun así no encajar en la frase. Cuando hay dos menús, el segundo suele depender del primero.</p>
+    <h3>Completar espacios</h3>
+    <p>Se escribe la respuesta, casi siempre un número. Escribe solo la cifra, sin la unidad y sin palabras, y usa el punto decimal, no la coma. No redondees más de lo que pida el enunciado.</p>
+    <h3>Punto crítico de imagen</h3>
+    <p>Se pulsa sobre una zona de la figura. Las zonas sensibles están delimitadas, no es cualquier píxel de la imagen. Si pulsas en otro sitio, prueba un poco más adentro de la zona marcada. Con el teclado, la tecla de tabulación recorre las zonas y la barra espaciadora selecciona.</p>
+  </div>
+</details>
+
+<details class="bloque">
+  <summary><span class="chevron" aria-hidden="true">▶</span>El reloj: cómo repartir los noventa minutos</summary>
+  <div class="cuerpo">
+    <p>El examen tiene cuarenta ítems y noventa minutos, sin descanso. Eso da un promedio de 2.25 minutos por ítem, es decir, 135 segundos: por eso el cronómetro de este entrenador está fijado en ese valor. No significa que debas emplear ese tiempo en todos, sino todo lo contrario: los ítems de selección múltiple directa se resuelven en menos de un minuto, y ese tiempo ahorrado es el que necesitarás en los dos ítems de respuesta escrita extendida, que piden entre diez y quince minutos cada uno.</p>
+    <p>La estrategia que se recomienda es sencilla. Reparte la prueba en bloques de diez ítems y comprueba el reloj al terminar cada bloque: a los veinte minutos deberías ir por el ítem diez. Si un ítem se te atasca más de dos minutos, marca la respuesta que te parezca más probable, señálalo para revisión y sigue adelante. Volver con tiempo sobrante es mucho mejor que quedarse sin llegar al final.</p>
+  </div>
+</details>
+
+<footer class="pie">
+  <p>Entrenador de formatos de ítem · Lección 8.3 · Spanish ASE Science · 96 horas</p>
+  <p>José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago</p>
+  <p>© 2026. Esta obra está licenciada bajo <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" rel="license">Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0 Internacional (CC BY-NC-SA 4.0)</a>.</p>
+</footer>
+
+</div>
+<script>
+"use strict";
+
+/* ══════════════════════════════════════════════════════════════════════════
+   ENTRENADOR DE FORMATOS DE ÍTEM · Lección 8.3
+   Sin dependencias externas. Separador decimal: punto.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+var FORMATOS = {
+  multiple    : "Selección múltiple",
+  arrastrar   : "Arrastrar y soltar",
+  desplegable : "Menú desplegable",
+  completar   : "Completar espacios",
+  punto       : "Punto crítico de imagen"
+};
+var ORDEN_FORMATOS = ["multiple","desplegable","arrastrar","completar","punto"];
+
+/* ── SVG de los ítems de punto crítico ─────────────────────────────────── */
+var SVG_SUBDUCCION =
+'<svg viewBox="0 0 660 320" role="img" aria-labelledby="tit-sub des-sub">' +
+'<title id="tit-sub">Corte esquemático de un margen convergente</title>' +
+'<desc id="des-sub">Una placa oceánica se hunde bajo una placa continental. Se marcan cuatro zonas: la dorsal oceánica a la izquierda, el interior de la placa oceánica, la fosa donde comienza el hundimiento y el relieve continental situado sobre la zona de hundimiento.</desc>' +
+'<rect x="0" y="0" width="660" height="320" fill="#f7fbff"></rect>' +
+'<rect x="0" y="70" width="420" height="60" fill="#bbdefb"></rect>' +
+'<polygon points="0,130 380,130 520,275 560,275 400,120 660,120 660,320 0,320" fill="#cfd8dc"></polygon>' +
+'<polygon points="0,130 380,130 520,275 470,290 0,175" fill="#78909c"></polygon>' +
+'<polygon points="400,120 660,120 660,230 400,230" fill="#a1887f"></polygon>' +
+'<polygon points="400,120 480,70 560,120" fill="#6d4c41"></polygon>' +
+'<polygon points="120,130 150,100 180,130" fill="#546e7a"></polygon>' +
+'<text x="14" y="26" font-size="15" font-weight="700" fill="#0d3a72">Océano</text>' +
+'<text x="470" y="42" font-size="15" font-weight="700" fill="#4e342e">Continente</text>' +
+'<text x="200" y="255" font-size="14" fill="#263238">Placa oceánica</text>' +
+'<text x="560" y="200" font-size="14" fill="#3e2723">Placa continental</text>' +
+'<g class="punto" data-punto="dorsal" role="button" tabindex="0" aria-pressed="false" aria-label="Zona A: la dorsal oceánica, en el centro del océano">' +
+'<circle class="diana" cx="150" cy="118" r="30"></circle><text class="rotulo" x="150" y="124" text-anchor="middle">A</text></g>' +
+'<g class="punto" data-punto="interior" role="button" tabindex="0" aria-pressed="false" aria-label="Zona B: el interior de la placa oceánica, lejos de todo borde">' +
+'<circle class="diana" cx="285" cy="170" r="30"></circle><text class="rotulo" x="285" y="176" text-anchor="middle">B</text></g>' +
+'<g class="punto" data-punto="fosa" role="button" tabindex="0" aria-pressed="false" aria-label="Zona C: la fosa, donde la placa oceánica empieza a hundirse">' +
+'<circle class="diana" cx="392" cy="136" r="28"></circle><text class="rotulo" x="392" y="142" text-anchor="middle">C</text></g>' +
+'<g class="punto" data-punto="arco" role="button" tabindex="0" aria-pressed="false" aria-label="Zona D: el relieve del continente situado justo encima de la placa que se hunde">' +
+'<circle class="diana" cx="480" cy="86" r="30"></circle><text class="rotulo" x="480" y="92" text-anchor="middle">D</text></g>' +
+'</svg>';
+
+var SVG_GRAFICA =
+'<svg viewBox="0 0 660 340" role="img" aria-labelledby="tit-gra des-gra">' +
+'<title id="tit-gra">Gráfica de distancia frente a tiempo de un ciclista</title>' +
+'<desc id="des-gra">La línea sube de 0 a 60 metros entre los segundos 0 y 10, se mantiene horizontal en 60 metros entre los segundos 10 y 20, vuelve a subir hasta 150 metros entre los segundos 20 y 35, y sube muy poco, hasta 165 metros, entre los segundos 35 y 45. Se marcan cuatro zonas, una sobre cada tramo.</desc>' +
+'<rect x="0" y="0" width="660" height="340" fill="#f7fbff"></rect>' +
+'<g stroke="#cfd8dc" stroke-width="1">' +
+'<line x1="80" y1="60" x2="620" y2="60"></line><line x1="80" y1="120" x2="620" y2="120"></line>' +
+'<line x1="80" y1="180" x2="620" y2="180"></line><line x1="80" y1="240" x2="620" y2="240"></line></g>' +
+'<line x1="80" y1="40" x2="80" y2="290" stroke="#263238" stroke-width="3"></line>' +
+'<line x1="80" y1="290" x2="620" y2="290" stroke="#263238" stroke-width="3"></line>' +
+'<text x="26" y="60" font-size="13" fill="#263238">180</text>' +
+'<text x="26" y="120" font-size="13" fill="#263238">135</text>' +
+'<text x="26" y="180" font-size="13" fill="#263238">90</text>' +
+'<text x="26" y="240" font-size="13" fill="#263238">45</text>' +
+'<text x="34" y="295" font-size="13" fill="#263238">0</text>' +
+'<text x="140" y="312" font-size="13" fill="#263238">10</text>' +
+'<text x="260" y="312" font-size="13" fill="#263238">20</text>' +
+'<text x="440" y="312" font-size="13" fill="#263238">35</text>' +
+'<text x="560" y="312" font-size="13" fill="#263238">45</text>' +
+'<text x="300" y="332" font-size="14" font-weight="700" fill="#0d3a72">Tiempo (s)</text>' +
+'<text x="16" y="26" font-size="14" font-weight="700" fill="#0d3a72">Distancia (m)</text>' +
+'<polyline points="80,290 146,210 266,210 446,90 566,70" fill="none" stroke="#0d47a1" stroke-width="4"></polyline>' +
+'<g class="punto" data-punto="t1" role="button" tabindex="0" aria-pressed="false" aria-label="Tramo A: entre los segundos 0 y 10, la distancia sube de 0 a 60 metros">' +
+'<circle class="diana" cx="113" cy="250" r="28"></circle><text class="rotulo" x="113" y="256" text-anchor="middle">A</text></g>' +
+'<g class="punto" data-punto="t2" role="button" tabindex="0" aria-pressed="false" aria-label="Tramo B: entre los segundos 10 y 20, la distancia se mantiene en 60 metros">' +
+'<circle class="diana" cx="206" cy="210" r="28"></circle><text class="rotulo" x="206" y="216" text-anchor="middle">B</text></g>' +
+'<g class="punto" data-punto="t3" role="button" tabindex="0" aria-pressed="false" aria-label="Tramo C: entre los segundos 20 y 35, la distancia sube de 60 a 150 metros">' +
+'<circle class="diana" cx="356" cy="150" r="28"></circle><text class="rotulo" x="356" y="156" text-anchor="middle">C</text></g>' +
+'<g class="punto" data-punto="t4" role="button" tabindex="0" aria-pressed="false" aria-label="Tramo D: entre los segundos 35 y 45, la distancia sube de 150 a 165 metros">' +
+'<circle class="diana" cx="506" cy="80" r="28"></circle><text class="rotulo" x="506" y="86" text-anchor="middle">D</text></g>' +
+'</svg>';
+
+/* ── Banco de ítems ────────────────────────────────────────────────────── */
+var BANCO = [
+
+/* ---------- Selección múltiple ---------- */
+{
+  formato:"multiple", dominio:"Ciencias de la vida", sp:"SP.3",
+  enunciado:'<p>Un grupo de estudiantes cultivó plántulas idénticas bajo cuatro intensidades de luz y midió su altura media a los catorce días. El resto de las condiciones se mantuvo constante.</p>' +
+    '<div class="tabla-wrap"><table class="datos"><caption>Altura media de las plántulas a los catorce días según la intensidad de luz recibida.</caption>' +
+    '<thead><tr><th scope="col">Intensidad de luz (lux)</th><th scope="col">Altura media (cm)</th></tr></thead>' +
+    '<tbody><tr><th scope="row">0</th><td>2.1</td></tr><tr><th scope="row">500</th><td>5.4</td></tr>' +
+    '<tr><th scope="row">1000</th><td>8.7</td></tr><tr><th scope="row">2000</th><td>8.9</td></tr></tbody></table></div>' +
+    '<p>¿Cuál de estas conclusiones está apoyada por los datos de la tabla?</p>',
+  opciones:[
+    {t:"La altura de las plántulas aumenta de forma constante conforme aumenta la intensidad de luz."},
+    {t:"Por encima de 1000 lux, aumentar la intensidad de luz produce muy poco cambio adicional en la altura.", ok:true},
+    {t:"La luz es el único factor que determina la altura de una plántula."},
+    {t:"Sin luz, las plántulas no llegan a crecer."}
+  ],
+  explicacion:"De 1000 a 2000 lux la altura pasa de 8.7 a 8.9 cm: la respuesta se ha estancado. La primera opción falla porque el aumento no es constante; la tercera afirma algo que este experimento no midió, y la cuarta se contradice con los 2.1 cm de la primera fila.",
+  consejo:"Tres de las cuatro opciones son afirmaciones que suenan razonables. La pregunta no es cuál es verdadera en general, sino cuál se sostiene con estos datos y solo con estos datos. Cuando una opción usa palabras absolutas —«único», «siempre», «nunca»— desconfía."
+},
+{
+  formato:"multiple", dominio:"Ciencias físicas", sp:"SP.2",
+  enunciado:'<p>Dos carritos descansan sobre una superficie horizontal sin rozamiento. Sobre cada uno se aplica la misma fuerza de 12 N. El primer carrito tiene una masa de 2.0 kg y el segundo, de 4.0 kg.</p><p>¿Qué ocurre con la aceleración de cada carrito?</p>',
+  opciones:[
+    {t:"Los dos aceleran igual, porque la fuerza aplicada es la misma."},
+    {t:"El carrito de 4.0 kg acelera más, porque tiene más masa."},
+    {t:"El carrito de 2.0 kg acelera al doble que el otro: 6.0 m/s² frente a 3.0 m/s².", ok:true},
+    {t:"No puede saberse sin conocer la velocidad inicial de cada carrito."}
+  ],
+  explicacion:"De la segunda ley de Newton, a = F/m. Para el primer carrito, 12 N ÷ 2.0 kg = 6.0 m/s²; para el segundo, 12 N ÷ 4.0 kg = 3.0 m/s². Al duplicarse la masa, la aceleración se reduce a la mitad. La velocidad inicial no interviene en el cálculo de la aceleración.",
+  consejo:"En selección múltiple con cálculo, conviene resolver primero y buscar después el resultado entre las opciones. Si empiezas leyendo las cuatro, las opciones equivocadas te empujan hacia razonamientos que no habías considerado."
+},
+{
+  formato:"multiple", dominio:"Ciencias de la Tierra y del espacio", sp:"SP.4",
+  enunciado:'<p>Al datar la roca del fondo oceánico a ambos lados de una dorsal, los geólogos encuentran que la roca más joven está justo en la dorsal y que la edad aumenta de forma simétrica conforme uno se aleja de ella.</p><p>¿Qué explica mejor este patrón?</p>',
+  opciones:[
+    {t:"La roca de la dorsal se ha erosionado más y por eso parece más joven."},
+    {t:"En la dorsal se forma corteza nueva de forma continua, que después se desplaza hacia ambos lados.", ok:true},
+    {t:"Los océanos se llenaron de agua empezando por los bordes de los continentes."},
+    {t:"La roca antigua se hunde en la dorsal y vuelve a salir por los bordes del océano."}
+  ],
+  explicacion:"La simetría del patrón es la clave: si la roca nueva se formara en cualquier otro sitio, las edades no se repartirían igual a los dos lados. La corteza se crea en la dorsal y se aparta de ella en las dos direcciones, lo que es la prueba directa de la expansión del fondo oceánico.",
+  consejo:"El examen suele dar un patrón de datos y pedir el mecanismo que lo produce. Fíjate en el rasgo más llamativo del patrón —aquí, la simetría— y descarta toda explicación que no dé cuenta de él."
+},
+
+/* ---------- Menú desplegable ---------- */
+{
+  formato:"desplegable", dominio:"Ciencias físicas", sp:"SP.1",
+  enunciado:'<p>Completa la explicación del cambio de estado eligiendo la opción correcta en cada menú.</p>',
+  partes:[
+    "Mientras un sólido se está fundiendo, la energía que recibe se emplea en romper las fuerzas que unen sus partículas, de modo que la temperatura de la sustancia ",
+    {aria:"primer menú, sobre la temperatura durante la fusión", ops:["permanece constante","aumenta con rapidez","disminuye poco a poco"], ok:0},
+    " durante todo el proceso. La energía cinética media de las partículas, por su parte, ",
+    {aria:"segundo menú, sobre la energía cinética media durante la fusión", ops:["aumenta al doble","tampoco cambia","se vuelve cero"], ok:1},
+    ", porque la temperatura es precisamente la medida de esa energía."
+  ],
+  explicacion:"Durante un cambio de estado toda la energía suministrada se invierte en separar las partículas, no en acelerarlas. Por eso la temperatura se mantiene en una meseta y la energía cinética media no varía, aunque la sustancia siga absorbiendo calor.",
+  consejo:"Los dos menús estaban encadenados: la segunda respuesta se deduce de la primera, porque temperatura y energía cinética media son la misma idea vista de dos maneras. Cuando una frase tiene dos menús, resuelve primero el que tengas más claro y usa esa decisión para el otro."
+},
+{
+  formato:"desplegable", dominio:"Ciencias de la vida", sp:"SP.6",
+  enunciado:'<p>Completa la descripción del flujo de energía en un ecosistema.</p>',
+  partes:[
+    "En una cadena alimentaria, la energía disponible en cada nivel trófico ",
+    {aria:"primer menú, sobre la energía disponible en cada nivel", ops:["se multiplica por diez","es aproximadamente el diez por ciento de la del nivel anterior","se mantiene igual que en el nivel anterior"], ok:1},
+    ". La mayor parte de la energía restante abandona el sistema en forma de ",
+    {aria:"segundo menú, sobre la forma en que se pierde la energía", ops:["calor","oxígeno","biomasa acumulada"], ok:0},
+    ", y por eso las cadenas alimentarias rara vez tienen más de cuatro o cinco niveles."
+  ],
+  explicacion:"Solo alrededor del diez por ciento de la energía de un nivel se incorpora al siguiente. El resto se disipa como calor en los procesos vitales de cada organismo. Ese desperdicio acumulado es lo que impone el límite práctico al número de niveles.",
+  consejo:"Lee la frase entera con la opción puesta antes de decidir. «Se multiplica por diez» es una expresión que aparece en este tema, pero al leerla dentro de la oración se ve que dice lo contrario de lo que ocurre."
+},
+
+/* ---------- Arrastrar y soltar ---------- */
+{
+  formato:"arrastrar", dominio:"Ciencias de la vida", sp:"SP.6",
+  enunciado:'<p>Clasifica cada organismo en el nivel trófico que le corresponde dentro de un ecosistema de pradera. Las seis fichas tienen sitio.</p>',
+  fichas:[
+    {id:"f1", t:"Hierba", v:"prod"}, {id:"f2", t:"Saltamontes", v:"prim"},
+    {id:"f3", t:"Rana", v:"sec"},    {id:"f4", t:"Hongo del suelo", v:"desc"},
+    {id:"f5", t:"Trébol", v:"prod"}, {id:"f6", t:"Bacteria de la hojarasca", v:"desc"}
+  ],
+  zonas:[
+    {id:"z1", t:"Productores", v:"prod"}, {id:"z2", t:"Consumidores primarios", v:"prim"},
+    {id:"z3", t:"Consumidores secundarios", v:"sec"}, {id:"z4", t:"Descomponedores", v:"desc"}
+  ],
+  explicacion:"La hierba y el trébol fabrican su propio alimento con la luz del sol: son productores. El saltamontes come plantas, así que es consumidor primario, y la rana come saltamontes, lo que la sitúa en el nivel siguiente. El hongo y la bacteria devuelven al suelo la materia de los organismos muertos: son descomponedores, y no ocupan un nivel más alto por ello.",
+  consejo:"Aquí todas las fichas tenían sitio, pero en el examen no siempre es así: a veces sobran fichas y a veces una misma ficha se usa en dos casillas. No des por hecho que la reserva tiene que quedar vacía."
+},
+{
+  formato:"arrastrar", dominio:"Ciencias físicas", sp:"SP.1",
+  enunciado:'<p>Equilibra la ecuación colocando el coeficiente que corresponde a cada casilla. Usa los coeficientes más pequeños posibles. <strong>Sobra una ficha.</strong></p>' +
+    '<p style="font-size:20px;font-weight:700;">☐ H<sub>2</sub> + ☐ O<sub>2</sub> → ☐ H<sub>2</sub>O</p>',
+  fichas:[{id:"c1", t:"1", v:"1"}, {id:"c2", t:"2", v:"2"}, {id:"c3", t:"2", v:"2"}, {id:"c4", t:"3", v:"3"}],
+  zonas:[
+    {id:"zh", t:"Coeficiente de H₂", v:"2", cupo:1},
+    {id:"zo", t:"Coeficiente de O₂", v:"1", cupo:1},
+    {id:"za", t:"Coeficiente de H₂O", v:"2", cupo:1}
+  ],
+  explicacion:"La ecuación equilibrada es 2 H₂ + 1 O₂ → 2 H₂O. A la izquierda hay cuatro átomos de hidrógeno y dos de oxígeno; a la derecha, los mismos. La combinación 4, 2, 4 también cuadra en número de átomos, pero no sería aceptada: el examen exige los coeficientes enteros más pequeños posibles.",
+  consejo:"El aviso de que sobra una ficha es una pista del propio formato: si al terminar te sobra más de una, algo falla en tu reparto. Equilibra siempre empezando por el elemento que aparece en menos compuestos."
+},
+{
+  formato:"arrastrar", dominio:"Ciencias de la Tierra y del espacio", sp:"SP.6",
+  enunciado:'<p>Clasifica cada recurso energético según se reponga o no en una escala de tiempo humana. Las seis fichas tienen sitio.</p>',
+  fichas:[
+    {id:"r1", t:"Carbón", v:"no"}, {id:"r2", t:"Viento", v:"si"},
+    {id:"r3", t:"Gas natural", v:"no"}, {id:"r4", t:"Energía geotérmica", v:"si"},
+    {id:"r5", t:"Uranio", v:"no"}, {id:"r6", t:"Biomasa gestionada", v:"si"}
+  ],
+  zonas:[{id:"s1", t:"Renovables", v:"si"}, {id:"s2", t:"No renovables", v:"no"}],
+  explicacion:"Carbón, gas natural y uranio proceden de depósitos que tardaron millones de años en formarse: consumirlos es agotarlos. El viento y el calor interno de la Tierra están disponibles de forma continua, y la biomasa se repone si se gestiona a un ritmo igual o menor que el de su crecimiento. Nótese que renovable no equivale a limpio: quemar biomasa también libera dióxido de carbono.",
+  consejo:"En este formato conviene colocar primero las fichas de las que estás seguro. Las dudosas se deciden mejor cuando ya ves cuántos huecos quedan y de qué categoría son."
+},
+
+/* ---------- Completar espacios ---------- */
+{
+  formato:"completar", dominio:"Ciencias físicas", sp:"SP.5",
+  enunciado:'<p>Un bloque metálico tiene una masa de 48.0 g y ocupa un volumen de 6.0 cm³.</p><p>Calcula su densidad. Escribe solo el número, con un decimal.</p>',
+  antes:"Densidad =", unidad:"g/cm³", aria:"densidad del bloque, en gramos por centímetro cúbico",
+  resp:8.0, tol:0.05,
+  explicacion:"La densidad es masa dividida entre volumen: 48.0 g ÷ 6.0 cm³ = 8.0 g/cm³. Ese valor es próximo al del hierro, que es de unos 7.9 g/cm³.",
+  consejo:"En el examen la casilla admite solo la cifra. Si escribes «8.0 g/cm³» dentro de la casilla, la respuesta se cuenta como incorrecta aunque el número esté bien. Y el separador decimal es el punto: «8,0» no se acepta."
+},
+{
+  formato:"completar", dominio:"Ciencias de la vida", sp:"SP.8",
+  enunciado:'<p>Se cruzan dos plantas heterocigotas para el color de la flor, Aa × Aa. El alelo A, dominante, produce flor morada, y el alelo a, recesivo, produce flor blanca.</p><p>¿Qué porcentaje de la descendencia se espera que tenga flor blanca? Escribe solo el número, sin el signo de porcentaje.</p>',
+  antes:"Porcentaje esperado =", unidad:"%", aria:"porcentaje de descendencia con flor blanca",
+  resp:25, tol:0.01,
+  explicacion:"El cuadro de Punnett del cruce Aa × Aa da cuatro casillas: AA, Aa, Aa y aa. Solo la última, aa, produce flor blanca, porque el rasgo recesivo necesita las dos copias. Una casilla de cuatro es 0.25, es decir, el 25 %.",
+  consejo:"Cuando el enunciado pide un porcentaje y avisa de que no escribas el signo, hazle caso al pie de la letra: la casilla ya lleva el símbolo fuera. Si tienes que convertir de fracción a porcentaje, multiplica por cien y comprueba que el resultado sea razonable."
+},
+{
+  formato:"completar", dominio:"Ciencias de la Tierra y del espacio", sp:"SP.5",
+  enunciado:'<p>Una placa tectónica se ha desplazado 60 km a lo largo de 3 millones de años, a velocidad constante.</p><p>¿Cuál ha sido su velocidad media en centímetros por año? Escribe solo el número, con un decimal. Recuerda que 1 km equivale a 100 000 cm.</p>',
+  antes:"Velocidad media =", unidad:"cm/año", aria:"velocidad media de la placa, en centímetros por año",
+  resp:2.0, tol:0.05,
+  explicacion:"Primero se convierten los kilómetros: 60 km × 100 000 = 6 000 000 cm. Después se divide entre el tiempo: 6 000 000 cm ÷ 3 000 000 años = 2.0 cm/año. Es un ritmo comparable al que crecen las uñas, y sin embargo basta para abrir un océano en unos cientos de millones de años.",
+  consejo:"Los ítems de completar con conversión de unidades son los que más errores producen por prisa. Haz la conversión en el papel de borrador antes de tocar la casilla, y comprueba que el resultado tenga un tamaño verosímil."
+},
+
+/* ---------- Punto crítico de imagen ---------- */
+{
+  formato:"punto", dominio:"Ciencias de la Tierra y del espacio", sp:"SP.4",
+  enunciado:'<p>La figura muestra el corte de un margen donde una placa oceánica se hunde bajo una placa continental.</p><p>Pulsa la zona donde se espera encontrar volcanes activos en la superficie.</p>',
+  svg:SVG_SUBDUCCION, correcto:"arco",
+  escala:"Corte esquemático. La escala vertical está exagerada y las proporciones no son reales.",
+  explicacion:"Los volcanes de un margen convergente no aparecen en la fosa, sino tierra adentro, sobre la placa que cabalga. La placa que se hunde arrastra agua; esa agua rebaja el punto de fusión del manto que tiene encima y genera magma, que asciende y atraviesa la placa continental a cierta distancia de la fosa. Es lo que ocurre en la cordillera de los Andes.",
+  consejo:"En este formato las zonas sensibles están delimitadas y son pocas. Si pulsas fuera de una de ellas no ocurre nada, y eso no significa que la pregunta esté trabada: significa que hay que pulsar más adentro de la zona marcada."
+},
+{
+  formato:"punto", dominio:"Ciencias físicas", sp:"SP.5",
+  enunciado:'<p>La gráfica muestra la distancia recorrida por un ciclista frente al tiempo.</p><p>Pulsa el tramo en el que el ciclista está detenido.</p>',
+  svg:SVG_GRAFICA, correcto:"t2",
+  explicacion:"En una gráfica de distancia frente a tiempo, la pendiente es la velocidad. El tramo B es horizontal: pasa el tiempo y la distancia no cambia, de modo que la velocidad es cero y el ciclista está detenido. El tramo D tiene poca pendiente, así que el ciclista va despacio, pero se sigue moviendo.",
+  consejo:"El error más frecuente en este ítem es confundir «horizontal» con «lento». Antes de pulsar, pregúntate qué representa cada eje: aquí, una línea plana significa quieto, no despacio."
+}
+];
+
+/* ── Estado ────────────────────────────────────────────────────────────── */
+var cola = [], idx = 0, comprobado = false;
+var fichaSel = null, colocacion = {}, puntoSel = null;
+var segundos = 0, intervalo = null, limite = 0;
+var marcador = {};
+ORDEN_FORMATOS.forEach(function(f){ marcador[f] = {n:0, ok:0}; });
+
+var $ = function(id){ return document.getElementById(id); };
+
+/* ── Construcción de la cola ───────────────────────────────────────────── */
+function armarCola(){
+  var filtro = $("filtro-formato").value;
+  cola = BANCO.filter(function(it){ return filtro === "todos" || it.formato === filtro; });
+  if (filtro === "todos"){
+    cola.sort(function(a,b){
+      return ORDEN_FORMATOS.indexOf(a.formato) - ORDEN_FORMATOS.indexOf(b.formato);
+    });
+  }
+  idx = 0;
+}
+
+/* ── Cronómetro ────────────────────────────────────────────────────────── */
+function pararCrono(){
+  if (intervalo){ clearInterval(intervalo); intervalo = null; }
+}
+function pintarCrono(){
+  var m = Math.floor(segundos / 60), s = segundos % 60;
+  $("crono").textContent = m + ":" + (s < 10 ? "0" : "") + s;
+  $("crono").classList.toggle("apremio", segundos <= 20);
+}
+function arrancarCrono(){
+  pararCrono();
+  limite = parseInt($("modo-crono").value, 10);
+  if (!limite){ $("crono").hidden = true; return; }
+  segundos = limite;
+  $("crono").hidden = false;
+  pintarCrono();
+  intervalo = setInterval(function(){
+    segundos--;
+    if (segundos <= 0){
+      segundos = 0; pintarCrono(); pararCrono();
+      if (!comprobado) comprobar(true);
+      return;
+    }
+    pintarCrono();
+  }, 1000);
+}
+
+/* ── Render del ítem ───────────────────────────────────────────────────── */
+function itemActual(){ return cola[idx]; }
+
+function render(){
+  var it = itemActual();
+  comprobado = false; fichaSel = null; colocacion = {}; puntoSel = null;
+  $("veredicto").innerHTML = "";
+  $("consejo").innerHTML = "";
+  $("btn-comprobar").disabled = false;
+  $("progreso").textContent = "Ítem " + (idx + 1) + " de " + cola.length;
+  $("etiquetas").innerHTML =
+    '<span class="etiqueta">' + FORMATOS[it.formato] + '</span>' +
+    '<span class="etiqueta dominio">' + it.dominio + '</span>' +
+    '<span class="etiqueta dominio">Práctica ' + it.sp + '</span>';
+  $("enunciado").innerHTML = it.enunciado;
+
+  var z = $("zona-item");
+  z.innerHTML = "";
+  if (it.formato === "multiple")    pintarMultiple(z, it);
+  if (it.formato === "desplegable") pintarDesplegable(z, it);
+  if (it.formato === "arrastrar")   pintarArrastrar(z, it);
+  if (it.formato === "completar")   pintarCompletar(z, it);
+  if (it.formato === "punto")       pintarPunto(z, it);
+
+  arrancarCrono();
+  leer("Ítem " + (idx + 1) + " de " + cola.length + ". Formato: " + FORMATOS[it.formato] +
+       ". Dominio: " + it.dominio + ". " + instruccion(it.formato));
+}
+
+function instruccion(f){
+  if (f === "multiple")    return "Elige una de las cuatro opciones y pulsa «Comprobar la respuesta».";
+  if (f === "desplegable") return "Elige una opción en cada menú de la frase.";
+  if (f === "arrastrar")   return "Arrastra cada ficha a su casilla, o pulsa la ficha y después la casilla.";
+  if (f === "completar")   return "Escribe el número en la casilla, con punto decimal y sin unidades.";
+  return "Pulsa una de las zonas marcadas de la figura.";
+}
+
+/* Selección múltiple */
+function pintarMultiple(z, it){
+  var cont = document.createElement("div");
+  cont.className = "opciones";
+  var letras = "ABCD";
+  it.opciones.forEach(function(op, i){
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "opcion";
+    b.setAttribute("aria-pressed", "false");
+    b.innerHTML = '<span class="letra" aria-hidden="true">' + letras[i] + '.</span><span>' + op.t + '</span>';
+    b.addEventListener("click", function(){
+      if (comprobado) return;
+      cont.querySelectorAll("button.opcion").forEach(function(o){ o.setAttribute("aria-pressed","false"); });
+      b.setAttribute("aria-pressed","true");
+      leer("Has elegido la opción " + letras[i] + ": " + op.t);
+    });
+    cont.appendChild(b);
+  });
+  z.appendChild(cont);
+}
+
+/* Menú desplegable */
+function pintarDesplegable(z, it){
+  var p = document.createElement("p");
+  p.className = "frase";
+  it.partes.forEach(function(parte){
+    if (typeof parte === "string"){ p.appendChild(document.createTextNode(parte)); return; }
+    var s = document.createElement("select");
+    s.className = "desplegable";
+    s.setAttribute("aria-label", parte.aria);
+    var vacia = document.createElement("option");
+    vacia.value = ""; vacia.textContent = "Elige…";
+    s.appendChild(vacia);
+    parte.ops.forEach(function(t, i){
+      var o = document.createElement("option");
+      o.value = String(i); o.textContent = t;
+      s.appendChild(o);
+    });
+    s.addEventListener("change", function(){
+      if (s.value !== "") leer("Has elegido: " + parte.ops[parseInt(s.value,10)]);
+    });
+    p.appendChild(s);
+  });
+  z.appendChild(p);
+}
+
+/* Arrastrar y soltar */
+function pintarArrastrar(z, it){
+  it.fichas.forEach(function(f){ colocacion[f.id] = null; });
+  var taller = document.createElement("div");
+  taller.className = "taller";
+  taller.innerHTML =
+    '<div class="reserva-fichas"><h3>Fichas disponibles</h3><div class="monton" id="reserva"></div></div>' +
+    '<div class="zonas" id="zonas"></div>';
+  z.appendChild(taller);
+
+  it.zonas.forEach(function(zn){
+    var d = document.createElement("div");
+    d.className = "zona"; d.dataset.zona = zn.id;
+    d.innerHTML = '<h3>' + zn.t + '</h3><div class="monton"></div>';
+    d.addEventListener("dragover", function(e){ e.preventDefault(); d.classList.add("encima"); });
+    d.addEventListener("dragleave", function(){ d.classList.remove("encima"); });
+    d.addEventListener("drop", function(e){
+      e.preventDefault(); d.classList.remove("encima");
+      soltar(e.dataTransfer.getData("text/plain"), zn.id, it);
+    });
+    d.addEventListener("click", function(){ if (fichaSel) soltar(fichaSel, zn.id, it); });
+    $("zonas").appendChild(d);
+  });
+
+  var res = $("reserva");
+  res.addEventListener("dragover", function(e){ e.preventDefault(); });
+  res.addEventListener("drop", function(e){
+    e.preventDefault(); soltar(e.dataTransfer.getData("text/plain"), null, it);
+  });
+  res.addEventListener("click", function(e){ if (e.target === res && fichaSel) soltar(fichaSel, null, it); });
+
+  repartirFichas(it);
+}
+
+function repartirFichas(it){
+  $("reserva").innerHTML = "";
+  document.querySelectorAll(".zona .monton").forEach(function(m){ m.innerHTML = ""; });
+  it.fichas.forEach(function(f){
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "ficha"; b.textContent = f.t;
+    b.draggable = true; b.dataset.ficha = f.id;
+    b.setAttribute("aria-pressed", fichaSel === f.id ? "true" : "false");
+    b.addEventListener("dragstart", function(e){ e.dataTransfer.setData("text/plain", f.id); });
+    b.addEventListener("click", function(e){
+      e.stopPropagation();
+      if (comprobado) return;
+      if (colocacion[f.id]){ soltar(f.id, null, it); return; }
+      fichaSel = (fichaSel === f.id) ? null : f.id;
+      repartirFichas(it);
+      leer(fichaSel ? ("Ficha seleccionada: " + f.t + ". Pulsa ahora la casilla donde quieres colocarla.")
+                    : "Ninguna ficha seleccionada.");
+    });
+    var destino = colocacion[f.id]
+      ? document.querySelector('.zona[data-zona="' + colocacion[f.id] + '"] .monton')
+      : $("reserva");
+    destino.appendChild(b);
+  });
+}
+
+function soltar(fid, zid, it){
+  if (comprobado || !fid) return;
+  var zn = zid ? it.zonas.filter(function(x){ return x.id === zid; })[0] : null;
+  if (zn && zn.cupo){
+    var dentro = Object.keys(colocacion).filter(function(k){ return colocacion[k] === zid; });
+    if (dentro.length >= zn.cupo && colocacion[fid] !== zid) colocacion[dentro[0]] = null;
+  }
+  colocacion[fid] = zid;
+  fichaSel = null;
+  repartirFichas(it);
+  var puestas = Object.keys(colocacion).filter(function(k){ return colocacion[k]; }).length;
+  var nom = it.fichas.filter(function(f){ return f.id === fid; })[0].t;
+  leer(zn ? ("Has colocado «" + nom + "» en " + zn.t + ". Llevas " + puestas + " de " + it.fichas.length + " fichas colocadas.")
+          : ("Has devuelto «" + nom + "» a la reserva. Llevas " + puestas + " de " + it.fichas.length + " fichas colocadas."));
+}
+
+/* Completar espacios */
+function pintarCompletar(z, it){
+  var d = document.createElement("div");
+  d.className = "linea-hueco";
+  d.innerHTML = '<span>' + it.antes + '</span>' +
+    '<input type="text" inputmode="decimal" class="hueco-num" id="hueco" autocomplete="off">' +
+    '<span class="unidad">' + it.unidad + '</span>';
+  z.appendChild(d);
+  var inp = $("hueco");
+  inp.setAttribute("aria-label", it.aria);
+  inp.addEventListener("keydown", function(e){ if (e.key === "Enter" && !comprobado) comprobar(false); });
+}
+
+/* Punto crítico */
+function pintarPunto(z, it){
+  var d = document.createElement("div");
+  d.className = "marco-svg";
+  d.innerHTML = it.svg + (it.escala ? '<p class="nota-escala">' + it.escala + '</p>' : "");
+  z.appendChild(d);
+  z.querySelectorAll(".punto").forEach(function(g){
+    var elegir = function(){
+      if (comprobado) return;
+      z.querySelectorAll(".punto").forEach(function(o){ o.setAttribute("aria-pressed","false"); });
+      g.setAttribute("aria-pressed","true");
+      puntoSel = g.dataset.punto;
+      leer("Has seleccionado la " + (g.getAttribute("aria-label") || "zona") + ".");
+    };
+    g.addEventListener("click", elegir);
+    g.addEventListener("keydown", function(e){
+      if (e.key === "Enter" || e.key === " " || e.key === "Spacebar"){ e.preventDefault(); elegir(); }
+    });
+  });
+}
+
+/* ── Comprobación ──────────────────────────────────────────────────────── */
+function comprobar(porTiempo){
+  if (comprobado) return;
+  var it = itemActual(), ok = false, sinResponder = false;
+
+  if (it.formato === "multiple"){
+    var bs = $("zona-item").querySelectorAll("button.opcion");
+    var elegida = -1;
+    bs.forEach(function(b, i){ if (b.getAttribute("aria-pressed") === "true") elegida = i; });
+    sinResponder = (elegida === -1);
+    ok = !sinResponder && !!it.opciones[elegida].ok;
+    bs.forEach(function(b, i){
+      if (it.opciones[i].ok) b.classList.add("acierto");
+      else if (i === elegida) b.classList.add("fallo");
+      b.disabled = true;
+    });
+  }
+
+  if (it.formato === "desplegable"){
+    var sels = $("zona-item").querySelectorAll("select.desplegable");
+    var menus = it.partes.filter(function(p){ return typeof p !== "string"; });
+    ok = true; sinResponder = false;
+    sels.forEach(function(s, i){
+      if (s.value === "") sinResponder = true;
+      var bien = (s.value !== "" && parseInt(s.value,10) === menus[i].ok);
+      s.classList.add(bien ? "acierto" : "fallo");
+      s.disabled = true;
+      if (!bien) ok = false;
+    });
+  }
+
+  if (it.formato === "arrastrar"){
+    var puestas = Object.keys(colocacion).filter(function(k){ return colocacion[k]; }).length;
+    sinResponder = (puestas === 0);
+    ok = true;
+    it.zonas.forEach(function(zn){
+      var dentro = it.fichas.filter(function(f){ return colocacion[f.id] === zn.id; });
+      var esperadas = it.fichas.filter(function(f){ return f.v === zn.v; });
+      var bien = dentro.length > 0 &&
+                 dentro.every(function(f){ return f.v === zn.v; }) &&
+                 (zn.cupo ? dentro.length === zn.cupo : dentro.length === esperadas.length);
+      var d = document.querySelector('.zona[data-zona="' + zn.id + '"]');
+      d.classList.add(bien ? "acierto" : "fallo");
+      if (!bien) ok = false;
+    });
+    document.querySelectorAll("button.ficha").forEach(function(b){ b.disabled = true; });
+  }
+
+  if (it.formato === "completar"){
+    var txt = $("hueco").value.trim().replace(",", ".");
+    var val = parseFloat(txt);
+    sinResponder = (txt === "");
+    ok = !sinResponder && !isNaN(val) && Math.abs(val - it.resp) <= it.tol;
+    $("hueco").classList.add(ok ? "acierto" : "fallo");
+    $("hueco").disabled = true;
+  }
+
+  if (it.formato === "punto"){
+    sinResponder = !puntoSel;
+    ok = (puntoSel === it.correcto);
+    $("zona-item").querySelectorAll(".punto").forEach(function(g){
+      if (g.dataset.punto === it.correcto) g.classList.add("acierto");
+      else if (g.dataset.punto === puntoSel) g.classList.add("fallo");
+      g.setAttribute("tabindex", "-1");
+    });
+  }
+
+  comprobado = true;
+  pararCrono();
+  $("btn-comprobar").disabled = true;
+
+  marcador[it.formato].n++;
+  if (ok) marcador[it.formato].ok++;
+  pintarMarcador();
+
+  var cabecera;
+  if (porTiempo && sinResponder) cabecera = "Se acabó el tiempo y el ítem quedó sin responder.";
+  else if (porTiempo)            cabecera = ok ? "Se acabó el tiempo. Lo que tenías marcado era correcto." : "Se acabó el tiempo. Lo que tenías marcado no era correcto.";
+  else if (sinResponder)         cabecera = "No has marcado nada. En el examen, un ítem en blanco cuenta igual que uno mal: contesta siempre.";
+  else                           cabecera = ok ? "Respuesta correcta." : "Respuesta incorrecta.";
+
+  $("veredicto").innerHTML =
+    '<div class="' + (ok ? "caja-ok" : "caja-mal") + '"><p><strong>' + cabecera + '</strong></p><p>' +
+    it.explicacion + '</p></div>';
+  $("consejo").innerHTML =
+    '<div class="caja-tip"><p><strong>Sobre este formato:</strong> ' + it.consejo + '</p></div>';
+
+  leer(cabecera + " " + it.explicacion + " Sobre el formato: " + it.consejo +
+       (idx + 1 < cola.length ? " Pulsa «Ítem siguiente» para continuar." : " Era el último ítem de la serie."));
+}
+
+/* ── Marcador ──────────────────────────────────────────────────────────── */
+function pintarMarcador(){
+  var filas = "";
+  ORDEN_FORMATOS.forEach(function(f){
+    var m = marcador[f];
+    var pct = m.n ? (Math.round(m.ok / m.n * 1000) / 10).toFixed(1) + " %" : "—";
+    filas += '<tr><th scope="row">' + FORMATOS[f] + '</th><td>' + m.n + '</td><td>' + m.ok + '</td><td>' + pct + '</td></tr>';
+  });
+  var tn = 0, tk = 0;
+  ORDEN_FORMATOS.forEach(function(f){ tn += marcador[f].n; tk += marcador[f].ok; });
+  var tp = tn ? (Math.round(tk / tn * 1000) / 10).toFixed(1) + " %" : "—";
+  filas += '<tr><th scope="row">Total</th><td>' + tn + '</td><td>' + tk + '</td><td>' + tp + '</td></tr>';
+  $("marcador").innerHTML = filas;
+}
+
+/* ── Utilidades ────────────────────────────────────────────────────────── */
+function leer(txt){ $("lectura-texto").textContent = txt; }
+
+function siguiente(){
+  if (idx + 1 < cola.length){ idx++; render(); }
+  else {
+    pararCrono();
+    leer("Has terminado la serie de " + cola.length + " ítems. Revisa la tabla de desempeño por formato: " +
+         "el formato con el porcentaje más bajo es el que conviene repasar antes del simulacro. " +
+         "Puedes elegir ese formato en el control «Qué practicar» y empezar de nuevo.");
+    $("progreso").textContent = "Serie terminada";
+  }
+}
+
+function reiniciar(){
+  ORDEN_FORMATOS.forEach(function(f){ marcador[f] = {n:0, ok:0}; });
+  armarCola(); pintarMarcador(); render();
+}
+
+/* ── Arranque ──────────────────────────────────────────────────────────── */
+$("btn-comprobar").addEventListener("click", function(){ comprobar(false); });
+$("btn-siguiente").addEventListener("click", function(){
+  if (!comprobado) { comprobar(false); return; }
+  siguiente();
+});
+$("btn-reiniciar").addEventListener("click", reiniciar);
+$("filtro-formato").addEventListener("change", function(){ armarCola(); render(); });
+$("modo-crono").addEventListener("change", function(){
+  if (!comprobado) arrancarCrono();
+  else { pararCrono(); $("crono").hidden = ($("modo-crono").value === "0"); }
+});
+
+armarCola();
+pintarMarcador();
+render();
+</script>
+</body>
+</html>

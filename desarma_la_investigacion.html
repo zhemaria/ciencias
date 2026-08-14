@@ -1,0 +1,823 @@
+<!doctype html>
+<!--
+  Desarma la investigación (Lección 1.1) · Spanish ASE Science
+  © 2026 José M. Fernández, ABE/ASE Math Master Teacher,
+  Harry S. Truman College — City Colleges of Chicago.
+  Licencia: Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0
+  Internacional (CC BY-NC-SA 4.0) — https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Desarma la investigación</title>
+<meta name="description" content="Tres ejercicios sobre la anatomía de una investigación científica: reconstruir las seis etapas del método, distinguir afirmaciones comprobables de las que no lo son, y diferenciar hipótesis, teoría y ley.">
+<meta name="author" content="José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago">
+<meta name="license" content="CC BY-NC-SA 4.0">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
+<style>
+@charset "utf-8";
+/* ============================================================================
+   Estilos unificados de los interactivos · Spanish ASE Science
+   José M. Fernández, ABE/ASE Math Master Teacher,
+   Harry S. Truman College — City Colleges of Chicago
+   © 2026 · CC BY-NC-SA 4.0
+   https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+   ----------------------------------------------------------------------------
+   CÓMO SE USA
+   Este bloque se copia completo dentro de <style> en cada interactivo, para que
+   el archivo siga siendo autónomo. La clase de unidad va en el <body>:
+       <body class="u4">   → Unidad 4, verde oliva
+   Unidades: u1 verde azulado · u2 gris pizarra · u3 verde · u4 verde oliva
+             u5 rojo anaranjado · u6 azul índigo · u7 violeta · u8 azul
+   Todos los colores de acento cumplen 4,5:1 sobre blanco y admiten texto
+   blanco encima. El ámbar de los avisos usa #5c3900 (10,29:1).
+   ========================================================================== */
+
+/* ── 1. PALETA POR UNIDAD ──────────────────────────────────────────────── */
+:root{
+  --u:#37474f; --u2:#263238; --u-bg:#eceff1;   /* valor por defecto */
+  --texto:#222; --texto-sec:#555; --linea:#e0e0e0;
+  --pagina:#f5f7fa; --papel:#ffffff;
+  --amb:#5c3900; --amb-bg:#fff8e1; --amb-borde:#b45309;
+  --ok:#1b5e20; --ok-bg:#e8f5e9; --mal:#7f1d1d; --mal-bg:#fbe9e7;
+  --radio:12px; --sombra:0 2px 8px rgba(0,0,0,.07);
+}
+body.u1{--u:#00695c;--u2:#004d40;--u-bg:#e0f2f1;}
+body.u2{--u:#37474f;--u2:#263238;--u-bg:#eceff1;}
+body.u3{--u:#1b5e20;--u2:#0f3d13;--u-bg:#e8f5e9;}
+body.u4{--u:#33691e;--u2:#1f4211;--u-bg:#f1f8e9;}
+body.u5{--u:#bf360c;--u2:#8c2708;--u-bg:#fbe9e7;}
+body.u6{--u:#1e3a8a;--u2:#142a63;--u-bg:#e8eaf6;}
+body.u7{--u:#5b21b6;--u2:#40157f;--u-bg:#ede7f6;}
+body.u8{--u:#0d47a1;--u2:#093271;--u-bg:#e3f2fd;}
+
+/* ── 2. BASE ───────────────────────────────────────────────────────────── */
+*{box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;margin:0;background:var(--pagina);
+  color:var(--texto);line-height:1.55;font-size:16px;}
+.contenedor{max-width:1100px;margin:0 auto;padding:24px;}
+a{color:#0b3d91;}
+h1,h2,h3{line-height:1.3;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+:focus-visible{outline:3px solid var(--u);outline-offset:2px;}
+
+/* ── 3. ENCABEZADO DEL INTERACTIVO ─────────────────────────────────────── */
+header.principal{background:var(--u);background:linear-gradient(135deg,var(--u) 0%,var(--u2) 100%);
+  color:#fff;padding:28px 32px;border-radius:14px;margin-bottom:22px;box-shadow:var(--sombra);}
+header.principal h1{margin:0 0 6px;font-size:26px;font-weight:700;color:#fff;}
+header.principal .meta{font-size:14px;margin:4px 0 0;color:#fff;}
+
+/* ── 4. BLOQUES DE TEXTO ───────────────────────────────────────────────── */
+.tarjeta{background:var(--papel);padding:20px 24px;border-radius:10px;
+  border-left:5px solid var(--u);margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.tarjeta h2{margin-top:0;color:var(--u);font-size:20px;}
+.tarjeta h3{font-size:16px;color:#263238;margin:16px 0 6px;}
+.caja-tip{background:var(--amb-bg);border-left:4px solid var(--amb-borde);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;font-size:15px;}
+.caja-tip strong{color:var(--amb);}
+.caja-ok{background:var(--ok-bg);border-left:5px solid var(--ok);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;}
+.caja-ok strong{color:var(--ok);}
+.caja-mal{background:var(--mal-bg);border-left:5px solid var(--mal);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;}
+.caja-mal strong{color:var(--mal);}
+
+/* ── 5. PANEL DE CONTROLES ─────────────────────────────────────────────── */
+.panel{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:18px 22px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.panel h2{margin:0 0 12px;font-size:18px;color:var(--u);}
+.control{margin-bottom:16px;}
+.control > label{display:block;font-weight:600;font-size:15px;color:#263238;margin-bottom:6px;}
+.control .valor{float:right;font-weight:700;color:var(--u);font-variant-numeric:tabular-nums;}
+.control input[type=range]{width:100%;accent-color:var(--u);height:26px;}
+.control select,.control input[type=number],.control input[type=text]{
+  font-family:inherit;font-size:16px;padding:9px 14px;border-radius:8px;
+  border:1px solid #90a4ae;background:#fff;color:var(--texto);width:100%;max-width:420px;}
+.fila-botones{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;}
+button{font-family:inherit;font-size:15px;font-weight:600;padding:10px 18px;border-radius:8px;
+  border:1px solid transparent;background:var(--u);color:#fff;cursor:pointer;}
+button:hover{background:var(--u2);}
+button.secundario{background:#fff;color:var(--u);border-color:var(--u);}
+button.secundario:hover{background:var(--u-bg);}
+
+/* ── 6. LIENZO / ESCENA ────────────────────────────────────────────────── */
+.escena{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:16px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);overflow-x:auto;}
+
+/* ── 7. LECTURA DEL ESTADO (alternativa textual, siempre visible) ──────── */
+.lectura{background:var(--u-bg);border-left:5px solid var(--u);border-radius:0 8px 8px 0;
+  padding:14px 18px;margin-bottom:22px;font-size:15px;}
+.lectura h2{margin:0 0 8px;font-size:17px;color:var(--u);}
+.lectura p{margin:6px 0;}
+.lectura .dato{font-weight:700;color:var(--u2);font-variant-numeric:tabular-nums;}
+
+/* ── 8. TABLAS (Ally: caption obligatorio y scope en todo th) ──────────── */
+.tabla-wrap{overflow-x:auto;margin-bottom:22px;}
+table.datos{width:100%;border-collapse:collapse;background:var(--papel);border-radius:10px;
+  overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);font-size:15px;}
+table.datos caption{caption-side:top;text-align:left;font-size:14px;color:var(--texto-sec);
+  padding:0 0 8px;font-style:italic;}
+table.datos th,table.datos td{padding:10px 12px;text-align:left;border-bottom:1px solid #eee;}
+table.datos thead th{background:#37474f;color:#fff;font-weight:600;font-size:13px;
+  text-transform:uppercase;letter-spacing:.4px;}
+table.datos tbody th{background:var(--u-bg);color:var(--u2);font-weight:700;}
+table.datos tr:last-child td{border-bottom:none;}
+
+/* ── 9. ACORDEÓN NATIVO ────────────────────────────────────────────────── */
+details.bloque{background:var(--papel);border-radius:var(--radio);margin-bottom:14px;
+  box-shadow:var(--sombra);border-left:5px solid var(--u);overflow:hidden;}
+details.bloque > summary{padding:14px 18px;cursor:pointer;list-style:none;display:flex;
+  gap:10px;align-items:center;background:var(--u-bg);font-weight:600;color:var(--u2);}
+details.bloque > summary::-webkit-details-marker{display:none;}
+details.bloque > summary .chevron{transition:transform .2s;flex-shrink:0;}
+details.bloque[open] > summary .chevron{transform:rotate(90deg);}
+details.bloque .cuerpo{padding:14px 20px 18px;}
+
+/* ── 10. PIE CON LICENCIA ──────────────────────────────────────────────── */
+footer.pie{padding:22px 4px;color:var(--texto-sec);font-size:13px;margin-top:20px;
+  border-top:1px solid #ddd;text-align:center;}
+footer.pie p{margin:5px 0;}
+
+/* ── 11. MOVIMIENTO REDUCIDO ───────────────────────────────────────────── */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;scroll-behavior:auto !important;}
+}
+
+/* ── 12. IMPRESIÓN ─────────────────────────────────────────────────────── */
+@media print{
+  body{background:#fff;}
+  .panel,.escena{page-break-inside:avoid;}
+  details[open] .cuerpo{display:block;}
+}
+
+/* ── 13. NOMBRES RESERVADOS ────────────────────────────────────────────── */
+/* Estas clases pertenecen a la hoja unificada. No las reutilices como
+   clase local en un interactivo: el selector local se sumaría al de aquí y
+   descuadraría el componente. Reservadas:
+   contenedor · sr-only · principal · meta · tarjeta · caja-tip · caja-ok ·
+   caja-mal · panel · control · valor · fila-botones · secundario · escena ·
+   lectura · dato · tabla-wrap · datos · bloque · cuerpo · chevron · pie
+   Para rejillas de cifras usa .cifras, no .datos. */
+
+/* ── PROPIO DE ESTE INTERACTIVO ────────────────────────────────────────── */
+.etiquetas{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+.etiqueta{font-size:13px;font-weight:600;padding:4px 12px;border-radius:999px;
+  background:var(--u-bg);color:var(--u2);border:1px solid var(--u);}
+.etiqueta.suave{background:#fff;color:var(--texto-sec);border-color:#b0bec5;}
+.enunciado{font-size:17px;margin:0 0 16px;}
+.enunciado p{margin:0 0 12px;}
+.barra-estado{display:flex;flex-wrap:wrap;gap:16px;align-items:center;
+  justify-content:space-between;margin-bottom:14px;}
+.progreso{font-size:15px;font-weight:600;color:var(--u2);}
+
+/* Ejercicio 1: fragmentos y ranuras */
+.taller{display:flex;gap:26px;flex-wrap:wrap;align-items:flex-start;}
+.reserva-frag{flex:1 1 300px;background:var(--u-bg);border:1px solid var(--linea);
+  border-radius:var(--radio);padding:14px 16px;}
+.reserva-frag h3{margin:0 0 10px;font-size:15px;color:var(--u2);}
+.monton{display:flex;flex-direction:column;gap:10px;min-height:52px;}
+button.fragmento{display:block;width:100%;text-align:left;font-weight:500;font-size:15px;
+  line-height:1.45;background:#fff;color:var(--texto);border:2px solid var(--u);
+  padding:10px 14px;cursor:grab;white-space:normal;}
+button.fragmento:hover{background:var(--u-bg);}
+button.fragmento[aria-pressed="true"]{background:var(--amb-bg);border-color:var(--amb-borde);
+  outline:3px solid var(--amb-borde);outline-offset:2px;}
+.ranuras{flex:1 1 340px;display:flex;flex-direction:column;gap:10px;}
+.ranura{background:#fff;border:3px dashed #78909c;border-radius:var(--radio);padding:10px 12px;}
+.ranura h3{margin:0 0 6px;font-size:14px;color:var(--u2);text-transform:uppercase;letter-spacing:.4px;}
+.ranura .pista-etapa{display:block;text-transform:none;letter-spacing:0;font-weight:500;
+  font-size:13px;color:var(--texto-sec);margin-top:2px;}
+.ranura.encima{border-style:solid;border-color:var(--u);background:var(--u-bg);}
+.ranura.acierto{border-style:solid;border-color:var(--ok);background:var(--ok-bg);}
+.ranura.fallo{border-style:solid;border-color:var(--mal);background:var(--mal-bg);}
+.reserva-frag.acierto{border:3px solid var(--ok);background:var(--ok-bg);}
+.reserva-frag.fallo{border:3px solid var(--mal);background:var(--mal-bg);}
+
+/* Ejercicios 2 y 3: opciones */
+.opciones{display:flex;flex-wrap:wrap;gap:12px;}
+button.opcion{flex:1 1 220px;text-align:left;font-weight:600;font-size:16px;background:#fff;
+  color:var(--texto);border:2px solid #90a4ae;padding:12px 16px;white-space:normal;}
+button.opcion:hover{background:var(--u-bg);border-color:var(--u);}
+button.opcion[aria-pressed="true"]{background:var(--u-bg);border-color:var(--u);
+  box-shadow:inset 0 0 0 1px var(--u);}
+button.opcion.acierto{border-color:var(--ok);background:var(--ok-bg);}
+button.opcion.fallo{border-color:var(--mal);background:var(--mal-bg);}
+.opciones.columna{flex-direction:column;max-width:820px;}
+.opciones.columna button.opcion{flex:none;font-weight:500;display:flex;gap:12px;align-items:flex-start;}
+button.opcion .letra{font-weight:700;color:var(--u2);flex-shrink:0;}
+.afirmacion{background:var(--papel);border:1px solid var(--linea);border-left:5px solid var(--u);
+  border-radius:0 10px 10px 0;padding:16px 20px;margin-bottom:18px;font-size:19px;line-height:1.5;}
+.paso-dos{margin-top:20px;padding-top:16px;border-top:2px dashed var(--linea);}
+.paso-dos h3{margin:0 0 12px;font-size:16px;color:var(--u);}
+</style>
+</head>
+<body class="u1">
+<div class="contenedor">
+
+<header class="principal">
+  <h1>Desarma la investigación</h1>
+  <p class="meta">Lección 1.1 · Del fenómeno a la hipótesis: la anatomía de una investigación</p>
+  <p class="meta">Unidad 1 · El método científico y el diseño de investigación · Spanish ASE Science</p>
+</header>
+
+<div class="tarjeta">
+  <h2>Qué vas a hacer</h2>
+  <p>Una investigación científica no es una lista de pasos que alguien decidió seguir por costumbre: cada etapa existe porque resuelve un problema concreto. Aquí vas a desmontar investigaciones reales adaptadas, pieza por pieza, para ver qué hace cada parte y por qué el orden importa.</p>
+  <h3>Los tres ejercicios</h3>
+  <p>El primero te da el informe de una investigación con los párrafos revueltos, y tú los colocas en la etapa que les corresponde. El segundo te presenta afirmaciones y te pide decidir cuáles se pueden poner a prueba y cuáles no, y cómo se reformulan las que no. El tercero distingue tres palabras que en la calle se usan como sinónimos y en ciencia significan cosas muy distintas: hipótesis, teoría y ley.</p>
+  <div class="caja-tip">
+    <p><strong>Ten presente:</strong> que una afirmación no sea comprobable no significa que sea falsa ni que carezca de valor. Significa que la ciencia no tiene manera de decidir sobre ella. La frontera que vas a practicar aquí no separa lo verdadero de lo falso, sino lo que se puede someter a prueba de lo que no.</p>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>Controles</h2>
+  <div class="control">
+    <label for="ejercicio">Ejercicio</label>
+    <select id="ejercicio">
+      <option value="etapas">1. Coloca cada párrafo en su etapa</option>
+      <option value="comprobable">2. ¿Comprobable o no comprobable?</option>
+      <option value="categoria">3. ¿Hipótesis, teoría o ley?</option>
+    </select>
+  </div>
+  <div class="fila-botones">
+    <button type="button" id="btn-comprobar">Comprobar la respuesta</button>
+    <button type="button" class="secundario" id="btn-siguiente">Siguiente</button>
+    <button type="button" class="secundario" id="btn-reiniciar">Empezar de nuevo</button>
+  </div>
+</div>
+
+<div class="lectura" id="lectura" aria-live="polite">
+  <h2>Lectura del ejercicio</h2>
+  <p id="lectura-texto">Cargando el primer ejercicio.</p>
+</div>
+
+<div class="escena">
+  <div class="barra-estado">
+    <p class="progreso" id="progreso">Ejercicio 1</p>
+  </div>
+  <div class="etiquetas" id="etiquetas"></div>
+  <div class="enunciado" id="enunciado"></div>
+  <div id="zona-item"></div>
+  <div id="veredicto"></div>
+  <div id="consejo"></div>
+</div>
+
+<div class="tabla-wrap">
+  <table class="datos">
+    <caption>Desempeño en cada uno de los tres ejercicios: cuántos elementos has contestado, cuántos has acertado y en qué proporción.</caption>
+    <thead>
+      <tr>
+        <th scope="col">Ejercicio</th><th scope="col">Contestados</th>
+        <th scope="col">Aciertos</th><th scope="col">Porcentaje</th>
+      </tr>
+    </thead>
+    <tbody id="marcador"></tbody>
+  </table>
+</div>
+
+<details class="bloque">
+  <summary><span class="chevron" aria-hidden="true">▶</span>Las seis etapas y para qué sirve cada una</summary>
+  <div class="cuerpo">
+    <div class="tabla-wrap">
+      <table class="datos">
+        <caption>Las seis etapas de una investigación científica, con la pregunta que responde cada una y el error más frecuente asociado.</caption>
+        <thead>
+          <tr><th scope="col">Etapa</th><th scope="col">Qué responde</th><th scope="col">Error frecuente</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Observación</th><td>¿Qué ocurre, exactamente?</td><td>Colar una explicación dentro de la descripción</td></tr>
+          <tr><th scope="row">Pregunta</th><td>¿Qué quiero averiguar?</td><td>Formularla tan amplia que no pueda responderse</td></tr>
+          <tr><th scope="row">Hipótesis</th><td>¿Qué espero que ocurra y por qué?</td><td>Escribir algo que ningún resultado podría desmentir</td></tr>
+          <tr><th scope="row">Diseño</th><td>¿Cómo lo pongo a prueba?</td><td>Dejar suelta más de una variable</td></tr>
+          <tr><th scope="row">Datos</th><td>¿Qué ocurrió de hecho?</td><td>Mezclar el dato con la interpretación del dato</td></tr>
+          <tr><th scope="row">Conclusión</th><td>¿Qué puedo afirmar ahora, y hasta dónde?</td><td>Afirmar más de lo que los datos sostienen</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <h3>Observación no es lo mismo que interpretación</h3>
+    <p>«Las hojas de la planta están amarillas» es una observación: cualquiera que mire verá lo mismo. «La planta está amarilla porque le falta agua» ya es una interpretación, y podría ser errónea aunque la observación sea impecable. El examen distingue las dos cosas con frecuencia, y el ejercicio primero de esta página también.</p>
+  </div>
+</details>
+
+<details class="bloque">
+  <summary><span class="chevron" aria-hidden="true">▶</span>Hipótesis, teoría y ley: tres palabras que no significan lo mismo</summary>
+  <div class="cuerpo">
+    <div class="tabla-wrap">
+      <table class="datos">
+        <caption>Diferencias entre hipótesis, teoría y ley científica, con un ejemplo de cada una.</caption>
+        <thead>
+          <tr><th scope="col">Término</th><th scope="col">Qué es</th><th scope="col">Ejemplo</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Hipótesis</th>
+            <td>Una respuesta provisional a una pregunta concreta, formulada de manera que un experimento pueda desmentirla. Se suele redactar como «si… entonces…».</td>
+            <td>Si riego las plantas con agua salada, entonces crecerán menos que las regadas con agua dulce.</td></tr>
+          <tr><th scope="row">Teoría</th>
+            <td>Una explicación amplia, sostenida por muchísimas pruebas independientes, que da cuenta de un conjunto grande de fenómenos y permite predecir otros nuevos.</td>
+            <td>La teoría celular: todo ser vivo está formado por células y toda célula procede de otra célula.</td></tr>
+          <tr><th scope="row">Ley</th>
+            <td>La descripción de una regularidad que se cumple siempre en unas condiciones dadas, casi siempre expresable con una relación matemática. Describe lo que ocurre; no explica por qué.</td>
+            <td>La segunda ley de Newton: la fuerza es igual a la masa por la aceleración.</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="caja-tip">
+      <p><strong>El malentendido más caro del examen:</strong> en el habla corriente, «es solo una teoría» significa «es una corazonada». En ciencia significa justo lo contrario. Una teoría no es una hipótesis que aún no ha crecido: es una explicación que ya superó miles de pruebas. Y una teoría no se convierte en ley con el tiempo, porque las dos hacen trabajos distintos: la ley describe la regularidad, la teoría explica su causa.</p>
+    </div>
+  </div>
+</details>
+
+<footer class="pie">
+  <p>Desarma la investigación · Lección 1.1 · Spanish ASE Science · 96 horas</p>
+  <p>José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago</p>
+  <p>© 2026. Esta obra está licenciada bajo <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" rel="license">Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0 Internacional (CC BY-NC-SA 4.0)</a>.</p>
+</footer>
+
+</div>
+<script>
+"use strict";
+
+/* ══════════════════════════════════════════════════════════════════════════
+   DESARMA LA INVESTIGACIÓN · Lección 1.1
+   Sin dependencias externas. Separador decimal: punto.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+var ETAPAS = [
+  {id:"e1", t:"1. Observación", p:"Lo que se ve, sin explicarlo todavía"},
+  {id:"e2", t:"2. Pregunta",    p:"Lo que se quiere averiguar"},
+  {id:"e3", t:"3. Hipótesis",   p:"La respuesta provisional, en forma de «si… entonces…»"},
+  {id:"e4", t:"4. Diseño",      p:"Cómo se pone a prueba"},
+  {id:"e5", t:"5. Datos",       p:"Lo que se midió, sin interpretarlo todavía"},
+  {id:"e6", t:"6. Conclusión",  p:"Qué se puede afirmar ahora, y hasta dónde"}
+];
+
+/* ── Ejercicio 1 · Tres investigaciones ────────────────────────────────── */
+var CASOS = [
+{
+  titulo:"Caso 1 · Biología", dominio:"Ciencias de la vida",
+  intro:"Un agrónomo estudia por qué el maíz del borde del sembrado crece menos que el del centro. Coloca cada párrafo del informe en la etapa que le corresponde. <strong>Uno de los siete párrafos no pertenece al informe y debe quedarse en la reserva.</strong>",
+  frag:[
+    {id:"a1", v:"e1", t:"En el borde del sembrado, junto al camino de tierra, las plantas de maíz son visiblemente más bajas que las del centro del terreno."},
+    {id:"a2", v:"e2", t:"¿Influye en el crecimiento del maíz el polvo que el camino deposita sobre las hojas?"},
+    {id:"a3", v:"e3", t:"Si el polvo cubre las hojas, entonces las plantas recibirán menos luz y crecerán menos que las plantas con las hojas limpias."},
+    {id:"a4", v:"e4", t:"Se cultivan sesenta plantas con el mismo riego, el mismo suelo y la misma temperatura. A treinta se les espolvorea tierra sobre las hojas dos veces por semana; a las otras treinta no se les añade nada."},
+    {id:"a5", v:"e5", t:"A las ocho semanas, las plantas con las hojas cubiertas midieron 94 cm de media y las de hojas limpias, 128 cm."},
+    {id:"a6", v:"e6", t:"Los datos apoyan la hipótesis: la capa de polvo reduce el crecimiento, probablemente porque intercepta parte de la luz que llegaría a la hoja."},
+    {id:"a7", v:"", t:"El maíz es el cultivo más importante de la región y las autoridades deberían pavimentar los caminos rurales cuanto antes."}
+  ],
+  sobra:"El séptimo párrafo es una opinión sobre lo que conviene hacer. Puede ser razonable, pero no es una etapa de la investigación: ningún dato del estudio la respalda ni la desmiente.",
+  explicacion:"Fíjate en la diferencia entre el párrafo de datos y el de conclusión. El de datos dice qué se midió —94 cm frente a 128 cm— y nada más. El de conclusión interpreta esa medida y aventura una causa, y por eso incluye la palabra «probablemente»: el experimento demostró que el polvo reduce el crecimiento, pero no midió directamente la luz que llegó a la hoja."
+},
+{
+  titulo:"Caso 2 · Física", dominio:"Ciencias físicas",
+  intro:"Un grupo de estudiantes investiga qué ocurre con un carrito al rodar sobre distintas superficies. Coloca cada párrafo en su etapa. <strong>Uno de los siete no pertenece al informe.</strong>",
+  frag:[
+    {id:"b1", v:"e1", t:"Una carretilla cargada rueda mucho más lejos por el pasillo de baldosas que por el patio de cemento rugoso, aunque se empuje con la misma fuerza."},
+    {id:"b2", v:"e2", t:"¿Cómo afecta el tipo de superficie a la distancia que recorre un objeto antes de detenerse?"},
+    {id:"b3", v:"e3", t:"Si la superficie es más lisa, entonces el carrito recorrerá una distancia mayor antes de detenerse, porque la fuerza de rozamiento será menor."},
+    {id:"b4", v:"e4", t:"El mismo carrito se suelta siempre desde la misma altura de una rampa y se mide la distancia que recorre sobre cuatro superficies distintas. Cada superficie se prueba diez veces y se calcula la media."},
+    {id:"b5", v:"e5", t:"Distancia media recorrida: 3.8 m sobre vidrio, 2.6 m sobre madera, 1.1 m sobre alfombra y 0.4 m sobre papel de lija."},
+    {id:"b6", v:"e6", t:"Los resultados apoyan la hipótesis: cuanto más rugosa es la superficie, menor es la distancia recorrida, lo que es coherente con una fuerza de rozamiento mayor."},
+    {id:"b7", v:"", t:"El rozamiento es una molestia que los ingenieros deberían eliminar siempre que sea posible."}
+  ],
+  sobra:"El séptimo párrafo es un juicio de valor, y además equivocado: sin rozamiento no habría frenos ni sería posible caminar. Nada en el experimento lo apoya.",
+  explicacion:"Repara en dos detalles del diseño. El primero es que el carrito se suelta siempre desde la misma altura: así llega abajo con la misma velocidad y la única diferencia entre las pruebas es la superficie. El segundo es que cada superficie se prueba diez veces; una sola medida podría salir rara por casualidad, y la media de diez reduce ese riesgo."
+},
+{
+  titulo:"Caso 3 · Tierra y espacio", dominio:"Ciencias de la Tierra y del espacio",
+  intro:"Un equipo del municipio investiga por qué el arroyo baja turbio después de las tormentas. Coloca cada párrafo en su etapa. <strong>Uno de los siete no pertenece al informe.</strong>",
+  frag:[
+    {id:"c1", v:"e1", t:"Después de cada tormenta fuerte, el agua del arroyo que cruza el pueblo baja turbia durante varios días."},
+    {id:"c2", v:"e2", t:"¿Está relacionada la turbidez del arroyo con la cantidad de vegetación que cubre las laderas por donde baja el agua?"},
+    {id:"c3", v:"e3", t:"Si una ladera tiene menos cubierta vegetal, entonces el agua que llegue al arroyo desde esa ladera arrastrará más sedimento."},
+    {id:"c4", v:"e4", t:"Se eligen seis puntos del arroyo: tres al pie de laderas con bosque y tres al pie de laderas sin vegetación. Después de cada lluvia se toma una muestra en cada punto y se mide su turbidez con el mismo aparato."},
+    {id:"c5", v:"e5", t:"Turbidez media tras las lluvias del trimestre: 18 unidades en los puntos con bosque y 76 unidades en los puntos sin vegetación."},
+    {id:"c6", v:"e6", t:"Los datos apoyan la hipótesis: la cubierta vegetal reduce el arrastre de sedimento hacia el arroyo, lo que sugiere que reforestar las laderas desnudas mejoraría la calidad del agua."},
+    {id:"c7", v:"", t:"El agua turbia da mal aspecto al pueblo y ahuyenta a los visitantes."}
+  ],
+  sobra:"El séptimo párrafo habla de una consecuencia estética y económica del problema. Puede ser cierta, pero no forma parte del razonamiento científico: no se observó, no se midió y no se puso a prueba.",
+  explicacion:"Este estudio no es un experimento de laboratorio: nadie taló una ladera para ver qué pasaba. Es un estudio de observación comparada, y por eso su conclusión se expresa con prudencia. Los seis puntos podrían diferir también en la pendiente o en el tipo de suelo, y esas variables no se controlaron."
+}
+];
+
+/* ── Ejercicio 2 · Comprobable o no ────────────────────────────────────── */
+var AFIRMACIONES = [
+{ t:"Las semillas de frijol germinan antes a 25 °C que a 10 °C.", comp:true,
+  exp:"Se puede montar mañana mismo: dos lotes de semillas iguales, dos temperaturas, y se cuenta cuántas germinan cada día. Todo lo que menciona la afirmación se puede medir." },
+{ t:"Las plantas crecen mejor si se les habla con cariño.", comp:false,
+  exp:"Ni «cariño» ni «mejor» están definidos de manera que alguien pueda medirlos. Dos personas honestas podrían mirar la misma planta y discrepar sobre si creció mejor.",
+  ref:["Las plantas expuestas dos horas diarias a un sonido de 60 decibelios crecen más altas que las que se mantienen en silencio.",
+       "Las plantas notan el afecto de quien las cuida.",
+       "Hablarles a las plantas es una costumbre extendida en muchas familias."], refok:0,
+  refexp:"La primera reformulación sustituye «cariño» por algo medible —un sonido de intensidad conocida durante un tiempo conocido— y «mejor» por una medida concreta, la altura. Ya no dice exactamente lo mismo que la frase original, y eso es inevitable: hacer comprobable una afirmación vaga siempre obliga a precisar de qué se está hablando." },
+{ t:"El agua salada se congela a una temperatura más baja que el agua destilada.", comp:true,
+  exp:"Basta un termómetro y dos vasos. Además, la afirmación es lo bastante concreta como para poder salir falsa, que es la verdadera prueba de que algo es comprobable." },
+{ t:"Los perros son mejores mascotas que los gatos.", comp:false,
+  exp:"«Mejor mascota» depende de lo que cada persona busque en un animal. No hay medida posible que zanje la discusión, porque el desacuerdo no es sobre un hecho sino sobre una preferencia.",
+  ref:["Los perros aprenden a responder a una orden nueva en menos intentos que los gatos.",
+       "Los perros quieren más a sus dueños que los gatos.",
+       "Tener perro es más gratificante que tener gato."], refok:0,
+  refexp:"Solo la primera se puede poner a prueba: se define una orden, se cuentan los intentos y se comparan los promedios. Las otras dos siguen apoyadas en palabras —«querer más», «más gratificante»— que nadie sabe cómo medir." },
+{ t:"Una pelota de goma rebota más alto sobre baldosa que sobre alfombra.", comp:true,
+  exp:"Se suelta la pelota desde la misma altura sobre las dos superficies y se mide el rebote. Que el resultado parezca obvio de antemano no le quita nada: una afirmación es comprobable por cómo está formulada, no por lo sorprendente que sea." },
+{ t:"En la casa abandonada del pueblo hay fantasmas.", comp:false,
+  exp:"Si no se encuentra nada, siempre cabrá decir que los fantasmas no quisieron aparecer. Una afirmación que ningún resultado posible podría desmentir queda fuera del alcance de la ciencia.",
+  ref:["La temperatura de las habitaciones de la casa abandonada varía más a lo largo de la noche que la de una casa habitada de tamaño similar.",
+       "Los fantasmas de la casa se manifiestan solo ante quienes creen en ellos.",
+       "La casa abandonada produce una sensación inquietante en quien entra."], refok:0,
+  refexp:"La primera reformulación mide algo que cualquiera puede registrar con un termómetro, y puede salir que no. La segunda es peor que la original, porque se blinda de antemano contra cualquier resultado negativo. La tercera vuelve a depender de una sensación personal." },
+{ t:"Los estudiantes que duermen ocho horas obtienen mejor puntuación en una prueba de memoria que los que duermen cuatro.", comp:true,
+  exp:"Las horas de sueño se cuentan y la puntuación de la prueba es un número. La afirmación señala qué comparar y con qué medida, que es todo lo que hace falta." },
+{ t:"El azul es el color más bonito del cielo.", comp:false,
+  exp:"«Bonito» es un juicio estético. No existe instrumento ni procedimiento que pueda decidir si es verdadero o falso, porque no describe una propiedad del cielo sino una reacción de quien lo mira.",
+  ref:["En una encuesta a doscientas personas, el azul es el color del cielo elegido con más frecuencia como preferido.",
+       "El azul es objetivamente el color más agradable del espectro.",
+       "El cielo es azul porque la atmósfera dispersa más la luz de longitud de onda corta."], refok:0,
+  refexp:"La primera convierte un juicio estético en un hecho sobre lo que responde la gente, que sí se cuenta. La tercera es comprobable y además cierta, pero no es una reformulación de la frase original: responde a otra pregunta, la de por qué el cielo es azul, no la de si es bonito." },
+{ t:"El vinagre disuelve la cáscara de un huevo más rápido que el jugo de limón.", comp:true,
+  exp:"Dos huevos iguales, dos líquidos, el mismo tiempo y una balanza. La afirmación nombra qué se compara y bajo qué criterio, así que puede confirmarse o desmentirse." },
+{ t:"El universo tiene un propósito.", comp:false,
+  exp:"Ninguna medición imaginable haría a la afirmación más o menos probable. Es una cuestión filosófica o religiosa legítima, pero la ciencia no dispone de herramientas para pronunciarse sobre ella.",
+  ref:["La expansión del universo se está acelerando.",
+       "El universo fue diseñado para que apareciera la vida.",
+       "Todo lo que ocurre en el universo sucede por alguna razón."], refok:0,
+  refexp:"Aquí no hay reformulación posible que conserve el sentido original: la primera opción es comprobable, pero ya no habla de propósito. Esa es la lección del ejercicio. Algunas preguntas no se vuelven científicas por reescribirlas mejor; sencillamente pertenecen a otro terreno." },
+{ t:"Las plantas regadas con agua de lluvia crecen más que las regadas con agua del grifo.", comp:true,
+  exp:"Dos grupos de plantas iguales, dos aguas y una regla. Se puede medir y podría salir que no, que es exactamente lo que se le pide a una hipótesis." },
+{ t:"La comida de la cafetería es mala.", comp:false,
+  exp:"«Mala» no está definido. Hasta que no se diga si se habla del sabor, de la temperatura, del valor nutritivo o de la higiene, y con qué medida, no hay nada que poner a prueba.",
+  ref:["Más de la mitad de los estudiantes encuestados califica la comida de la cafetería con 3 o menos en una escala de 1 a 5.",
+       "A casi nadie le gusta la comida de la cafetería.",
+       "La cafetería debería cambiar de proveedor."], refok:0,
+  refexp:"La primera fija tres cosas: a quién se pregunta, qué se pregunta y con qué escala se responde. Ya no es una queja, es una afirmación que la encuesta puede confirmar o desmentir. La segunda sigue siendo vaga —«casi nadie»— y la tercera es una recomendación, no una afirmación sobre hechos." }
+];
+
+/* ── Ejercicio 3 · Hipótesis, teoría o ley ─────────────────────────────── */
+var CATEGORIAS = ["Hipótesis","Teoría","Ley"];
+var ENUNCIADOS = [
+{ t:"Si aumento la concentración de sal del agua, entonces la papa sumergida en ella perderá más masa.", ok:0,
+  exp:"Es una respuesta provisional a una pregunta concreta, escrita en forma de «si… entonces…» y pensada para ponerla a prueba esta misma semana. Eso es una hipótesis." },
+{ t:"Todos los seres vivos están formados por células, y toda célula procede de otra célula anterior.", ok:1,
+  exp:"Es la teoría celular. No es una conjetura pendiente de comprobación: es una explicación general, sostenida por siglo y medio de observaciones independientes, que da cuenta de un enorme conjunto de fenómenos." },
+{ t:"La fuerza neta que actúa sobre un cuerpo es igual a su masa multiplicada por su aceleración.", ok:2,
+  exp:"Es la segunda ley de Newton. Describe con una relación matemática una regularidad que se cumple siempre dentro de sus condiciones de validez, pero no explica por qué la naturaleza se comporta así." },
+{ t:"Si el cable que alimenta la bombilla es más grueso, entonces la bombilla brillará más.", ok:0,
+  exp:"Predicción concreta, comprobable en un rato con un par de cables y un multímetro. Es una hipótesis, y por cierto de las que suelen salir falsas: en un circuito doméstico el grosor del cable apenas cambia el brillo." },
+{ t:"La energía no se crea ni se destruye: solamente se transforma de una forma en otra.", ok:2,
+  exp:"Es el principio de conservación de la energía, una ley. Dice qué ocurre siempre, en cualquier proceso conocido, sin ofrecer una explicación de por qué el universo funciona así." },
+{ t:"Las especies actuales descienden de antepasados comunes y han cambiado a lo largo del tiempo por selección natural.", ok:1,
+  exp:"Es la teoría de la evolución por selección natural: una explicación amplia que reúne pruebas de la genética, la paleontología, la anatomía y la biogeografía, y que además permite predecir hallazgos nuevos." },
+{ t:"En un gas a temperatura constante, la presión y el volumen son inversamente proporcionales.", ok:2,
+  exp:"Es la ley de Boyle. Se expresa con una relación matemática y describe una regularidad; la explicación de por qué ocurre la aporta otra cosa, la teoría cinética de los gases." },
+{ t:"Las placas de la litosfera se desplazan sobre el manto, y ese movimiento explica los terremotos, los volcanes y la formación de las cordilleras.", ok:1,
+  exp:"Es la teoría de la tectónica de placas. Reúne fenómenos que antes parecían inconexos bajo una sola explicación y predice dónde ocurrirán los terremotos y los volcanes." },
+{ t:"Si dejo el patio sin sombra, entonces su suelo se secará antes que el del jardín arbolado.", ok:0,
+  exp:"Una predicción concreta sobre un caso particular, formulada de manera que una medición pueda desmentirla. Es una hipótesis, no una teoría, por mucho que la idea de fondo sea conocida." }
+];
+
+/* ── Estado ────────────────────────────────────────────────────────────── */
+var ejercicio = "etapas";
+var cola = [], idx = 0, comprobado = false, fase = 1;
+var fragSel = null, colocacion = {}, seleccion = -1;
+var marcador = {etapas:{n:0,ok:0}, comprobable:{n:0,ok:0}, categoria:{n:0,ok:0}};
+var NOMBRES = {etapas:"1. Coloca cada párrafo en su etapa",
+               comprobable:"2. ¿Comprobable o no comprobable?",
+               categoria:"3. ¿Hipótesis, teoría o ley?"};
+
+var $ = function(id){ return document.getElementById(id); };
+function leer(t){ $("lectura-texto").textContent = t; }
+
+function armarCola(){
+  ejercicio = $("ejercicio").value;
+  if (ejercicio === "etapas")           cola = CASOS.slice();
+  else if (ejercicio === "comprobable") cola = AFIRMACIONES.slice();
+  else                                  cola = ENUNCIADOS.slice();
+  idx = 0;
+}
+
+/* ── Render ────────────────────────────────────────────────────────────── */
+function render(){
+  comprobado = false; fase = 1; fragSel = null; colocacion = {}; seleccion = -1;
+  $("veredicto").innerHTML = "";
+  $("consejo").innerHTML = "";
+  $("btn-comprobar").disabled = false;
+  $("progreso").textContent = (ejercicio === "etapas" ? "Caso " : "Elemento ") +
+    (idx + 1) + " de " + cola.length;
+  var z = $("zona-item");
+  z.innerHTML = "";
+
+  if (ejercicio === "etapas")      renderEtapas(z);
+  if (ejercicio === "comprobable") renderComprobable(z);
+  if (ejercicio === "categoria")   renderCategoria(z);
+}
+
+/* Ejercicio 1 */
+function renderEtapas(z){
+  var c = cola[idx];
+  c.frag.forEach(function(f){ colocacion[f.id] = null; });
+  $("etiquetas").innerHTML = '<span class="etiqueta">' + c.titulo + '</span>' +
+    '<span class="etiqueta suave">' + c.dominio + '</span>' +
+    '<span class="etiqueta suave">Práctica SP.1</span>';
+  $("enunciado").innerHTML = "<p>" + c.intro + "</p>";
+
+  var taller = document.createElement("div");
+  taller.className = "taller";
+  taller.innerHTML = '<div class="reserva-frag" id="reserva"><h3>Párrafos del informe</h3>' +
+    '<div class="monton" id="monton-reserva"></div></div><div class="ranuras" id="ranuras"></div>';
+  z.appendChild(taller);
+
+  ETAPAS.forEach(function(e){
+    var d = document.createElement("div");
+    d.className = "ranura"; d.dataset.zona = e.id;
+    d.innerHTML = '<h3>' + e.t + '<span class="pista-etapa">' + e.p + '</span></h3><div class="monton"></div>';
+    d.addEventListener("dragover", function(ev){ ev.preventDefault(); d.classList.add("encima"); });
+    d.addEventListener("dragleave", function(){ d.classList.remove("encima"); });
+    d.addEventListener("drop", function(ev){
+      ev.preventDefault(); d.classList.remove("encima");
+      soltar(ev.dataTransfer.getData("text/plain"), e.id);
+    });
+    d.addEventListener("click", function(){ if (fragSel) soltar(fragSel, e.id); });
+    $("ranuras").appendChild(d);
+  });
+
+  var res = $("reserva");
+  res.addEventListener("dragover", function(ev){ ev.preventDefault(); });
+  res.addEventListener("drop", function(ev){
+    ev.preventDefault(); soltar(ev.dataTransfer.getData("text/plain"), null);
+  });
+  res.addEventListener("click", function(ev){
+    if (fragSel && !ev.target.closest("button.fragmento")) soltar(fragSel, null);
+  });
+
+  repartir();
+  leer("Caso " + (idx + 1) + " de " + cola.length + ". " + c.titulo +
+       ". Coloca cada uno de los siete párrafos en su etapa; uno debe quedarse en la reserva. " +
+       "Puedes arrastrar un párrafo, o pulsarlo para seleccionarlo y pulsar después la etapa.");
+}
+
+function repartir(){
+  var c = cola[idx];
+  $("monton-reserva").innerHTML = "";
+  document.querySelectorAll(".ranura .monton").forEach(function(m){ m.innerHTML = ""; });
+  c.frag.forEach(function(f){
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "fragmento"; b.textContent = f.t;
+    b.draggable = true; b.dataset.frag = f.id;
+    b.setAttribute("aria-pressed", fragSel === f.id ? "true" : "false");
+    b.addEventListener("dragstart", function(ev){ ev.dataTransfer.setData("text/plain", f.id); });
+    b.addEventListener("click", function(ev){
+      ev.stopPropagation();
+      if (comprobado) return;
+      if (colocacion[f.id]){ soltar(f.id, null); return; }
+      fragSel = (fragSel === f.id) ? null : f.id;
+      repartir();
+      leer(fragSel ? "Párrafo seleccionado. Pulsa ahora la etapa donde quieres colocarlo, o púlsalo otra vez para soltarlo."
+                   : "Ningún párrafo seleccionado.");
+    });
+    var destino = colocacion[f.id]
+      ? document.querySelector('.ranura[data-zona="' + colocacion[f.id] + '"] .monton')
+      : $("monton-reserva");
+    destino.appendChild(b);
+  });
+}
+
+function soltar(fid, zid){
+  if (comprobado || !fid) return;
+  if (zid){
+    var ocupante = Object.keys(colocacion).filter(function(k){ return colocacion[k] === zid; })[0];
+    if (ocupante && ocupante !== fid) colocacion[ocupante] = null;
+  }
+  colocacion[fid] = zid;
+  fragSel = null;
+  repartir();
+  var puestos = Object.keys(colocacion).filter(function(k){ return colocacion[k]; }).length;
+  var et = zid ? ETAPAS.filter(function(e){ return e.id === zid; })[0].t : null;
+  leer((et ? "Párrafo colocado en " + et + ". " : "Párrafo devuelto a la reserva. ") +
+       "Llevas " + puestos + " de 6 etapas ocupadas.");
+}
+
+/* Ejercicio 2 */
+function renderComprobable(z){
+  var a = cola[idx];
+  $("etiquetas").innerHTML = '<span class="etiqueta">¿Comprobable o no comprobable?</span>' +
+    '<span class="etiqueta suave">Práctica SP.1</span>';
+  $("enunciado").innerHTML = "<p>Lee la afirmación y decide si la ciencia puede ponerla a prueba.</p>";
+  z.innerHTML = '<p class="afirmacion">' + a.t + '</p>' +
+    '<div class="opciones" id="opciones"></div>';
+  ["Sí es comprobable","No es comprobable"].forEach(function(t, i){
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "opcion";
+    b.setAttribute("aria-pressed", "false");
+    b.textContent = t;
+    b.addEventListener("click", function(){
+      if (comprobado) return;
+      $("opciones").querySelectorAll("button").forEach(function(o){ o.setAttribute("aria-pressed","false"); });
+      b.setAttribute("aria-pressed","true");
+      seleccion = i;
+      leer("Has elegido: " + t);
+    });
+    $("opciones").appendChild(b);
+  });
+  leer("Elemento " + (idx + 1) + " de " + cola.length + ". Afirmación: " + a.t +
+       " Decide si es comprobable o no, y pulsa «Comprobar la respuesta».");
+}
+
+function renderReformulacion(){
+  var a = cola[idx];
+  var d = document.createElement("div");
+  d.className = "paso-dos";
+  d.innerHTML = '<h3>Segundo paso: ¿cuál de estas reformulaciones sí se puede poner a prueba?</h3>' +
+    '<div class="opciones columna" id="opciones2"></div>';
+  $("zona-item").appendChild(d);
+  seleccion = -1; fase = 2; comprobado = false;
+  $("btn-comprobar").disabled = false;
+  var letras = "ABC";
+  a.ref.forEach(function(t, i){
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "opcion";
+    b.setAttribute("aria-pressed", "false");
+    b.innerHTML = '<span class="letra" aria-hidden="true">' + letras[i] + '.</span><span>' + t + '</span>';
+    b.addEventListener("click", function(){
+      if (comprobado) return;
+      $("opciones2").querySelectorAll("button").forEach(function(o){ o.setAttribute("aria-pressed","false"); });
+      b.setAttribute("aria-pressed","true");
+      seleccion = i;
+      leer("Has elegido la reformulación " + letras[i] + ".");
+    });
+    $("opciones2").appendChild(b);
+  });
+}
+
+/* Ejercicio 3 */
+function renderCategoria(z){
+  var e = cola[idx];
+  $("etiquetas").innerHTML = '<span class="etiqueta">¿Hipótesis, teoría o ley?</span>' +
+    '<span class="etiqueta suave">Práctica SP.1</span>';
+  $("enunciado").innerHTML = "<p>Lee el enunciado y decide en cuál de las tres categorías encaja.</p>";
+  z.innerHTML = '<p class="afirmacion">' + e.t + '</p><div class="opciones" id="opciones"></div>';
+  CATEGORIAS.forEach(function(t, i){
+    var b = document.createElement("button");
+    b.type = "button"; b.className = "opcion";
+    b.setAttribute("aria-pressed", "false");
+    b.textContent = t;
+    b.addEventListener("click", function(){
+      if (comprobado) return;
+      $("opciones").querySelectorAll("button").forEach(function(o){ o.setAttribute("aria-pressed","false"); });
+      b.setAttribute("aria-pressed","true");
+      seleccion = i;
+      leer("Has elegido: " + t);
+    });
+    $("opciones").appendChild(b);
+  });
+  leer("Elemento " + (idx + 1) + " de " + cola.length + ". Enunciado: " + e.t +
+       " Elige entre hipótesis, teoría o ley.");
+}
+
+/* ── Comprobación ──────────────────────────────────────────────────────── */
+function comprobar(){
+  if (comprobado) return;
+  if (ejercicio === "etapas")      return comprobarEtapas();
+  if (ejercicio === "comprobable") return comprobarComprobable();
+  return comprobarCategoria();
+}
+
+function comprobarEtapas(){
+  var c = cola[idx], ok = true;
+  ETAPAS.forEach(function(e){
+    var dentro = c.frag.filter(function(f){ return colocacion[f.id] === e.id; })[0];
+    var bien = !!dentro && dentro.v === e.id;
+    var d = document.querySelector('.ranura[data-zona="' + e.id + '"]');
+    d.classList.add(bien ? "acierto" : "fallo");
+    if (!bien) ok = false;
+  });
+  var enReserva = c.frag.filter(function(f){ return !colocacion[f.id]; });
+  var reservaBien = (enReserva.length === 1 && enReserva[0].v === "");
+  $("reserva").classList.add(reservaBien ? "acierto" : "fallo");
+  if (!reservaBien) ok = false;
+  document.querySelectorAll("button.fragmento").forEach(function(b){ b.disabled = true; });
+
+  cerrar(ok, ok ? "Reconstrucción correcta." : "La reconstrucción tiene errores.",
+    c.explicacion + " " + c.sobra,
+    ok ? "" : "Repasa las casillas marcadas en rojo. Si dudaste entre datos y conclusión, la regla es simple: si la frase contiene una explicación o una causa, ya no es un dato.");
+}
+
+function comprobarComprobable(){
+  var a = cola[idx];
+  if (fase === 1){
+    var correcta = a.comp ? 0 : 1;
+    var ok = (seleccion === correcta);
+    $("opciones").querySelectorAll("button").forEach(function(b, i){
+      if (i === correcta) b.classList.add("acierto");
+      else if (i === seleccion) b.classList.add("fallo");
+      b.disabled = true;
+    });
+    if (ok && !a.comp){
+      /* acierto en una no comprobable: se abre el segundo paso antes de puntuar */
+      $("veredicto").innerHTML = '<div class="caja-ok"><p><strong>Correcto: no es comprobable.</strong></p><p>' +
+        a.exp + '</p></div>';
+      comprobado = true;
+      renderReformulacion();
+      leer("Correcto: no es comprobable. " + a.exp +
+           " Ahora elige cuál de las tres reformulaciones sí se puede poner a prueba.");
+      return;
+    }
+    marcar(ok);
+    var extra = a.comp ? "" : (" La reformulación que sí funciona sería: «" + a.ref[a.refok] + "»");
+    cerrar(ok, ok ? "Respuesta correcta." : "Respuesta incorrecta.", a.exp + extra, "");
+    return;
+  }
+  /* fase 2: reformulación */
+  var ok2 = (seleccion === a.refok);
+  var letras = "ABC";
+  $("opciones2").querySelectorAll("button").forEach(function(b, i){
+    if (i === a.refok) b.classList.add("acierto");
+    else if (i === seleccion) b.classList.add("fallo");
+    b.disabled = true;
+  });
+  marcar(ok2);
+  comprobado = true;
+  $("btn-comprobar").disabled = true;
+  $("veredicto").innerHTML = '<div class="' + (ok2 ? "caja-ok" : "caja-mal") + '"><p><strong>' +
+    (ok2 ? "Reformulación correcta." : "Esa reformulación no resuelve el problema.") +
+    '</strong></p><p>' + a.refexp + '</p></div>';
+  leer((ok2 ? "Reformulación correcta. " : "Reformulación incorrecta. La buena era la " +
+       letras[a.refok] + ". ") + a.refexp + " Pulsa «Siguiente» para continuar.");
+}
+
+function comprobarCategoria(){
+  var e = cola[idx];
+  var ok = (seleccion === e.ok);
+  $("opciones").querySelectorAll("button").forEach(function(b, i){
+    if (i === e.ok) b.classList.add("acierto");
+    else if (i === seleccion) b.classList.add("fallo");
+    b.disabled = true;
+  });
+  marcar(ok);
+  cerrar(ok, ok ? "Respuesta correcta." : "Respuesta incorrecta. Era " + CATEGORIAS[e.ok].toLowerCase() + ".",
+    e.exp, "");
+}
+
+function marcar(ok){
+  marcador[ejercicio].n++;
+  if (ok) marcador[ejercicio].ok++;
+  pintarMarcador();
+}
+
+function cerrar(ok, cabecera, cuerpo, consejo){
+  if (ejercicio === "etapas") marcar(ok);
+  comprobado = true;
+  $("btn-comprobar").disabled = true;
+  $("veredicto").innerHTML = '<div class="' + (ok ? "caja-ok" : "caja-mal") +
+    '"><p><strong>' + cabecera + '</strong></p><p>' + cuerpo + '</p></div>';
+  $("consejo").innerHTML = consejo
+    ? '<div class="caja-tip"><p><strong>Para la próxima:</strong> ' + consejo + '</p></div>' : "";
+  leer(cabecera + " " + cuerpo + " " + consejo +
+       (idx + 1 < cola.length ? " Pulsa «Siguiente» para continuar." : " Era el último elemento del ejercicio."));
+}
+
+/* ── Marcador ──────────────────────────────────────────────────────────── */
+function pintarMarcador(){
+  var filas = "", tn = 0, tk = 0;
+  ["etapas","comprobable","categoria"].forEach(function(k){
+    var m = marcador[k];
+    tn += m.n; tk += m.ok;
+    var pct = m.n ? (Math.round(m.ok / m.n * 1000) / 10).toFixed(1) + " %" : "—";
+    filas += '<tr><th scope="row">' + NOMBRES[k] + '</th><td>' + m.n + '</td><td>' + m.ok +
+             '</td><td>' + pct + '</td></tr>';
+  });
+  var tp = tn ? (Math.round(tk / tn * 1000) / 10).toFixed(1) + " %" : "—";
+  filas += '<tr><th scope="row">Total</th><td>' + tn + '</td><td>' + tk + '</td><td>' + tp + '</td></tr>';
+  $("marcador").innerHTML = filas;
+}
+
+/* ── Navegación ────────────────────────────────────────────────────────── */
+function siguiente(){
+  if (idx + 1 < cola.length){ idx++; render(); }
+  else {
+    $("progreso").textContent = "Ejercicio terminado";
+    leer("Has terminado este ejercicio. Puedes elegir otro en el control «Ejercicio», " +
+         "o repetir este desde «Empezar de nuevo». La tabla de desempeño conserva tus resultados.");
+  }
+}
+
+$("btn-comprobar").addEventListener("click", comprobar);
+$("btn-siguiente").addEventListener("click", function(){
+  if (!comprobado) { comprobar(); return; }
+  siguiente();
+});
+$("btn-reiniciar").addEventListener("click", function(){
+  marcador = {etapas:{n:0,ok:0}, comprobable:{n:0,ok:0}, categoria:{n:0,ok:0}};
+  armarCola(); pintarMarcador(); render();
+});
+$("ejercicio").addEventListener("change", function(){ armarCola(); render(); });
+
+armarCola();
+pintarMarcador();
+render();
+</script>
+</body>
+</html>
