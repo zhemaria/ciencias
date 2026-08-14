@@ -1,0 +1,585 @@
+<!doctype html>
+<!--
+  Hot spot anatómico (Lección 3.3) · Spanish ASE Science
+  © 2026 José M. Fernández, ABE/ASE Math Master Teacher,
+  Harry S. Truman College — City Colleges of Chicago.
+  Licencia: Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0
+  Internacional (CC BY-NC-SA 4.0) — https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hot spot anatómico</title>
+<meta name="description" content="Entrenador del formato de ítem hot spot sobre modelos anatómicos: se plantea una función y el estudiante marca la estructura responsable sobre el diagrama, sin opciones que sirvan de pista.">
+<meta name="author" content="José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago">
+<meta name="license" content="CC BY-NC-SA 4.0">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
+<style>
+@charset "utf-8";
+/* ============================================================================
+   Estilos unificados de los interactivos · Spanish ASE Science
+   José M. Fernández, ABE/ASE Math Master Teacher,
+   Harry S. Truman College — City Colleges of Chicago
+   © 2026 · CC BY-NC-SA 4.0
+   https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+   ----------------------------------------------------------------------------
+   CÓMO SE USA
+   Este bloque se copia completo dentro de <style> en cada interactivo, para que
+   el archivo siga siendo autónomo. La clase de unidad va en el <body>:
+       <body class="u4">   → Unidad 4, verde oliva
+   Unidades: u1 verde azulado · u2 gris pizarra · u3 verde · u4 verde oliva
+             u5 rojo anaranjado · u6 azul índigo · u7 violeta · u8 azul
+   Todos los colores de acento cumplen 4,5:1 sobre blanco y admiten texto
+   blanco encima. El ámbar de los avisos usa #5c3900 (10,29:1).
+   ========================================================================== */
+
+/* ── 1. PALETA POR UNIDAD ──────────────────────────────────────────────── */
+:root{
+  --u:#37474f; --u2:#263238; --u-bg:#eceff1;   /* valor por defecto */
+  --texto:#222; --texto-sec:#555; --linea:#e0e0e0;
+  --pagina:#f5f7fa; --papel:#ffffff;
+  --amb:#5c3900; --amb-bg:#fff8e1; --amb-borde:#b45309;
+  --ok:#1b5e20; --ok-bg:#e8f5e9; --mal:#7f1d1d; --mal-bg:#fbe9e7;
+  --radio:12px; --sombra:0 2px 8px rgba(0,0,0,.07);
+}
+body.u1{--u:#00695c;--u2:#004d40;--u-bg:#e0f2f1;}
+body.u2{--u:#37474f;--u2:#263238;--u-bg:#eceff1;}
+body.u3{--u:#1b5e20;--u2:#0f3d13;--u-bg:#e8f5e9;}
+body.u4{--u:#33691e;--u2:#1f4211;--u-bg:#f1f8e9;}
+body.u5{--u:#bf360c;--u2:#8c2708;--u-bg:#fbe9e7;}
+body.u6{--u:#1e3a8a;--u2:#142a63;--u-bg:#e8eaf6;}
+body.u7{--u:#5b21b6;--u2:#40157f;--u-bg:#ede7f6;}
+body.u8{--u:#0d47a1;--u2:#093271;--u-bg:#e3f2fd;}
+
+/* ── 2. BASE ───────────────────────────────────────────────────────────── */
+*{box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;margin:0;background:var(--pagina);
+  color:var(--texto);line-height:1.55;font-size:16px;}
+.contenedor{max-width:1100px;margin:0 auto;padding:24px;}
+a{color:#0b3d91;}
+h1,h2,h3{line-height:1.3;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+:focus-visible{outline:3px solid var(--u);outline-offset:2px;}
+
+/* ── 3. ENCABEZADO DEL INTERACTIVO ─────────────────────────────────────── */
+header.principal{background:var(--u);background:linear-gradient(135deg,var(--u) 0%,var(--u2) 100%);
+  color:#fff;padding:28px 32px;border-radius:14px;margin-bottom:22px;box-shadow:var(--sombra);}
+header.principal h1{margin:0 0 6px;font-size:26px;font-weight:700;color:#fff;}
+header.principal .meta{font-size:14px;margin:4px 0 0;color:#fff;}
+
+/* ── 4. BLOQUES DE TEXTO ───────────────────────────────────────────────── */
+.tarjeta{background:var(--papel);padding:20px 24px;border-radius:10px;
+  border-left:5px solid var(--u);margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.tarjeta h2{margin-top:0;color:var(--u);font-size:20px;}
+.tarjeta h3{font-size:16px;color:#263238;margin:16px 0 6px;}
+.caja-tip{background:var(--amb-bg);border-left:4px solid var(--amb-borde);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;font-size:15px;}
+.caja-tip strong{color:var(--amb);}
+.caja-ok{background:var(--ok-bg);border-left:5px solid var(--ok);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;}
+.caja-ok strong{color:var(--ok);}
+.caja-mal{background:var(--mal-bg);border-left:5px solid var(--mal);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;}
+.caja-mal strong{color:var(--mal);}
+
+/* ── 5. PANEL DE CONTROLES ─────────────────────────────────────────────── */
+.panel{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:18px 22px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.panel h2{margin:0 0 12px;font-size:18px;color:var(--u);}
+.control{margin-bottom:16px;}
+.control > label{display:block;font-weight:600;font-size:15px;color:#263238;margin-bottom:6px;}
+.control .valor{float:right;font-weight:700;color:var(--u);font-variant-numeric:tabular-nums;}
+.control input[type=range]{width:100%;accent-color:var(--u);height:26px;}
+.control select,.control input[type=number],.control input[type=text]{
+  font-family:inherit;font-size:16px;padding:9px 14px;border-radius:8px;
+  border:1px solid #90a4ae;background:#fff;color:var(--texto);width:100%;max-width:420px;}
+.fila-botones{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;}
+button{font-family:inherit;font-size:15px;font-weight:600;padding:10px 18px;border-radius:8px;
+  border:1px solid transparent;background:var(--u);color:#fff;cursor:pointer;}
+button:hover{background:var(--u2);}
+button.secundario{background:#fff;color:var(--u);border-color:var(--u);}
+button.secundario:hover{background:var(--u-bg);}
+
+/* ── 6. LIENZO / ESCENA ────────────────────────────────────────────────── */
+.escena{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:16px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);overflow-x:auto;}
+
+/* ── 7. LECTURA DEL ESTADO (alternativa textual, siempre visible) ──────── */
+.lectura{background:var(--u-bg);border-left:5px solid var(--u);border-radius:0 8px 8px 0;
+  padding:14px 18px;margin-bottom:22px;font-size:15px;}
+.lectura h2{margin:0 0 8px;font-size:17px;color:var(--u);}
+.lectura p{margin:6px 0;}
+.lectura .dato{font-weight:700;color:var(--u2);font-variant-numeric:tabular-nums;}
+
+/* ── 8. TABLAS (Ally: caption obligatorio y scope en todo th) ──────────── */
+.tabla-wrap{overflow-x:auto;margin-bottom:22px;}
+table.datos{width:100%;border-collapse:collapse;background:var(--papel);border-radius:10px;
+  overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);font-size:15px;}
+table.datos caption{caption-side:top;text-align:left;font-size:14px;color:var(--texto-sec);
+  padding:0 0 8px;font-style:italic;}
+table.datos th,table.datos td{padding:10px 12px;text-align:left;border-bottom:1px solid #eee;}
+table.datos thead th{background:#37474f;color:#fff;font-weight:600;font-size:13px;
+  text-transform:uppercase;letter-spacing:.4px;}
+table.datos tbody th{background:var(--u-bg);color:var(--u2);font-weight:700;}
+table.datos tr:last-child td{border-bottom:none;}
+
+/* ── 9. ACORDEÓN NATIVO ────────────────────────────────────────────────── */
+details.bloque{background:var(--papel);border-radius:var(--radio);margin-bottom:14px;
+  box-shadow:var(--sombra);border-left:5px solid var(--u);overflow:hidden;}
+details.bloque > summary{padding:14px 18px;cursor:pointer;list-style:none;display:flex;
+  gap:10px;align-items:center;background:var(--u-bg);font-weight:600;color:var(--u2);}
+details.bloque > summary::-webkit-details-marker{display:none;}
+details.bloque > summary .chevron{transition:transform .2s;flex-shrink:0;}
+details.bloque[open] > summary .chevron{transform:rotate(90deg);}
+details.bloque .cuerpo{padding:14px 20px 18px;}
+
+/* ── 10. PIE CON LICENCIA ──────────────────────────────────────────────── */
+footer.pie{padding:22px 4px;color:var(--texto-sec);font-size:13px;margin-top:20px;
+  border-top:1px solid #ddd;text-align:center;}
+footer.pie p{margin:5px 0;}
+
+/* ── 11. MOVIMIENTO REDUCIDO ───────────────────────────────────────────── */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;scroll-behavior:auto !important;}
+}
+
+/* ── 12. IMPRESIÓN ─────────────────────────────────────────────────────── */
+@media print{
+  body{background:#fff;}
+  .panel,.escena{page-break-inside:avoid;}
+  details[open] .cuerpo{display:block;}
+}
+
+/* ── 13. NOMBRES RESERVADOS ────────────────────────────────────────────── */
+/* Estas clases pertenecen a la hoja unificada. No las reutilices como
+   clase local en un interactivo: el selector local se sumaría al de aquí y
+   descuadraría el componente. Reservadas:
+   contenedor · sr-only · principal · meta · tarjeta · caja-tip · caja-ok ·
+   caja-mal · panel · control · valor · fila-botones · secundario · escena ·
+   lectura · dato · tabla-wrap · datos · bloque · cuerpo · chevron · pie
+   Para rejillas de cifras usa .cifras, no .datos. */
+
+/* ── PROPIO DE ESTE INTERACTIVO ────────────────────────────────────────── */
+.etiquetas{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+.etiqueta{font-size:13px;font-weight:600;padding:4px 12px;border-radius:999px;
+  background:var(--u-bg);color:var(--u2);border:1px solid var(--u);}
+.etiqueta.suave{background:#fff;color:var(--texto-sec);border-color:#b0bec5;}
+.progreso{font-size:15px;font-weight:600;color:var(--u2);margin:0 0 14px;}
+.enunciado{font-size:17px;margin:0 0 16px;}
+
+.consigna{background:var(--papel);border:1px solid var(--linea);border-left:5px solid var(--u);
+  border-radius:0 10px 10px 0;padding:16px 20px;margin-bottom:16px;font-size:19px;line-height:1.55;}
+.consigna strong{color:var(--u);}
+
+.marco-svg{overflow-x:auto;}
+.marco-svg svg{display:block;margin:0 auto;width:100%;height:auto;max-height:60vh;}
+.diana{cursor:pointer;}
+.diana .zona{fill:#ffffff;fill-opacity:0;stroke:none;transition:fill-opacity .2s;}
+.diana:hover .zona{fill:#0d47a1;fill-opacity:.18;}
+.diana:focus-visible{outline:none;}
+.diana:focus-visible .zona{fill-opacity:.20;stroke:#5c3900;stroke-width:4;stroke-dasharray:6 4;}
+.diana[aria-pressed="true"] .zona{fill:#0d47a1;fill-opacity:.28;stroke:#0d47a1;stroke-width:4;}
+.diana.acierto .zona{fill:#1b5e20;fill-opacity:.30;stroke:#1b5e20;stroke-width:4;}
+.diana.fallo .zona{fill:#7f1d1d;fill-opacity:.28;stroke:#7f1d1d;stroke-width:4;}
+.rot-organo{font-size:14px;font-weight:700;fill:#263238;text-anchor:middle;pointer-events:none;}
+.rot-chico{font-size:12px;fill:#455a64;text-anchor:middle;pointer-events:none;}
+.pista-mapa{font-size:14px;color:var(--texto-sec);margin:10px 0 0;font-style:italic;}
+
+.listado{margin-top:14px;}
+.listado h3{font-size:16px;color:var(--u);margin:0 0 8px;}
+.listado ul{margin:0;padding-left:20px;font-size:15px;}
+.listado li{margin-bottom:4px;}
+.cifras{display:flex;flex-wrap:wrap;gap:12px;margin:12px 0 0;}
+.cifras div{flex:1 1 190px;background:var(--u-bg);border-radius:8px;padding:10px 14px;font-size:14px;}
+.cifras .rot{display:block;font-size:13px;color:var(--texto-sec);}
+.cifras b{color:var(--u2);font-size:19px;font-variant-numeric:tabular-nums;}
+</style>
+</head>
+<body class="u3">
+<div class="contenedor">
+
+<header class="principal">
+  <h1>Hot spot anatómico</h1>
+  <p class="meta">Lección 3.3 · Sistemas del cuerpo humano, homeostasis y salud</p>
+  <p class="meta">Unidad 3 · Ciencias de la vida I: célula, energía y cuerpo humano · Spanish ASE Science</p>
+</header>
+
+<div class="tarjeta">
+  <h2>Qué vas a hacer</h2>
+  <p>En un ítem de punto crítico no hay cuatro opciones entre las que elegir. Se plantea una función y hay que señalarla directamente sobre el diagrama, sin nada que sirva de pista. Es de los formatos que más aparece en el examen y el que menos se practica, precisamente porque no admite el atajo de descartar opciones absurdas.</p>
+  <div class="caja-tip">
+    <p><strong>Cómo se responde:</strong> lee la consigna dos veces antes de pulsar. La mayoría de los fallos no vienen de no saber anatomía, sino de marcar el órgano que se parece a la respuesta: el corazón cuando preguntan por el pulmón, el estómago cuando preguntan por el intestino delgado. Y si pulsas y no ocurre nada, no es que la pregunta esté trabada: es que la zona sensible está un poco más adentro.</p>
+  </div>
+</div>
+
+<div class="panel">
+  <h2>Controles</h2>
+  <div class="control">
+    <label for="mapa">Diagrama</label>
+    <select id="mapa">
+      <option value="todos">Todos los diagramas, en orden</option>
+      <option value="torso">Solo el torso: sistemas circulatorio, respiratorio y digestivo</option>
+      <option value="corazon">Solo el corazón y la circulación</option>
+      <option value="lazo">Solo el lazo de retroalimentación</option>
+    </select>
+  </div>
+  <div class="fila-botones">
+    <button type="button" id="btn-comprobar">Comprobar</button>
+    <button type="button" class="secundario" id="btn-siguiente">Siguiente</button>
+    <button type="button" class="secundario" id="btn-reiniciar">Empezar de nuevo</button>
+    <button type="button" class="secundario" id="btn-rotulos">Mostrar los rótulos</button>
+  </div>
+</div>
+
+<div class="lectura" id="lectura" aria-live="polite">
+  <h2>Lectura del ejercicio</h2>
+  <p id="lectura-texto">Cargando el primer diagrama.</p>
+</div>
+
+<div class="escena">
+  <p class="progreso" id="progreso"></p>
+  <div class="etiquetas" id="etiquetas"></div>
+  <div class="enunciado" id="enunciado"></div>
+  <div id="zona-item"></div>
+  <div id="veredicto"></div>
+</div>
+
+<div class="tabla-wrap">
+  <table class="datos">
+    <caption>Desempeño por diagrama. Este formato no permite descartar opciones, de modo que el porcentaje refleja conocimiento anatómico y no habilidad para eliminar distractores.</caption>
+    <thead>
+      <tr><th scope="col">Diagrama</th><th scope="col">Contestados</th><th scope="col">Aciertos</th><th scope="col">Porcentaje</th></tr>
+    </thead>
+    <tbody id="marcador"></tbody>
+  </table>
+</div>
+
+<details class="bloque">
+  <summary><span class="chevron" aria-hidden="true">▶</span>El formato de punto crítico en el examen</summary>
+  <div class="cuerpo">
+    <h3>Cómo funciona</h3>
+    <p>La pantalla muestra una imagen con zonas sensibles delimitadas de antemano. Al pulsar dentro de una de ellas, queda marcada; al pulsar fuera, no ocurre nada. Se puede cambiar la selección tantas veces como haga falta antes de pasar a la pregunta siguiente, y en algunos ítems se pide marcar más de una zona.</p>
+    <h3>Por qué es más difícil de lo que parece</h3>
+    <p>En un ítem de selección múltiple, dos de las cuatro opciones suelen ser descartables sin saber nada, así que el estudiante que duda entre las otras dos tiene un cincuenta por ciento. Aquí no hay nada que descartar: o se sabe dónde está la estructura, o no. Por eso conviene practicar sobre diagramas mudos y no sobre diagramas rotulados, que es lo que hace este entrenador.</p>
+    <h3>Con el teclado</h3>
+    <p>La tecla de tabulación recorre las zonas sensibles una por una y la barra espaciadora selecciona la que esté enfocada. Merece la pena probarlo aunque uses el ratón: recorrer las zonas con el tabulador es una manera rápida de comprobar cuántas hay antes de decidir.</p>
+    <div class="caja-tip">
+      <p><strong>Un consejo que vale puntos:</strong> el botón «Mostrar los rótulos» de esta página está para estudiar, no para responder. Úsalo la primera vez que recorras un diagrama, y después contesta con los rótulos ocultos. Si solo practicas con las etiquetas puestas, el día del examen te faltará justamente lo que no practicaste.</p>
+    </div>
+  </div>
+</details>
+
+<footer class="pie">
+  <p>Hot spot anatómico · Lección 3.3 · Spanish ASE Science · 96 horas</p>
+  <p>José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago</p>
+  <p>© 2026. Esta obra está licenciada bajo <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" rel="license">Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0 Internacional (CC BY-NC-SA 4.0)</a>.</p>
+</footer>
+
+</div>
+<script>
+"use strict";
+
+/* ══════════════════════════════════════════════════════════════════════════
+   HOT SPOT ANATÓMICO · Lección 3.3
+   Las zonas sensibles son invisibles hasta que se pulsan, como en el examen.
+   Sin dependencias externas.
+   ═══════════════════════════════════════════════════════════════════════ */
+
+/* ── Diagrama 1 · Torso ────────────────────────────────────────────────── */
+var SVG_TORSO =
+'<svg viewBox="0 0 560 620" role="img" aria-labelledby="t-torso d-torso">' +
+'<title id="t-torso">Diagrama mudo del torso humano</title>' +
+'<desc id="d-torso">Corte esquemático del tronco con los pulmones a ambos lados, el corazón entre ellos, la tráquea que baja desde el cuello, el diafragma bajo los pulmones, el estómago, el hígado, el intestino delgado y el intestino grueso. Las estructuras no llevan rótulo salvo que se active el botón correspondiente. Cada zona sensible se recorre con la tecla de tabulación y se selecciona con la barra espaciadora.</desc>' +
+'<rect x="0" y="0" width="560" height="620" fill="#f7faf7"></rect>' +
+'<path d="M180,40 L380,40 L410,120 L410,520 Q280,570 150,520 L150,120 Z" fill="#ffe0d6" stroke="#8d6e63" stroke-width="3"></path>' +
+/* tráquea y bronquios */
+'<path d="M280,45 L280,150" stroke="#78909c" stroke-width="14" fill="none"></path>' +
+'<path d="M280,150 L235,185 M280,150 L325,185" stroke="#78909c" stroke-width="10" fill="none"></path>' +
+/* pulmones */
+'<path d="M235,180 Q185,200 180,270 Q176,340 215,360 Q250,362 252,300 L252,200 Z" fill="#f8bbd0" stroke="#ad1457" stroke-width="3"></path>' +
+'<path d="M325,180 Q375,200 380,270 Q384,340 345,360 Q310,362 308,300 L308,200 Z" fill="#f8bbd0" stroke="#ad1457" stroke-width="3"></path>' +
+/* corazón */
+'<path d="M280,225 q -32,-30 -50,4 q -16,32 50,72 q 66,-40 50,-72 q -18,-34 -50,-4 Z" fill="#c62828" stroke="#7f1d1d" stroke-width="3"></path>' +
+/* diafragma */
+'<path d="M175,375 Q280,410 385,375" stroke="#6a1b9a" stroke-width="9" fill="none"></path>' +
+/* hígado y estómago */
+'<path d="M180,395 Q245,385 265,420 Q240,455 185,445 Z" fill="#8d6e63" stroke="#4e342e" stroke-width="3"></path>' +
+'<path d="M300,395 Q355,395 350,435 Q345,470 305,462 Q285,440 300,395 Z" fill="#ffcc80" stroke="#e65100" stroke-width="3"></path>' +
+/* intestinos */
+'<path d="M215,470 L215,545 Q215,560 240,560 L330,560 Q350,560 350,540 L350,470" fill="none" stroke="#a1887f" stroke-width="16"></path>' +
+'<path d="M245,485 q 40,10 20,30 q -25,18 5,30 q 32,12 50,-8" fill="none" stroke="#ffab91" stroke-width="13"></path>' +
+'</svg>';
+
+var ZONAS_TORSO = [
+  {id:"pulmon-i", forma:'<path class="zona" d="M235,180 Q185,200 180,270 Q176,340 215,360 Q250,362 252,300 L252,200 Z"></path>',
+   rot:{x:210, y:300, t:"Pulmón"}, aria:"estructura del lado izquierdo de la imagen, entre las costillas"},
+  {id:"pulmon-d", forma:'<path class="zona" d="M325,180 Q375,200 380,270 Q384,340 345,360 Q310,362 308,300 L308,200 Z"></path>',
+   rot:{x:348, y:300, t:"Pulmón"}, aria:"estructura del lado derecho de la imagen, entre las costillas"},
+  {id:"corazon", forma:'<path class="zona" d="M280,220 q -36,-34 -56,4 q -18,36 56,80 q 74,-44 56,-80 q -20,-38 -56,-4 Z"></path>',
+   rot:{x:280, y:262, t:"Corazón"}, aria:"estructura central, entre las dos anteriores"},
+  {id:"traquea", forma:'<rect class="zona" x="262" y="45" width="36" height="105"></rect>',
+   rot:{x:280, y:100, t:"Tráquea"}, aria:"conducto vertical que baja desde el cuello"},
+  {id:"diafragma", forma:'<path class="zona" d="M175,360 Q280,400 385,360 L385,392 Q280,428 175,392 Z"></path>',
+   rot:{x:280, y:392, t:"Diafragma"}, aria:"lámina curva situada bajo los pulmones"},
+  {id:"estomago", forma:'<path class="zona" d="M296,390 Q360,390 355,437 Q350,476 302,467 Q280,442 296,390 Z"></path>',
+   rot:{x:325, y:432, t:"Estómago"}, aria:"órgano curvo del lado derecho de la imagen, bajo el diafragma"},
+  {id:"higado", forma:'<path class="zona" d="M176,390 Q248,380 270,420 Q243,460 181,450 Z"></path>',
+   rot:{x:222, y:422, t:"Hígado"}, aria:"órgano triangular del lado izquierdo de la imagen, bajo el diafragma"},
+  {id:"delgado", forma:'<path class="zona" d="M238,478 q 52,12 28,36 q -30,22 8,36 q 40,14 62,-10 l 0,26 l -110,0 Z"></path>',
+   rot:{x:290, y:520, t:"Intestino delgado"}, aria:"conducto plegado del centro del abdomen"},
+  {id:"grueso", forma:'<path class="zona" d="M203,462 L227,462 L227,548 L338,548 L338,462 L362,462 L362,572 L203,572 Z"></path>',
+   rot:{x:282, y:590, t:"Intestino grueso"}, aria:"conducto ancho que rodea al anterior por los lados y por abajo"}
+];
+
+/* ── Diagrama 2 · Corazón y circulación ────────────────────────────────── */
+var SVG_CORAZON =
+'<svg viewBox="0 0 560 560" role="img" aria-labelledby="t-cor d-cor">' +
+'<title id="t-cor">Diagrama mudo del corazón y la circulación</title>' +
+'<desc id="d-cor">Corte del corazón con sus cuatro cavidades: dos aurículas arriba y dos ventrículos abajo, separadas por el tabique. Se representan también la arteria que sale hacia el cuerpo, la que va a los pulmones y las venas que llegan. El lado que maneja sangre pobre en oxígeno se dibuja en azul y el que la maneja rica en oxígeno, en rojo. Las estructuras no llevan rótulo salvo que se active el botón correspondiente.</desc>' +
+'<rect x="0" y="0" width="560" height="560" fill="#f7faf7"></rect>' +
+/* silueta */
+'<path d="M280,120 q -90,-60 -140,30 q -50,95 40,220 q 45,60 100,100 q 55,-40 100,-100 q 90,-125 40,-220 q -50,-90 -140,-30 Z" fill="#ffcdd2" stroke="#7f1d1d" stroke-width="3"></path>' +
+/* tabique */
+'<path d="M280,120 L280,455" stroke="#7f1d1d" stroke-width="6"></path>' +
+/* cavidades */
+'<ellipse cx="205" cy="205" rx="58" ry="45" fill="#90caf9" stroke="#0d47a1" stroke-width="3"></ellipse>' +
+'<ellipse cx="355" cy="205" rx="58" ry="45" fill="#ef9a9a" stroke="#7f1d1d" stroke-width="3"></ellipse>' +
+'<ellipse cx="205" cy="330" rx="62" ry="62" fill="#64b5f6" stroke="#0d47a1" stroke-width="3"></ellipse>' +
+'<ellipse cx="355" cy="330" rx="62" ry="62" fill="#e57373" stroke="#7f1d1d" stroke-width="3"></ellipse>' +
+/* grandes vasos */
+'<path d="M300,110 q 40,-70 95,-40" stroke="#c62828" stroke-width="20" fill="none"></path>' +
+'<path d="M250,110 q -30,-70 -90,-45" stroke="#1565c0" stroke-width="18" fill="none"></path>' +
+'<path d="M175,150 q -55,-25 -95,10" stroke="#1565c0" stroke-width="16" fill="none"></path>' +
+'</svg>';
+
+var ZONAS_CORAZON = [
+  {id:"ai", forma:'<ellipse class="zona" cx="205" cy="205" rx="60" ry="47"></ellipse>',
+   rot:{x:205, y:205, t:"Aurícula derecha"}, aria:"cavidad superior del lado izquierdo de la imagen, en azul"},
+  {id:"ad", forma:'<ellipse class="zona" cx="355" cy="205" rx="60" ry="47"></ellipse>',
+   rot:{x:355, y:205, t:"Aurícula izquierda"}, aria:"cavidad superior del lado derecho de la imagen, en rojo"},
+  {id:"vi", forma:'<ellipse class="zona" cx="205" cy="330" rx="64" ry="64"></ellipse>',
+   rot:{x:205, y:330, t:"Ventrículo derecho"}, aria:"cavidad inferior del lado izquierdo de la imagen, en azul"},
+  {id:"vd", forma:'<ellipse class="zona" cx="355" cy="330" rx="64" ry="64"></ellipse>',
+   rot:{x:355, y:330, t:"Ventrículo izquierdo"}, aria:"cavidad inferior del lado derecho de la imagen, en rojo"},
+  {id:"aorta", forma:'<path class="zona" d="M292,120 q 44,-80 108,-46 l -14,26 q -46,-22 -76,38 Z"></path>',
+   rot:{x:390, y:60, t:"Arteria al cuerpo"}, aria:"vaso grueso rojo que sale hacia arriba y a la derecha"},
+  {id:"pulmonar", forma:'<path class="zona" d="M258,120 q -34,-80 -102,-52 l 12,28 q 48,-18 72,34 Z"></path>',
+   rot:{x:150, y:58, t:"Arteria a los pulmones"}, aria:"vaso azul que sale hacia arriba y a la izquierda"},
+  {id:"tabique", forma:'<rect class="zona" x="266" y="130" width="28" height="320"></rect>',
+   rot:{x:280, y:470, t:"Tabique"}, aria:"pared vertical que separa los dos lados"}
+];
+
+/* ── Diagrama 3 · Lazo de retroalimentación ────────────────────────────── */
+var SVG_LAZO =
+'<svg viewBox="0 0 700 400" role="img" aria-labelledby="t-lazo d-lazo">' +
+'<title id="t-lazo">Esquema mudo del lazo de retroalimentación</title>' +
+'<desc id="d-lazo">Cinco casillas enlazadas en círculo: el estímulo arriba a la izquierda, el sensor a la izquierda, el centro de control arriba al centro, el efector a la derecha y la respuesta abajo a la derecha, con una flecha de retorno hacia el estímulo. Las casillas no llevan rótulo salvo que se active el botón correspondiente.</desc>' +
+'<rect x="0" y="0" width="700" height="400" fill="#f7faf7"></rect>' +
+'<defs><marker id="pl" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="12" markerHeight="12" ' +
+'markerUnits="userSpaceOnUse" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#1b5e20"></path></marker></defs>' +
+'<path d="M120,120 L120,60 L240,60" fill="none" stroke="#1b5e20" stroke-width="4" marker-end="url(#pl)"></path>' +
+'<path d="M420,60 L560,60 L560,120" fill="none" stroke="#1b5e20" stroke-width="4" marker-end="url(#pl)"></path>' +
+'<path d="M560,200 L560,290 L440,290" fill="none" stroke="#1b5e20" stroke-width="4" marker-end="url(#pl)"></path>' +
+'<path d="M240,290 L120,290 L120,205" fill="none" stroke="#1b5e20" stroke-width="4" marker-end="url(#pl)"></path>' +
+'<path d="M60,250 L60,160" fill="none" stroke="#1b5e20" stroke-width="4" marker-end="url(#pl)"></path>' +
+'<rect x="40" y="120" width="160" height="80" rx="10" fill="#fff" stroke="#1b5e20" stroke-width="3"></rect>' +
+'<rect x="250" y="20" width="160" height="80" rx="10" fill="#fff" stroke="#1b5e20" stroke-width="3"></rect>' +
+'<rect x="480" y="120" width="160" height="80" rx="10" fill="#fff" stroke="#1b5e20" stroke-width="3"></rect>' +
+'<rect x="250" y="250" width="180" height="80" rx="10" fill="#fff" stroke="#1b5e20" stroke-width="3"></rect>' +
+'<rect x="20" y="250" width="80" height="80" rx="10" fill="#fff" stroke="#1b5e20" stroke-width="3"></rect>' +
+'</svg>';
+
+var ZONAS_LAZO = [
+  {id:"sensor", forma:'<rect class="zona" x="40" y="120" width="160" height="80" rx="10"></rect>',
+   rot:{x:120, y:165, t:"Sensor"}, aria:"casilla del lado izquierdo, en el centro de la altura"},
+  {id:"control", forma:'<rect class="zona" x="250" y="20" width="160" height="80" rx="10"></rect>',
+   rot:{x:330, y:65, t:"Centro de control"}, aria:"casilla superior central"},
+  {id:"efector", forma:'<rect class="zona" x="480" y="120" width="160" height="80" rx="10"></rect>',
+   rot:{x:560, y:165, t:"Efector"}, aria:"casilla del lado derecho, en el centro de la altura"},
+  {id:"respuesta", forma:'<rect class="zona" x="250" y="250" width="180" height="80" rx="10"></rect>',
+   rot:{x:340, y:295, t:"Respuesta"}, aria:"casilla inferior central"},
+  {id:"estimulo", forma:'<rect class="zona" x="20" y="250" width="80" height="80" rx="10"></rect>',
+   rot:{x:60, y:295, t:"Estímulo"}, aria:"casilla pequeña de la esquina inferior izquierda"}
+];
+
+/* ── Preguntas ─────────────────────────────────────────────────────────── */
+var MAPAS = {
+torso:{ nombre:"Torso", svg:SVG_TORSO, zonas:ZONAS_TORSO, preguntas:[
+  {q:"Marca el órgano donde el oxígeno pasa del aire a la sangre.", ok:["pulmon-i","pulmon-d"],
+   exp:"El intercambio de gases ocurre en los alvéolos de los pulmones, no en el corazón. El corazón mueve la sangre, pero no la oxigena: son dos sistemas distintos colaborando, el respiratorio y el circulatorio."},
+  {q:"Marca el órgano que impulsa la sangre por todo el cuerpo.", ok:["corazon"],
+   exp:"El corazón es la bomba del sistema circulatorio. Repara en que está situado entre los dos pulmones, y algo desplazado hacia el lado izquierdo del cuerpo, que en la imagen aparece a la derecha."},
+  {q:"Marca la estructura donde se absorben hacia la sangre los nutrientes de los alimentos.", ok:["delgado"],
+   exp:"La absorción ocurre en el intestino delgado, gracias a sus vellosidades. El estómago descompone, pero absorbe muy poco; el intestino grueso recupera sobre todo agua."},
+  {q:"Marca el músculo que al contraerse hace entrar aire en los pulmones.", ok:["diafragma"],
+   exp:"El diafragma es la lámina muscular situada bajo los pulmones. Al contraerse desciende, aumenta el volumen del tórax y el aire entra. Respirar es un acto muscular, no algo que hagan los pulmones por sí solos."},
+  {q:"Marca el conducto por el que el aire desciende desde la garganta hacia los pulmones.", ok:["traquea"],
+   exp:"La tráquea se divide en dos bronquios, uno hacia cada pulmón. Ese punto de bifurcación es visible en el diagrama."},
+  {q:"Marca el órgano que almacena glucosa en forma de glucógeno cuando la insulina se lo ordena.", ok:["higado"],
+   exp:"El hígado es el efector del lazo que regula la glucosa. Cuando la glucosa sube, el páncreas libera insulina y el hígado la retira de la sangre; cuando baja, el glucagón hace que la devuelva. Es el mismo esquema de sensor, control y efector de esta lección."},
+  {q:"Marca el órgano donde los alimentos se mezclan con ácido y comienzan a descomponerse.", ok:["estomago"],
+   exp:"El estómago inicia la digestión química con ácido clorhídrico y enzimas. Confundirlo con el intestino delgado es el error más frecuente de este diagrama, porque los dos pertenecen al mismo sistema y están uno junto al otro."},
+  {q:"Marca la estructura que absorbe agua y forma los residuos sólidos.", ok:["grueso"],
+   exp:"El intestino grueso rodea al delgado por los lados y por abajo. Su función principal ya no es absorber nutrientes, sino recuperar agua."}
+]},
+corazon:{ nombre:"Corazón", svg:SVG_CORAZON, zonas:ZONAS_CORAZON, preguntas:[
+  {q:"Marca la cavidad que impulsa la sangre hacia todo el cuerpo.", ok:["vd"],
+   exp:"Es el ventrículo izquierdo, que en la imagen aparece a la derecha porque el corazón se dibuja como si se mirara de frente al paciente. Su pared es la más gruesa de las cuatro cavidades, porque tiene que empujar la sangre hasta los pies."},
+  {q:"Marca la cavidad que recibe la sangre pobre en oxígeno que vuelve del cuerpo.", ok:["ai"],
+   exp:"Es la aurícula derecha, arriba y a la izquierda de la imagen. Las aurículas reciben y los ventrículos expulsan: esa es la división de trabajo de las cuatro cavidades."},
+  {q:"Marca el vaso que lleva la sangre desde el corazón hasta los pulmones.", ok:["pulmonar"],
+   exp:"La arteria pulmonar es la excepción de la regla que dice que las arterias llevan sangre oxigenada: transporta sangre pobre en oxígeno, y por eso se dibuja en azul. Arteria significa que sale del corazón, no que la sangre esté oxigenada."},
+  {q:"Marca la pared que impide que se mezclen la sangre rica y la pobre en oxígeno.", ok:["tabique"],
+   exp:"El tabique separa el lado derecho del izquierdo. Si tiene un orificio —lo que se llama comunicación interventricular— las dos sangres se mezclan y el cuerpo recibe menos oxígeno del que necesita."},
+  {q:"Marca la cavidad que recibe la sangre ya oxigenada que llega desde los pulmones.", ok:["ad"],
+   exp:"Es la aurícula izquierda, arriba y a la derecha de la imagen. Cierra el circuito pulmonar: el ventrículo derecho manda la sangre a los pulmones y esta vuelve aquí ya cargada de oxígeno."},
+  {q:"Marca el vaso por el que sale la sangre oxigenada hacia el resto del organismo.", ok:["aorta"],
+   exp:"Es la aorta, el vaso más grueso del cuerpo. Sale del ventrículo izquierdo y de ella derivan todas las arterias que reparten la sangre."}
+]},
+lazo:{ nombre:"Lazo de retroalimentación", svg:SVG_LAZO, zonas:ZONAS_LAZO, preguntas:[
+  {q:"Marca la casilla que ocupan los termorreceptores de la piel.", ok:["sensor"],
+   exp:"El sensor es el que detecta el cambio. En el lazo de la temperatura son los termorreceptores; en el de la glucosa, las células del páncreas que miden su concentración en sangre."},
+  {q:"Marca la casilla que ocupa el hipotálamo en la regulación de la temperatura.", ok:["control"],
+   exp:"El centro de control compara el valor detectado con el valor de referencia y decide. El hipotálamo cumple esa función para la temperatura; el páncreas, para la glucosa."},
+  {q:"Marca la casilla que ocupan las glándulas sudoríparas cuando el cuerpo se calienta.", ok:["efector"],
+   exp:"El efector es el que ejecuta la orden. Sudar, tiritar, liberar insulina o contraer los vasos de la piel son respuestas de efectores distintos según el lazo."},
+  {q:"Marca la casilla donde se sitúa el aumento de temperatura provocado por el ambiente.", ok:["estimulo"],
+   exp:"El estímulo es la perturbación que pone en marcha el lazo. Sin él, el sensor no señala nada y el efector permanece en reposo."},
+  {q:"Marca la casilla cuyo resultado vuelve a llegar al sensor y cierra el lazo.", ok:["respuesta"],
+   exp:"La respuesta es lo que produce el efector, y su efecto regresa al punto de partida. Ese retorno es exactamente lo que significa la palabra retroalimentación: el resultado de la acción vuelve a entrar en el sistema que la ordenó."}
+]}
+};
+
+/* ── Estado ────────────────────────────────────────────────────────────── */
+var cola = [], idx = 0, comprobado = false, elegida = null, rotulos = false;
+var marcador = {torso:{n:0,ok:0}, corazon:{n:0,ok:0}, lazo:{n:0,ok:0}};
+
+var $ = function(id){ return document.getElementById(id); };
+function leer(t){ $("lectura-texto").textContent = t; }
+
+function armarCola(){
+  var f = $("mapa").value;
+  cola = [];
+  ["torso","corazon","lazo"].forEach(function(k){
+    if (f === "todos" || f === k){
+      MAPAS[k].preguntas.forEach(function(p){ cola.push({mapa:k, p:p}); });
+    }
+  });
+  idx = 0;
+}
+
+function render(){
+  var it = cola[idx], m = MAPAS[it.mapa];
+  comprobado = false; elegida = null;
+  $("veredicto").innerHTML = "";
+  $("btn-comprobar").disabled = false;
+  $("progreso").textContent = "Pregunta " + (idx + 1) + " de " + cola.length + " · diagrama: " + m.nombre;
+  $("etiquetas").innerHTML = '<span class="etiqueta">Punto crítico de imagen</span>' +
+    '<span class="etiqueta suave">' + m.nombre + '</span>' +
+    '<span class="etiqueta suave">' + m.zonas.length + ' zonas sensibles</span>';
+  $("enunciado").innerHTML = '<p class="consigna">' + it.p.q + '</p>';
+
+  /* Se inyectan las zonas invisibles dentro del SVG, antes de cerrarlo */
+  var capa = m.zonas.map(function(z){
+    return '<g class="diana" data-z="' + z.id + '" role="button" tabindex="0" aria-pressed="false" ' +
+      'aria-label="Zona sensible: ' + z.aria + '">' + z.forma + '</g>';
+  }).join("");
+  var capaRot = rotulos ? m.zonas.map(function(z){
+    return '<text class="rot-organo" x="' + z.rot.x + '" y="' + z.rot.y + '">' + z.rot.t + '</text>';
+  }).join("") : "";
+  var svg = m.svg.replace("</svg>", capa + capaRot + "</svg>");
+
+  $("zona-item").innerHTML = '<div class="marco-svg">' + svg + '</div>' +
+    '<p class="pista-mapa">Diagrama esquemático, sin escala. El lado izquierdo de la imagen corresponde al lado derecho del cuerpo, como en cualquier lámina anatómica vista de frente.</p>';
+
+  $("zona-item").querySelectorAll(".diana").forEach(function(g){
+    var elegir = function(){
+      if (comprobado) return;
+      $("zona-item").querySelectorAll(".diana").forEach(function(o){ o.setAttribute("aria-pressed", "false"); });
+      g.setAttribute("aria-pressed", "true");
+      elegida = g.dataset.z;
+      leer("Has marcado la " + g.getAttribute("aria-label").replace("Zona sensible: ", "") + ".");
+    };
+    g.addEventListener("click", elegir);
+    g.addEventListener("keydown", function(e){
+      if (e.key === "Enter" || e.key === " " || e.key === "Spacebar"){ e.preventDefault(); elegir(); }
+    });
+  });
+
+  leer("Pregunta " + (idx + 1) + " de " + cola.length + ". Diagrama del " + m.nombre.toLowerCase() +
+       ", con " + m.zonas.length + " zonas sensibles. " + it.p.q +
+       " Recorre las zonas con la tecla de tabulación y selecciona con la barra espaciadora.");
+}
+
+function comprobar(){
+  if (comprobado) return;
+  var it = cola[idx], m = MAPAS[it.mapa];
+  var ok = (elegida !== null && it.p.ok.indexOf(elegida) >= 0);
+  $("zona-item").querySelectorAll(".diana").forEach(function(g){
+    if (it.p.ok.indexOf(g.dataset.z) >= 0) g.classList.add("acierto");
+    else if (g.dataset.z === elegida) g.classList.add("fallo");
+    g.setAttribute("tabindex", "-1");
+  });
+  comprobado = true;
+  $("btn-comprobar").disabled = true;
+  marcador[it.mapa].n++;
+  if (ok) marcador[it.mapa].ok++;
+  pintarMarcador();
+
+  var correcta = m.zonas.filter(function(z){ return z.id === it.p.ok[0]; })[0];
+  var cab = (elegida === null) ? "No has marcado ninguna zona."
+          : (ok ? "Correcto." : "No es esa. La respuesta está señalada en verde: " + correcta.rot.t.toLowerCase() + ".");
+  $("veredicto").innerHTML = '<div class="' + (ok ? "caja-ok" : "caja-mal") + '"><p><strong>' +
+    cab + '</strong></p><p>' + it.p.exp + '</p></div>';
+  leer(cab + " " + it.p.exp +
+       (idx + 1 < cola.length ? " Pulsa «Siguiente» para continuar." : " Era la última pregunta."));
+}
+
+function pintarMarcador(){
+  var filas = "", tn = 0, tk = 0;
+  ["torso","corazon","lazo"].forEach(function(k){
+    var m = marcador[k];
+    tn += m.n; tk += m.ok;
+    var p = m.n ? (Math.round(m.ok / m.n * 1000) / 10).toFixed(1) + " %" : "—";
+    filas += '<tr><th scope="row">' + MAPAS[k].nombre + '</th><td>' + m.n + '</td><td>' + m.ok +
+             '</td><td>' + p + '</td></tr>';
+  });
+  var tp = tn ? (Math.round(tk / tn * 1000) / 10).toFixed(1) + " %" : "—";
+  filas += '<tr><th scope="row">Total</th><td>' + tn + '</td><td>' + tk + '</td><td>' + tp + '</td></tr>';
+  $("marcador").innerHTML = filas;
+}
+
+$("btn-comprobar").addEventListener("click", comprobar);
+$("btn-siguiente").addEventListener("click", function(){
+  if (!comprobado){ comprobar(); return; }
+  if (idx + 1 < cola.length){ idx++; render(); }
+  else {
+    $("progreso").textContent = "Serie terminada";
+    leer("Has terminado la serie de " + cola.length + " preguntas. Revisa la tabla de desempeño: " +
+         "el diagrama con el porcentaje más bajo es el que conviene repasar.");
+  }
+});
+$("btn-reiniciar").addEventListener("click", function(){
+  marcador = {torso:{n:0,ok:0}, corazon:{n:0,ok:0}, lazo:{n:0,ok:0}};
+  armarCola(); pintarMarcador(); render();
+});
+$("btn-rotulos").addEventListener("click", function(){
+  rotulos = !rotulos;
+  $("btn-rotulos").textContent = rotulos ? "Ocultar los rótulos" : "Mostrar los rótulos";
+  var estado = {c:comprobado, e:elegida};
+  render();
+  if (estado.c){ elegida = estado.e; comprobar(); }
+  leer(rotulos ? "Rótulos visibles. Úsalos para estudiar el diagrama y vuelve a ocultarlos para responder."
+               : "Rótulos ocultos, como en el examen.");
+});
+$("mapa").addEventListener("change", function(){ armarCola(); render(); });
+
+armarCola();
+pintarMarcador();
+render();
+</script>
+</body>
+</html>
