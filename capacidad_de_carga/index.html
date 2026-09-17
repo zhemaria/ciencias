@@ -1,1 +1,1278 @@
+<!doctype html>
+<!--
+  Capacidad de carga y relaciones entre especies (Lección 4.3) · Spanish ASE Science
+  © 2026 José M. Fernández, ABE/ASE Math Master Teacher,
+  Harry S. Truman College — City Colleges of Chicago.
+  Licencia: Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0
+  Internacional (CC BY-NC-SA 4.0) — https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+-->
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Capacidad de carga y relaciones entre especies</title>
+<meta name="description" content="Simulador de crecimiento poblacional con capacidad de carga y clasificador de relaciones entre especies: mutualismo, comensalismo, parasitismo y depredación.">
+<meta name="author" content="José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago">
+<meta name="license" content="CC BY-NC-SA 4.0">
+<link rel="license" href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">
+<style>
+@charset "utf-8";
+/* ============================================================================
+   Estilos unificados de los interactivos · Spanish ASE Science
+   José M. Fernández, ABE/ASE Math Master Teacher,
+   Harry S. Truman College — City Colleges of Chicago
+   © 2026 · CC BY-NC-SA 4.0
+   https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es
+   ----------------------------------------------------------------------------
+   CÓMO SE USA
+   Este bloque se copia completo dentro de <style> en cada interactivo, para que
+   el archivo siga siendo autónomo. La clase de unidad va en el <body>:
+       <body class="u4">   → Unidad 4, verde oliva
+   Unidades: u1 verde azulado · u2 gris pizarra · u3 verde · u4 verde oliva
+             u5 rojo anaranjado · u6 azul índigo · u7 violeta · u8 azul
+   Todos los colores de acento cumplen 4,5:1 sobre blanco y admiten texto
+   blanco encima. El ámbar de los avisos usa #5c3900 (10,29:1).
+   ========================================================================== */
 
+/* ── 1. PALETA POR UNIDAD ──────────────────────────────────────────────── */
+:root{
+  --u:#37474f; --u2:#263238; --u-bg:#eceff1;   /* valor por defecto */
+  --texto:#222; --texto-sec:#555; --linea:#e0e0e0;
+  --pagina:#f5f7fa; --papel:#ffffff;
+  --amb:#5c3900; --amb-bg:#fff8e1; --amb-borde:#b45309;
+  --ok:#1b5e20; --ok-bg:#e8f5e9; --mal:#7f1d1d; --mal-bg:#fbe9e7;
+  --radio:12px; --sombra:0 2px 8px rgba(0,0,0,.07);
+}
+body.u1{--u:#00695c;--u2:#004d40;--u-bg:#e0f2f1;}
+body.u2{--u:#37474f;--u2:#263238;--u-bg:#eceff1;}
+body.u3{--u:#1b5e20;--u2:#0f3d13;--u-bg:#e8f5e9;}
+body.u4{--u:#33691e;--u2:#1f4211;--u-bg:#f1f8e9;}
+body.u5{--u:#bf360c;--u2:#8c2708;--u-bg:#fbe9e7;}
+body.u6{--u:#1e3a8a;--u2:#142a63;--u-bg:#e8eaf6;}
+body.u7{--u:#5b21b6;--u2:#40157f;--u-bg:#ede7f6;}
+body.u8{--u:#0d47a1;--u2:#093271;--u-bg:#e3f2fd;}
+
+/* ── 2. BASE ───────────────────────────────────────────────────────────── */
+*{box-sizing:border-box;}
+body{font-family:'Segoe UI',system-ui,sans-serif;margin:0;background:var(--pagina);
+  color:var(--texto);line-height:1.55;font-size:16px;}
+.contenedor{max-width:1100px;margin:0 auto;padding:24px;}
+a{color:#0b3d91;}
+h1,h2,h3{line-height:1.3;}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;
+  clip:rect(0,0,0,0);white-space:nowrap;border:0;}
+:focus-visible{outline:3px solid var(--u);outline-offset:2px;}
+
+/* ── 3. ENCABEZADO DEL INTERACTIVO ─────────────────────────────────────── */
+header.principal{background:var(--u);background:linear-gradient(135deg,var(--u) 0%,var(--u2) 100%);
+  color:#fff;padding:28px 32px;border-radius:14px;margin-bottom:22px;box-shadow:var(--sombra);}
+header.principal h1{margin:0 0 6px;font-size:26px;font-weight:700;color:#fff;}
+header.principal .meta{font-size:14px;margin:4px 0 0;color:#fff;}
+
+/* ── 4. BLOQUES DE TEXTO ───────────────────────────────────────────────── */
+.tarjeta{background:var(--papel);padding:20px 24px;border-radius:10px;
+  border-left:5px solid var(--u);margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.tarjeta h2{margin-top:0;color:var(--u);font-size:20px;}
+.tarjeta h3{font-size:16px;color:#263238;margin:16px 0 6px;}
+.caja-tip{background:var(--amb-bg);border-left:4px solid var(--amb-borde);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;font-size:15px;}
+.caja-tip strong{color:var(--amb);}
+.caja-ok{background:var(--ok-bg);border-left:5px solid var(--ok);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;}
+.caja-ok strong{color:var(--ok);}
+.caja-mal{background:var(--mal-bg);border-left:5px solid var(--mal);padding:14px 18px;
+  margin:16px 0;border-radius:0 8px 8px 0;}
+.caja-mal strong{color:var(--mal);}
+
+/* ── 5. PANEL DE CONTROLES ─────────────────────────────────────────────── */
+.panel{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:18px 22px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.panel h2{margin:0 0 12px;font-size:18px;color:var(--u);}
+.control{margin-bottom:16px;}
+.control > label{display:block;font-weight:600;font-size:15px;color:#263238;margin-bottom:6px;}
+.control .valor{float:right;font-weight:700;color:var(--u);font-variant-numeric:tabular-nums;}
+.control input[type=range]{width:100%;accent-color:var(--u);height:26px;}
+.control select,.control input[type=number],.control input[type=text]{
+  font-family:inherit;font-size:16px;padding:9px 14px;border-radius:8px;
+  border:1px solid #90a4ae;background:#fff;color:var(--texto);width:100%;max-width:420px;}
+.fila-botones{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px;}
+button{font-family:inherit;font-size:15px;font-weight:600;padding:10px 18px;border-radius:8px;
+  border:1px solid transparent;background:var(--u);color:#fff;cursor:pointer;}
+button:hover{background:var(--u2);}
+button.secundario{background:#fff;color:var(--u);border-color:var(--u);}
+button.secundario:hover{background:var(--u-bg);}
+
+/* ── 6. LIENZO / ESCENA ────────────────────────────────────────────────── */
+.escena{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:16px;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.05);overflow-x:auto;}
+
+/* ── 7. LECTURA DEL ESTADO (alternativa textual, siempre visible) ──────── */
+.lectura{background:var(--u-bg);border-left:5px solid var(--u);border-radius:0 8px 8px 0;
+  padding:14px 18px;margin-bottom:22px;font-size:15px;}
+.lectura h2{margin:0 0 8px;font-size:17px;color:var(--u);}
+.lectura p{margin:6px 0;}
+.lectura .dato{font-weight:700;color:var(--u2);font-variant-numeric:tabular-nums;}
+
+/* ── 8. TABLAS (Ally: caption obligatorio y scope en todo th) ──────────── */
+.tabla-wrap{overflow-x:auto;margin-bottom:22px;}
+table.datos{width:100%;border-collapse:collapse;background:var(--papel);border-radius:10px;
+  overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);font-size:15px;}
+table.datos caption{caption-side:top;text-align:left;font-size:14px;color:var(--texto-sec);
+  padding:0 0 8px;font-style:italic;}
+table.datos th,table.datos td{padding:10px 12px;text-align:left;border-bottom:1px solid #eee;}
+table.datos thead th{background:#37474f;color:#fff;font-weight:600;font-size:13px;
+  text-transform:uppercase;letter-spacing:.4px;}
+table.datos tbody th{background:var(--u-bg);color:var(--u2);font-weight:700;}
+table.datos tr:last-child td{border-bottom:none;}
+
+/* ── 9. ACORDEÓN NATIVO ────────────────────────────────────────────────── */
+details.bloque{background:var(--papel);border-radius:var(--radio);margin-bottom:14px;
+  box-shadow:var(--sombra);border-left:5px solid var(--u);overflow:hidden;}
+details.bloque > summary{padding:14px 18px;cursor:pointer;list-style:none;display:flex;
+  gap:10px;align-items:center;background:var(--u-bg);font-weight:600;color:var(--u2);}
+details.bloque > summary::-webkit-details-marker{display:none;}
+details.bloque > summary .chevron{transition:transform .2s;flex-shrink:0;}
+details.bloque[open] > summary .chevron{transform:rotate(90deg);}
+details.bloque .cuerpo{padding:14px 20px 18px;}
+
+/* ── 10. PIE CON LICENCIA ──────────────────────────────────────────────── */
+footer.pie{padding:22px 4px;color:var(--texto-sec);font-size:13px;margin-top:20px;
+  border-top:1px solid #ddd;text-align:center;}
+footer.pie p{margin:5px 0;}
+
+/* ── 11. MOVIMIENTO REDUCIDO ───────────────────────────────────────────── */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;
+    transition-duration:.001ms !important;scroll-behavior:auto !important;}
+}
+
+/* ── 12. IMPRESIÓN ─────────────────────────────────────────────────────── */
+@media print{
+  body{background:#fff;}
+  .panel,.escena{page-break-inside:avoid;}
+  details[open] .cuerpo{display:block;}
+}
+
+/* ── 13. NOMBRES RESERVADOS ────────────────────────────────────────────── */
+/* Estas clases pertenecen a la hoja unificada. No las reutilices como
+   clase local en un interactivo: el selector local se sumaría al de aquí y
+   descuadraría el componente. Reservadas:
+   contenedor · sr-only · principal · meta · tarjeta · caja-tip · caja-ok ·
+   caja-mal · panel · control · valor · fila-botones · secundario · escena ·
+   lectura · dato · tabla-wrap · datos · bloque · cuerpo · chevron · pie
+   Para rejillas de cifras usa .cifras, no .datos. */
+
+
+/* ── PROPIO DE ESTE INTERACTIVO ────────────────────────────────────────── */
+h2.modulo{font-size:22px;color:var(--u2);margin:34px 0 14px;padding-bottom:6px;
+  border-bottom:3px solid var(--u-bg);}
+.dos{display:grid;grid-template-columns:330px 1fr;gap:20px;align-items:start;}
+@media (max-width:900px){ .dos{grid-template-columns:1fr;} }
+.ayuda{font-size:14px;color:var(--texto-sec);margin:4px 0 10px;}
+.extremos{display:flex;justify-content:space-between;font-size:13px;color:var(--texto-sec);margin:0;}
+.grupo-titulo{font-size:16px;color:var(--u2);margin:18px 0 8px;font-weight:700;}
+.grupo-titulo:first-of-type{margin-top:4px;}
+
+/* Gráfica */
+.lienzo{overflow-x:auto;}
+svg.grafica{display:block;margin:0 auto;min-width:620px;max-width:100%;height:auto;
+  background:#fbfdf9;border:1px solid var(--linea);border-radius:8px;}
+
+/* Interruptor de retraso reproductivo */
+.casilla{display:flex;gap:10px;align-items:flex-start;background:var(--u-bg);
+  border-radius:8px;padding:10px 12px;margin-top:10px;}
+.casilla input{width:20px;height:20px;accent-color:var(--u);margin-top:2px;flex-shrink:0;}
+.casilla span{font-size:14px;}
+
+/* Retos */
+.reto{background:var(--papel);border:1px solid var(--linea);border-left:5px solid #0277bd;
+  border-radius:0 10px 10px 0;padding:14px 18px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.reto h3{margin:0 0 6px;font-size:16px;color:#01579b;}
+.reto p{margin:6px 0;font-size:15px;}
+.veredicto:empty{display:none;}
+.veredicto{margin-top:10px;font-size:15px;padding:12px 16px;border-radius:0 8px 8px 0;}
+.veredicto.bien{background:var(--ok-bg);border-left:5px solid var(--ok);}
+.veredicto.aun{background:var(--amb-bg);border-left:5px solid var(--amb-borde);}
+.veredicto strong.bien{color:var(--ok);}
+.veredicto strong.aun{color:var(--amb);}
+
+/* Matriz de relaciones */
+table.matriz{width:100%;border-collapse:collapse;background:var(--papel);font-size:14px;
+  box-shadow:0 1px 4px rgba(0,0,0,.06);border-radius:10px;overflow:hidden;}
+table.matriz caption{caption-side:top;text-align:left;font-size:14px;color:var(--texto-sec);
+  padding:0 0 8px;font-style:italic;}
+table.matriz th,table.matriz td{border:1px solid #cfd8dc;padding:9px 10px;text-align:center;}
+table.matriz thead th{background:#37474f;color:#fff;font-size:13px;}
+table.matriz tbody th{background:var(--u-bg);color:var(--u2);text-align:left;white-space:nowrap;}
+table.matriz td.viva{background:var(--papel);}
+table.matriz td.fuera{background:#f5f5f5;color:var(--texto-sec);font-style:italic;}
+table.matriz td.marcada{background:#fff59d;outline:3px solid #b45309;outline-offset:-3px;font-weight:700;color:#4a2d00;}
+
+/* Clasificador de casos */
+.caso{background:var(--papel);border:1px solid var(--linea);border-radius:var(--radio);
+  padding:18px 22px;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+.caso .contador{font-size:13px;color:var(--texto-sec);margin:0 0 6px;}
+.caso p.enunciado-caso{font-size:17px;margin:0 0 14px;}
+.eleccion{margin-bottom:14px;}
+.eleccion p.pide{font-weight:700;margin:0 0 8px;font-size:15px;color:#263238;}
+button.opcion{background:#fff;color:var(--texto);border:1px solid #90a4ae;font-weight:600;}
+button.opcion:hover{background:var(--u-bg);border-color:var(--u);}
+button.opcion[aria-pressed="true"]{background:var(--u);color:#fff;border-color:var(--u2);}
+.desenlace{border-top:1px dashed #b0bec5;padding-top:14px;margin-top:4px;}
+.marcador{font-size:15px;font-weight:700;color:var(--u2);font-variant-numeric:tabular-nums;}
+
+/* Preguntas rápidas */
+.pregunta{border-top:1px solid var(--linea);padding-top:16px;margin-top:16px;}
+.pregunta:first-of-type{border-top:0;padding-top:0;margin-top:0;}
+.pregunta p.enunciado{font-weight:600;margin:0 0 10px;}
+.retro:empty{display:none;}
+.retro{margin-top:10px;}
+</style>
+</head>
+<body class="u4">
+<div class="contenedor">
+
+<header class="principal">
+  <h1>Capacidad de carga y relaciones entre especies</h1>
+  <p class="meta">Lección 4.3 · Selección natural, evidencia evolutiva y ecosistemas</p>
+  <p class="meta">Unidad 4 · Ciencias de la vida II · Spanish ASE Science</p>
+</header>
+
+<div class="tarjeta">
+  <h2>Qué vas a hacer</h2>
+  <p>Este interactivo tiene dos partes. En la primera haces crecer una población de ciervos en un valle y observas dónde se detiene. En la segunda clasificas relaciones entre especies a partir de un solo criterio: qué le ocurre a cada una.</p>
+  <p>Las dos partes están unidas. Cada tipo de relación deja una huella distinta en la curva de crecimiento, y al final podrás reconocer de cuál se trata solo con mirar la gráfica.</p>
+  <div class="caja-tip">
+    <p><strong>La confusión que hay que deshacer:</strong> la capacidad de carga no es cuántos individuos hay, ni cuántos llegó a haber en el mejor momento. Es el máximo que los recursos de ese ambiente pueden sostener <em>de forma continuada</em>. Es una propiedad del ambiente, no de la especie: el mismo valle tiene una capacidad de carga si llueve y otra distinta si hay sequía.</p>
+  </div>
+</div>
+
+<h2 class="modulo">1 · La capacidad de carga</h2>
+
+<div class="dos">
+
+  <div class="panel">
+    <h2>Controles</h2>
+
+    <p class="grupo-titulo">Recursos del valle</p>
+    <p class="ayuda">Estos dos deciden la altura de la meseta.</p>
+    <div class="control">
+      <label for="alimento">Alimento disponible <span class="valor" id="v-alimento">normal</span></label>
+      <input type="range" id="alimento" min="0.4" max="1.8" step="0.1" value="1">
+      <p class="extremos"><span>Escaso</span><span>Normal</span><span>Abundante</span></p>
+    </div>
+    <div class="control">
+      <label for="espacio">Espacio y refugio <span class="valor" id="v-espacio">normal</span></label>
+      <input type="range" id="espacio" min="0.4" max="1.8" step="0.1" value="1">
+      <p class="extremos"><span>Reducido</span><span>Normal</span><span>Amplio</span></p>
+    </div>
+
+    <p class="grupo-titulo">La especie</p>
+    <p class="ayuda">Estos dos deciden la rapidez y el punto de partida, no la altura.</p>
+    <div class="control">
+      <label for="velocidad">Velocidad de reproducción <span class="valor" id="v-velocidad">0,25</span></label>
+      <input type="range" id="velocidad" min="0.05" max="0.6" step="0.05" value="0.25">
+      <p class="extremos"><span>Lenta</span><span>Rápida</span></p>
+    </div>
+    <div class="control">
+      <label for="inicial">Población inicial <span class="valor" id="v-inicial">20</span></label>
+      <input type="range" id="inicial" min="10" max="900" step="10" value="20">
+      <p class="extremos"><span>10</span><span>900</span></p>
+    </div>
+
+    <p class="grupo-titulo">Otra especie en el valle</p>
+    <div class="control">
+      <label for="relacion">Relación con los ciervos</label>
+      <select id="relacion">
+        <option value="ninguna">Ninguna: los ciervos solos</option>
+        <option value="mutualismo">Mutualismo: bacterias del rumen que digieren la hierba por ellos</option>
+        <option value="comensalismo">Comensalismo: un ave que caza los insectos que ellos levantan</option>
+        <option value="parasitismo">Parasitismo: garrapatas que los debilitan</option>
+        <option value="depredacion">Depredación: una manada de lobos</option>
+        <option value="competencia">Competencia: otro herbívoro que come la misma hierba</option>
+      </select>
+    </div>
+
+    <div class="casilla">
+      <input type="checkbox" id="retraso">
+      <label for="retraso"><span>La reproducción responde con retraso: las crías nacidas en la época de abundancia llegan cuando el alimento ya escasea.</span></label>
+    </div>
+
+    <p class="grupo-titulo">Escenarios</p>
+    <div class="fila-botones">
+      <button type="button" id="btn-animar">Ver el crecimiento paso a paso</button>
+      <button type="button" class="secundario" data-esc="sequia">Sequía</button>
+      <button type="button" class="secundario" data-esc="exceso">Soltar 800 ciervos de golpe</button>
+      <button type="button" class="secundario" data-esc="lobos">Llegan los lobos</button>
+      <button type="button" class="secundario" data-esc="colapso">Crecer sin frenos</button>
+      <button type="button" class="secundario" id="btn-reiniciar">Reiniciar</button>
+    </div>
+  </div>
+
+  <div class="escena">
+    <div class="lienzo" id="lienzo"></div>
+    <p class="ayuda" style="text-align:center;margin:10px 0 0;">La línea discontinua marca la capacidad de carga. El punto azul señala el momento de crecimiento más rápido.</p>
+  </div>
+
+</div>
+
+<div class="lectura" aria-live="polite">
+  <h2>Lectura de la gráfica</h2>
+  <p id="lectura-1"></p>
+  <p id="lectura-2"></p>
+  <p id="lectura-3"></p>
+</div>
+
+<div class="tabla-wrap">
+  <table class="datos">
+    <caption>Datos de la simulación actual. La población se expresa en número de ciervos y el tiempo en generaciones desde el inicio.</caption>
+    <thead>
+      <tr><th scope="col">Dato</th><th scope="col">Valor</th><th scope="col">Qué significa</th></tr>
+    </thead>
+    <tbody id="tabla-hitos"></tbody>
+  </table>
+</div>
+
+<h3 style="font-size:18px;color:var(--u2);margin:26px 0 12px;">Cuatro retos</h3>
+<p class="ayuda">Mueve los controles hasta conseguir cada cosa y pulsa <em>Comprobar</em>. Cada reto desmonta una confusión distinta.</p>
+
+<div class="reto">
+  <h3>Reto 1 · Llegar antes a la misma meseta</h3>
+  <p>Consigue que la población se estabilice mucho antes, pero que la meseta quede exactamente a la misma altura que ahora.</p>
+  <div class="fila-botones"><button type="button" class="secundario" data-reto="1">Comprobar</button></div>
+  <div class="veredicto" id="ver1"></div>
+</div>
+
+<div class="reto">
+  <h3>Reto 2 · Subir la meseta sin tocar la velocidad</h3>
+  <p>Deja la velocidad de reproducción en su valor de partida (0,25) y consigue que el valle sostenga más de 600 ciervos.</p>
+  <div class="fila-botones"><button type="button" class="secundario" data-reto="2">Comprobar</button></div>
+  <div class="veredicto" id="ver2"></div>
+</div>
+
+<div class="reto">
+  <h3>Reto 3 · Quedarse por debajo del techo</h3>
+  <p>Consigue que la población se estabilice bastante por debajo de la capacidad de carga, sin que el alimento ni el espacio cambien.</p>
+  <div class="fila-botones"><button type="button" class="secundario" data-reto="3">Comprobar</button></div>
+  <div class="veredicto" id="ver3"></div>
+</div>
+
+<div class="reto">
+  <h3>Reto 4 · Pasarse de la raya y pagarlo</h3>
+  <p>Consigue que la población supere la capacidad de carga y después se desplome por debajo de ella.</p>
+  <div class="fila-botones"><button type="button" class="secundario" data-reto="4">Comprobar</button></div>
+  <div class="veredicto" id="ver4"></div>
+</div>
+
+<div class="tabla-wrap">
+  <table class="datos">
+    <caption>Qué modifica la capacidad de carga de un ambiente y qué no la modifica, con el efecto que tiene cada cosa sobre la curva.</caption>
+    <thead>
+      <tr><th scope="col">Cambio</th><th scope="col">¿Cambia la capacidad de carga?</th><th scope="col">Qué le ocurre a la curva</th></tr>
+    </thead>
+    <tbody>
+      <tr><th scope="row">Más alimento o más espacio</th><td>Sí, sube</td><td>La meseta queda más alta.</td></tr>
+      <tr><th scope="row">Sequía, incendio, pérdida de hábitat</th><td>Sí, baja</td><td>La meseta queda más baja y la población sobrante muere.</td></tr>
+      <tr><th scope="row">Otra especie que compite por lo mismo</th><td>Sí, baja</td><td>El mismo alimento se reparte entre más bocas.</td></tr>
+      <tr><th scope="row">La especie se reproduce más deprisa</th><td>No</td><td>Llega antes a la misma meseta.</td></tr>
+      <tr><th scope="row">Empezar con más individuos</th><td>No</td><td>Sale de más arriba y termina en el mismo sitio.</td></tr>
+      <tr><th scope="row">Llega un depredador</th><td>No</td><td>La población se estabiliza por debajo del techo, que sigue donde estaba.</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="tarjeta">
+  <h2>Tres cosas que el examen pregunta sobre esta curva</h2>
+  <h3>La meseta no es el final de la historia</h3>
+  <p>Cuando la curva se aplana, la población no ha dejado de reproducirse: nacen tantos ciervos como mueren. El crecimiento es cero porque los dos números se igualan, no porque se haya detenido la vida.</p>
+  <h3>El crecimiento más rápido ocurre a media altura</h3>
+  <p>Ni al principio, cuando hay pocos individuos que se reproduzcan, ni al final, cuando ya no queda comida para más. El máximo está alrededor de la mitad de la capacidad de carga, y ese es el punto azul de la gráfica.</p>
+  <h3>Superar el techo no es sostenerse arriba</h3>
+  <p>Una población puede pasarse de la capacidad de carga durante un tiempo, pero lo paga después: agota los recursos y cae por debajo del nivel que habría podido mantener. Actívalo con la casilla del retraso reproductivo.</p>
+</div>
+
+<h2 class="modulo">2 · Las relaciones entre especies</h2>
+
+<div class="tarjeta">
+  <h2>Un solo criterio</h2>
+  <p>Las cuatro relaciones no se aprenden de memoria: se deducen. Basta con responder dos preguntas sobre cada caso —qué le ocurre a la primera especie y qué le ocurre a la segunda— y el nombre aparece solo en la casilla correspondiente.</p>
+  <p>Los signos son estos: <strong>se beneficia (+)</strong>, <strong>no le afecta (0)</strong> y <strong>se perjudica (−)</strong>.</p>
+</div>
+
+<div class="tabla-wrap">
+  <table class="matriz" id="matriz">
+    <caption>Las casillas resultan de combinar el efecto sobre cada especie. La casilla que elijas en el ejercicio se resaltará aquí.</caption>
+    <thead>
+      <tr>
+        <th scope="col">Efecto sobre A ↓ · sobre B →</th>
+        <th scope="col">B se beneficia (+)</th>
+        <th scope="col">B no se ve afectada (0)</th>
+        <th scope="col">B se perjudica (−)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">A se beneficia (+)</th>
+        <td class="viva" id="c-mm">Mutualismo</td>
+        <td class="viva" id="c-m0">Comensalismo</td>
+        <td class="viva" id="c-mp">Depredación o parasitismo</td>
+      </tr>
+      <tr>
+        <th scope="row">A no se ve afectada (0)</th>
+        <td class="viva" id="c-0m">Comensalismo</td>
+        <td class="fuera" id="c-00">Neutralismo</td>
+        <td class="fuera" id="c-0p">Fuera del temario</td>
+      </tr>
+      <tr>
+        <th scope="row">A se perjudica (−)</th>
+        <td class="viva" id="c-pm">Depredación o parasitismo</td>
+        <td class="fuera" id="c-p0">Fuera del temario</td>
+        <td class="viva" id="c-pp">Competencia</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div class="caja-tip">
+  <p><strong>La casilla que contiene dos nombres:</strong> cuando una especie gana y la otra pierde, todavía falta un dato. Si la perjudicada muere en ese momento, es <strong>depredación</strong>. Si sigue viva mucho tiempo mientras la otra se alimenta de ella, es <strong>parasitismo</strong>. Al parásito le conviene que su anfitrión siga vivo: es su despensa.</p>
+</div>
+
+<div class="caso" id="caso">
+  <p class="contador" id="contador"></p>
+  <p class="enunciado-caso" id="texto-caso"></p>
+
+  <div class="eleccion">
+    <p class="pide" id="pide-a"></p>
+    <div class="fila-botones" id="ops-a">
+      <button type="button" class="opcion" data-lado="a" data-v="+" aria-pressed="false">Se beneficia</button>
+      <button type="button" class="opcion" data-lado="a" data-v="0" aria-pressed="false">No le afecta</button>
+      <button type="button" class="opcion" data-lado="a" data-v="-" aria-pressed="false">Se perjudica</button>
+    </div>
+  </div>
+
+  <div class="eleccion">
+    <p class="pide" id="pide-b"></p>
+    <div class="fila-botones" id="ops-b">
+      <button type="button" class="opcion" data-lado="b" data-v="+" aria-pressed="false">Se beneficia</button>
+      <button type="button" class="opcion" data-lado="b" data-v="0" aria-pressed="false">No le afecta</button>
+      <button type="button" class="opcion" data-lado="b" data-v="-" aria-pressed="false">Se perjudica</button>
+    </div>
+  </div>
+
+  <div class="eleccion desenlace" id="bloque-desenlace" hidden>
+    <p class="pide">Una especie gana y la otra pierde. ¿Cuál es el desenlace?</p>
+    <div class="fila-botones" id="ops-d">
+      <button type="button" class="opcion" data-lado="d" data-v="muere" aria-pressed="false">La perjudicada muere en el acto</button>
+      <button type="button" class="opcion" data-lado="d" data-v="sigue" aria-pressed="false">Sigue viva mucho tiempo</button>
+    </div>
+  </div>
+
+  <p class="ayuda" id="pista-casilla" aria-live="polite"></p>
+
+  <div class="fila-botones">
+    <button type="button" id="btn-comprobar">Comprobar</button>
+    <button type="button" class="secundario" id="btn-siguiente" hidden>Siguiente caso</button>
+  </div>
+
+  <div class="retro" id="retro-caso" aria-live="polite"></div>
+  <p class="marcador" id="marcador" style="margin-top:14px;"></p>
+</div>
+
+<div class="caja-tip">
+  <p><strong>Cuidado con el comensalismo:</strong> exige que la segunda especie quede exactamente igual, ni mejor ni peor. Comprobarlo es difícil, y muchos casos que se citaban como comensalismo resultaron ser mutualismos o parasitismos leves al estudiarlos de cerca. En el examen, elige comensalismo solo cuando el enunciado diga de forma explícita que la segunda especie no se ve afectada.</p>
+</div>
+
+<h2 class="modulo">3 · Las dos partes juntas</h2>
+
+<div class="tarjeta">
+  <h2>Cada relación deja una huella distinta en la curva</h2>
+  <p>Vuelve al simulador y prueba las seis opciones del selector una por una. Esto es lo que verás, y explica por qué no da igual confundir una relación con otra.</p>
+  <div class="tabla-wrap" style="margin-top:14px;">
+    <table class="datos">
+      <caption>Efecto de cada tipo de relación sobre la capacidad de carga y sobre la curva de crecimiento de los ciervos.</caption>
+      <thead>
+        <tr><th scope="col">Relación</th><th scope="col">Efecto en los ciervos</th><th scope="col">Huella en la gráfica</th></tr>
+      </thead>
+      <tbody>
+        <tr><th scope="row">Mutualismo</th><td>Se benefician</td><td>La meseta sube: aprovechan mejor la misma hierba.</td></tr>
+        <tr><th scope="row">Comensalismo</th><td>No les afecta</td><td>La curva no cambia en nada. Esa es justamente la prueba.</td></tr>
+        <tr><th scope="row">Parasitismo</th><td>Se perjudican, pero no mueren</td><td>Crecen más despacio y la meseta baja un poco.</td></tr>
+        <tr><th scope="row">Depredación</th><td>Mueren los capturados</td><td>El techo no se mueve, pero la población se estabiliza por debajo de él.</td></tr>
+        <tr><th scope="row">Competencia</th><td>Ambas especies se perjudican</td><td>La meseta baja: el mismo alimento alimenta a menos ciervos.</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p>Fíjate en la diferencia entre las dos últimas filas, porque es la que más se falla. El competidor <em>se lleva comida</em>, así que baja el techo. El lobo <em>no come hierba</em>: el techo sigue donde estaba y lo que hace es impedir que los ciervos lleguen hasta él.</p>
+</div>
+
+<div class="tarjeta">
+  <h2>Preguntas rápidas</h2>
+
+  <div class="pregunta" data-p="1" data-ok="c" data-expl="La capacidad de carga es un máximo sostenible, y lo fijan los recursos del ambiente. Por eso el mismo valle tiene una capacidad de carga distinta en un año lluvioso y en uno seco.">
+    <p class="enunciado">1. La capacidad de carga de un ambiente es:</p>
+    <div class="fila-botones">
+      <button type="button" class="secundario" data-op="a">El número de individuos que hay en ese momento</button>
+      <button type="button" class="secundario" data-op="b">El mayor número que llegó a haber alguna vez</button>
+      <button type="button" class="secundario" data-op="c">La población máxima que sus recursos pueden sostener de forma continuada</button>
+    </div>
+    <div class="retro" id="r1"></div>
+  </div>
+
+  <div class="pregunta" data-p="2" data-ok="b" data-expl="Al principio hay pocos individuos que se reproduzcan; al final ya no queda alimento para más. El máximo está en el medio, y es el punto azul de la gráfica.">
+    <p class="enunciado">2. Una población crece más deprisa cuando:</p>
+    <div class="fila-botones">
+      <button type="button" class="secundario" data-op="a">Acaba de llegar al ambiente</button>
+      <button type="button" class="secundario" data-op="b">Está alrededor de la mitad de la capacidad de carga</button>
+      <button type="button" class="secundario" data-op="c">Está a punto de alcanzar la capacidad de carga</button>
+    </div>
+    <div class="retro" id="r2"></div>
+  </div>
+
+  <div class="pregunta" data-p="3" data-ok="a" data-expl="La velocidad de reproducción decide cuándo se llega, no hasta dónde. El techo lo ponen el alimento y el espacio, y esos no se han tocado.">
+    <p class="enunciado">3. Si una especie se reproduce el doble de deprisa y los recursos no cambian, la meseta:</p>
+    <div class="fila-botones">
+      <button type="button" class="secundario" data-op="a">Se alcanza antes, a la misma altura</button>
+      <button type="button" class="secundario" data-op="b">Queda al doble de altura</button>
+      <button type="button" class="secundario" data-op="c">Desaparece: la población ya no se detiene</button>
+    </div>
+    <div class="retro" id="r3"></div>
+  </div>
+
+  <div class="pregunta" data-p="4" data-ok="c" data-expl="El lobo no come hierba, de modo que los recursos siguen siendo los mismos y el techo no se mueve. Lo que hace es mantener a los ciervos por debajo de ese techo.">
+    <p class="enunciado">4. Llega una manada de lobos a un valle con ciervos. La capacidad de carga del valle para los ciervos:</p>
+    <div class="fila-botones">
+      <button type="button" class="secundario" data-op="a">Baja, porque hay menos ciervos</button>
+      <button type="button" class="secundario" data-op="b">Sube, porque sobra hierba</button>
+      <button type="button" class="secundario" data-op="c">No cambia: los recursos del valle son los mismos</button>
+    </div>
+    <div class="retro" id="r4"></div>
+  </div>
+
+  <div class="pregunta" data-p="5" data-ok="b" data-expl="La garrapata vive sobre el perro durante días y le conviene que siga vivo, porque es su fuente de alimento. El zorro mata al conejo y la relación termina ahí.">
+    <p class="enunciado">5. La garrapata y el zorro se benefician a costa de otra especie. ¿Qué los distingue?</p>
+    <div class="fila-botones">
+      <button type="button" class="secundario" data-op="a">Que la garrapata es más pequeña</button>
+      <button type="button" class="secundario" data-op="b">El desenlace y la duración: el parásito necesita que su anfitrión siga vivo</button>
+      <button type="button" class="secundario" data-op="c">Que el zorro no obtiene alimento de la relación</button>
+    </div>
+    <div class="retro" id="r5"></div>
+  </div>
+
+  <div class="pregunta" data-p="6" data-ok="a" data-expl="Dos especies que comen lo mismo reparten el mismo alimento entre más bocas, de manera que el ambiente sostiene menos individuos de cada una.">
+    <p class="enunciado">6. Un segundo herbívoro llega al valle y come exactamente la misma hierba. Para los ciervos, la capacidad de carga:</p>
+    <div class="fila-botones">
+      <button type="button" class="secundario" data-op="a">Baja, porque el alimento se reparte</button>
+      <button type="button" class="secundario" data-op="b">No cambia, porque el valle es el mismo</button>
+      <button type="button" class="secundario" data-op="c">Sube, porque hay más animales</button>
+    </div>
+    <div class="retro" id="r6"></div>
+  </div>
+
+  <div class="pregunta" data-p="7" data-ok="c" data-expl="En la meseta nacen tantos individuos como mueren. El crecimiento neto es cero porque los dos números se igualan.">
+    <p class="enunciado">7. Cuando la curva llega a la meseta, lo que ocurre es que:</p>
+    <div class="fila-botones">
+      <button type="button" class="secundario" data-op="a">La población deja de reproducirse</button>
+      <button type="button" class="secundario" data-op="b">Todos los individuos han alcanzado la vejez</button>
+      <button type="button" class="secundario" data-op="c">Nacen tantos individuos como mueren</button>
+    </div>
+    <div class="retro" id="r7"></div>
+  </div>
+</div>
+
+<footer class="pie">
+  <p>Capacidad de carga y relaciones entre especies · Lección 4.3 · Spanish ASE Science · 96 horas</p>
+  <p>José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago</p>
+  <p>© 2026. Esta obra está licenciada bajo <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" rel="license">Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0 Internacional (CC BY-NC-SA 4.0)</a>.</p>
+</footer>
+
+</div>
+<script>
+"use strict";
+
+/* ===========================================================================
+   MÓDULO 1 · CAPACIDAD DE CARGA
+   El modelo es el crecimiento logístico: la población crece en proporción a
+   los individuos que ya hay, pero frenada por lo que queda libre del techo.
+   El techo (K) sale del alimento y del espacio; nunca de la velocidad de
+   reproducción ni de la población inicial. Esa separación es el objetivo
+   didáctico de todo el módulo.
+   ========================================================================= */
+
+var K_BASE  = 500;   /* capacidad de carga del valle en condiciones normales */
+var PASOS   = 140;   /* generaciones simuladas                                */
+var RETARDO = 2;     /* generaciones de desfase cuando se activa el retraso   */
+
+/* Cada relación actúa sobre un parámetro distinto, y ahí está la lección:
+   k = multiplica la capacidad de carga · r = multiplica la velocidad ·
+   m = mortalidad añadida, proporcional a la velocidad de reproducción, de
+   modo que la población se equilibra en K·(1 − m) sin llegar a extinguirse. */
+var RELACIONES = {
+  ninguna:      {k:1.00, r:1.00, m:0.00, nombre:"sin otra especie"},
+  mutualismo:   {k:1.35, r:1.00, m:0.00, nombre:"mutualismo"},
+  comensalismo: {k:1.00, r:1.00, m:0.00, nombre:"comensalismo"},
+  parasitismo:  {k:0.88, r:0.60, m:0.00, nombre:"parasitismo"},
+  depredacion:  {k:1.00, r:1.00, m:0.30, nombre:"depredación"},
+  competencia:  {k:0.62, r:1.00, m:0.00, nombre:"competencia"}
+};
+
+var ctrl = {alimento:1, espacio:1, r:0.25, n0:20, rel:"ninguna", retraso:false};
+var animacion = null;
+var baseEstab = null;   /* referencia del Reto 1, calculada al cargar */
+
+function coma(x){ return String(x).replace(".", ","); }
+function ent(x){ return Math.round(x); }
+
+function leer(){
+  ctrl.alimento = parseFloat(document.getElementById("alimento").value);
+  ctrl.espacio  = parseFloat(document.getElementById("espacio").value);
+  ctrl.r        = parseFloat(document.getElementById("velocidad").value);
+  ctrl.n0       = parseInt(document.getElementById("inicial").value, 10);
+  ctrl.rel      = document.getElementById("relacion").value;
+  ctrl.retraso  = document.getElementById("retraso").checked;
+}
+
+function escribirControles(){
+  document.getElementById("alimento").value  = ctrl.alimento;
+  document.getElementById("espacio").value   = ctrl.espacio;
+  document.getElementById("velocidad").value = ctrl.r;
+  document.getElementById("inicial").value   = ctrl.n0;
+  document.getElementById("relacion").value  = ctrl.rel;
+  document.getElementById("retraso").checked = ctrl.retraso;
+}
+
+function etiqueta(v){
+  if (v <= 0.6) return "muy escaso";
+  if (v <= 0.9) return "escaso";
+  if (v <= 1.1) return "normal";
+  if (v <= 1.4) return "abundante";
+  return "muy abundante";
+}
+
+function rel(){
+  return RELACIONES[ctrl.rel] || RELACIONES.ninguna;
+}
+
+function capacidad(){
+  return Math.round(K_BASE * ctrl.alimento * ctrl.espacio * rel().k);
+}
+
+function simular(){
+  var k = capacidad();
+  var r = ctrl.r * rel().r;
+  var m = ctrl.r * rel().m;
+  var N = [ctrl.n0];
+  var t, actual, densidad, siguiente;
+
+  for (t = 0; t < PASOS; t++){
+    actual   = N[t];
+    densidad = ctrl.retraso ? N[Math.max(0, t - RETARDO)] : actual;
+    siguiente = actual + r*actual*(1 - densidad/k) - m*actual;
+    if (siguiente < 0) siguiente = 0;
+    if (siguiente > k*2.4) siguiente = k*2.4;
+    N.push(siguiente);
+  }
+  return {N:N, k:k, r:r, m:m};
+}
+
+function hitos(sim){
+  var N = sim.N, i, j;
+  var nf = N[N.length - 1];
+  var maxN = 0, tMax = 0;
+  for (i = 0; i < N.length; i++){ if (N[i] > maxN){ maxN = N[i]; tMax = i; } }
+
+  var dmax = -1e9, tInf = 0, d;
+  for (i = 0; i < N.length - 1; i++){
+    d = N[i+1] - N[i];
+    if (d > dmax){ dmax = d; tInf = i; }
+  }
+  /* Si la población parte por encima del techo nunca crece: no hay punto de
+     crecimiento máximo que señalar, y decir lo contrario confundiría. */
+  if (dmax < Math.max(0.5, nf*0.003)) tInf = null;
+
+  var margen = Math.max(3, nf*0.03), tEstab = null, estable;
+  for (i = 0; i < N.length; i++){
+    estable = true;
+    for (j = i; j < N.length; j++){
+      if (Math.abs(N[j] - nf) > margen){ estable = false; break; }
+    }
+    if (estable){ tEstab = i; break; }
+  }
+
+  /* Si aún se mueve al final de la ventana simulada, no se ha estabilizado */
+  if (tEstab !== null && tEstab >= PASOS - 5) tEstab = null;
+
+  var minTras = 1e9;
+  for (i = tMax; i < N.length; i++){ if (N[i] < minTras) minTras = N[i]; }
+
+  return {nf:nf, maxN:maxN, tMax:tMax, tInf:tInf, nInf:(tInf === null ? null : N[tInf]), dmax:dmax,
+          tEstab:tEstab, minTras:minTras};
+}
+
+/* ── Dibujo de la gráfica ──────────────────────────────────────────────── */
+var W = 720, H = 380, ML = 64, MR = 20, MT = 24, MB = 48;
+
+function pasoBonito(v){
+  var cand = [10,20,25,50,100,125,200,250,500,1000,2000], i;
+  for (i = 0; i < cand.length; i++){ if (cand[i] >= v) return cand[i]; }
+  return 2000;
+}
+
+function dibujar(sim, h, hasta){
+  var N = sim.N, k = sim.k, i, x, y;
+  if (hasta === undefined || hasta === null) hasta = N.length - 1;
+
+  var tope = Math.max(k*1.30, h.maxN*1.12, 120);
+  var paso = pasoBonito(tope/5);
+  var yMax = paso*5;
+
+  var xs = W - ML - MR, ys = H - MT - MB;
+  function px(t){ return ML + (t/PASOS)*xs; }
+  function py(v){ return H - MB - (v/yMax)*ys; }
+
+  var s = '<rect x="0" y="0" width="' + W + '" height="' + H + '" fill="#fbfdf9"></rect>';
+
+  /* Franja por encima del techo: territorio insostenible */
+  if (py(k) > MT){
+    s += '<rect x="' + ML + '" y="' + MT + '" width="' + xs + '" height="' + (py(k)-MT).toFixed(1) +
+         '" fill="#c62828" opacity="0.07"></rect>';
+  }
+
+  /* Rejilla y escala vertical */
+  for (i = 0; i <= 5; i++){
+    y = py(paso*i);
+    s += '<line x1="' + ML + '" y1="' + y.toFixed(1) + '" x2="' + (W-MR) + '" y2="' + y.toFixed(1) +
+         '" stroke="#e0e0e0" stroke-width="1"></line>';
+    s += '<text x="' + (ML-10) + '" y="' + (y+4).toFixed(1) + '" text-anchor="end" font-size="12" fill="#555">' +
+         (paso*i) + '</text>';
+  }
+
+  /* Escala horizontal */
+  for (i = 0; i <= PASOS; i += 20){
+    x = px(i);
+    s += '<line x1="' + x.toFixed(1) + '" y1="' + (H-MB) + '" x2="' + x.toFixed(1) + '" y2="' + (H-MB+5) +
+         '" stroke="#90a4ae" stroke-width="1"></line>';
+    s += '<text x="' + x.toFixed(1) + '" y="' + (H-MB+20) + '" text-anchor="middle" font-size="12" fill="#555">' + i + '</text>';
+  }
+
+  s += '<line x1="' + ML + '" y1="' + MT + '" x2="' + ML + '" y2="' + (H-MB) + '" stroke="#37474f" stroke-width="2"></line>';
+  s += '<line x1="' + ML + '" y1="' + (H-MB) + '" x2="' + (W-MR) + '" y2="' + (H-MB) + '" stroke="#37474f" stroke-width="2"></line>';
+  s += '<text x="' + (ML + xs/2) + '" y="' + (H-8) + '" text-anchor="middle" font-size="13" fill="#263238">Generaciones</text>';
+  s += '<text transform="translate(16,' + (MT + ys/2) + ') rotate(-90)" text-anchor="middle" font-size="13" fill="#263238">Ciervos</text>';
+
+  /* La capacidad de carga */
+  s += '<line x1="' + ML + '" y1="' + py(k).toFixed(1) + '" x2="' + (W-MR) + '" y2="' + py(k).toFixed(1) +
+       '" stroke="#b45309" stroke-width="3" stroke-dasharray="9,6"></line>';
+  s += '<text x="' + (ML+8) + '" y="' + (py(k)-8).toFixed(1) + '" font-size="13" font-weight="700" fill="#5c3900">' +
+       'Capacidad de carga: ' + k + ' ciervos</text>';
+
+  /* Área bajo la curva y curva */
+  var area = "M " + px(0).toFixed(1) + " " + py(0).toFixed(1);
+  var linea = "";
+  for (i = 0; i <= hasta; i++){
+    area  += " L " + px(i).toFixed(1) + " " + py(N[i]).toFixed(1);
+    linea += (i === 0 ? "M " : " L ") + px(i).toFixed(1) + " " + py(N[i]).toFixed(1);
+  }
+  area += " L " + px(hasta).toFixed(1) + " " + py(0).toFixed(1) + " Z";
+  s += '<path d="' + area + '" fill="#33691e" opacity="0.10"></path>';
+  s += '<path d="' + linea + '" fill="none" stroke="#1f4211" stroke-width="3.5" stroke-linejoin="round"></path>';
+
+  /* Fases, solo cuando la curva sube de forma limpia hacia la meseta */
+  var limpia = !ctrl.retraso && N[0] < k*0.6 && h.tEstab !== null && h.tInf !== null;
+  if (limpia){
+    s += '<text x="' + px(Math.max(4, h.tInf*0.45)).toFixed(1) + '" y="' + (py(N[Math.round(h.tInf*0.45)]) + 26).toFixed(1) +
+         '" font-size="12" fill="#546e7a">crecimiento lento</text>';
+    s += '<text x="' + px(h.tInf + 4).toFixed(1) + '" y="' + (py(h.nInf) + 4).toFixed(1) +
+         '" font-size="12" fill="#01579b" font-weight="700">crecimiento más rápido</text>';
+    s += '<text x="' + (W-MR-10) + '" y="' + (py(h.nf) + 22).toFixed(1) +
+         '" text-anchor="end" font-size="12" fill="#546e7a">el crecimiento se detiene</text>';
+  }
+
+  /* Punto de crecimiento máximo */
+  if (h.tInf !== null && hasta >= h.tInf){
+    s += '<circle cx="' + px(h.tInf).toFixed(1) + '" cy="' + py(h.nInf).toFixed(1) +
+         '" r="7" fill="#0277bd" stroke="#ffffff" stroke-width="2.5"></circle>';
+  }
+  /* Punto final del recorrido dibujado */
+  s += '<circle cx="' + px(hasta).toFixed(1) + '" cy="' + py(N[hasta]).toFixed(1) +
+       '" r="6" fill="#1f4211" stroke="#ffffff" stroke-width="2.5"></circle>';
+
+  document.getElementById("lienzo").innerHTML =
+    '<svg class="grafica" viewBox="0 0 ' + W + ' ' + H + '" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="' +
+    'Curva de crecimiento de una población de ciervos. La capacidad de carga es de ' + k +
+    ' ciervos y la población termina en ' + ent(h.nf) + '. La lectura completa en texto aparece debajo de la gráfica.">' +
+    s + '</svg>';
+}
+
+/* ── Lectura en texto (alternativa accesible, siempre visible) ─────────── */
+function lectura(sim, h){
+  var k = sim.k, p1, p2, p3;
+
+  p1 = "La capacidad de carga de este valle es de " + k + " ciervos: es el máximo que sus recursos " +
+       "pueden sostener de forma continuada. La población parte de " + ctrl.n0 + " y termina en " +
+       ent(h.nf) + ".";
+
+  if (h.tEstab === null){
+    p2 = "La población todavía no se ha estabilizado al cabo de " + PASOS + " generaciones.";
+  } else if (h.tEstab === 0){
+    p2 = "La población ya parte de su nivel de equilibrio, de modo que apenas cambia.";
+  } else if (h.tInf === null){
+    p2 = "La población parte por encima de lo que el valle puede sostener, de modo que no crece en ningún momento: " +
+         "desciende hasta el techo y se estabiliza hacia la generación " + h.tEstab + ". Los ciervos sobrantes mueren.";
+  } else {
+    p2 = "Se estabiliza hacia la generación " + h.tEstab + ". El crecimiento más rápido ocurre en la " +
+         h.tInf + ", cuando hay " + ent(h.nInf) + " ciervos" +
+         (Math.abs(h.nInf - k/2) < k*0.18 ? ", es decir, alrededor de la mitad de la capacidad de carga." : ".");
+  }
+
+  if (ctrl.rel === "ninguna"){
+    p3 = "No hay otra especie en juego: lo que ves depende solo de los recursos y de la propia población.";
+  } else if (ctrl.rel === "mutualismo"){
+    p3 = "Con el mutualismo, los ciervos aprovechan mejor la misma hierba: el techo sube a " + k +
+         " ciervos sin que el valle haya cambiado de tamaño.";
+  } else if (ctrl.rel === "comensalismo"){
+    p3 = "Con el comensalismo, la curva es idéntica a la de los ciervos solos. El ave gana algo y los " +
+         "ciervos no pierden ni ganan nada: por eso la gráfica no se entera.";
+  } else if (ctrl.rel === "parasitismo"){
+    p3 = "Con el parasitismo, los ciervos siguen vivos pero debilitados: crecen más despacio y el techo " +
+         "queda algo más bajo.";
+  } else if (ctrl.rel === "depredacion"){
+    p3 = "Con los lobos, fíjate en que el techo sigue en " + k + ": los lobos no comen hierba. La " +
+         "población se estabiliza en " + ent(h.nf) + ", por debajo de una capacidad de carga que no ha cambiado.";
+  } else {
+    p3 = "Con un competidor que come lo mismo, el techo baja a " + k + " ciervos: el alimento se reparte " +
+         "entre más bocas.";
+  }
+
+  if (h.maxN > k*1.05){
+    p3 += " Observa también que la población llegó a " + ent(h.maxN) + " ciervos, por encima del techo, y después cayó hasta " +
+          ent(h.minTras) + ". Superar la capacidad de carga no es sostenerse arriba: es agotar los recursos y pagarlo.";
+  }
+
+  document.getElementById("lectura-1").textContent = p1;
+  document.getElementById("lectura-2").textContent = p2;
+  document.getElementById("lectura-3").textContent = p3;
+}
+
+function tabla(sim, h){
+  var k = sim.k;
+  var filas = [
+    ["Capacidad de carga", k + " ciervos", "El máximo sostenible. Lo fijan el alimento y el espacio."],
+    ["Población inicial", ctrl.n0 + " ciervos", "De dónde sale la curva. No influye en dónde termina."],
+    ["Población final", ent(h.nf) + " ciervos", h.nf < k*0.92 ? "Se estabiliza por debajo del techo." : "Se estabiliza en el techo o muy cerca de él."],
+    ["Generación de crecimiento más rápido",
+     h.tInf === null ? "no hay crecimiento" : "generación " + h.tInf,
+     h.tInf === null ? "La población parte por encima del techo y solo puede bajar." : "Ocurre a media altura, no al principio."],
+    ["Población en ese momento",
+     h.tInf === null ? "—" : ent(h.nInf) + " ciervos",
+     "Compárala con la mitad de la capacidad de carga: " + Math.round(k/2) + "."],
+    ["Población máxima alcanzada", ent(h.maxN) + " ciervos", h.maxN > k*1.05 ? "Se superó el techo, y después la población cayó." : "No se superó el techo en ningún momento."],
+    ["Se estabiliza en la generación", h.tEstab === null ? "todavía no" : String(h.tEstab), "Cuánto tarda en llegar, no hasta dónde llega."]
+  ];
+  var html = "", i;
+  for (i = 0; i < filas.length; i++){
+    html += '<tr><th scope="row">' + filas[i][0] + '</th><td>' + filas[i][1] + '</td><td>' + filas[i][2] + '</td></tr>';
+  }
+  document.getElementById("tabla-hitos").innerHTML = html;
+}
+
+var simActual = null, hitosActual = null;
+
+function actualizar(){
+  leer();
+  document.getElementById("v-alimento").textContent = etiqueta(ctrl.alimento);
+  document.getElementById("v-espacio").textContent  = etiqueta(ctrl.espacio);
+  document.getElementById("v-velocidad").textContent = coma(ctrl.r.toFixed(2));
+  document.getElementById("v-inicial").textContent  = ctrl.n0;
+
+  if (animacion){ clearInterval(animacion); animacion = null; }
+  simActual = simular();
+  hitosActual = hitos(simActual);
+  dibujar(simActual, hitosActual);
+  lectura(simActual, hitosActual);
+  tabla(simActual, hitosActual);
+}
+
+function animar(){
+  if (animacion){ clearInterval(animacion); animacion = null; }
+  var reducido = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (reducido){ dibujar(simActual, hitosActual); return; }
+  var t = 0;
+  animacion = setInterval(function(){
+    t += 2;
+    if (t >= PASOS){ t = PASOS; clearInterval(animacion); animacion = null; }
+    dibujar(simActual, hitosActual, t);
+  }, 30);
+}
+
+/* ── Retos ─────────────────────────────────────────────────────────────── */
+function veredicto(id, bien, texto){
+  var caja = document.getElementById(id);
+  caja.className = "veredicto " + (bien ? "bien" : "aun");
+  caja.innerHTML = '<strong class="' + (bien ? "bien" : "aun") + '">' +
+    (bien ? "Conseguido. " : "Todavía no. ") + '</strong>' + texto;
+}
+
+function comprobarReto(n){
+  var k = simActual.k, h = hitosActual;
+
+  if (n === 1){
+    if (Math.abs(h.nf - K_BASE) > 30 || k !== K_BASE){
+      veredicto("ver1", false, "La meseta ha cambiado de altura. Devuelve el alimento y el espacio a «normal» y deja la relación en «ninguna»: lo único que debes mover es la velocidad de reproducción.");
+    } else if (h.tEstab === null || h.tEstab >= baseEstab - 3){
+      veredicto("ver1", false, "La meseta está a la altura correcta, pero la población no llega antes. Sube la velocidad de reproducción.");
+    } else {
+      veredicto("ver1", true, "Has subido la velocidad de reproducción y la población se estabiliza en la generación " + h.tEstab +
+        " en lugar de la " + baseEstab + ". La meseta, en cambio, sigue en " + K_BASE +
+        " ciervos. Reproducirse deprisa decide cuándo se llega al techo, nunca a qué altura está el techo.");
+    }
+    return;
+  }
+
+  if (n === 2){
+    if (Math.abs(ctrl.r - 0.25) > 0.001){
+      veredicto("ver2", false, "La velocidad de reproducción tiene que quedarse en 0,25. Devuélvela a ese valor y sube el alimento o el espacio.");
+    } else if (k <= 600){
+      veredicto("ver2", false, "El valle sostiene ahora " + k + " ciervos. Sube el alimento o el espacio hasta pasar de 600.");
+    } else {
+      veredicto("ver2", true, "Sin tocar la especie, el valle sostiene ahora " + k + " ciervos" +
+        (ctrl.rel === "mutualismo" ? ", gracias a que el mutualismo les permite aprovechar mejor la misma hierba" : "") +
+        ". La capacidad de carga la fijan los recursos del ambiente, y solo ellos.");
+    }
+    return;
+  }
+
+  if (n === 3){
+    if (Math.abs(ctrl.alimento - 1) > 0.001 || Math.abs(ctrl.espacio - 1) > 0.001){
+      veredicto("ver3", false, "El alimento y el espacio deben quedarse en «normal»: el reto es bajar la población sin bajar el techo.");
+    } else if (h.nf >= k*0.9){
+      veredicto("ver3", false, "La población sigue pegada al techo. Prueba a introducir una especie que se lleve ciervos sin llevarse hierba.");
+    } else {
+      veredicto("ver3", true, "La capacidad de carga sigue en " + k + " ciervos y la población se ha estabilizado en " + ent(h.nf) +
+        ". Los lobos no comen hierba, de modo que no tocan el techo: lo que hacen es mantener a los ciervos por debajo de él. " +
+        "Un competidor habría hecho lo contrario, bajar el techo.");
+    }
+    return;
+  }
+
+  if (h.maxN > k*1.08 && h.minTras < k*0.92){
+    veredicto("ver4", true, "La población llegó a " + ent(h.maxN) + " ciervos, por encima de los " + k +
+      " que el valle podía sostener, y después cayó hasta " + ent(h.minTras) +
+      ". Ese desplome es la prueba de que el techo era real: los ciervos de más se comieron la hierba del año siguiente.");
+  } else {
+    veredicto("ver4", false, "Todavía no hay desplome. Activa la casilla del retraso reproductivo y sube la velocidad: las crías nacidas en la abundancia llegarán cuando ya no quede alimento.");
+  }
+}
+
+/* ── Escenarios ────────────────────────────────────────────────────────── */
+var ESCENARIOS = {
+  sequia:  {alimento:0.5, espacio:1,   r:0.25, n0:400, rel:"ninguna",    retraso:false},
+  exceso:  {alimento:1,   espacio:1,   r:0.25, n0:900, rel:"ninguna",    retraso:false},
+  lobos:   {alimento:1,   espacio:1,   r:0.25, n0:20,  rel:"depredacion",retraso:false},
+  colapso: {alimento:1,   espacio:1,   r:0.55, n0:20,  rel:"ninguna",    retraso:true}
+};
+
+function aplicarEscenario(nombre){
+  var e = ESCENARIOS[nombre], p;
+  for (p in e){ if (Object.prototype.hasOwnProperty.call(e, p)) ctrl[p] = e[p]; }
+  escribirControles();
+  actualizar();
+  animar();
+}
+
+/* ── Conexiones del módulo 1 ───────────────────────────────────────────── */
+(function(){
+  var ids = ["alimento","espacio","velocidad","inicial"], i;
+  for (i = 0; i < ids.length; i++){
+    document.getElementById(ids[i]).addEventListener("input", actualizar);
+  }
+  document.getElementById("relacion").addEventListener("change", actualizar);
+  document.getElementById("retraso").addEventListener("change", actualizar);
+  document.getElementById("btn-animar").addEventListener("click", animar);
+  document.getElementById("btn-reiniciar").addEventListener("click", function(){
+    ctrl = {alimento:1, espacio:1, r:0.25, n0:20, rel:"ninguna", retraso:false};
+    escribirControles();
+    actualizar();
+  });
+
+  var escs = document.querySelectorAll("button[data-esc]");
+  for (i = 0; i < escs.length; i++){
+    escs[i].addEventListener("click", function(){ aplicarEscenario(this.getAttribute("data-esc")); });
+  }
+  var retos = document.querySelectorAll("button[data-reto]");
+  for (i = 0; i < retos.length; i++){
+    retos[i].addEventListener("click", function(){ comprobarReto(parseInt(this.getAttribute("data-reto"), 10)); });
+  }
+
+  actualizar();
+  baseEstab = hitosActual.tEstab === null ? PASOS : hitosActual.tEstab;
+})();
+
+/* ===========================================================================
+   MÓDULO 2 · RELACIONES ENTRE ESPECIES
+   El estudiante no elige el nombre de la relación: elige qué le ocurre a cada
+   especie, y el nombre aparece solo. Cuando la casilla contiene dos nombres
+   (una gana y la otra pierde), se pide además el desenlace, que es lo único
+   que separa la depredación del parasitismo.
+   ========================================================================= */
+
+var CASOS = [
+  {a:"la abeja", b:"la flor",
+   texto:"La abeja recoge néctar de la flor y, al hacerlo, se lleva pegado el polen, que deposita en la siguiente flor que visita.",
+   ea:"+", eb:"+", tipo:"Mutualismo",
+   expl:"Las dos salen ganando: la abeja se alimenta y la flor consigue que su polen viaje hasta otra flor."},
+
+  {a:"la garrapata", b:"el perro",
+   texto:"La garrapata se fija en la piel del perro y se alimenta de su sangre durante varios días. El perro se debilita, pero sigue vivo.",
+   ea:"+", eb:"-", des:"sigue", tipo:"Parasitismo",
+   expl:"La garrapata gana y el perro pierde, pero el perro sigue vivo mucho tiempo. A la garrapata le conviene que así sea: es su fuente de alimento."},
+
+  {a:"el zorro", b:"el conejo",
+   texto:"El zorro persigue al conejo por el prado, lo captura y se lo come.",
+   ea:"+", eb:"-", des:"muere", tipo:"Depredación",
+   expl:"Mismo reparto que en el parasitismo —uno gana y otro pierde—, pero aquí la presa muere y la relación termina en ese momento."},
+
+  {a:"la rémora", b:"el tiburón",
+   texto:"La rémora se adhiere al vientre del tiburón, viaja con él y come los restos que deja al alimentarse. El tiburón no obtiene ventaja alguna ni resulta perjudicado.",
+   ea:"+", eb:"0", tipo:"Comensalismo",
+   expl:"La rémora gana transporte y comida; el tiburón queda exactamente igual. El enunciado lo dice de forma explícita, y por eso aquí sí puede elegirse comensalismo."},
+
+  {a:"el hongo micorrícico", b:"el pino",
+   texto:"El hongo envuelve las raíces del pino y le entrega agua y minerales del suelo. El pino le cede a cambio parte de los azúcares que fabrica.",
+   ea:"+", eb:"+", tipo:"Mutualismo",
+   expl:"Un intercambio en los dos sentidos. La mayoría de los árboles de un bosque dependen de estos hongos."},
+
+  {a:"el muérdago", b:"la encina",
+   texto:"El muérdago crece sobre las ramas de la encina y extrae de ella agua y savia. La encina crece más despacio, pero puede vivir así durante años.",
+   ea:"+", eb:"-", des:"sigue", tipo:"Parasitismo",
+   expl:"El muérdago vive a costa del árbol durante años sin matarlo. Que la víctima siga viva es la marca del parásito."},
+
+  {a:"la garcilla", b:"el búfalo",
+   texto:"La garcilla camina junto al búfalo y atrapa los insectos que este levanta al pisar la hierba. El búfalo no se ve afectado.",
+   ea:"+", eb:"0", tipo:"Comensalismo",
+   expl:"El ave aprovecha lo que el búfalo remueve sin darle nada ni quitarle nada."},
+
+  {a:"el halcón", b:"el ratón",
+   texto:"El halcón localiza al ratón desde el aire, se lanza sobre él y lo captura.",
+   ea:"+", eb:"-", des:"muere", tipo:"Depredación",
+   expl:"La presa muere en el acto. Ese desenlace inmediato es lo que lo separa del parasitismo."},
+
+  {a:"las bacterias del intestino", b:"el ser humano",
+   texto:"Ciertas bacterias que viven en el intestino humano producen vitaminas y ayudan a digerir alimentos que el cuerpo no podría aprovechar solo. A cambio, obtienen alimento y refugio.",
+   ea:"+", eb:"+", tipo:"Mutualismo",
+   expl:"Vivir dentro de otro organismo no significa parasitarlo. Aquí las dos partes ganan."},
+
+  {a:"la tenia", b:"el ser humano",
+   texto:"La tenia se instala en el intestino de una persona y absorbe parte de los nutrientes que esta ingiere. La persona adelgaza y se debilita, pero la relación puede durar meses.",
+   ea:"+", eb:"-", des:"sigue", tipo:"Parasitismo",
+   expl:"La tenia se alimenta a costa del anfitrión durante meses. Si lo matara deprisa, se quedaría sin despensa."},
+
+  {a:"el pez payaso", b:"la anémona",
+   texto:"El pez payaso se refugia entre los tentáculos urticantes de la anémona, que no lo dañan. A cambio, ahuyenta a los peces que se comen a la anémona y retira sus restos.",
+   ea:"+", eb:"+", tipo:"Mutualismo",
+   expl:"El pez obtiene protección y la anémona, defensa y limpieza. Si la anémona no obtuviera nada, sería comensalismo."},
+
+  {a:"el lobo", b:"el alce",
+   texto:"En el parque reintroducido de la lectura de la lección, la manada de lobos caza alces y, además, los obliga a abandonar las riberas donde quedan expuestos.",
+   ea:"+", eb:"-", des:"muere", tipo:"Depredación",
+   expl:"El alce cazado muere. El efecto sobre los álamos que viene después no cambia el tipo de relación entre lobo y alce: es una consecuencia en cascada."},
+
+  {a:"la ardilla gris", b:"la ardilla roja",
+   texto:"Las dos especies comen las mismas bellotas del mismo bosque. Donde coinciden, las dos poblaciones son menores que cuando cada una vive sola.",
+   ea:"-", eb:"-", tipo:"Competencia",
+   expl:"Nadie se alimenta del otro: las dos pierden porque reparten un alimento limitado. Esta es la casilla que explica por qué un competidor baja la capacidad de carga."},
+
+  {a:"los percebes", b:"la ballena",
+   texto:"Los percebes viajan adheridos a la piel de la ballena y filtran alimento del agua por la que esta nada. Los estudios no han detectado efecto sobre la ballena.",
+   ea:"+", eb:"0", tipo:"Comensalismo",
+   expl:"Se clasifica como comensalismo porque el enunciado afirma que no hay efecto detectado.",
+   nota:"Caso discutible. Si se midiera que un exceso de percebes aumenta el rozamiento al nadar y obliga a la ballena a gastar más energía, pasaría a ser parasitismo leve. El dato que haría falta es justamente ese: cuánto le cuesta nadar con ellos y sin ellos."}
+];
+
+var CELDAS = {"++":"c-mm","+0":"c-m0","+-":"c-mp",
+              "0+":"c-0m","00":"c-00","0-":"c-0p",
+              "-+":"c-pm","-0":"c-p0","--":"c-pp"};
+
+var orden = [], puesto = 0, selA = null, selB = null, selD = null;
+var intentos = 0, resueltos = 0, aciertos = 0, cerrado = false;
+
+function barajar(n){
+  var v = [], i, j, t;
+  for (i = 0; i < n; i++) v.push(i);
+  for (i = n - 1; i > 0; i--){
+    j = Math.floor(Math.random()*(i+1));
+    t = v[i]; v[i] = v[j]; v[j] = t;
+  }
+  return v;
+}
+
+function casoActual(){ return CASOS[orden[puesto]]; }
+
+function limpiarBotones(lado){
+  var bs = document.querySelectorAll('button.opcion[data-lado="' + lado + '"]'), i;
+  for (i = 0; i < bs.length; i++) bs[i].setAttribute("aria-pressed", "false");
+}
+
+function limpiarCasillas(){
+  var c, id;
+  for (c in CELDAS){
+    if (Object.prototype.hasOwnProperty.call(CELDAS, c)){
+      id = CELDAS[c];
+      document.getElementById(id).classList.remove("marcada");
+    }
+  }
+}
+
+function marcarCasilla(){
+  limpiarCasillas();
+  var pista = document.getElementById("pista-casilla");
+  var hayPar = (selA === "+" && selB === "-") || (selA === "-" && selB === "+");
+  document.getElementById("bloque-desenlace").hidden = !hayPar;
+
+  if (selA === null || selB === null){ pista.textContent = ""; return; }
+  var celda = document.getElementById(CELDAS[selA + selB]);
+  celda.classList.add("marcada");
+  pista.textContent = "Con esa combinación, la matriz señala: " + celda.textContent + ".";
+}
+
+function pintarCaso(){
+  var c = casoActual();
+  selA = null; selB = null; selD = null; intentos = 0; cerrado = false;
+  limpiarBotones("a"); limpiarBotones("b"); limpiarBotones("d");
+  limpiarCasillas();
+  document.getElementById("contador").textContent = "Caso " + (puesto + 1) + " de " + CASOS.length;
+  document.getElementById("texto-caso").textContent = c.texto;
+  document.getElementById("pide-a").textContent = "¿Qué le ocurre a " + c.a + "?";
+  document.getElementById("pide-b").textContent = "¿Qué le ocurre a " + c.b + "?";
+  document.getElementById("bloque-desenlace").hidden = true;
+  document.getElementById("pista-casilla").textContent = "";
+  document.getElementById("retro-caso").innerHTML = "";
+  document.getElementById("btn-siguiente").hidden = true;
+  document.getElementById("btn-comprobar").hidden = false;
+  marcador();
+}
+
+function marcador(){
+  document.getElementById("marcador").textContent =
+    "Casos resueltos: " + resueltos + " de " + CASOS.length + " · Acertados a la primera: " + aciertos;
+}
+
+function retroCaso(clase, titulo, cuerpo){
+  document.getElementById("retro-caso").innerHTML =
+    '<div class="' + clase + '"><p><strong>' + titulo + '</strong> ' + cuerpo + '</p></div>';
+}
+
+function cerrarCaso(acertado){
+  cerrado = true;
+  resueltos++;
+  if (acertado && intentos === 0) aciertos++;
+  document.getElementById("btn-comprobar").hidden = true;
+  document.getElementById("btn-siguiente").hidden = (puesto >= CASOS.length - 1);
+  marcador();
+  if (puesto >= CASOS.length - 1){
+    document.getElementById("marcador").textContent +=
+      " · Has terminado los " + CASOS.length + " casos.";
+  }
+}
+
+function comprobarCaso(){
+  if (cerrado) return;
+  var c = casoActual();
+
+  if (selA === null || selB === null){
+    retroCaso("caja-tip", "Falta un dato.", "Indica primero qué le ocurre a cada una de las dos especies.");
+    return;
+  }
+  var hayPar = (selA === "+" && selB === "-") || (selA === "-" && selB === "+");
+  if (hayPar && selD === null){
+    retroCaso("caja-tip", "Falta el desenlace.", "Una gana y otra pierde, pero eso todavía no distingue la depredación del parasitismo. Responde qué le ocurre a la perjudicada.");
+    return;
+  }
+
+  var efectosBien = (selA === c.ea && selB === c.eb);
+  var desBien = !c.des || selD === c.des;
+
+  if (efectosBien && desBien){
+    var cuerpo = "Es <strong>" + c.tipo.toLowerCase() + "</strong>. " + c.expl;
+    if (c.nota) cuerpo += " <em>" + c.nota + "</em>";
+    retroCaso("caja-ok", intentos === 0 ? "Correcto." : "Correcto, en el segundo intento.", cuerpo);
+    cerrarCaso(true);
+    return;
+  }
+
+  intentos++;
+
+  if (intentos < 2){
+    var pista;
+    if (!efectosBien){
+      pista = "Vuelve al enunciado y pregúntate, especie por especie, si sale ganando, si pierde algo o si queda exactamente igual. Recuerda que «no le afecta» exige que el texto lo diga.";
+    } else {
+      pista = "Los efectos están bien. Lo que falla es el desenlace: fíjate en si la especie perjudicada muere en ese momento o sigue viva mientras la otra se aprovecha de ella.";
+    }
+    retroCaso("caja-mal", "Todavía no.", pista + " Puedes corregir tu respuesta y volver a comprobar.");
+    return;
+  }
+
+  var signo = {"+":"se beneficia", "0":"no se ve afectada", "-":"se perjudica"};
+  var solucion = "Es <strong>" + c.tipo.toLowerCase() + "</strong>: " + c.a + " " + signo[c.ea] +
+                 " y " + c.b + " " + signo[c.eb] + ". " + c.expl;
+  if (c.nota) solucion += " <em>" + c.nota + "</em>";
+  retroCaso("caja-mal", "La respuesta era esta.", solucion);
+  cerrarCaso(false);
+}
+
+(function(){
+  var ops = document.querySelectorAll("button.opcion"), i;
+  for (i = 0; i < ops.length; i++){
+    ops[i].addEventListener("click", function(){
+      if (cerrado) return;
+      var lado = this.getAttribute("data-lado"), v = this.getAttribute("data-v");
+      limpiarBotones(lado);
+      this.setAttribute("aria-pressed", "true");
+      if (lado === "a") selA = v;
+      else if (lado === "b") selB = v;
+      else selD = v;
+      if (lado !== "d") selD = null;
+      if (lado !== "d") limpiarBotones("d");
+      marcarCasilla();
+    });
+  }
+  document.getElementById("btn-comprobar").addEventListener("click", comprobarCaso);
+  document.getElementById("btn-siguiente").addEventListener("click", function(){
+    if (puesto < CASOS.length - 1){ puesto++; pintarCaso(); }
+  });
+
+  orden = barajar(CASOS.length);
+  pintarCaso();
+})();
+
+/* ===========================================================================
+   PREGUNTAS RÁPIDAS
+   ========================================================================= */
+(function(){
+  var preguntas = document.querySelectorAll(".pregunta"), i, j;
+  for (i = 0; i < preguntas.length; i++){
+    (function(p){
+      var ok = p.getAttribute("data-ok");
+      var expl = p.getAttribute("data-expl");
+      var caja = p.querySelector(".retro");
+      var botones = p.querySelectorAll("button[data-op]");
+      for (j = 0; j < botones.length; j++){
+        botones[j].addEventListener("click", function(){
+          if (this.getAttribute("data-op") === ok){
+            caja.innerHTML = '<div class="caja-ok"><p><strong>Correcto.</strong> ' + expl + '</p></div>';
+            var k;
+            for (k = 0; k < botones.length; k++){ botones[k].disabled = true; }
+            this.style.background = "#1b5e20";
+            this.style.color = "#ffffff";
+            this.style.borderColor = "#1b5e20";
+          } else {
+            caja.innerHTML = '<div class="caja-mal"><p><strong>No es esa.</strong> Vuelve a leer el enunciado y prueba con otra opción.</p></div>';
+          }
+        });
+      }
+    })(preguntas[i]);
+  }
+})();
+</script>
+</body>
+</html>
