@@ -293,6 +293,15 @@ code{background:var(--u-bg);color:var(--u2);padding:2px 6px;border-radius:5px;
   font-size:14px;white-space:nowrap;}
 .marcador{font-size:15px;font-weight:700;color:var(--u2);font-variant-numeric:tabular-nums;
   margin-top:16px;}
+/* Volver arriba: botón flotante y botón al final de cada tema */
+button.subir{position:fixed;right:20px;bottom:20px;z-index:50;width:54px;height:54px;padding:0;
+  border-radius:50%;background:var(--u);color:#fff;font-size:24px;line-height:1;
+  box-shadow:0 3px 10px rgba(0,0,0,.28);display:none;align-items:center;justify-content:center;}
+button.subir.visible{display:flex;}
+button.subir:hover{background:var(--u2);}
+@media print{ button.subir{display:none !important;} }
+.fin-tema{display:flex;justify-content:flex-end;margin-top:22px;
+  border-top:1px solid var(--linea);padding-top:14px;}
 </style>
 </head>
 <body class="u6">
@@ -367,6 +376,9 @@ code{background:var(--u-bg);color:var(--u2);padding:2px 6px;border-radius:5px;
       <p><strong>Lo que el examen pregunta con esto:</strong> subir la amplitud de una luz verde la hace más brillante, pero sigue siendo verde y sigue sin ser peligrosa. El color y la energía de cada fotón dependen solo de λ. Amplitud e intensidad van juntas; longitud de onda y energía van juntas; los dos pares no se mezclan.</p>
     </div>
 
+    <div class="fin-tema">
+      <button type="button" class="secundario volver">Volver a los temas</button>
+    </div>
   </div>
 </details>
 
@@ -470,6 +482,9 @@ code{background:var(--u-bg);color:var(--u2);padding:2px 6px;border-radius:5px;
       <p><strong>Por qué la escala es logarítmica:</strong> cada paso de la barra multiplica por diez, no suma uno. Entre el extremo izquierdo y el derecho hay diecinueve de esos pasos, es decir, un diez seguido de dieciocho ceros. Si la barra fuera lineal y la luz visible midiera un milímetro, la barra entera tendría que medir más que la distancia de Chicago a la Luna.</p>
     </div>
 
+    <div class="fin-tema">
+      <button type="button" class="secundario volver">Volver a los temas</button>
+    </div>
   </div>
 </details>
 
@@ -523,6 +538,9 @@ code{background:var(--u-bg);color:var(--u2);padding:2px 6px;border-radius:5px;
       <p>El infrarrojo se percibe como calor, pero el calor en sí es energía interna de la materia. Una estufa calienta emitiendo infrarrojo, y una radiografía no calienta aunque lleve muchísima más energía por fotón.</p>
     </div>
 
+    <div class="fin-tema">
+      <button type="button" class="secundario volver">Volver a los temas</button>
+    </div>
   </div>
 </details>
 
@@ -609,6 +627,9 @@ code{background:var(--u-bg);color:var(--u2);padding:2px 6px;border-radius:5px;
       <p class="marcador" id="marcador">Aciertos a la primera: 0 de 7</p>
     </div>
 
+    <div class="fin-tema">
+      <button type="button" class="secundario volver">Volver a los temas</button>
+    </div>
   </div>
 </details>
 
@@ -645,6 +666,10 @@ code{background:var(--u-bg);color:var(--u2);padding:2px 6px;border-radius:5px;
   <p>José M. Fernández, ABE/ASE Math Master Teacher, Harry S. Truman College — City Colleges of Chicago</p>
   <p>© 2026. Esta obra está licenciada bajo <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es" rel="license">Creative Commons Reconocimiento-NoComercial-CompartirIgual 4.0 Internacional (CC BY-NC-SA 4.0)</a>.</p>
 </footer>
+
+<button type="button" class="subir" id="btn-subir" aria-label="Volver al principio de la página">
+  <span aria-hidden="true">&#8593;</span>
+</button>
 
 </div>
 <script>
@@ -1163,6 +1188,32 @@ function veredicto(id, bien, titulo, texto){
 /* ── Arranque ──────────────────────────────────────────────────────────── */
 actualizar();
 window.requestAnimationFrame(bucle);
+/* ===========================================================================
+   VOLVER ARRIBA
+   Un botón flotante que aparece al bajar y otro al cerrar cada tema. Los dos
+   devuelven el foco a la primera tarjeta, para que quien navega con teclado o
+   con lector de pantalla quede donde está la vista.
+   ========================================================================= */
+(function(){
+  var subir = document.getElementById("btn-subir");
+
+  function alPrincipio(){
+    window.scrollTo({top: 0, behavior: sinMovimiento() ? "auto" : "smooth"});
+    var primera = document.querySelector("button.tema");
+    if (primera) primera.focus({preventScroll: true});
+  }
+
+  subir.addEventListener("click", alPrincipio);
+  var vueltas = document.querySelectorAll("button.volver"), i;
+  for (i = 0; i < vueltas.length; i++){ vueltas[i].addEventListener("click", alPrincipio); }
+
+  function mirar(){
+    subir.className = (window.pageYOffset || document.documentElement.scrollTop) > 420 ? "subir visible" : "subir";
+  }
+  window.addEventListener("scroll", mirar);
+  window.addEventListener("resize", mirar);
+  mirar();
+})();
 </script>
 </body>
 </html>
